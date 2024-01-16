@@ -1,0 +1,194 @@
+variables:
+  FLUTTER_VERSION: 3.16.7
+
+image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-base
+
+before_script:
+  - export VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
+
+stages:
+  - test
+  - build
+  - deploy
+
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - polycule-*
+
+test:codestyle:
+  stage: build
+  script:
+    - flutter pub get
+    - flutter gen-l10n
+    - dart analyze --fatal-infos
+    - dart format lib test web --set-exit-if-changed
+    - dart run import_sorter:main --no-comments --exit-if-changed
+
+build:apk_debug:
+  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-android
+  stage: build
+  script:
+    - flutter pub get
+    - flutter gen-l10n
+    - flutter build apk --debug --build-number $CI_PIPELINE_ID
+    - mv build/app/outputs/flutter-apk/app-debug.apk polycule-$VERSION-debug.apk
+  except:
+    - main
+    - tags
+  artifacts:
+    paths:
+      - polycule-*.apk
+
+build:apk:
+  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-android
+  stage: build
+  before_script:
+    - export VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
+    - cat "$KEY_BASE64" | base64 -d > android/app/keystore.jks
+    - cp "$KEY_PROPERTIES" android/key.properties
+  script:
+    # make build reproducible with F-Droid
+    - export BUILD_DIR="$(pwd)"
+    - cd ..
+    - mv "$BUILD_DIR" /tmp/build
+    - pushd /tmp/build
+    - flutter pub get
+    - flutter gen-l10n
+    # only increment build number on branches
+    - if [ -z "$CI_COMMIT_TAG" ]; then
+      flutter build apk --build-number $CI_PIPELINE_ID --dart-define=POLYCULE_VERSION="$(git describe)";
+      else
+      flutter build apk --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
+      fi
+    # reproducible stuff again
+    - popd
+    - mv /tmp/build "$BUILD_DIR"
+    - cd "$BUILD_DIR"
+    - mv build/app/outputs/apk/release/app-release.apk polycule-$VERSION.apk
+  only:
+    - tags
+    - main
+  artifacts:
+    paths:
+      - polycule-*.apk
+
+build:bundle:
+  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-android
+  stage: build
+  before_script:
+    - export VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
+    - cat "$KEY_BASE64" | base64 -d > android/app/keystore.jks
+    - cp "$KEY_PROPERTIES" android/key.properties
+  script:
+    - flutter pub get
+    - flutter gen-l10n
+    # only increment build number on branches
+    - if [ -z "$CI_COMMIT_TAG" ]; then
+      flutter build appbundle --build-number $CI_PIPELINE_ID --dart-define=POLYCULE_VERSION="$(git describe)";
+      else
+      flutter build appbundle --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
+      fi
+    - mv build/app/outputs/bundle/release/app-release.aab polycule-$VERSION.aab
+  only:
+    - tags
+    - main
+  artifacts:
+    paths:
+      - polycule-*.aab
+
+build:web:
+  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-web
+  stage: build
+  script:
+    - flutter pub get
+    - flutter gen-l10n
+    - if [ -z "$CI_COMMIT_TAG" ]; then
+      flutter build web --build-number $CI_PIPELINE_ID --no-web-resources-cdn --base-href "/$CI_PROJECT_NAME/" --source-maps --dart-define=POLYCULE_VERSION="$(git describe)";
+      else
+      flutter build web --build-number $CI_PIPELINE_ID --no-web-resources-cdn --base-href "/$CI_PROJECT_NAME/" --source-maps --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
+      fi
+    - mv build/web polycule-web-$VERSION
+  artifacts:
+    paths:
+      - polycule-web-*
+
+build:linux_x86_64:
+  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-linux
+  stage: build
+  script:
+    - flutter pub get
+    - flutter gen-l10n
+    - if [ -z "$CI_COMMIT_TAG" ]; then
+      flutter build linux --dart-define=POLYCULE_VERSION="$(git describe)";
+      else
+      flutter build linux --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
+      fi
+    - mv ./build/linux/x64/release/bundle polycule-$VERSION-amd64
+  artifacts:
+    paths:
+      - polycule-*-amd64
+
+build:linux_aarch64:
+  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-linux
+  stage: build
+  tags:
+    - aarch64
+  script:
+    - dart pub get
+    - flutter gen-l10n
+    - if [ -z "$CI_COMMIT_TAG" ]; then
+      flutter build linux --dart-define=POLYCULE_VERSION="$(git describe)";
+      else
+      flutter build linux --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
+      fi
+    - mv ./build/linux/arm64/release/bundle polycule-$VERSION-aarch64
+  allow_failure: true
+  artifacts:
+    paths:
+      - polycule-*-aarch64
+
+build:debian_x86_64:
+  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-debian
+  stage: build
+  before_script:
+    - export VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
+    - sed -i "s/DATE/$(date -R)/g" debian/changelog
+    - sed -i "s/VERSION/$VERSION/g" debian/changelog
+  script:
+    - dpkg-buildpackage
+    - mv ../polycule_*.deb .
+  artifacts:
+    paths:
+      - polycule_*.deb
+
+build:debian_aarch64:
+  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-debian
+  stage: build
+  tags:
+    - aarch64
+  before_script:
+    - export VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
+    - sed -i "s/DATE/$(date -R)/g" debian/changelog
+    - sed -i "s/VERSION/$VERSION/g" debian/changelog
+    - sed -i "s/x64/arm64/g" debian/polycule.install
+  script:
+    - dpkg-buildpackage
+    - mv ../polycule_*.deb .
+  allow_failure: true
+  artifacts:
+    paths:
+      - polycule_*.deb
+
+pages:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - mkdir public
+    - cp -r polycule-web-$VERSION/* public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - main

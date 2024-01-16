@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+
+Name=< polycule >
+Comment=A simple and beautiful matrix client written in Flutter.
+Keywords=matrix;chat;element
+
+Exec=polycule %f
+SingleMainWindow=true
+StartupWMClass=business.braid.polycule
+Terminal=false
+StartupNotify=false
+Icon=business.braid.polycule
+Categories=Office

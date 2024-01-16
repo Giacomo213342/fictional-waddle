@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  matrix: ^0.25.5
 
 dev_dependencies:
   flutter_test:

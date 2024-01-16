@@ -1,0 +1,12 @@
+Source: polycule
+Section: utils
+Priority: optional
+Maintainer: The one with the braid <info@braid-business>
+Build-Depends: debhelper (>=10), cmake, make, ninja-build, clang, pkg-config, libgtk-3-dev, libssl-dev, libsecret-1-dev, libjsoncpp-dev, openssl
+Standards-Version: 4.3.0
+Homepage: https://gitlab.com/TheOneWithTheBraid/polycule
+
+Package: polycule
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, xdg-user-dirs
+Description: A simple and beautiful matrix client written in Flutter.
