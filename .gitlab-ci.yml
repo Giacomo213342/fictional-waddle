@@ -183,6 +183,9 @@ build:debian_aarch64:
 
 pages:
   stage: deploy
+  dependencies:
+    - build:web
+    - test:codestyle
   image: alpine:latest
   script:
     - mkdir public
