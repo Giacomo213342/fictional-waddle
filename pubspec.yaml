@@ -6,7 +6,9 @@ version: 1.0.0+1
 
 environment:
   sdk: '>=3.2.4 <4.0.0'
+
 dependencies:
+  dynamic_color: ^1.6.9
   flutter:
     sdk: flutter
   import_sorter: ^4.6.0
@@ -17,11 +19,10 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^2.0.0
   flutter_launcher_icons: ^0.13.1
+
 flutter:
   generate: true
   uses-material-design: true
-  assets:
-    - assets/logo/logo-circle.png
 
   fonts:
     - family: Sono

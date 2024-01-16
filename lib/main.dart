@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,24 +11,34 @@ class PolyculeClient extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        fontFamily: 'Sono',
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        fontFamily: 'Sono',
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.indigo,
-          brightness: Brightness.dark,
-        ),
-        brightness: Brightness.dark,
-        useMaterial3: true,
-      ),
-      themeMode: ThemeMode.dark,
-      home: const MyHomePage(),
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) {
+        return MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            fontFamily: 'Sono',
+            colorScheme: lightDynamic ??
+                ColorScheme.fromSeed(
+                  seedColor: Colors.indigo,
+                  brightness: Brightness.light,
+                ),
+            brightness: Brightness.light,
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            fontFamily: 'Sono',
+            colorScheme: darkDynamic ??
+                ColorScheme.fromSeed(
+                  seedColor: Colors.indigo,
+                  brightness: Brightness.dark,
+                ),
+            brightness: Brightness.dark,
+            useMaterial3: true,
+          ),
+          themeMode: ThemeMode.dark,
+          home: const MyHomePage(),
+        );
+      },
     );
   }
 }
