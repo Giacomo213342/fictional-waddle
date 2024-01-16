@@ -20,6 +20,8 @@ dev_dependencies:
 flutter:
   generate: true
   uses-material-design: true
+  assets:
+    - assets/logo/logo-circle.png
 
   fonts:
     - family: Sono
