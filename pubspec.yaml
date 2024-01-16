@@ -9,12 +9,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  import_sorter: ^4.6.0
   matrix: ^0.25.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.13.1
 flutter:
   generate: true
   uses-material-design: true
@@ -23,3 +25,29 @@ flutter:
     - family: Sono
       fonts:
         - asset: assets/fonts/sono.ttf
+
+flutter_launcher_icons:
+  # convert -background none -density 4096 -resize 1024x1024 assets/logo/logo-white.svg assets/logo/logo-white.png
+  # convert -density 4096 -resize 1024x1024 assets/logo/logo-background.svg -alpha remove assets/logo/logo-background.png
+  # convert -background none -density 4096 -resize 1024x1024 assets/logo/logo-circle.svg assets/logo/logo-circle.png
+  image_path: "assets/logo/logo-circle.png"
+  image_path_ios: "assets/logo/logo-background.png"
+
+  adaptive_icon_foreground: "assets/logo/logo-white.png"
+  adaptive_icon_background: "#3F51B5"
+
+  android: true
+  min_sdk_android: 16
+  ios: true
+  remove_alpha_ios: true
+  web:
+    generate: true
+    background_color: "black"
+    theme_color: "#3F51B5"
+  windows:
+    generate: true
+    image_path: "assets/logo/logo-background.png"
+    icon_size: 256
+  macos:
+    generate: true
+    image_path: "assets/logo/logo-background.png"
