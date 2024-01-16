@@ -7,6 +7,6 @@
 	dh $@
 
 build:
-	ln -s /opt/polycule/polycule polycule
+	ln -s /opt/polycule/polycule linux/polycule
 	flutter gen-l10n
 	flutter build linux
