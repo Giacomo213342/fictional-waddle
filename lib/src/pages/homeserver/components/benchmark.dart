@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix_homeserver_recommendations/matrix_homeserver_recommendations.dart';
+import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../login/login.dart';
@@ -21,6 +22,8 @@ class BenchmarkWidget extends StatefulWidget {
 class _BenchmarkWidgetState extends State<BenchmarkWidget> {
   bool highlight = false;
 
+  String get uri => LoginPage.makeRouteName(widget.result.homeserver.baseUrl);
+
   @override
   Widget build(BuildContext context) {
     final description = widget.result.homeserver.description;
@@ -30,12 +33,8 @@ class _BenchmarkWidgetState extends State<BenchmarkWidget> {
       onExit: _handlePointer,
       child: CallbackShortcuts(
         bindings: <ShortcutActivator, VoidCallback>{
-          const SingleActivator(LogicalKeyboardKey.arrowRight): () {
-            _connect();
-          },
-          const SingleActivator(LogicalKeyboardKey.enter): () {
-            _connect();
-          },
+          const SingleActivator(LogicalKeyboardKey.arrowRight): _connect,
+          const SingleActivator(LogicalKeyboardKey.enter): _connect,
         },
         child: Focus(
           onFocusChange: _handleFocusChange,
@@ -43,20 +42,23 @@ class _BenchmarkWidgetState extends State<BenchmarkWidget> {
             duration: const Duration(milliseconds: 150),
             color:
                 highlight ? Theme.of(context).focusColor : Colors.transparent,
-            child: ListTile(
-              title: Text(widget.result.homeserver.baseUrl.host),
-              subtitle: description != null
-                  ? Html(
-                      data: description,
-                      onLinkTap: _launchUrl,
-                    )
-                  : null,
-              trailing: Focus(
-                descendantsAreFocusable: false,
-                child: IconButton(
-                  tooltip: AppLocalizations.of(context)!.connect,
-                  icon: const Icon(Icons.rocket_launch),
-                  onPressed: _connect,
+            child: Link(
+              uri: Uri.parse(uri),
+              builder: (context, callback) => ListTile(
+                title: Text(widget.result.homeserver.baseUrl.host),
+                subtitle: description != null
+                    ? Html(
+                        data: description,
+                        onLinkTap: _launchUrl,
+                      )
+                    : null,
+                trailing: Focus(
+                  descendantsAreFocusable: false,
+                  child: IconButton(
+                    tooltip: AppLocalizations.of(context)!.connect,
+                    icon: const Icon(Icons.rocket_launch),
+                    onPressed: callback,
+                  ),
                 ),
               ),
             ),
@@ -66,20 +68,18 @@ class _BenchmarkWidgetState extends State<BenchmarkWidget> {
     );
   }
 
-  void _handlePointer(PointerEvent event) {
-    setState(() {
-      highlight = event is PointerEnterEvent || event is PointerHoverEvent;
-    });
-  }
-
-  void _connect() => context.push(
-        LoginPage.makeRouteName(widget.result.homeserver.baseUrl),
-      );
+  void _connect() => context.push(uri);
 
   void _launchUrl(String? url, Map<String, String> attributes, element) {
     if (url != null) {
       launchUrlString(url);
     }
+  }
+
+  void _handlePointer(PointerEvent event) {
+    setState(() {
+      highlight = event is PointerEnterEvent || event is PointerHoverEvent;
+    });
   }
 
   void _handleFocusChange(bool value) {

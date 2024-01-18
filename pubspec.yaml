@@ -25,6 +25,7 @@ dependencies:
   matrix: ^0.25.5
   matrix_homeserver_recommendations: ^0.4.0
   olm: ^2.0.3
+  path_provider: ^2.1.2
   provider: ^6.1.1
   sqflite_common_ffi: ^2.3.1
   sqlcipher_flutter_libs: ^0.6.0
