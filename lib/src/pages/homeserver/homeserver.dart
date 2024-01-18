@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix_homeserver_recommendations/matrix_homeserver_recommendations.dart';
 
+import '../../utils/about_dialog.dart';
 import 'homeserver_view.dart';
 
 class HomeserverPage extends StatefulWidget {
@@ -39,5 +40,9 @@ class HomeserverController extends State<HomeserverPage> {
       });
     } catch (_) {}
     setState(() => recommendationsLoading = false);
+  }
+
+  void showAboutDialog() {
+    showInfoDialog(context);
   }
 }
