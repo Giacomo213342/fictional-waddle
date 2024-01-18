@@ -1,20 +1,38 @@
-import 'package:dynamic_color/dynamic_color.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const PolyculeClient());
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:matrix/matrix.dart';
+
+import 'src/router/router.dart';
+
+void main(List<String>? args) {
+  Logs().level = Level.verbose;
+  // used to capture errors in main thread
+  runZonedGuarded(
+    () => runApp(const PolyculeClient()),
+    (error, stack) {
+      // TODO: de-obfuscate web stack traces using source maps
+      Logs().wtf('Error launching main applications', error, stack);
+    },
+  );
 }
 
 class PolyculeClient extends StatelessWidget {
   const PolyculeClient({super.key});
 
-  // This widget is the root of your application.
+  static final router = PolyculeRouter();
+
   @override
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
-        return MaterialApp(
-          title: 'Flutter Demo',
+        return MaterialApp.router(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
           theme: ThemeData(
             fontFamily: 'Sono',
             colorScheme: lightDynamic ??
@@ -36,38 +54,9 @@ class PolyculeClient extends StatelessWidget {
             useMaterial3: true,
           ),
           themeMode: ThemeMode.dark,
-          home: const MyHomePage(),
+          routerConfig: router,
         );
       },
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Meow !'),
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

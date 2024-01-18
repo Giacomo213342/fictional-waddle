@@ -1,0 +1,66 @@
+import 'package:flutter/foundation.dart';
+
+import 'package:go_router/go_router.dart';
+
+import '../pages/fatal_error/fatal_error_page.dart';
+import '../pages/homeserver/homeserver.dart';
+import '../pages/login/login.dart';
+import '../pages/room/room.dart';
+import '../pages/room_list/room_list.dart';
+import '../pages/splash_screen/splash_screen.dart';
+import '../widgets/matrix/client_manager.dart';
+import '../widgets/placeholder.dart';
+import 'extensions/go_router_path_extension.dart';
+import 'extensions/homeserver_uri_route.dart';
+import 'extensions/must_be_logged_out_route.dart';
+import 'extensions/requires_login_route.dart';
+import 'extensions/responsive_shell_route.dart';
+import 'extensions/room_available_route.dart';
+
+class PolyculeRouter extends GoRouter {
+  PolyculeRouter()
+      : super(
+          debugLogDiagnostics: kDebugMode,
+          routes: [
+            ShellRoute(
+              builder: ClientManagerWidget.routeBuilder,
+              routes: [
+                GoRoute(
+                  path: SplashPage.routeName,
+                  builder: (context, state) => const SplashPage(),
+                ),
+                GoRoute(
+                  path: FatalErrorPage.routeName,
+                  builder: (context, state) =>
+                      FatalErrorPage(error: state.extra),
+                ),
+                MustBeLoggedOutRoute(
+                  path: HomeserverPage.routeName,
+                  builder: (context, state) => const HomeserverPage(),
+                ),
+                HomeserverUriRoute(
+                  path: LoginPage.routeName,
+                  builder: (context, state, uri) => LoginPage(homeserver: uri),
+                ),
+                ResponsiveShellRoute(
+                  builder: (context, state) => const RoomListPage(),
+                  routes: [
+                    RequiresLoginRoute(
+                      path: RoomListPage.routeName,
+                      builder: (context, state) => const PolyculePlaceholder(),
+                      routes: [
+                        RoomAvailableRoute(
+                          path: RoomPage.pathParameter.asGoRouterPath(),
+                          builder: (context, state, room) => RoomPage(
+                            room: room,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+}
