@@ -1,5 +1,18 @@
 {
   "appName": "< polycule >",
+  "about": "About",
+  "author": "Author: {author}",
+  "@author": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
+  "appSlogan": "A simple and beautiful matrix client written in Flutter.",
+  "repoLabel": "Source code (GitLab)",
+  "releaseNotes": "Release notes",
+  "buyMeACoffee": "Buy me a coffee",
   "homeserverHeadline": "Haj ! Welcome to < polycule >",
   "@homeserverHeadline": {
     "description": "Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'."
