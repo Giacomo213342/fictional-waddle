@@ -1,6 +1,28 @@
 include: package:flutter_lints/flutter.yaml
 
 linter:
+  # https://dart.dev/tools/linter-rules
   rules:
+    - prefer_final_fields
+    - prefer_const_constructors
+    - sort_constructors_first
+    - sort_unnamed_constructors_first
+    - always_put_control_body_on_new_line
+    - avoid_annotating_with_dynamic
+    - always_declare_return_types
+    - avoid_js_rounded_ints
+    - avoid_renaming_method_parameters
+    - cast_nullable_to_non_nullable
+    - annotate_redeclares
+    - avoid_double_and_int_checks
+    - sort_pub_dependencies
     - require_trailing_commas
-    - sort_child_properties_last
+    - conditional_uri_does_not_exist
+    - empty_catches
+    - eol_at_end_of_file
+    - join_return_with_assignment
+    - use_key_in_widget_constructors
+    - prefer_relative_imports
+    - lines_longer_than_80_chars
+    - one_member_abstracts
+    - prefer_single_quotes

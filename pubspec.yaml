@@ -8,17 +8,33 @@ environment:
   sdk: '>=3.2.4 <4.0.0'
 
 dependencies:
+  animations: ^2.0.11
   dynamic_color: ^1.6.9
   flutter:
     sdk: flutter
+  flutter_html: ^3.0.0-beta.2
+  flutter_html_table: ^3.0.0-beta.2
+  flutter_localizations:
+    sdk: flutter
+  flutter_olm: ^1.4.1
+  flutter_secure_storage: ^9.0.0
+  go_router: ^11.1.3
+  html: ^0.15.4
   import_sorter: ^4.6.0
+  intl: ^0.18.1
   matrix: ^0.25.5
+  matrix_homeserver_recommendations: ^0.4.0
+  olm: ^2.0.3
+  provider: ^6.1.1
+  sqflite_common_ffi: ^2.3.1
+  sqlcipher_flutter_libs: ^0.6.0
+  url_launcher: ^6.2.3
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^3.0.1
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
-  flutter_launcher_icons: ^0.13.1
 
 flutter:
   generate: true
@@ -54,3 +70,9 @@ flutter_launcher_icons:
   macos:
     generate: true
     image_path: "assets/logo/logo-background.png"
+
+dependency_overrides:
+  matrix:
+    git:
+      url: https://github.com/TheOneWithTheBraid/matrix-dart-sdk
+      ref: braid/sqflite-encryption-helper
