@@ -19,41 +19,46 @@ import 'extensions/room_available_route.dart';
 
 class PolyculeRouter extends GoRouter {
   PolyculeRouter()
-      : super(
-          debugLogDiagnostics: kDebugMode,
-          routes: [
-            ShellRoute(
-              builder: ClientManagerWidget.routeBuilder,
+      : super.routingConfig(
+          routingConfig: _ConstantRoutingConfig(
+            RoutingConfig(
               routes: [
-                GoRoute(
-                  path: SplashPage.routeName,
-                  builder: (context, state) => const SplashPage(),
-                ),
-                GoRoute(
-                  path: FatalErrorPage.routeName,
-                  builder: (context, state) =>
-                      FatalErrorPage(error: state.extra),
-                ),
-                MustBeLoggedOutRoute(
-                  path: HomeserverPage.routeName,
-                  builder: (context, state) => const HomeserverPage(),
-                ),
-                HomeserverUriRoute(
-                  path: LoginPage.routeName,
-                  builder: (context, state, uri) => LoginPage(homeserver: uri),
-                ),
-                ResponsiveShellRoute(
-                  builder: (context, state) => const RoomListPage(),
+                ShellRoute(
+                  builder: ClientManagerWidget.routeBuilder,
                   routes: [
-                    RequiresLoginRoute(
-                      path: RoomListPage.routeName,
-                      builder: (context, state) => const PolyculePlaceholder(),
+                    GoRoute(
+                      path: SplashPage.routeName,
+                      builder: (context, state) => const SplashPage(),
+                    ),
+                    GoRoute(
+                      path: FatalErrorPage.routeName,
+                      builder: (context, state) =>
+                          FatalErrorPage(error: state.extra),
+                    ),
+                    MustBeLoggedOutRoute(
+                      path: HomeserverPage.routeName,
+                      builder: (context, state) => const HomeserverPage(),
+                    ),
+                    HomeserverUriRoute(
+                      path: LoginPage.routeName,
+                      builder: (context, state, uri) =>
+                          LoginPage(homeserver: uri),
+                    ),
+                    ResponsiveShellRoute(
+                      builder: (context, state) => const RoomListPage(),
                       routes: [
-                        RoomAvailableRoute(
-                          path: RoomPage.pathParameter.asGoRouterPath(),
-                          builder: (context, state, room) => RoomPage(
-                            room: room,
-                          ),
+                        RequiresLoginRoute(
+                          path: RoomListPage.routeName,
+                          builder: (context, state) =>
+                              const PolyculePlaceholder(),
+                          routes: [
+                            RoomAvailableRoute(
+                              path: RoomPage.pathParameter.asGoRouterPath(),
+                              builder: (context, state, room) => RoomPage(
+                                room: room,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -61,6 +66,24 @@ class PolyculeRouter extends GoRouter {
                 ),
               ],
             ),
-          ],
+          ),
         );
+}
+
+/// A routing config that is never going to change.
+class _ConstantRoutingConfig extends ValueListenable<RoutingConfig> {
+  const _ConstantRoutingConfig(this.value);
+
+  @override
+  void addListener(VoidCallback listener) {
+    // Intentionally empty because listener will never be called.
+  }
+
+  @override
+  void removeListener(VoidCallback listener) {
+    // Intentionally empty because listener will never be called.
+  }
+
+  @override
+  final RoutingConfig value;
 }
