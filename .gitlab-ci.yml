@@ -108,6 +108,7 @@ build:web:
   script:
     - flutter pub get
     - flutter gen-l10n
+    - dart compile js web/web_worker.dart -m -o web/web_worker.dart.js
     - if [ -z "$CI_COMMIT_TAG" ]; then
       flutter build web --build-number $CI_PIPELINE_ID --no-web-resources-cdn --base-href "/$CI_PROJECT_NAME/" --source-maps --dart-define=POLYCULE_VERSION="$(git describe --always)";
       else

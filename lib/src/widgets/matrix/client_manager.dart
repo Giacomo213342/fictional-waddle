@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:go_router/go_router.dart';
@@ -11,6 +12,7 @@ import 'package:provider/provider.dart';
 import '../../pages/fatal_error/fatal_error_page.dart';
 import '../../pages/homeserver/homeserver.dart';
 import '../../pages/room_list/room_list.dart';
+import 'database/polycule_database_builder.dart';
 
 class ClientManagerWidget extends StatefulWidget {
   const ClientManagerWidget({super.key, required this.child});
@@ -43,10 +45,14 @@ class ClientManager extends State<ClientManagerWidget> {
   Client buildClient(String name) {
     final client = Client(
       name,
+      databaseBuilder: polyculeDatabaseBuilder,
       verificationMethods: {
         KeyVerificationMethod.numbers,
         KeyVerificationMethod.reciprocate,
       },
+      nativeImplementations: kIsWeb
+          ? NativeImplementationsWebWorker(Uri.parse('web_worker.dart.js'))
+          : NativeImplementationsIsolate(compute),
     );
     _loginStateListener?.cancel();
     _loginStateListener =
