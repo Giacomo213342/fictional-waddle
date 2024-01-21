@@ -1,0 +1,88 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+
+import 'package:matrix/matrix.dart';
+
+import '../room_list.dart';
+import 'room_list_tile.dart';
+
+class FadeInRoomList extends StatefulWidget {
+  const FadeInRoomList(this.controller, {super.key});
+
+  final RoomListController controller;
+
+  @override
+  State<FadeInRoomList> createState() => _FadeInRoomListState();
+}
+
+class _FadeInRoomListState extends State<FadeInRoomList>
+    with TickerProviderStateMixin {
+  AnimationController? _animation;
+  StreamSubscription<SyncUpdate>? _subscription;
+
+  @override
+  Widget build(BuildContext context) {
+    final rooms = widget.controller.client.rooms;
+    final animation = makeAnimation();
+
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (BuildContext context, Widget? child) =>
+          Opacity(opacity: 1 - animation.value, child: child),
+      child: ListView.builder(
+        itemBuilder: (context, index) => RoomListTile(
+          widget.controller,
+          room: rooms[index],
+        ),
+        itemCount: rooms.length,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animation?.dispose();
+    _subscription?.cancel();
+    super.dispose();
+  }
+
+  AnimationController makeAnimation() {
+    AnimationController? animation = _animation;
+    if (animation != null) {
+      return animation;
+    }
+
+    _animation = animation = AnimationController(
+      lowerBound: 0,
+      upperBound: .5,
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
+
+    final sync = widget.controller.client.onSync.value;
+    if (sync == null) {
+      animation.forward();
+      animation.addListener(() {
+        final animation = _animation;
+        if (animation == null) {
+          return;
+        }
+        if (animation.isCompleted) {
+          animation.reverse();
+        }
+        if (animation.isDismissed) {
+          animation.forward();
+        }
+      });
+      _subscription =
+          widget.controller.client.onSync.stream.listen((event) async {
+        _subscription?.cancel();
+        animation?.stop();
+        await animation?.animateBack(0);
+        animation?.dispose();
+      });
+    }
+    return animation;
+  }
+}
