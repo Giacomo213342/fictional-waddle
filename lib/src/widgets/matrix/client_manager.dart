@@ -89,7 +89,9 @@ class ClientManager extends State<ClientManagerWidget> {
     // the very first login change is handled at the [SplashPage]
     if (!_initialRedirectHandled) {
       _initialRedirectHandled = true;
-      return;
+      if (state == LoginState.loggedOut) {
+        return;
+      }
     }
 
     switch (state) {

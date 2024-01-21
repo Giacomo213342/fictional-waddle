@@ -1,0 +1,105 @@
+{
+  "appName": "< polycule >",
+  "about": "About",
+  "author": "Author: {author}",
+  "@author": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
+  "appSlogan": "A simple and beautiful matrix client written in Flutter.",
+  "repoLabel": "Source code (GitLab)",
+  "releaseNotes": "Release notes",
+  "buyMeACoffee": "Buy me a coffee",
+  "homeserverHeadline": "Haj ! Welcome to < polycule >",
+  "@homeserverHeadline": {
+    "description": "Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'."
+  },
+  "aMatrixClient": "- yet another [matrix] client",
+  "connectToHomeserver": "Connect to your homeserver",
+  "discoverHomeservers": "Discover new homeservers",
+  "newToMatrixLong": "Find eligible homeservers from the [matrix] universe. This will connect to joinmatrix.org.",
+  "connect": "Connect",
+  "homeserverNotValid": "This is no valid homeserver input.",
+  "pleaseProvideHomeserver": "Please provide a homeserver.",
+  "errorConnectingToHomeserver": "Error connecting to server {homeserver}. Please check your selection.",
+  "@errorConnectingToHomeserver": {
+    "placeholders": {
+      "homeserver": {
+        "type": "String"
+      }
+    }
+  },
+  "connectingToHomeserver": "Connecting to {homeserver} ...",
+  "@connectingToHomeserver": {
+    "placeholders": {
+      "homeserver": {
+        "type": "String"
+      }
+    }
+  },
+  "welcomeToHomeserver": "Welcome to {homeserver} !",
+  "@welcomeToHomeserver": {
+    "placeholders": {
+      "homeserver": {
+        "type": "String"
+      }
+    }
+  },
+  "howWouldYouLikeToConnect": "How would you like to connect ?",
+  "loginPassword": "Login using password",
+  "username": "username",
+  "email": "email",
+  "password": "password",
+  "pleaseProvideEmail": "Please provide your email.",
+  "pleaseProvidePassword": "Please enter your password.",
+  "pleaseProvideUsername": "Please enter your username.",
+  "emailMinimals": "Your email should at least contain the @ symbol, a local part and your domain.",
+  "mxidSyntax": "Allowed characters : a-z, 0-9 as well as the symbols ., _, =, -, /, and +.",
+  "clientDisplayName": "< polycule > on {platform}",
+  "@clientDisplayName": {
+    "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
+    "placeholders": {
+      "platform": {
+        "type": "String",
+        "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
+      }
+    }
+  },
+  "platformWeb": "web",
+  "loginError": "Error during login, please check your credentials.",
+  "loginErrorMessage": "Error during login : {message}",
+  "@loginErrorMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "hajUser": "Haj {localpart} !",
+  "@hajUser": {
+    "placeholders": {
+      "localpart": {
+        "type": "String?"
+      }
+    }
+  },
+  "syncInProgress": "Sync in progress",
+  "initialSync": "Initial sync in progress",
+  "syncOffline": "Sync interrupted",
+  "syncFunctional": "Sync state healthy",
+  "lastSyncReceived": "Last sync : {timestamp} ({duration} ms)",
+  "@lastSyncReceived": {
+    "placeholders": {
+      "timestamp": {
+        "type": "DateTime",
+        "format": "jms"
+      },
+      "duration": {
+        "format": "int"
+      }
+    }
+  }
+}

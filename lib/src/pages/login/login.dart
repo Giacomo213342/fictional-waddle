@@ -1,11 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../utils/matrix/matrix_state.dart';
 import '../homeserver/homeserver.dart';
 import 'login_view.dart';
@@ -34,6 +36,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginController extends MatrixState<LoginPage> {
+  bool loginLoading = false;
+
   Uri get homeserver => widget.homeserver;
 
   Future<HomeserverSummary?>? homeserverCheck;
@@ -56,7 +60,7 @@ class LoginController extends MatrixState<LoginPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          AppLocalizations.of(context)!
+          AppLocalizations.of(context)
               .errorConnectingToHomeserver(homeserver.toString()),
         ),
       ),
@@ -68,5 +72,49 @@ class LoginController extends MatrixState<LoginPage> {
       context.go(HomeserverPage.routeName);
     });
     return null;
+  }
+
+  Future<void> passwordLogin(
+    AuthenticationIdentifier identifier,
+    String password,
+  ) async {
+    setState(() {
+      loginLoading = true;
+    });
+    try {
+      await client.login(
+        LoginType.mLoginPassword,
+        identifier: identifier,
+        initialDeviceDisplayName: _generateDeviceDisplayName(),
+        password: password,
+      );
+    } on MatrixException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).loginErrorMessage(e.errorMessage),
+            ),
+          ),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context).loginError)),
+        );
+      }
+    }
+    setState(() {
+      loginLoading = false;
+    });
+  }
+
+  String _generateDeviceDisplayName() {
+    final platform = kIsWeb
+        ? AppLocalizations.of(context).platformWeb
+        : Platform.operatingSystem;
+
+    return AppLocalizations.of(context).clientDisplayName(platform);
   }
 }
