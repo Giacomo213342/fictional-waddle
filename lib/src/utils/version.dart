@@ -2,19 +2,18 @@ abstract class Version {
   const Version._();
 
   static const isStable = bool.fromEnvironment(
-    'FWALLET_IS_STABLE',
+    'POLYCULE_IS_STABLE',
     defaultValue: false,
   );
 
   static const version = String.fromEnvironment(
-    'FWALLET_VERSION',
+    'POLYCULE_VERSION',
     defaultValue: 'debug',
   );
 
   static const author = 'The one with the braid';
 
-  static const gitlabRepoBase =
-      'https://gitlab.com/TheOneWithTheBraid/polycule';
+  static const gitlabRepoBase = 'https://gitlab.com/polycule_client/polycule';
 
   static const stableChangeLog = '$gitlabRepoBase/-/tags/${Version.version}';
 
