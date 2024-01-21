@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:matrix/matrix.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../widgets/ascii_progress_indicator.dart';
+import 'components/password_login_provider.dart';
 import 'login.dart';
 
 class LoginView extends StatelessWidget {
@@ -27,7 +29,7 @@ class LoginView extends StatelessWidget {
                     const AsciiProgressIndicator(),
                     const SizedBox(height: 32),
                     Text(
-                      AppLocalizations.of(context)!.connectingToHomeserver(
+                      AppLocalizations.of(context).connectingToHomeserver(
                         controller.homeserver.toString(),
                       ),
                       style: Theme.of(context).textTheme.titleMedium,
@@ -41,27 +43,49 @@ class LoginView extends StatelessWidget {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 786),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const ListTile(
-                      leading: Icon(Icons.info_outline),
-                      title: Text('Login is not implemented yet. Coming soon.'),
-                    ),
-                    const Divider(),
                     Text(
-                      'Login flows :',
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                    ...data.loginFlows.map(
-                      (e) => Text(e.type.toString()),
+                      AppLocalizations.of(context)
+                          .welcomeToHomeserver(controller.homeserver.host),
+                      style: Theme.of(context).textTheme.headlineLarge,
                     ),
                     Text(
-                      'Unstable features :',
-                      style: Theme.of(context).textTheme.headlineSmall,
+                      AppLocalizations.of(context).howWouldYouLikeToConnect,
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
-                    ...(data.versions.unstableFeatures ?? {})
-                        .keys
-                        .map((e) => Text(e)),
+                    if (!controller.loginLoading) ...[
+                      if (data.loginFlows.any(
+                        (flow) => flow.type == LoginType.mLoginPassword.name,
+                      ))
+                        PasswordLoginProvider(controller),
+                      if (data.loginFlows.any(
+                        (flow) => flow.type == AuthenticationTypes.sso,
+                      ))
+                        const ListTile(
+                          leading: Icon(Icons.info_outline),
+                          title: Text(
+                            'SSO login is not implemented yet. Coming soon.',
+                          ),
+                        ),
+                      const Divider(),
+                      Text(
+                        'Login flows we don\'t support :',
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      ...data.loginFlows
+                          .where(
+                            (element) =>
+                                element.type != AuthenticationTypes.sso &&
+                                element.type != LoginType.mLoginPassword.name,
+                          )
+                          .map(
+                            (e) => Text(e.type.toString()),
+                          ),
+                    ] else
+                      const Center(
+                        child: AsciiProgressIndicator(),
+                      ),
                   ],
                 ),
               ),

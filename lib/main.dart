@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:matrix/matrix.dart';
 
+import 'src/../l10n/generated/app_localizations.dart';
 import 'src/router/router.dart';
 
 void main(List<String>? args) {
@@ -32,7 +32,7 @@ class PolyculeClient extends StatelessWidget {
         return MaterialApp.router(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
+          onGenerateTitle: (context) => AppLocalizations.of(context).appName,
           theme: ThemeData(
             fontFamily: 'Sono',
             colorScheme: lightDynamic ??

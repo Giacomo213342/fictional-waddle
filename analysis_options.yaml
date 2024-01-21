@@ -1,5 +1,9 @@
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude:
+    - lib/l10n/generated
+
 linter:
   # https://dart.dev/tools/linter-rules
   rules:

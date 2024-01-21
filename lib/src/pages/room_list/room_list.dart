@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/matrix/matrix_state.dart';
 import 'room_list_view.dart';
 
 class RoomListPage extends StatefulWidget {
@@ -10,7 +11,7 @@ class RoomListPage extends StatefulWidget {
   State<RoomListPage> createState() => RoomListController();
 }
 
-class RoomListController extends State<RoomListPage> {
+class RoomListController extends MatrixState<RoomListPage> {
   @override
   Widget build(BuildContext context) => RoomListView(this);
 }

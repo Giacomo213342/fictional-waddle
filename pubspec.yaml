@@ -49,6 +49,11 @@ flutter:
       fonts:
         - asset: assets/fonts/sono.ttf
 
+import_sorter:
+  comments: false
+  ignored_files:
+    - \/lib\/l10n\/generated\/*
+
 flutter_launcher_icons:
   # convert -background none -density 4096 -resize 1024x1024 assets/logo/logo-white.svg assets/logo/logo-white.png
   # convert -density 4096 -resize 1024x1024 assets/logo/logo-background.svg -alpha remove assets/logo/logo-background.png

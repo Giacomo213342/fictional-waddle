@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../login/login.dart';
 
 class HomeserverInput extends StatefulWidget {
@@ -27,13 +27,13 @@ class _HomeserverInputState extends State<HomeserverInput> {
 
   String? _homeserverValidator(String? input) {
     if (input == null || input.isEmpty) {
-      return AppLocalizations.of(context)!.pleaseProvideHomeserver;
+      return AppLocalizations.of(context).pleaseProvideHomeserver;
     }
     try {
       _parseHomeserverInput(input);
       return null;
     } catch (e) {
-      return AppLocalizations.of(context)!.homeserverNotValid;
+      return AppLocalizations.of(context).homeserverNotValid;
     }
   }
 
@@ -70,11 +70,11 @@ class _HomeserverInputState extends State<HomeserverInput> {
           prefixText: 'https://',
           suffixIcon: IconButton(
             padding: const EdgeInsets.all(16.0),
-            tooltip: AppLocalizations.of(context)!.connect,
+            tooltip: AppLocalizations.of(context).connect,
             icon: const Icon(Icons.rocket_launch),
             onPressed: _checkHomeserver,
           ),
-          labelText: AppLocalizations.of(context)!.connectToHomeserver,
+          labelText: AppLocalizations.of(context).connectToHomeserver,
         ),
       ),
     );

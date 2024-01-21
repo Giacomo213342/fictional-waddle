@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/link.dart';
 
+import '../../l10n/generated/app_localizations.dart';
 import 'version.dart';
 
 void showInfoDialog(BuildContext context) => showAboutDialog(
@@ -13,8 +13,8 @@ void showInfoDialog(BuildContext context) => showAboutDialog(
         width: 64,
         height: 64,
       ),
-      applicationLegalese: '${AppLocalizations.of(context)!.appSlogan}\n\n'
-          '${AppLocalizations.of(context)!.author(Version.author)}',
+      applicationLegalese: '${AppLocalizations.of(context).appSlogan}\n\n'
+          '${AppLocalizations.of(context).author(Version.author)}',
       children: [
         Link(
           uri: Uri.parse(Version.gitlabRepoBase),
@@ -22,7 +22,7 @@ void showInfoDialog(BuildContext context) => showAboutDialog(
             return OutlinedButton.icon(
               onPressed: followLink,
               icon: const Icon(Icons.public),
-              label: Text(AppLocalizations.of(context)!.repoLabel),
+              label: Text(AppLocalizations.of(context).repoLabel),
             );
           },
         ),
@@ -34,7 +34,7 @@ void showInfoDialog(BuildContext context) => showAboutDialog(
             return OutlinedButton.icon(
               onPressed: followLink,
               icon: const Icon(Icons.list_alt),
-              label: Text(AppLocalizations.of(context)!.releaseNotes),
+              label: Text(AppLocalizations.of(context).releaseNotes),
             );
           },
         ),
@@ -44,7 +44,7 @@ void showInfoDialog(BuildContext context) => showAboutDialog(
             return OutlinedButton.icon(
               onPressed: followLink,
               icon: const Icon(Icons.coffee),
-              label: Text(AppLocalizations.of(context)!.buyMeACoffee),
+              label: Text(AppLocalizations.of(context).buyMeACoffee),
             );
           },
         ),

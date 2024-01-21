@@ -24,7 +24,7 @@ test:codestyle:
     - flutter gen-l10n
     - dart analyze --fatal-infos
     - dart format lib test web --set-exit-if-changed
-    - dart run import_sorter:main --no-comments --exit-if-changed
+    - dart run import_sorter:main --exit-if-changed
 
 build:apk_debug:
   image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-android

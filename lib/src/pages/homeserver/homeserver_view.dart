@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import '../../../l10n/generated/app_localizations.dart';
 import '../../widgets/ascii_progress_indicator.dart';
 import 'components/benchmark.dart';
 import 'components/homeserver_input.dart';
@@ -33,11 +32,11 @@ class HomeserverView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            AppLocalizations.of(context)!.homeserverHeadline,
+                            AppLocalizations.of(context).homeserverHeadline,
                             style: Theme.of(context).textTheme.headlineMedium,
                           ),
                           Text(
-                            AppLocalizations.of(context)!.aMatrixClient,
+                            AppLocalizations.of(context).aMatrixClient,
                             style: Theme.of(context).textTheme.titleMedium,
                             textAlign: TextAlign.end,
                           ),
@@ -46,10 +45,10 @@ class HomeserverView extends StatelessWidget {
                           const Divider(),
                           ExpansionTile(
                             title: Text(
-                              AppLocalizations.of(context)!.discoverHomeservers,
+                              AppLocalizations.of(context).discoverHomeservers,
                             ),
                             subtitle: Text(
-                              AppLocalizations.of(context)!.newToMatrixLong,
+                              AppLocalizations.of(context).newToMatrixLong,
                             ),
                             onExpansionChanged:
                                 controller.handleHomeserverListExpansion,
@@ -77,7 +76,7 @@ class HomeserverView extends StatelessWidget {
                 OutlinedButton.icon(
                   onPressed: controller.showAboutDialog,
                   icon: const Icon(Icons.info),
-                  label: Text(AppLocalizations.of(context)!.about),
+                  label: Text(AppLocalizations.of(context).about),
                 ),
               ],
             ),

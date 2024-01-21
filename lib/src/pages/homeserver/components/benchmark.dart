@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix_homeserver_recommendations/matrix_homeserver_recommendations.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../login/login.dart';
 
 class BenchmarkWidget extends StatefulWidget {
@@ -55,7 +55,7 @@ class _BenchmarkWidgetState extends State<BenchmarkWidget> {
                 trailing: Focus(
                   descendantsAreFocusable: false,
                   child: IconButton(
-                    tooltip: AppLocalizations.of(context)!.connect,
+                    tooltip: AppLocalizations.of(context).connect,
                     icon: const Icon(Icons.rocket_launch),
                     onPressed: callback,
                   ),
