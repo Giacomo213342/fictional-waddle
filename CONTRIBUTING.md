@@ -1,0 +1,104 @@
+## Contributing to < polycule >
+
+It's easier than you think. < polycule > does not require any complex development environment.
+
+What you need :
+
+- flutter
+- OpenSSL
+- OLM
+- libsecret
+
+### Flutter
+
+Flutter is currently packaged as Alpine package or as SNAP. The Arch User Repository also ships build files for it. On other distributions or operating systems, please check [docs.flutter.dev](https://docs.flutter.dev/get-started/install).
+
+### OpenSSL
+
+The OpenSSL part might be a bit difficult : We require a statically compiled versio of OpenSSL in order to compile some native code.
+
+Use the following packages :
+
+- Ubuntu : `libssl-dev`
+- Fedora : `openssl-devel`
+- Arch : The AUR contains build files for `openssl-static`
+
+### OLM
+
+Olm is used for the matrix related cryptography. You will only need to install it when deeloping for Desktops.
+
+Olm is packaged on pretty any package manager on Linux, Windows and macOS.
+
+**Important** : For building or running the web version, you will need to download the JS/WASM version of OLM. Use the following script to download the matching version.
+
+```shell
+# ensure the command `yq` is installed on your system
+which yq
+# download OLM for web
+./scripts/download-olm.sh
+```
+
+### libsecret
+
+On Linux, you will need libsecret in order to compile the applications and a running keyring daemon in order to run the application.
+
+## Setting up your development environment
+
+### Editors
+
+Flutter has decent integration into the IntelliJ-based IDES (such as IDEA or Android Studio), Microsoft Visual Studio Code based editors and vim based editors. Check your search engine of choice for the setup.
+
+### Translations and String resources
+
+Never hard code any Strings into the code. All Strings should be listed in `lib/l10n/arb/app_en.arb` - as well as any other language you might want to translate for.
+
+After changing or adding a String resource, execute the following command in order to make it accessible in your Dart code.
+
+```shell
+flutter gen-l10n
+```
+
+### Code style
+
+We use dartfmt in order to have all files properly formated. Additionally, we use [`package:import_sorter`](https://pub.dev/packages/import_sorter) for managing imports.
+
+Use the following lines of code to ensure your code is properly foratted.
+
+```shell
+# ensure all linter recommendations are applied
+dart fix --apply
+# check whether there's anything left the linter could not fix automatically
+dart analyze --fatal-infos
+# format the code according to our preferrences
+dart format lib test web
+# sort the imports
+dart run import_sorter:main
+```
+
+## Building < polycule >
+
+### Prequisite for web
+
+If you want to run < polycule > for web, ensure you build the web worker first.
+
+```shell
+dart compile js -o web/web_worker.dart.js -m web/web_worker.dart
+```
+
+### Running in debug mode
+
+```shell
+flutter run
+```
+
+### Building a (more or less) release build
+
+```shell
+# decide which platform to build for, e.g. linux, web, apk, appbundle, ios, macos, windows or winuwp
+# Only linux, web, apk and appbundle tested so far.
+export PLATFORM=linux
+flutter build $PLATFORM
+```
+
+Enjoy !
+
