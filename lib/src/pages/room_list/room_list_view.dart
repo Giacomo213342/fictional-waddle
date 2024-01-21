@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
-import 'components/room_list.dart';
+import 'components/fade_in_room_list.dart';
+import 'components/initial_sync_tile.dart';
 import 'components/sync_update_status_row.dart';
 import 'room_list.dart';
 
@@ -31,8 +32,9 @@ class RoomListView extends StatelessWidget {
           ),
           body: Column(
             children: [
+              InitialSyncTile(snapshot.data),
               Expanded(
-                child: RoomList(controller),
+                child: FadeInRoomList(controller),
               ),
               SyncUpdateStatusRow(
                 syncUpdate: snapshot.data,
