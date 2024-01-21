@@ -40,8 +40,6 @@ class ClientManager extends State<ClientManagerWidget> {
 
   StreamSubscription<KeyVerification>? _sasVerificationListener;
 
-  bool _initialRedirectHandled = false;
-
   Client buildClient(String name) {
     final client = Client(
       name,
@@ -86,14 +84,6 @@ class ClientManager extends State<ClientManagerWidget> {
   }
 
   void _handleLoginStateChange(LoginState state) {
-    // the very first login change is handled at the [SplashPage]
-    if (!_initialRedirectHandled) {
-      _initialRedirectHandled = true;
-      if (state == LoginState.loggedOut) {
-        return;
-      }
-    }
-
     switch (state) {
       case LoginState.loggedIn:
         // under no case start the app if encryption not supported
