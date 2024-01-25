@@ -57,7 +57,7 @@ class _BenchmarkWidgetState extends State<BenchmarkWidget> {
                   child: IconButton(
                     tooltip: AppLocalizations.of(context).connect,
                     icon: const Icon(Icons.rocket_launch),
-                    onPressed: callback,
+                    onPressed: _connect,
                   ),
                 ),
               ),
