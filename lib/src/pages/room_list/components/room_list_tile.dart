@@ -29,7 +29,7 @@ class RoomListTile extends StatelessWidget {
           return ListTile(
             // make the tle keyboard focusable by request
             focusNode: RoomListController.getFocusNode(room.id),
-            onTap: followLink?.call,
+            onTap: () => context.go(path),
             title: Text(room.getLocalizedDisplayname()),
           );
         },
