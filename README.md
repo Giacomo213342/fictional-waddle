@@ -25,7 +25,7 @@ Flutter Linux-native integrations.
 
 ## Preview
 
-You can try to web-builds hosted on [GitLab pages](https://polycule_client.gitlab.io/polycule/) or download some
+You can try to web-builds hosted on [GitLab pages](https://polycule.im/web/) or download some
 Linux builds from the CI jobs.
 
 ## Thanks
