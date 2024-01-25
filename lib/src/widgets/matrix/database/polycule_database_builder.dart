@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 
 import 'package:matrix/matrix.dart';
@@ -32,32 +34,43 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(Client client) async {
   // fix dlopen for old Android
   await applyWorkaroundToOpenSqlCipherOnOldAndroidVersions();
 
-  // import the SQLite / SQLCipher shared objects / dynamic libraries
-  final factory =
-      createDatabaseFactoryFfi(ffiInit: SQfLiteEncryptionHelper.ffiInit);
+  // build a DB factory that supports SQLCipher
+  final factory = createDatabaseFactoryFfi(
+    ffiInit: SQfLiteEncryptionHelper.ffiInit,
+  );
 
-  // required for [getDatabasesPath]
-  databaseFactory = factory;
-
-  // in case we got a cipher, we use the encryption helper
-  // to manage SQLite encryption
+  // initialize the encryption helper
   final helper = SQfLiteEncryptionHelper(
     factory: factory,
     path: path,
     cipher: cipher,
   );
 
-  // check whether the DB is already encrypted and otherwise do so
-  await helper.ensureDatabaseFileEncrypted();
+  Database database;
 
-  final database = await factory.openDatabase(
-    path,
-    options: OpenDatabaseOptions(
-      version: 1,
-      // most important : apply encryption when opening the DB
-      onConfigure: helper.applyPragmaKey,
-    ),
-  );
+  // check whether the database is encrypted ad in case not encrypt it
+  try {
+    await helper.ensureDatabaseFileEncrypted();
+
+    database = await factory.openDatabase(
+      path,
+      options: OpenDatabaseOptions(
+        version: 1,
+        // most important : apply encryption when opening the DB
+        onConfigure: helper.applyPragmaKey,
+      ),
+    );
+  } catch (e, s) {
+    final file = File(path);
+    if (await file.exists()) {
+      await file.copy('$path.broken');
+      Logs()
+          .wtf('Copied broken DB state for backup. Now reinitializing.', e, s);
+    }
+    await factory.deleteDatabase(path).catchError((_) {});
+
+    rethrow;
+  }
 
   final db = MatrixSdkDatabase(
     client.clientName,

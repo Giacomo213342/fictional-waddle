@@ -28,7 +28,7 @@ class ResponsiveLayout extends StatelessWidget {
             return Row(
               children: [
                 SizedBox(
-                  width: 512,
+                  width: 256 + 192,
                   child: main,
                 ),
                 Expanded(child: secondary ?? placeholder),

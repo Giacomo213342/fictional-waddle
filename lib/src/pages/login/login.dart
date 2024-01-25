@@ -105,9 +105,11 @@ class LoginController extends MatrixState<LoginPage> {
         );
       }
     }
-    setState(() {
-      loginLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        loginLoading = false;
+      });
+    }
   }
 
   String _generateDeviceDisplayName() {
