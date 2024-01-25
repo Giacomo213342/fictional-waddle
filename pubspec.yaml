@@ -17,6 +17,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_olm: ^1.4.1
+  flutter_openssl_crypto: ^0.3.0
   flutter_secure_storage: ^9.0.0
   go_router: ^13.0.1
   html: ^0.15.4
@@ -43,6 +44,7 @@ flutter:
 
   assets:
     - assets/logo/logo-circle.png
+    - assets/icons/rosahaj/base/Rosahaj_Peek.png
 
   fonts:
     - family: Sono

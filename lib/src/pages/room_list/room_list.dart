@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:matrix/matrix.dart';
-
 import '../../utils/matrix/matrix_state.dart';
 import 'room_list_view.dart';
 
@@ -17,8 +15,6 @@ class RoomListPage extends StatefulWidget {
 }
 
 class RoomListController extends MatrixState<RoomListPage> {
-  StreamSubscription<SyncUpdate>? _syncFocusListener;
-
   static final Map<String, FocusNode> _focusNodes = {};
 
   /// provides the [FocusNode] for the room list tile of the given Room [id].
@@ -29,9 +25,7 @@ class RoomListController extends MatrixState<RoomListPage> {
 
   @override
   void initState() {
-    // ensure we focus the first room available once synced
-    // for keyboard navigation
-    _syncFocusListener = client.onSync.stream.listen(_focusFirstRoom);
+    _processFirstSync();
     super.initState();
   }
 
@@ -40,13 +34,30 @@ class RoomListController extends MatrixState<RoomListPage> {
 
   @override
   void dispose() {
-    _syncFocusListener?.cancel();
     super.dispose();
+  }
+
+  Future<void> _processFirstSync() async {
+    // wait for all basic data to be synced
+    await client.accountDataLoading;
+    await client.roomsLoading;
+    await client.onSync.stream.first;
+    _focusFirstRoom();
+    if (!mounted) {
+      return;
+    }
+    if (client.isUnknownSession ||
+        await client.encryption?.crossSigning.isCached() == false ||
+        await client.encryption?.keyManager.isCached() == false) {
+      if (mounted) {
+        // open SSSS page
+      }
+    }
   }
 
   /// checks whether our room list contains any item and tries to focus it
   /// In case of success, it cancels the further sync listener
-  void _focusFirstRoom(SyncUpdate event) {
+  void _focusFirstRoom() {
     final firstRoom = client.rooms.firstOrNull;
     if (firstRoom == null) {
       return;
@@ -56,6 +67,5 @@ class RoomListController extends MatrixState<RoomListPage> {
       return;
     }
     node.requestFocus();
-    _syncFocusListener?.cancel();
   }
 }

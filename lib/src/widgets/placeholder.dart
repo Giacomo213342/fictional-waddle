@@ -19,7 +19,9 @@ class PolyculePlaceholder extends StatelessWidget {
                 children: [
                   SizedBox.square(
                     dimension: 128,
-                    child: Image.asset('assets/logo/logo-circle.png'),
+                    child: Image.asset(
+                      'assets/icons/rosahaj/base/Rosahaj_Peek.png',
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),

@@ -28,8 +28,10 @@ class _FadeInRoomListState extends State<FadeInRoomList>
 
     return AnimatedBuilder(
       animation: animation,
-      builder: (BuildContext context, Widget? child) =>
-          Opacity(opacity: 1 - animation.value, child: child),
+      builder: (BuildContext context, Widget? child) => Opacity(
+        opacity: .5 + (animation.value - .5).abs(),
+        child: child,
+      ),
       child: ListView.builder(
         itemBuilder: (context, index) => RoomListTile(
           widget.controller,
@@ -55,34 +57,28 @@ class _FadeInRoomListState extends State<FadeInRoomList>
 
     _animation = animation = AnimationController(
       lowerBound: 0,
-      upperBound: .5,
+      upperBound: 1,
       vsync: this,
-      duration: const Duration(seconds: 1),
+      duration: const Duration(seconds: 2),
     );
 
     final sync = widget.controller.client.onSync.value;
     if (sync == null) {
-      animation.forward();
-      animation.addListener(() {
-        final animation = _animation;
-        if (animation == null) {
-          return;
-        }
-        if (animation.isCompleted) {
-          animation.reverse();
-        }
-        if (animation.isDismissed) {
-          animation.forward();
-        }
-      });
-      _subscription =
-          widget.controller.client.onSync.stream.listen((event) async {
-        _subscription?.cancel();
-        animation?.stop();
-        await animation?.animateBack(0);
-        animation?.dispose();
-      });
+      animation.repeat();
+      _subscription = widget.controller.client.onSync.stream.listen(
+        (_) => _cancelAnimation(),
+      );
     }
     return animation;
+  }
+
+  Future<void> _cancelAnimation() async {
+    _subscription?.cancel();
+    _subscription = null;
+
+    _animation?.stop();
+    await _animation?.animateBack(0);
+    _animation?.dispose();
+    _animation = null;
   }
 }
