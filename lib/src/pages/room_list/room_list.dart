@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:go_router/go_router.dart';
+
 import '../../utils/matrix/matrix_state.dart';
+import '../ssss_bootstrap/ssss_bootstrap.dart';
 import 'room_list_view.dart';
 
 class RoomListPage extends StatefulWidget {
@@ -50,7 +53,7 @@ class RoomListController extends MatrixState<RoomListPage> {
         await client.encryption?.crossSigning.isCached() == false ||
         await client.encryption?.keyManager.isCached() == false) {
       if (mounted) {
-        // open SSSS page
+        context.go(SsssBootstrapPage.routeName);
       }
     }
   }

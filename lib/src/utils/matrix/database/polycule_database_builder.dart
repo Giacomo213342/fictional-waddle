@@ -35,13 +35,13 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(Client client) async {
   await applyWorkaroundToOpenSqlCipherOnOldAndroidVersions();
 
   // build a DB factory that supports SQLCipher
-  final factory = createDatabaseFactoryFfi(
+  databaseFactory = createDatabaseFactoryFfi(
     ffiInit: SQfLiteEncryptionHelper.ffiInit,
   );
 
   // initialize the encryption helper
   final helper = SQfLiteEncryptionHelper(
-    factory: factory,
+    factory: databaseFactory,
     path: path,
     cipher: cipher,
   );
@@ -52,7 +52,7 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(Client client) async {
   try {
     await helper.ensureDatabaseFileEncrypted();
 
-    database = await factory.openDatabase(
+    database = await databaseFactory.openDatabase(
       path,
       options: OpenDatabaseOptions(
         version: 1,
@@ -67,7 +67,7 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(Client client) async {
       Logs()
           .wtf('Copied broken DB state for backup. Now reinitializing.', e, s);
     }
-    await factory.deleteDatabase(path).catchError((_) {});
+    await databaseFactory.deleteDatabase(path).catchError((_) {});
 
     rethrow;
   }

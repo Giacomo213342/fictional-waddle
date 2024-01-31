@@ -101,5 +101,51 @@
         "format": "int"
       }
     }
-  }
+  },
+  "authenticationRequired": "Authentication required",
+  "passphraseNotEmpty": "The passphrase can't be empty",
+  "cancel": "Cancel",
+  "noMatch": "No match",
+  "keysMatch": "Keys match",
+  "wipeAccount": "Wipe account",
+  "wipeAccountWarning": "If you lost your device, you can wipe and reset your account. All messages and chats will be lost.",
+  "deleteAll": "Delete all",
+  "previous": "Previous",
+  "next": "Next",
+  "connectPreviousDevice": "Connect previous device",
+  "connectPreviousDeviceLong": "Please verify existing device.",
+  "deviceNotAvailable": "I don't have my device available.",
+  "compareSasNumbers": "Compare security numbers",
+  "compareSasExplanation": "Check if the numbers on your device are identical with the numbers on the other device requesting the verification.",
+  "incomingVerificationRequest": "Incoming verification request",
+  "waitingForVerification": "Waiting for verification",
+  "waitingForVerificationFallback": "Please verify using your second device or enter your recovery phrase.",
+  "incomingVerificationRequestUser": "{user} wants to verify",
+  "@incomingVerificationRequestUser": {
+    "placeholders": {
+      "user": {
+        "type": "String?",
+        "description": "User who wants to verify"
+      }
+    }
+  },
+  "incomingVerificationRequestMyself": "There is an incoming verification request to verify another device for your account.",
+  "incomingVerificationRequestLong": "There is an incoming verification request, do you want to handle the verification request?",
+  "reject": "Reject",
+  "proceed": "Proceed",
+  "enterRecoveryPhrase": "Enter recovery phrase",
+  "keyVerificationErrorGeneric": "There was an error verifying your device.",
+  "keyVerificationErrorUser": "The verification was rejected.",
+  "close": "Close",
+  "verificationSuccessful": "Key verification successful",
+  "verifyLogin": "Verify your new login",
+  "finish": "Finish",
+  "or": "or",
+  "verifyWithOtherDevice": "Verify with other device",
+  "verifyMethodsNotAvailable": "You don't have a verification method available?",
+  "verifyWithPassphrase": "Verify with passphrase",
+  "passphraseNoWhitespace": "The passphrase cannot contain any whitespace characters!",
+  "errorTryAgain": "An error occurred. Please try again.",
+  "submit": "submit",
+  "togglePassword": "Toggle password visibility"
 }

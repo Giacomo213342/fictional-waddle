@@ -12,7 +12,10 @@ import 'package:provider/provider.dart';
 import '../../pages/fatal_error/fatal_error_page.dart';
 import '../../pages/homeserver/homeserver.dart';
 import '../../pages/room_list/room_list.dart';
-import 'database/polycule_database_builder.dart';
+import '../../utils/matrix/database/polycule_database_builder.dart';
+import '../../utils/matrix/uia_helper.dart';
+import 'key_verification/key_verification_request_widget.dart';
+import 'uia_dialog.dart';
 
 class ClientManagerWidget extends StatefulWidget {
   const ClientManagerWidget({super.key, required this.child});
@@ -111,19 +114,21 @@ class ClientManager extends State<ClientManagerWidget> {
   }
 
   Future<void> _handleUiaRequest(UiaRequest request) async {
-    /*final handler = UiaHelper(
-      request,
-      tokenCallback: (request) => UiaDialog(request: request).show(context),
+    final handler = UiaHelper(
+      client: getActiveClient(),
+      request: request,
+      authenticationPasswordCallback: (request) =>
+          UiaDialog(request: request).show(context),
     );
-    await handler.respond();*/
+    await handler.respond();
   }
 
   Future<void> _handleSasVerificationRequest(KeyVerification request) async {
-    /*Logs().d('Incoming key verification request');
+    Logs().d('Incoming key verification request');
     return KeyVerificationRequestWidget.showDialog(
       request,
       context: context,
       client: getActiveClient(),
-    );*/
+    );
   }
 }

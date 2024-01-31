@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../utils/matrix/matrix_state.dart';
+import '../fatal_error/fatal_error_page.dart';
 import '../homeserver/homeserver.dart';
 import '../room_list/room_list.dart';
 import 'splash_screen_view.dart';
@@ -27,9 +28,16 @@ class SplashController extends MatrixState<SplashPage> {
 
   Future<void> _checkLoginState() async {
     if (!client.isLogged()) {
-      await client.init(
-        waitForFirstSync: false,
-      );
+      try {
+        await client.init(
+          waitForFirstSync: false,
+        );
+      } catch (e) {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => context.go(FatalErrorPage.routeName),
+        );
+        rethrow;
+      }
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => context.go(HomeserverPage.routeName),
       );
