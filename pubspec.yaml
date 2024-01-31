@@ -23,11 +23,12 @@ dependencies:
   html: ^0.15.4
   import_sorter: ^4.6.0
   intl: ^0.18.1
-  matrix: ^0.25.5
+  matrix: ^0.25.8
   matrix_homeserver_recommendations: ^0.4.0
   olm: ^2.0.3
   path_provider: ^2.1.2
   provider: ^6.1.1
+  sqflite: ^2.3.2
   sqflite_common_ffi: ^2.3.1
   sqlcipher_flutter_libs: ^0.6.0
   url_launcher: ^6.2.3
@@ -81,9 +82,3 @@ flutter_launcher_icons:
   macos:
     generate: true
     image_path: "assets/logo/logo-background.png"
-
-dependency_overrides:
-  matrix:
-    git:
-      url: https://github.com/TheOneWithTheBraid/matrix-dart-sdk
-      ref: braid/sqflite-encryption-helper

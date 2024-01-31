@@ -8,6 +8,7 @@ import '../pages/login/login.dart';
 import '../pages/room/room.dart';
 import '../pages/room_list/room_list.dart';
 import '../pages/splash_screen/splash_screen.dart';
+import '../pages/ssss_bootstrap/ssss_bootstrap.dart';
 import '../widgets/matrix/client_manager.dart';
 import '../widgets/placeholder.dart';
 import 'extensions/go_router_path_extension.dart';
@@ -43,6 +44,10 @@ class PolyculeRouter extends GoRouter {
                       path: LoginPage.routeName,
                       builder: (context, state, uri) =>
                           LoginPage(homeserver: uri),
+                    ),
+                    RequiresLoginRoute(
+                      path: SsssBootstrapPage.routeName,
+                      builder: (context, state) => const SsssBootstrapPage(),
                     ),
                     ResponsiveShellRoute(
                       builder: (context, state) => const RoomListPage(),

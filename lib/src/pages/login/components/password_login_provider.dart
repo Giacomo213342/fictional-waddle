@@ -130,6 +130,7 @@ class _PasswordLoginProviderState extends State<PasswordLoginProvider> {
                       borderRadius: BorderRadius.zero,
                     ),
                     suffixIcon: IconButton(
+                      tooltip: AppLocalizations.of(context).togglePassword,
                       onPressed: _togglePasswordVisibility,
                       icon: Icon(
                         _showPassword ? Icons.visibility_off : Icons.visibility,
@@ -137,7 +138,7 @@ class _PasswordLoginProviderState extends State<PasswordLoginProvider> {
                     ),
                   ),
                   onFieldSubmitted: (_) => _submitForm(),
-                  textInputAction: TextInputAction.join,
+                  textInputAction: TextInputAction.send,
                 ),
               const SizedBox(height: 8),
             ],

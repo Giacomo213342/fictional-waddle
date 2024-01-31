@@ -142,4 +142,128 @@ class AppLocalizationsEn extends AppLocalizations {
 
     return 'Last sync : $timestampString ($duration ms)';
   }
+
+  @override
+  String get authenticationRequired => 'Authentication required';
+
+  @override
+  String get passphraseNotEmpty => 'The passphrase can\'t be empty';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get noMatch => 'No match';
+
+  @override
+  String get keysMatch => 'Keys match';
+
+  @override
+  String get wipeAccount => 'Wipe account';
+
+  @override
+  String get wipeAccountWarning =>
+      'If you lost your device, you can wipe and reset your account. All messages and chats will be lost.';
+
+  @override
+  String get deleteAll => 'Delete all';
+
+  @override
+  String get previous => 'Previous';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get connectPreviousDevice => 'Connect previous device';
+
+  @override
+  String get connectPreviousDeviceLong => 'Please verify existing device.';
+
+  @override
+  String get deviceNotAvailable => 'I don\'t have my device available.';
+
+  @override
+  String get compareSasNumbers => 'Compare security numbers';
+
+  @override
+  String get compareSasExplanation =>
+      'Check if the numbers on your device are identical with the numbers on the other device requesting the verification.';
+
+  @override
+  String get incomingVerificationRequest => 'Incoming verification request';
+
+  @override
+  String get waitingForVerification => 'Waiting for verification';
+
+  @override
+  String get waitingForVerificationFallback =>
+      'Please verify using your second device or enter your recovery phrase.';
+
+  @override
+  String incomingVerificationRequestUser(String? user) {
+    return '$user wants to verify';
+  }
+
+  @override
+  String get incomingVerificationRequestMyself =>
+      'There is an incoming verification request to verify another device for your account.';
+
+  @override
+  String get incomingVerificationRequestLong =>
+      'There is an incoming verification request, do you want to handle the verification request?';
+
+  @override
+  String get reject => 'Reject';
+
+  @override
+  String get proceed => 'Proceed';
+
+  @override
+  String get enterRecoveryPhrase => 'Enter recovery phrase';
+
+  @override
+  String get keyVerificationErrorGeneric =>
+      'There was an error verifying your device.';
+
+  @override
+  String get keyVerificationErrorUser => 'The verification was rejected.';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get verificationSuccessful => 'Key verification successful';
+
+  @override
+  String get verifyLogin => 'Verify your new login';
+
+  @override
+  String get finish => 'Finish';
+
+  @override
+  String get or => 'or';
+
+  @override
+  String get verifyWithOtherDevice => 'Verify with other device';
+
+  @override
+  String get verifyMethodsNotAvailable =>
+      'You don\'t have a verification method available?';
+
+  @override
+  String get verifyWithPassphrase => 'Verify with passphrase';
+
+  @override
+  String get passphraseNoWhitespace =>
+      'The passphrase cannot contain any whitespace characters!';
+
+  @override
+  String get errorTryAgain => 'An error occurred. Please try again.';
+
+  @override
+  String get submit => 'submit';
+
+  @override
+  String get togglePassword => 'Toggle password visibility';
 }

@@ -9,6 +9,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../utils/matrix/matrix_state.dart';
+import '../../utils/password_cache_manager.dart';
 import '../homeserver/homeserver.dart';
 import 'login_view.dart';
 
@@ -105,6 +106,7 @@ class LoginController extends MatrixState<LoginPage> {
         );
       }
     }
+    PasswordCacheManager.cachedPassword = password;
     if (mounted) {
       setState(() {
         loginLoading = false;

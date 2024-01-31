@@ -318,6 +318,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last sync : {timestamp} ({duration} ms)'**
   String lastSyncReceived(DateTime timestamp, Object duration);
+
+  /// No description provided for @authenticationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication required'**
+  String get authenticationRequired;
+
+  /// No description provided for @passphraseNotEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'The passphrase can\'t be empty'**
+  String get passphraseNotEmpty;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @noMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No match'**
+  String get noMatch;
+
+  /// No description provided for @keysMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Keys match'**
+  String get keysMatch;
+
+  /// No description provided for @wipeAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Wipe account'**
+  String get wipeAccount;
+
+  /// No description provided for @wipeAccountWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'If you lost your device, you can wipe and reset your account. All messages and chats will be lost.'**
+  String get wipeAccountWarning;
+
+  /// No description provided for @deleteAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all'**
+  String get deleteAll;
+
+  /// No description provided for @previous.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get previous;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @connectPreviousDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect previous device'**
+  String get connectPreviousDevice;
+
+  /// No description provided for @connectPreviousDeviceLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Please verify existing device.'**
+  String get connectPreviousDeviceLong;
+
+  /// No description provided for @deviceNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'I don\'t have my device available.'**
+  String get deviceNotAvailable;
+
+  /// No description provided for @compareSasNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare security numbers'**
+  String get compareSasNumbers;
+
+  /// No description provided for @compareSasExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Check if the numbers on your device are identical with the numbers on the other device requesting the verification.'**
+  String get compareSasExplanation;
+
+  /// No description provided for @incomingVerificationRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming verification request'**
+  String get incomingVerificationRequest;
+
+  /// No description provided for @waitingForVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for verification'**
+  String get waitingForVerification;
+
+  /// No description provided for @waitingForVerificationFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Please verify using your second device or enter your recovery phrase.'**
+  String get waitingForVerificationFallback;
+
+  /// No description provided for @incomingVerificationRequestUser.
+  ///
+  /// In en, this message translates to:
+  /// **'{user} wants to verify'**
+  String incomingVerificationRequestUser(String? user);
+
+  /// No description provided for @incomingVerificationRequestMyself.
+  ///
+  /// In en, this message translates to:
+  /// **'There is an incoming verification request to verify another device for your account.'**
+  String get incomingVerificationRequestMyself;
+
+  /// No description provided for @incomingVerificationRequestLong.
+  ///
+  /// In en, this message translates to:
+  /// **'There is an incoming verification request, do you want to handle the verification request?'**
+  String get incomingVerificationRequestLong;
+
+  /// No description provided for @reject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get reject;
+
+  /// No description provided for @proceed.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed'**
+  String get proceed;
+
+  /// No description provided for @enterRecoveryPhrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter recovery phrase'**
+  String get enterRecoveryPhrase;
+
+  /// No description provided for @keyVerificationErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'There was an error verifying your device.'**
+  String get keyVerificationErrorGeneric;
+
+  /// No description provided for @keyVerificationErrorUser.
+  ///
+  /// In en, this message translates to:
+  /// **'The verification was rejected.'**
+  String get keyVerificationErrorUser;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @verificationSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Key verification successful'**
+  String get verificationSuccessful;
+
+  /// No description provided for @verifyLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your new login'**
+  String get verifyLogin;
+
+  /// No description provided for @finish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get finish;
+
+  /// No description provided for @or.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get or;
+
+  /// No description provided for @verifyWithOtherDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify with other device'**
+  String get verifyWithOtherDevice;
+
+  /// No description provided for @verifyMethodsNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have a verification method available?'**
+  String get verifyMethodsNotAvailable;
+
+  /// No description provided for @verifyWithPassphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify with passphrase'**
+  String get verifyWithPassphrase;
+
+  /// No description provided for @passphraseNoWhitespace.
+  ///
+  /// In en, this message translates to:
+  /// **'The passphrase cannot contain any whitespace characters!'**
+  String get passphraseNoWhitespace;
+
+  /// No description provided for @errorTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred. Please try again.'**
+  String get errorTryAgain;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'submit'**
+  String get submit;
+
+  /// No description provided for @togglePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle password visibility'**
+  String get togglePassword;
 }
 
 class _AppLocalizationsDelegate

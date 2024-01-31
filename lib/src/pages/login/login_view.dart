@@ -42,8 +42,7 @@ class LoginView extends StatelessWidget {
             return Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 786),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: ListView(
                   children: [
                     Text(
                       AppLocalizations.of(context)
@@ -68,16 +67,19 @@ class LoginView extends StatelessWidget {
                             'SSO login is not implemented yet. Coming soon.',
                           ),
                         ),
-                      const Divider(),
-                      Text(
+                      const SizedBox(
+                        height: 32,
+                        child: Divider(),
+                      ),
+                      const Text(
                         'Login flows we don\'t support :',
-                        style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       ...data.loginFlows
                           .where(
                             (element) =>
                                 element.type != AuthenticationTypes.sso &&
-                                element.type != LoginType.mLoginPassword.name,
+                                element.type != LoginType.mLoginPassword.name &&
+                                element.type != LoginType.mLoginToken.name,
                           )
                           .map(
                             (e) => Text(e.type.toString()),
