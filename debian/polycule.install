@@ -3,5 +3,5 @@ build/linux/x64/release/bundle/lib/ opt/polycule/
 build/linux/x64/release/bundle/data/ opt/polycule/
 linux/polycule usr/bin/
 linux/business.braid.polycule.desktop usr/share/applications/
-assets/logo/logo-circle.png usr/share/pixmaps/
-assets/logo/logo-circle.png usr/share/icons/hicolor/192x192/apps/
+assets/logo/logo-circle.png usr/share/pixmaps/polycule.png
+assets/logo/logo-circle.png usr/share/icons/hicolor/192x192/apps/polycule.png
