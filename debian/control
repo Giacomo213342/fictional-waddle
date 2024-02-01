@@ -8,5 +8,5 @@ Homepage: https://gitlab.com/polycule_client/polycule
 
 Package: polycule
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, xdg-user-dirs
+Depends: ${shlibs:Depends}, ${misc:Depends}, xdg-user-dirs, libolm3
 Description: A simple and beautiful matrix client written in Flutter.
