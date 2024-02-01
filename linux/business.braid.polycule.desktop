@@ -12,3 +12,4 @@ Terminal=false
 StartupNotify=false
 Icon=business.braid.polycule
 Categories=Office
+X-Purism-FormFactor=Workstation;Mobile;
