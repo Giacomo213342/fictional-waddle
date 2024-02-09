@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:go_router/go_router.dart';
-
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../router/extensions/go_router_path_extension.dart';
 import '../../login/login.dart';
 
 class HomeserverInput extends StatefulWidget {

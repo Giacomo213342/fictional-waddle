@@ -34,12 +34,27 @@ class RoomAvailableRoute extends RequiresLoginRoute {
         BuildContext context,
         GoRouterState state,
       ) {
-        final client = ClientManager.activeClient;
+        final isInitialized = ClientManager.activeClients.isNotEmpty;
+        if (!isInitialized) {
+          return const FatalErrorPage();
+        }
+        final parameter = state.pathParameters['client'];
+        if (parameter == null) {
+          return const FatalErrorPage();
+        }
+        final identifier = int.tryParse(parameter);
+        if (identifier == null) {
+          return const FatalErrorPage();
+        }
+        final client = ClientManager.getClientByIdentifier(identifier);
+        if (client == null) {
+          return const FatalErrorPage();
+        }
         final roomId = state.pathParameters[RoomPage.pathParameter];
         if (roomId == null) {
           return const FatalErrorPage();
         }
-        final room = client?.getRoomById(roomId);
+        final room = client.getRoomById(roomId);
         if (room == null) {
           return const FatalErrorPage();
         }

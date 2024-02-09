@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
+import '../../router/extensions/go_router_path_extension.dart';
 import '../../utils/matrix/matrix_state.dart';
 import '../../utils/password_cache_manager.dart';
 import '../homeserver/homeserver.dart';
@@ -67,8 +67,8 @@ class LoginController extends MatrixState<LoginPage> {
       ),
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.canPop()) {
-        context.pop();
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
       }
       context.go(HomeserverPage.routeName);
     });

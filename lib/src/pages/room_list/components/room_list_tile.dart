@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/link.dart';
 
+import '../../../router/extensions/go_router_path_extension.dart';
 import '../../room/room.dart';
 import '../room_list.dart';
 

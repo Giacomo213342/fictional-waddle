@@ -9,10 +9,10 @@ import '../pages/room/room.dart';
 import '../pages/room_list/room_list.dart';
 import '../pages/splash_screen/splash_screen.dart';
 import '../pages/ssss_bootstrap/ssss_bootstrap.dart';
-import '../widgets/matrix/client_manager.dart';
 import '../widgets/placeholder.dart';
 import 'extensions/go_router_path_extension.dart';
 import 'extensions/homeserver_uri_route.dart';
+import 'extensions/matrix_injected_route.dart';
 import 'extensions/must_be_logged_out_route.dart';
 import 'extensions/requires_login_route.dart';
 import 'extensions/responsive_shell_route.dart';
@@ -24,36 +24,41 @@ class PolyculeRouter extends GoRouter {
           routingConfig: _ConstantRoutingConfig(
             RoutingConfig(
               routes: [
-                ShellRoute(
-                  builder: ClientManagerWidget.routeBuilder,
+                GoRoute(
+                  path: FatalErrorPage.routeName,
+                  builder: (context, state) =>
+                      FatalErrorPage(error: state.extra),
+                ),
+                MatrixInjectedRoute(
                   routes: [
+                    // in order to handle `/`
                     GoRoute(
                       path: SplashPage.routeName,
                       builder: (context, state) => const SplashPage(),
                     ),
+                    // in order to initialize particular client
                     GoRoute(
-                      path: FatalErrorPage.routeName,
-                      builder: (context, state) =>
-                          FatalErrorPage(error: state.extra),
+                      path: SplashPage.routeName.asMultiClientRoute(),
+                      builder: (context, state) => const SplashPage(),
                     ),
                     MustBeLoggedOutRoute(
-                      path: HomeserverPage.routeName,
+                      path: HomeserverPage.routeName.asMultiClientRoute(),
                       builder: (context, state) => const HomeserverPage(),
                     ),
                     HomeserverUriRoute(
-                      path: LoginPage.routeName,
+                      path: LoginPage.routeName.asMultiClientRoute(),
                       builder: (context, state, uri) =>
                           LoginPage(homeserver: uri),
                     ),
                     RequiresLoginRoute(
-                      path: SsssBootstrapPage.routeName,
+                      path: SsssBootstrapPage.routeName.asMultiClientRoute(),
                       builder: (context, state) => const SsssBootstrapPage(),
                     ),
                     ResponsiveShellRoute(
                       builder: (context, state) => const RoomListPage(),
                       routes: [
                         RequiresLoginRoute(
-                          path: RoomListPage.routeName,
+                          path: RoomListPage.routeName.asMultiClientRoute(),
                           builder: (context, state) =>
                               const PolyculePlaceholder(),
                           routes: [
