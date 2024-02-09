@@ -5,3 +5,4 @@ linux/polycule usr/bin/
 linux/business.braid.polycule.desktop usr/share/applications/
 linux/business.braid.polycule.svg usr/share/pixmaps/
 linux/business.braid.polycule.svg usr/share/icons/hicolor/scalable/apps/
+linux/business.braid.polycule.metainfo.xml usr/share/metainfo/
