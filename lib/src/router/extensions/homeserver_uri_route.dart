@@ -10,6 +10,7 @@ import '../../pages/homeserver/homeserver.dart';
 import '../../pages/login/login.dart';
 import '../../pages/splash_screen/splash_screen.dart';
 import '../../widgets/matrix/client_manager.dart';
+import 'go_router_path_extension.dart';
 
 typedef HomeserverUriBuilder = Widget Function(
   BuildContext context,
@@ -45,22 +46,37 @@ class HomeserverUriRoute extends GoRoute {
     BuildContext context,
     GoRouterState state,
   ) {
-    final client = ClientManager.activeClient;
-    final loginState = client?.onLoginStateChanged.value;
+    final isInitialized = ClientManager.activeClients.isNotEmpty;
+    if (!isInitialized) {
+      return context.clientifyLocation(SplashPage.routeName);
+    }
+    final parameter = state.pathParameters['client'];
+    if (parameter == null) {
+      return context.clientifyLocation(SplashPage.routeName);
+    }
+    final identifier = int.tryParse(parameter);
+    if (identifier == null) {
+      return context.clientifyLocation(SplashPage.routeName);
+    }
+    final client = ClientManager.getClientByIdentifier(identifier);
+    if (client == null) {
+      return context.clientifyLocation(SplashPage.routeName);
+    }
+    final loginState = client.onLoginStateChanged.value;
     if (loginState != LoginState.loggedOut) {
-      return SplashPage.routeName;
+      return context.clientifyLocation(SplashPage.routeName);
     }
 
-    final parameter = state.pathParameters[LoginPage.pathParameter];
-    if (parameter == null) {
-      return HomeserverPage.routeName;
+    final hostParameter = state.pathParameters[LoginPage.pathParameter];
+    if (hostParameter == null) {
+      return context.clientifyLocation(HomeserverPage.routeName);
     }
     Uri? uri;
     try {
-      uri = _decodeUriFragment(parameter);
+      uri = _decodeUriFragment(hostParameter);
     } catch (_) {}
     if (uri == null) {
-      return HomeserverPage.routeName;
+      return context.clientifyLocation(HomeserverPage.routeName);
     }
 
     return null;

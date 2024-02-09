@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:go_router/go_router.dart';
-
+import '../../router/extensions/go_router_path_extension.dart';
 import '../../utils/matrix/matrix_state.dart';
 import '../ssss_bootstrap/ssss_bootstrap.dart';
 import 'room_list_view.dart';
@@ -45,10 +44,10 @@ class RoomListController extends MatrixState<RoomListPage> {
     await client.accountDataLoading;
     await client.roomsLoading;
     await client.onSync.stream.first;
-    _focusFirstRoom();
     if (!mounted) {
       return;
     }
+    _focusFirstRoom();
     if (client.isUnknownSession ||
         await client.encryption?.crossSigning.isCached() == false ||
         await client.encryption?.keyManager.isCached() == false) {

@@ -3,10 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:go_router/go_router.dart';
 import 'package:matrix/encryption.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
+import '../../router/extensions/go_router_path_extension.dart';
 import '../../utils/matrix/matrix_state.dart';
 import '../fatal_error/fatal_error_page.dart';
 import '../room_list/room_list.dart';
@@ -101,7 +101,7 @@ class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
         break;
       case BootstrapState.done:
         if (widget.passphrase != null) {
-          context.pop();
+          Navigator.of(context).pop();
           return;
         }
         _nextStage(() => context.go(RoomListPage.routeName));
@@ -172,7 +172,7 @@ class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
             title: Text(AppLocalizations.of(context).errorTryAgain),
             actions: [
               TextButton(
-                onPressed: () => context.pop(),
+                onPressed: Navigator.of(context).pop,
                 child: Text(AppLocalizations.of(context).close),
               ),
             ],

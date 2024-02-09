@@ -37,7 +37,8 @@ class ResponsiveLayout extends StatelessWidget {
           } else {
             Widget? child;
             bool reverse = false;
-            final segments = path?.split('/');
+            final segments =
+                path?.replaceFirst('/client/:client', '').split('/');
             if (segments == null) {
               child = main;
             } else {

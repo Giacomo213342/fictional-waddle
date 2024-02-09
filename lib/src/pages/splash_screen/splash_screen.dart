@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
-import 'package:go_router/go_router.dart';
-
+import '../../router/extensions/go_router_path_extension.dart';
 import '../../utils/matrix/matrix_state.dart';
 import '../fatal_error/fatal_error_page.dart';
 import '../homeserver/homeserver.dart';
