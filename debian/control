@@ -7,6 +7,6 @@ Standards-Version: 4.3.0
 Homepage: https://gitlab.com/polycule_client/polycule
 
 Package: polycule
-Architecture: any
+Architecture: amd64 arm64
 Depends: ${shlibs:Depends}, ${misc:Depends}, xdg-user-dirs, libolm3
 Description: A simple and beautiful matrix client written in Flutter.

@@ -9,5 +9,4 @@
 build:
 	cp assets/logo/logo-circle.svg linux/business.braid.polycule.svg
 	ln -s /opt/polycule/polycule linux/polycule
-	flutter gen-l10n
 	flutter build linux
