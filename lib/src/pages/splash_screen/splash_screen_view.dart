@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../widgets/ascii_progress_indicator.dart';
 import 'splash_screen.dart';
 
 class SplashPageView extends StatelessWidget {
@@ -11,7 +12,7 @@ class SplashPageView extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: CircularProgressIndicator(),
+        child: AsciiProgressIndicator(),
       ),
     );
   }

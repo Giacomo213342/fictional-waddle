@@ -325,6 +325,12 @@ abstract class AppLocalizations {
   /// **'Authentication required'**
   String get authenticationRequired;
 
+  /// No description provided for @authenticateForAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Please authenticate with your credentials for {mxid}.'**
+  String authenticateForAccount(Object mxid);
+
   /// No description provided for @passphraseNotEmpty.
   ///
   /// In en, this message translates to:
@@ -546,6 +552,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Toggle password visibility'**
   String get togglePassword;
+
+  /// No description provided for @loggingInToClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Login to account'**
+  String get loggingInToClient;
 }
 
 class _AppLocalizationsDelegate

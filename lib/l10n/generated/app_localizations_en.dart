@@ -147,6 +147,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authenticationRequired => 'Authentication required';
 
   @override
+  String authenticateForAccount(Object mxid) {
+    return 'Please authenticate with your credentials for $mxid.';
+  }
+
+  @override
   String get passphraseNotEmpty => 'The passphrase can\'t be empty';
 
   @override
@@ -266,4 +271,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get togglePassword => 'Toggle password visibility';
+
+  @override
+  String get loggingInToClient => 'Login to account';
 }

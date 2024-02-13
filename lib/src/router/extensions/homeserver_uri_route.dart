@@ -9,7 +9,7 @@ import '../../pages/fatal_error/fatal_error_page.dart';
 import '../../pages/homeserver/homeserver.dart';
 import '../../pages/login/login.dart';
 import '../../pages/splash_screen/splash_screen.dart';
-import '../../widgets/matrix/client_manager.dart';
+import '../../widgets/matrix/client_manager/client_manager.dart';
 import 'go_router_path_extension.dart';
 
 typedef HomeserverUriBuilder = Widget Function(
@@ -46,15 +46,7 @@ class HomeserverUriRoute extends GoRoute {
     BuildContext context,
     GoRouterState state,
   ) {
-    final isInitialized = ClientManager.activeClients.isNotEmpty;
-    if (!isInitialized) {
-      return context.clientifyLocation(SplashPage.routeName);
-    }
-    final parameter = state.pathParameters['client'];
-    if (parameter == null) {
-      return context.clientifyLocation(SplashPage.routeName);
-    }
-    final identifier = int.tryParse(parameter);
+    final identifier = ClientManager.extractClientIdentifierFromRoute(state);
     if (identifier == null) {
       return context.clientifyLocation(SplashPage.routeName);
     }

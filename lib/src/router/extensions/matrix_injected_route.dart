@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 
-import '../../widgets/matrix/client_manager.dart';
+import '../../widgets/matrix/client_manager/client_manager.dart';
 
 class MatrixInjectedRoute extends ShellRoute {
   MatrixInjectedRoute({
