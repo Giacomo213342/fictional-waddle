@@ -5,7 +5,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../pages/fatal_error/fatal_error_page.dart';
 import '../../pages/room/room.dart';
-import '../../widgets/matrix/client_manager.dart';
+import '../../widgets/matrix/client_manager/client_manager.dart';
 import 'requires_login_route.dart';
 
 typedef RoomAvailableBuilder = Widget Function(
@@ -34,15 +34,8 @@ class RoomAvailableRoute extends RequiresLoginRoute {
         BuildContext context,
         GoRouterState state,
       ) {
-        final isInitialized = ClientManager.activeClients.isNotEmpty;
-        if (!isInitialized) {
-          return const FatalErrorPage();
-        }
-        final parameter = state.pathParameters['client'];
-        if (parameter == null) {
-          return const FatalErrorPage();
-        }
-        final identifier = int.tryParse(parameter);
+        final identifier =
+            ClientManager.extractClientIdentifierFromRoute(state);
         if (identifier == null) {
           return const FatalErrorPage();
         }

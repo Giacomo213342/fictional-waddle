@@ -34,6 +34,7 @@ class HomeserverView extends StatelessWidget {
                           Text(
                             AppLocalizations.of(context).homeserverHeadline,
                             style: Theme.of(context).textTheme.headlineMedium,
+                            textAlign: TextAlign.end,
                           ),
                           Text(
                             AppLocalizations.of(context).aMatrixClient,

@@ -5,9 +5,10 @@ import 'package:matrix/matrix.dart';
 import '../../../l10n/generated/app_localizations.dart';
 
 class UiaDialog extends StatefulWidget {
-  const UiaDialog({super.key, required this.request});
+  const UiaDialog({super.key, required this.request, required this.client});
 
   final UiaRequest request;
+  final Client client;
 
   Future<String?> show(BuildContext context) => showDialog<String?>(
         context: context,
@@ -25,22 +26,35 @@ class _UiaDialogState extends State<UiaDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final userId = widget.client.userID;
     return AlertDialog(
       title: Text(AppLocalizations.of(context).authenticationRequired),
-      content: TextField(
-        controller: controller,
-        onSubmitted: (_) => _submit(),
-        obscureText: _hideInput,
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          labelText: AppLocalizations.of(context).password,
-          suffixIcon: IconButton(
-            tooltip: AppLocalizations.of(context).togglePassword,
-            onPressed: _toggleHidden,
-            icon: Icon(
-              _hideInput ? Icons.visibility : Icons.visibility_off,
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 256 + 128),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (userId != null) ...[
+              Text(AppLocalizations.of(context).authenticateForAccount(userId)),
+              const SizedBox(height: 16),
+            ],
+            TextField(
+              controller: controller,
+              onSubmitted: (_) => _submit(),
+              obscureText: _hideInput,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: AppLocalizations.of(context).password,
+                suffixIcon: IconButton(
+                  tooltip: AppLocalizations.of(context).togglePassword,
+                  onPressed: _toggleHidden,
+                  icon: Icon(
+                    _hideInput ? Icons.visibility : Icons.visibility_off,
+                  ),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
       actions: [

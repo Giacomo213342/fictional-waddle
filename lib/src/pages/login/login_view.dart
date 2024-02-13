@@ -43,6 +43,8 @@ class LoginView extends StatelessWidget {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 786),
                 child: ListView(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   children: [
                     Text(
                       AppLocalizations.of(context)

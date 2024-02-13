@@ -21,6 +21,7 @@ import 'extensions/room_available_route.dart';
 class PolyculeRouter extends GoRouter {
   PolyculeRouter()
       : super.routingConfig(
+          debugLogDiagnostics: true,
           routingConfig: _ConstantRoutingConfig(
             RoutingConfig(
               routes: [
@@ -55,7 +56,9 @@ class PolyculeRouter extends GoRouter {
                       builder: (context, state) => const SsssBootstrapPage(),
                     ),
                     ResponsiveShellRoute(
-                      builder: (context, state) => const RoomListPage(),
+                      builder: (context, state) => RoomListPage(
+                        key: ValueKey(state.pathParameters['client']),
+                      ),
                       routes: [
                         RequiresLoginRoute(
                           path: RoomListPage.routeName.asMultiClientRoute(),

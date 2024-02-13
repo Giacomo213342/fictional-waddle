@@ -103,6 +103,14 @@
     }
   },
   "authenticationRequired": "Authentication required",
+  "authenticateForAccount": "Please authenticate with your credentials for {mxid}.",
+  "@authenticateForAccount": {
+    "placeholders": {
+      "mxid": {
+        "format": "String"
+      }
+    }
+  },
   "passphraseNotEmpty": "The passphrase can't be empty",
   "cancel": "Cancel",
   "noMatch": "No match",
@@ -147,5 +155,6 @@
   "passphraseNoWhitespace": "The passphrase cannot contain any whitespace characters!",
   "errorTryAgain": "An error occurred. Please try again.",
   "submit": "submit",
-  "togglePassword": "Toggle password visibility"
+  "togglePassword": "Toggle password visibility",
+  "loggingInToClient": "Login to account"
 }

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_html/flutter_html.dart';
-import 'package:go_router/go_router.dart';
 import 'package:matrix_homeserver_recommendations/matrix_homeserver_recommendations.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../router/extensions/go_router_path_extension.dart';
 import '../../login/login.dart';
 
 class BenchmarkWidget extends StatefulWidget {
@@ -72,7 +72,7 @@ class _BenchmarkWidgetState extends State<BenchmarkWidget> {
 
   void _launchUrl(String? url, Map<String, String> attributes, element) {
     if (url != null) {
-      launchUrlString(url);
+      launchUrlString(context.clientifyLocation(url));
     }
   }
 
