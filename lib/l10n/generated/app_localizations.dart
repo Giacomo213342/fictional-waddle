@@ -558,6 +558,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login to account'**
   String get loggingInToClient;
+
+  /// No description provided for @pendingInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending invite'**
+  String get pendingInvite;
+
+  /// No description provided for @invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite'**
+  String get invite;
+
+  /// Please keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.
+  ///
+  /// In en, this message translates to:
+  /// **'You are invited to join the room : « {roomname} ».'**
+  String inviteLongRoom(String roomname);
+
+  /// No description provided for @inviteLongDM.
+  ///
+  /// In en, this message translates to:
+  /// **'You are invited to discuss with « {displayname} ».'**
+  String inviteLongDM(Object displayname);
+
+  /// No description provided for @roomParticipants.
+  ///
+  /// In en, this message translates to:
+  /// **'{participants, plural, =0{No participants} =1{1 participant} other{{participants} participants}}'**
+  String roomParticipants(int participants);
+
+  /// No description provided for @joinRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Join room'**
+  String get joinRoom;
+
+  /// No description provided for @knockRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Knock to join'**
+  String get knockRoom;
+
+  /// No description provided for @youCannotJoinThisRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot join this room.'**
+  String get youCannotJoinThisRoom;
 }
 
 class _AppLocalizationsDelegate

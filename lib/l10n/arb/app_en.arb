@@ -156,5 +156,36 @@
   "errorTryAgain": "An error occurred. Please try again.",
   "submit": "submit",
   "togglePassword": "Toggle password visibility",
-  "loggingInToClient": "Login to account"
+  "loggingInToClient": "Login to account",
+  "pendingInvite": "Pending invite",
+  "invite": "Invite",
+  "inviteLongRoom": "You are invited to join the room : « {roomname} ».",
+  "@inviteLongRoom": {
+    "description": "Please keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
+    "placeholders": {
+      "roomname": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteLongDM": "You are invited to discuss with « {displayname} ».",
+  "@intiveLongDM": {
+    "description": "Please keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
+    "placeholders": {
+      "displayname": {
+        "type": "String"
+      }
+    }
+  },
+  "roomParticipants": "{participants, plural, =0{No participants} =1{1 participant} other{{participants} participants}}",
+  "@roomParticipants": {
+    "placeholders": {
+      "participants": {
+        "type": "int"
+      }
+    }
+  },
+  "joinRoom": "Join room",
+  "knockRoom": "Knock to join",
+  "youCannotJoinThisRoom": "You cannot join this room."
 }
