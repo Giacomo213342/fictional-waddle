@@ -274,4 +274,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loggingInToClient => 'Login to account';
+
+  @override
+  String get pendingInvite => 'Pending invite';
+
+  @override
+  String get invite => 'Invite';
+
+  @override
+  String inviteLongRoom(String roomname) {
+    return 'You are invited to join the room : « $roomname ».';
+  }
+
+  @override
+  String inviteLongDM(Object displayname) {
+    return 'You are invited to discuss with « $displayname ».';
+  }
+
+  @override
+  String roomParticipants(int participants) {
+    String _temp0 = intl.Intl.pluralLogic(
+      participants,
+      locale: localeName,
+      other: '$participants participants',
+      one: '1 participant',
+      zero: 'No participants',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get joinRoom => 'Join room';
+
+  @override
+  String get knockRoom => 'Knock to join';
+
+  @override
+  String get youCannotJoinThisRoom => 'You cannot join this room.';
 }

@@ -13,8 +13,11 @@ class ClientTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      bottom: true,
       top: false,
+      bottom: true,
+      left: true,
+      right: true,
+      maintainBottomViewPadding: true,
       child: SizedBox(
         height: 48,
         child: ListView.builder(

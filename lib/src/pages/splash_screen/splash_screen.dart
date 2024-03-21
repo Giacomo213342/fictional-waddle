@@ -37,9 +37,11 @@ class SplashController extends MatrixState<SplashPage> {
         );
         rethrow;
       }
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) => context.go(HomeserverPage.routeName),
-      );
+      if (mounted) {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => context.go(HomeserverPage.routeName),
+        );
+      }
     } else {
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => context.go(RoomListPage.routeName),

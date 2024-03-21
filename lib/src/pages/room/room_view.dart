@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../widgets/matrix/avatar_builder/room_avatar.dart';
+import 'components/room_body.dart';
 import 'room.dart';
 
 class RoomView extends StatelessWidget {
@@ -25,10 +27,18 @@ class RoomView extends StatelessWidget {
         focusNode: controller.focusNode,
         child: Scaffold(
           appBar: AppBar(
+            leading: Padding(
+              padding: const EdgeInsets.all(2),
+              child: RoomAvatar(
+                room: controller.room,
+                dimension: 64,
+              ),
+            ),
             title: Text(controller.room.getLocalizedDisplayname()),
           ),
-          body: const Center(
-            child: Text('RoomView'),
+          body: RoomBody(
+            controller: controller,
+            key: ValueKey(controller.room.id),
           ),
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:matrix/matrix.dart';
 import 'package:url_launcher/link.dart';
 
 import '../../../router/extensions/go_router_path_extension.dart';
+import '../../../widgets/matrix/avatar_builder/room_avatar.dart';
 import '../../room/room.dart';
 import '../room_list.dart';
 
@@ -30,6 +31,10 @@ class RoomListTile extends StatelessWidget {
             // make the tle keyboard focusable by request
             focusNode: RoomListController.getFocusNode(room.id),
             onTap: () => context.go(path),
+            leading: RoomAvatar(
+              room: room,
+              dimension: 36,
+            ),
             title: Text(room.getLocalizedDisplayname()),
           );
         },
