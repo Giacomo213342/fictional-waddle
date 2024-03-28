@@ -6,20 +6,49 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/ascii_progress_indicator.dart';
 
 class InitialSyncTile extends StatelessWidget {
-  const InitialSyncTile(this.syncUpdate, {super.key});
+  const InitialSyncTile({required this.client, super.key});
 
-  final SyncUpdate? syncUpdate;
+  final Client client;
 
   @override
   Widget build(BuildContext context) {
-    final expanded = syncUpdate == null;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 250),
-      height: expanded ? 48 : 0,
-      child: ListTile(
-        leading: const AsciiProgressIndicator(),
-        title: Text(AppLocalizations.of(context).initialSync),
-      ),
+    return StreamBuilder(
+      stream: client.onSyncStatus.stream,
+      builder: (context, snapshot) {
+        final syncStatus = snapshot.data;
+        final hide = client.onSync.value != null &&
+            syncStatus?.status != SyncStatus.error &&
+            client.prevBatch != null;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          height: hide ? 0 : 48,
+          child: ListTile(
+            leading: AsciiProgressIndicator(
+              progress: hide ? 1 : syncStatus?.progress,
+            ),
+            title: Text(
+              syncStatus?.toLocalizedString(context) ??
+                  AppLocalizations.of(context).initialSync,
+            ),
+          ),
+        );
+      },
     );
+  }
+}
+
+extension on SyncStatusUpdate {
+  String toLocalizedString(BuildContext context) {
+    switch (status) {
+      case SyncStatus.waitingForResponse:
+        return AppLocalizations.of(context).initialSync;
+      case SyncStatus.error:
+        return ((error?.exception ?? status) as Object).toString();
+      case SyncStatus.processing:
+      case SyncStatus.cleaningUp:
+      case SyncStatus.finished:
+      default:
+        return AppLocalizations.of(context).syncInProgress;
+    }
   }
 }
