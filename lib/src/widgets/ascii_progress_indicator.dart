@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class AsciiProgressIndicator extends StatefulWidget {
-  const AsciiProgressIndicator({super.key});
+  const AsciiProgressIndicator({
+    super.key,
+    this.progress,
+    this.toNextProgressValue = const Duration(milliseconds: 200),
+  });
+
+  final double? progress;
+  final Duration toNextProgressValue;
 
   @override
   State<AsciiProgressIndicator> createState() => _AsciiProgressIndicatorState();
@@ -21,15 +28,30 @@ class _AsciiProgressIndicatorState extends State<AsciiProgressIndicator>
 
   late AnimationController controller;
 
+  double? get progress => widget.progress;
+
   @override
   void initState() {
     controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 24),
       lowerBound: 0,
-      upperBound: characters.length.toDouble() - 1,
-    )..repeat();
+      upperBound: 1,
+      value: progress,
+    );
+    if (widget.progress == null) {
+      controller.repeat();
+    }
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant AsciiProgressIndicator oldWidget) {
+    final progress = this.progress;
+    if (progress != null && oldWidget.progress != progress) {
+      controller.animateTo(progress, duration: widget.toNextProgressValue);
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -37,27 +59,30 @@ class _AsciiProgressIndicatorState extends State<AsciiProgressIndicator>
     return SizedBox.square(
       dimension: 48,
       child: Center(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            const CircularProgressIndicator(
-              strokeWidth: 2,
-            ),
-            Semantics(
-              excludeSemantics: true,
-              child: AnimatedBuilder(
-                animation: controller,
-                builder: (context, _) {
-                  final rounded = controller.value.round();
-                  final character = characters[rounded];
-                  return Text(
+        child: AnimatedBuilder(
+          animation: controller,
+          builder: (context, _) {
+            final rounded =
+                (controller.value * (characters.length - 1)).floor();
+            final character = characters[rounded];
+
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                CircularProgressIndicator(
+                  strokeWidth: 2,
+                  value: progress == null ? null : controller.value,
+                ),
+                Semantics(
+                  excludeSemantics: true,
+                  child: Text(
                     character,
                     style: Theme.of(context).textTheme.titleSmall,
-                  );
-                },
-              ),
-            ),
-          ],
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

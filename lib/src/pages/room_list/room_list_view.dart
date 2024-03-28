@@ -32,7 +32,7 @@ class RoomListView extends StatelessWidget {
           ),
           body: Column(
             children: [
-              InitialSyncTile(snapshot.data),
+              InitialSyncTile(client: controller.client),
               Expanded(
                 child: FadeInRoomList(controller),
               ),
