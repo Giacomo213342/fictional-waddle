@@ -20,11 +20,14 @@ class OpenExistingSsssView extends StatelessWidget {
         vertical: 8,
       ),
       children: [
-        ListTile(
-          leading: const Icon(Icons.security),
-          title: Text(
-            AppLocalizations.of(context).verifyLogin,
-            style: Theme.of(context).textTheme.headlineLarge!,
+        Focus(
+          autofocus: true,
+          child: ListTile(
+            leading: const Icon(Icons.security),
+            title: Text(
+              AppLocalizations.of(context).verifyLogin,
+              style: Theme.of(context).textTheme.headlineLarge!,
+            ),
           ),
         ),
         const SizedBox(height: 8),
@@ -49,6 +52,7 @@ class OpenExistingSsssView extends StatelessWidget {
               border: const OutlineInputBorder(),
               labelText: AppLocalizations.of(context).enterRecoveryPhrase,
               suffixIcon: IconButton(
+                tooltip: AppLocalizations.of(context).togglePassword,
                 onPressed: controller.toggleObscurePassphrase,
                 icon: controller.obscurePassphrase
                     ? const Icon(Icons.visibility)

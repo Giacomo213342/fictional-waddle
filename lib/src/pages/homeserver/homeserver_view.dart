@@ -55,10 +55,17 @@ class HomeserverView extends StatelessWidget {
                                 controller.handleHomeserverListExpansion,
                             children: [
                               if (controller.recommendationsLoading)
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Center(
-                                    child: AsciiProgressIndicator(),
+                                Focus(
+                                  autofocus: true,
+                                  child: Semantics(
+                                    hint: AppLocalizations.of(context)
+                                        .loadingHomeservers,
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Center(
+                                        child: AsciiProgressIndicator(),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ...controller.recommendations

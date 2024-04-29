@@ -22,35 +22,38 @@ class RoomAvatar extends StatelessWidget {
 
     final uri = room.avatar;
 
-    return SizedBox.square(
-      dimension: dimension,
-      child: Stack(
-        alignment: Alignment.center,
-        fit: StackFit.expand,
-        children: [
-          Center(
-            child: MonogramText(
-              room.getLocalizedDisplayname(),
-              style: style?.copyWith(fontSize: size),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          if (uri != null)
-            MxcImage(
-              uri: uri,
-              client: room.client,
-              width: dimension,
-              height: dimension,
-            ),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Theme.of(context).colorScheme.primary,
-                width: 2,
+    return Semantics(
+      excludeSemantics: true,
+      child: SizedBox.square(
+        dimension: dimension,
+        child: Stack(
+          alignment: Alignment.center,
+          fit: StackFit.expand,
+          children: [
+            Center(
+              child: MonogramText(
+                room.getLocalizedDisplayname(),
+                style: style?.copyWith(fontSize: size),
+                textAlign: TextAlign.center,
               ),
             ),
-          ),
-        ],
+            if (uri != null)
+              MxcImage(
+                uri: uri,
+                client: room.client,
+                width: dimension,
+                height: dimension,
+              ),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 2,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -187,5 +187,9 @@
   },
   "joinRoom": "Join room",
   "knockRoom": "Knock to join",
-  "youCannotJoinThisRoom": "You cannot join this room."
+  "youCannotJoinThisRoom": "You cannot join this room.",
+  "addAccount": "Add another account",
+  "regionAccountSwitcher": "Screen region: Account switcher.",
+  "regionChatContents": "Screen region: Chat content.",
+  "loadingHomeservers": "Loading homeservers. Progress unknown. Please wait."
 }

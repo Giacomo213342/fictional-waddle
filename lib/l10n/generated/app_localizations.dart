@@ -606,6 +606,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You cannot join this room.'**
   String get youCannotJoinThisRoom;
+
+  /// No description provided for @addAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Add another account'**
+  String get addAccount;
+
+  /// No description provided for @regionAccountSwitcher.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen region: Account switcher.'**
+  String get regionAccountSwitcher;
+
+  /// No description provided for @regionChatContents.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen region: Chat content.'**
+  String get regionChatContents;
+
+  /// No description provided for @loadingHomeservers.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading homeservers. Progress unknown. Please wait.'**
+  String get loadingHomeservers;
 }
 
 class _AppLocalizationsDelegate
