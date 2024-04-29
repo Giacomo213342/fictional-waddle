@@ -27,7 +27,8 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(Client client) async {
   final cipher = await getDatabaseCipher();
 
   final fileStoragePath = await getApplicationSupportDirectory();
-  final temporaryStoragePath = await getTemporaryDirectory();
+  final temporaryStorageDirectory = await getTemporaryDirectory();
+  final fileStorageLocation = Uri.file(temporaryStorageDirectory.path);
 
   final path = '${fileStoragePath.path}/${client.clientName}.sqlite';
 
@@ -76,7 +77,7 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(Client client) async {
     client.clientName,
     database: database,
     maxFileSize: 1024 * 1024 * 10,
-    fileStoragePath: temporaryStoragePath,
+    fileStorageLocation: fileStorageLocation,
     deleteFilesAfterDuration: const Duration(days: 30),
   );
   await db.open();

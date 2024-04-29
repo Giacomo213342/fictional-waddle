@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../widgets/matrix/avatar_builder/room_avatar.dart';
 import 'components/room_body.dart';
 import 'room.dart';
@@ -36,9 +37,12 @@ class RoomView extends StatelessWidget {
             ),
             title: Text(controller.room.getLocalizedDisplayname()),
           ),
-          body: RoomBody(
-            controller: controller,
-            key: ValueKey(controller.room.id),
+          body: Semantics(
+            hint: AppLocalizations.of(context).regionChatContents,
+            child: RoomBody(
+              controller: controller,
+              key: ValueKey(controller.room.id),
+            ),
           ),
         ),
       ),

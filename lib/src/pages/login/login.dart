@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
+import 'package:matrix/matrix_api_lite.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
@@ -41,20 +42,26 @@ class LoginController extends MatrixState<LoginPage> {
 
   Uri get homeserver => widget.homeserver;
 
-  Future<HomeserverSummary?>? homeserverCheck;
+  Future<(DiscoveryInformation?, GetVersionsResponse, List<LoginFlow>)?>?
+      homeserverCheck;
 
   @override
   void initState() {
-    homeserverCheck =
-        Future<HomeserverSummary?>.value(client.checkHomeserver(homeserver))
-          ..onError(_popHomeserverError);
+    homeserverCheck = Future<
+        (
+          DiscoveryInformation?,
+          GetVersionsResponse,
+          List<LoginFlow>
+        )?>.value(client.checkHomeserver(homeserver))
+      ..onError(_popHomeserverError);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) => LoginView(this);
 
-  FutureOr<HomeserverSummary?> _popHomeserverError(
+  FutureOr<(DiscoveryInformation?, GetVersionsResponse, List<LoginFlow>)?>
+      _popHomeserverError(
     Object error,
     StackTrace stackTrace,
   ) {

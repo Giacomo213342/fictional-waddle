@@ -311,4 +311,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get youCannotJoinThisRoom => 'You cannot join this room.';
+
+  @override
+  String get addAccount => 'Add another account';
+
+  @override
+  String get regionAccountSwitcher => 'Screen region: Account switcher.';
+
+  @override
+  String get regionChatContents => 'Screen region: Chat content.';
+
+  @override
+  String get loadingHomeservers =>
+      'Loading homeservers. Progress unknown. Please wait.';
 }

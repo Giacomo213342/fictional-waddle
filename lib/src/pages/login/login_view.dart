@@ -56,11 +56,11 @@ class LoginView extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     if (!controller.loginLoading) ...[
-                      if (data.loginFlows.any(
+                      if (data.$3.any(
                         (flow) => flow.type == LoginType.mLoginPassword.name,
                       ))
                         PasswordLoginProvider(controller),
-                      if (data.loginFlows.any(
+                      if (data.$3.any(
                         (flow) => flow.type == AuthenticationTypes.sso,
                       ))
                         const ListTile(
@@ -76,7 +76,7 @@ class LoginView extends StatelessWidget {
                       const Text(
                         'Login flows we don\'t support :',
                       ),
-                      ...data.loginFlows
+                      ...data.$3
                           .where(
                             (element) =>
                                 element.type != AuthenticationTypes.sso &&

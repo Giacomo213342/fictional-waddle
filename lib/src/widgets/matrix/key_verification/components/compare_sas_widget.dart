@@ -49,9 +49,12 @@ class CompareSasWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             child: Column(
               children: [
-                Text(
-                  AppLocalizations.of(context).compareSasNumbers,
-                  style: Theme.of(context).textTheme.headlineMedium,
+                Focus(
+                  autofocus: true,
+                  child: Text(
+                    AppLocalizations.of(context).compareSasNumbers,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Center(

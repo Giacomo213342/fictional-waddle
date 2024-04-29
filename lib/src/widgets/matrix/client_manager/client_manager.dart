@@ -275,6 +275,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
         break;
 
+      case LoginState.softLoggedOut:
       case LoginState.loggedOut:
         if (client.clientName.clientIdentifier ==
             getActiveClient().clientName.clientIdentifier) {
