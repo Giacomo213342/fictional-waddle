@@ -4,6 +4,7 @@ import 'package:matrix/matrix.dart';
 
 import '../room.dart';
 import 'event_tile.dart';
+import 'load_history_indicator.dart';
 
 class TimelineView extends StatelessWidget {
   const TimelineView({
@@ -24,12 +25,31 @@ class TimelineView extends StatelessWidget {
     return AnimatedList(
       key: listKey,
       reverse: true,
-      initialItemCount: timeline.events.length,
-      itemBuilder: (context, index, animation) => EventTile(
-        event: timeline.events[index].getDisplayEvent(timeline),
-        room: room,
-        controller: controller,
-      ),
+      initialItemCount: timeline.events.length + 1,
+      itemBuilder: (context, index, animation) {
+        if (index == timeline.events.length) {
+          return LoadHistoryIndicator(
+            timeline: timeline,
+          );
+        }
+        final nextEvent = index - 1 >= 0
+            ? timeline.events[index - 1].getDisplayEvent(timeline)
+            : null;
+
+        final previousEvent = index + 1 < timeline.events.length
+            ? timeline.events[index + 1].getDisplayEvent(timeline)
+            : null;
+        final event = timeline.events[index].getDisplayEvent(timeline);
+
+        return EventTile(
+          event: event,
+          previousEvent: previousEvent,
+          nextEvent: nextEvent,
+          room: room,
+          controller: controller,
+          timeline: timeline,
+        );
+      },
     );
   }
 }

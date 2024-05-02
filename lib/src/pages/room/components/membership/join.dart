@@ -67,6 +67,8 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
   }
 
   void _changeEvent(int index) {
-    // throw UnimplementedError();
+    listKey.currentState
+        ?.removeItem(index, (context, animation) => Container());
+    listKey.currentState?.insertItem(index);
   }
 }
