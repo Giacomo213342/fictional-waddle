@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
+import '../../../utils/matrix/is_display_event_extension.dart';
 import '../room.dart';
 import 'event_tile.dart';
 import 'load_history_indicator.dart';
@@ -22,34 +23,56 @@ class TimelineView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedList(
-      key: listKey,
-      reverse: true,
-      initialItemCount: timeline.events.length + 1,
-      itemBuilder: (context, index, animation) {
-        if (index == timeline.events.length) {
-          return LoadHistoryIndicator(
+    return SelectionArea(
+      child: AnimatedList(
+        key: listKey,
+        reverse: true,
+        initialItemCount: timeline.events.length + 1,
+        itemBuilder: (context, index, animation) {
+          if (index == timeline.events.length) {
+            return LoadHistoryIndicator(
+              timeline: timeline,
+            );
+          }
+
+          Event? nextEvent;
+          int nextEventIndex = index;
+          do {
+            nextEventIndex--;
+            if (nextEventIndex >= 0) {
+              nextEvent =
+                  timeline.events[nextEventIndex].getDisplayEvent(timeline);
+            } else {
+              nextEvent = null;
+            }
+          } while (
+              nextEventIndex >= 0 && !(nextEvent?.isDisplayEvent ?? false));
+
+          Event? previousEvent;
+          int previousEventIndex = index;
+          do {
+            previousEventIndex++;
+            if (previousEventIndex < timeline.events.length) {
+              previousEvent =
+                  timeline.events[previousEventIndex].getDisplayEvent(timeline);
+            } else {
+              previousEvent = null;
+            }
+          } while (previousEventIndex < timeline.events.length &&
+              !(previousEvent?.isDisplayEvent ?? false));
+
+          final event = timeline.events[index].getDisplayEvent(timeline);
+
+          return EventTile(
+            event: event,
+            previousEvent: previousEvent,
+            nextEvent: nextEvent,
+            room: room,
+            controller: controller,
             timeline: timeline,
           );
-        }
-        final nextEvent = index - 1 >= 0
-            ? timeline.events[index - 1].getDisplayEvent(timeline)
-            : null;
-
-        final previousEvent = index + 1 < timeline.events.length
-            ? timeline.events[index + 1].getDisplayEvent(timeline)
-            : null;
-        final event = timeline.events[index].getDisplayEvent(timeline);
-
-        return EventTile(
-          event: event,
-          previousEvent: previousEvent,
-          nextEvent: nextEvent,
-          room: room,
-          controller: controller,
-          timeline: timeline,
-        );
-      },
+        },
+      ),
     );
   }
 }

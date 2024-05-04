@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../widgets/matrix/avatar_builder/user_avatar.dart';
+import '../../../../widgets/matrix/reaction_chip.dart';
 import 'm_room_message_content.dart';
 
 class RoomMessage extends StatelessWidget {
@@ -51,57 +52,62 @@ class RoomMessage extends StatelessWidget {
         builder: (context, constraints) {
           return Row(
             children: [
-              SizedBox.square(
-                dimension: 32,
-                child: showOtherSenderAvatar
-                    ? UserAvatar(
-                        user: event.senderFromMemoryOrFallback,
-                        client: client,
-                        dimension: 32,
-                      )
-                    : null,
+              SelectionArea(
+                child: SizedBox.square(
+                  dimension: 32,
+                  child: showOtherSenderAvatar
+                      ? UserAvatar(
+                          user: event.senderFromMemoryOrFallback,
+                          client: client,
+                          dimension: 32,
+                        )
+                      : null,
+                ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top:
-                          !previousMessageSameSender ? border : BorderSide.none,
-                      bottom: !nextMessageSameSender ? border : BorderSide.none,
-                      left: border,
-                      right: border,
+              ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 32),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: !previousMessageSameSender
+                            ? border
+                            : BorderSide.none,
+                        bottom:
+                            !nextMessageSameSender ? border : BorderSide.none,
+                        left: border,
+                        right: border,
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        width: constraints.maxWidth - 72,
-                        child: RoomMessageContent(event: event),
-                      ),
-                      Row(
-                        children: reactionEvents
-                            .map(
-                              (e) => SizedBox.square(
-                                dimension: 16,
-                                child: Text(e.text),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ],
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: constraints.maxWidth - 72,
+                          child: RoomMessageContent(event: event),
+                        ),
+                        Row(
+                          children: reactionEvents
+                              .map((e) => ReactionChip(event: e))
+                              .toList(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-              SizedBox.square(
-                dimension: 32,
-                child: showOwnAvatar
-                    ? UserAvatar(
-                        user: event.senderFromMemoryOrFallback,
-                        client: client,
-                        dimension: 32,
-                      )
-                    : null,
+              SelectionArea(
+                child: SizedBox.square(
+                  dimension: 32,
+                  child: showOwnAvatar
+                      ? UserAvatar(
+                          user: event.senderFromMemoryOrFallback,
+                          client: client,
+                          dimension: 32,
+                        )
+                      : null,
+                ),
               ),
             ],
           );

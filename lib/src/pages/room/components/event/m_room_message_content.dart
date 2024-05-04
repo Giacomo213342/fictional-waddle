@@ -18,6 +18,7 @@ class RoomMessageContent extends StatelessWidget {
       case MessageTypes.Image:
         return ImageMessage(event: event);
       case MessageTypes.Text:
+      case MessageTypes.Emote:
         return TextMessage(event: event);
       default:
         return Text(event.messageType);
