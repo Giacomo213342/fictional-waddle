@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
+import '../../../utils/matrix/is_display_event_extension.dart';
 import '../room.dart';
 import 'event/m_room_message.dart';
 
@@ -25,9 +26,7 @@ class EventTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if ([
-      RelationshipTypes.edit,
-    ].contains(event.relationshipType)) {
+    if (!event.isDisplayEvent) {
       return const SizedBox();
     }
     switch (event.type) {

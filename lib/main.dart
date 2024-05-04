@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dynamic_color/dynamic_color.dart';
@@ -34,7 +36,8 @@ class PolyculeClient extends StatelessWidget {
           supportedLocales: AppLocalizations.supportedLocales,
           onGenerateTitle: (context) => AppLocalizations.of(context).appName,
           theme: ThemeData(
-            fontFamily: 'Sono',
+            fontFamily: !kIsWeb && Platform.isWindows ? 'Arial' : 'Sono',
+            fontFamilyFallback: const ['Noto Color Emoji'],
             colorScheme: lightDynamic ??
                 ColorScheme.fromSeed(
                   seedColor: Colors.indigo,
@@ -44,7 +47,8 @@ class PolyculeClient extends StatelessWidget {
             useMaterial3: true,
           ),
           darkTheme: ThemeData(
-            fontFamily: 'Sono',
+            fontFamily: !kIsWeb && Platform.isWindows ? 'Arial' : 'Sono',
+            fontFamilyFallback: const ['Noto Color Emoji'],
             colorScheme: darkDynamic ??
                 ColorScheme.fromSeed(
                   seedColor: Colors.indigo,

@@ -55,6 +55,9 @@ flutter:
     - family: Sono
       fonts:
         - asset: assets/fonts/sono.ttf
+    - family: Noto Color Emoji
+      fonts:
+        - asset: assets/fonts/NotoColorEmoji-Regular.ttf
 
 import_sorter:
   comments: false

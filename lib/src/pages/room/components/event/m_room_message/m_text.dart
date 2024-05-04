@@ -9,6 +9,18 @@ class TextMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SelectableText(event.text);
+    double textScaleFactor = 1;
+    if (event.onlyEmotes) {
+      textScaleFactor = 4;
+    }
+    String prefix = '';
+    if (event.messageType == MessageTypes.Emote) {
+      // Unicode Bullet
+      prefix = '\u2022 ';
+    }
+    return Text(
+      prefix + event.text,
+      textScaler: TextScaler.linear(textScaleFactor),
+    );
   }
 }
