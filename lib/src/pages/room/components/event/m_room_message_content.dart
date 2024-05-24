@@ -15,11 +15,15 @@ class RoomMessageContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (event.messageType) {
+      case MessageTypes.Sticker:
       case MessageTypes.Image:
         return ImageMessage(event: event);
       case MessageTypes.Text:
       case MessageTypes.Emote:
-        return TextMessage(event: event);
+        return TextMessage(
+          event: event,
+          key: ValueKey(event.text),
+        );
       default:
         return Text(event.messageType);
     }

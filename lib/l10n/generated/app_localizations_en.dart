@@ -324,4 +324,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get loadingHomeservers =>
       'Loading homeservers. Progress unknown. Please wait.';
+
+  @override
+  String get send => 'Send';
 }

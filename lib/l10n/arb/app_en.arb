@@ -191,5 +191,6 @@
   "addAccount": "Add another account",
   "regionAccountSwitcher": "Screen region: Account switcher.",
   "regionChatContents": "Screen region: Chat content.",
-  "loadingHomeservers": "Loading homeservers. Progress unknown. Please wait."
+  "loadingHomeservers": "Loading homeservers. Progress unknown. Please wait.",
+  "send": "Send"
 }

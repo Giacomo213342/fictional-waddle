@@ -15,7 +15,10 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_html: ^3.0.0-beta.2
+  flutter_html_audio: ^3.0.0-beta.2
+  flutter_html_svg: ^3.0.0-beta.2
   flutter_html_table: ^3.0.0-beta.2
+  flutter_html_video: ^3.0.0-beta.2
   flutter_localizations:
     sdk: flutter
   flutter_olm: ^1.4.1
@@ -26,7 +29,8 @@ dependencies:
   image: ^4.1.7
   import_sorter: ^4.6.0
   intl: ">=0.18.0 <2.0.0"
-  matrix: ^0.28.0
+  linkify: ^5.0.0
+  matrix: ^0.29.8
   matrix_homeserver_recommendations: ^0.4.0
   olm: ^2.0.3
   path_provider: ^2.1.2
@@ -35,11 +39,11 @@ dependencies:
   sqflite_common_ffi: ^2.3.1
   sqlcipher_flutter_libs: ^0.6.1
   unorm_dart: ^0.2.0
-  url_launcher: ^6.2.3
+  url_launcher: ^6.2.6
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
-  flutter_lints: ^3.0.1
+  flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
 

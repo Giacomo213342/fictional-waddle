@@ -25,6 +25,7 @@ class TimelineView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SelectionArea(
       child: AnimatedList(
+        shrinkWrap: true,
         key: listKey,
         reverse: true,
         initialItemCount: timeline.events.length + 1,

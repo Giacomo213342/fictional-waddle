@@ -630,6 +630,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading homeservers. Progress unknown. Please wait.'**
   String get loadingHomeservers;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
 }
 
 class _AppLocalizationsDelegate

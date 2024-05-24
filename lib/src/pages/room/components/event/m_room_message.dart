@@ -80,19 +80,22 @@ class RoomMessage extends StatelessWidget {
                         right: border,
                       ),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: constraints.maxWidth - 72,
-                          child: RoomMessageContent(event: event),
-                        ),
-                        Row(
-                          children: reactionEvents
-                              .map((e) => ReactionChip(event: e))
-                              .toList(),
-                        ),
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.all(1),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: constraints.maxWidth - 74,
+                            child: RoomMessageContent(event: event),
+                          ),
+                          Row(
+                            children: reactionEvents
+                                .map((e) => ReactionChip(event: e))
+                                .toList(),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

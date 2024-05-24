@@ -33,6 +33,7 @@ class EventTile extends StatelessWidget {
       case EventTypes.Reaction:
       case EventTypes.Redaction:
         return const SizedBox();
+      case EventTypes.Sticker:
       case EventTypes.Message:
         return RoomMessage(
           event: event,
