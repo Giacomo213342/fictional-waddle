@@ -26,6 +26,8 @@ class RoomController extends State<RoomPage> {
 
   bool loading = false;
 
+  final messageController = TextEditingController();
+
   Room get room => widget.room;
 
   @override
@@ -54,5 +56,15 @@ class RoomController extends State<RoomPage> {
     setState(() {
       loading = false;
     });
+  }
+
+  Future<void> sendMessage() async {
+    final message = messageController.text;
+    messageController.text = '';
+    try {
+      await room.sendTextEvent(message);
+    } catch (_) {
+      messageController.text = message;
+    }
   }
 }

@@ -78,6 +78,7 @@ class _PasswordLoginProviderState extends State<PasswordLoginProvider> {
                   keyboardType: TextInputType.name,
                   autofocus: true,
                   autocorrect: false,
+                  cursorWidth: 10,
                   validator: _mxidValidator,
                   inputFormatters: [
                     TextInputFormatter.withFunction(
@@ -101,6 +102,7 @@ class _PasswordLoginProviderState extends State<PasswordLoginProvider> {
                   keyboardType: TextInputType.emailAddress,
                   autofocus: true,
                   autocorrect: false,
+                  cursorWidth: 10,
                   validator: _mightBeMailValidator,
                   inputFormatters: [
                     TextInputFormatter.withFunction(
@@ -123,6 +125,7 @@ class _PasswordLoginProviderState extends State<PasswordLoginProvider> {
                   keyboardType: TextInputType.visiblePassword,
                   obscureText: !_showPassword,
                   autocorrect: false,
+                  cursorWidth: 10,
                   validator: _notEmptyValidator,
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context).password,

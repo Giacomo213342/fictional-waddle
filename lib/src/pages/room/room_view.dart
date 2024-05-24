@@ -15,12 +15,9 @@ class RoomView extends StatelessWidget {
   Widget build(BuildContext context) {
     return CallbackShortcuts(
       bindings: <ShortcutActivator, VoidCallback>{
-        // navigate keyboard focus back to the room
-        // list on backspace or arrow back
-        const SingleActivator(LogicalKeyboardKey.backspace):
+        const SingleActivator(LogicalKeyboardKey.arrowLeft, control: true):
             controller.focusBack,
-        const SingleActivator(LogicalKeyboardKey.arrowLeft):
-            controller.focusBack,
+        const SingleActivator(LogicalKeyboardKey.escape): controller.focusBack,
       },
       child: Focus(
         autofocus: true,

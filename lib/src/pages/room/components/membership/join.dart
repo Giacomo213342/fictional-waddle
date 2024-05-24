@@ -4,6 +4,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../widgets/ascii_progress_indicator.dart';
 import '../../room.dart';
+import '../event/compose/message_input.dart';
 import '../timeline.dart';
 
 class MembershipJoinView extends StatefulWidget {
@@ -38,11 +39,30 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
         child: AsciiProgressIndicator(),
       );
     }
-    return TimelineView(
-      controller: widget.controller,
-      room: widget.room,
-      timeline: timeline,
-      listKey: listKey,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final timelineSize = widget.room.canSendDefaultMessages
+            ? constraints.maxHeight - 80
+            : constraints.maxHeight;
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: timelineSize,
+              child: TimelineView(
+                controller: widget.controller,
+                room: widget.room,
+                timeline: timeline,
+                listKey: listKey,
+              ),
+            ),
+            if (widget.room.canSendDefaultMessages)
+              Expanded(
+                child: MessageInput(controller: widget.controller),
+              ),
+          ],
+        );
+      },
     );
   }
 
