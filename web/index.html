@@ -19,26 +19,10 @@
   <title>< polycule ></title>
   <link rel="manifest" href="manifest.json">
 
-  <script>
-    const serviceWorkerVersion = null;
-  </script>
-  <script src="flutter.js" defer></script>
+  <!-- This script initializes and starts the flutter app -->
+  <script src="flutter_bootstrap.js" async></script>
+  <!-- Include the OLM JS code -->
   <script src="js/olm/olm.js"></script>
 </head>
-<body>
-  <script>
-    window.addEventListener('load', function(ev) {
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        },
-        onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine().then(function(appRunner) {
-            appRunner.runApp();
-          });
-        }
-      });
-    });
-  </script>
-</body>
+<body></body>
 </html>
