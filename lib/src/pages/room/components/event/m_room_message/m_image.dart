@@ -15,7 +15,9 @@ class ImageMessage extends StatelessWidget {
       constraints: const BoxConstraints(maxHeight: 512, maxWidth: 512),
       child: FutureBuilder(
         key: ValueKey(event.attachmentMxcUrl),
-        future: event.downloadAndDecryptAttachment(),
+        future: event.downloadAndDecryptAttachment(
+          getThumbnail: true,
+        ),
         builder: (context, snapshot) {
           final data = snapshot.data;
           if (data == null) {
