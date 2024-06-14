@@ -25,8 +25,11 @@ class RoomMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isOwnMessage = event.senderId == client.userID;
-    final previousMessageSameSender = previousEvent?.senderId == event.senderId;
-    final nextMessageSameSender = nextEvent?.senderId == event.senderId;
+    final previousMessageSameSender = previousEvent?.senderId ==
+            event.senderId &&
+        [EventTypes.Message, EventTypes.Sticker].contains(previousEvent?.type);
+    final nextMessageSameSender = nextEvent?.senderId == event.senderId &&
+        [EventTypes.Message, EventTypes.Sticker].contains(nextEvent?.type);
     final showOtherSenderAvatar = !isOwnMessage && !previousMessageSameSender;
     final showOwnAvatar = isOwnMessage && !previousMessageSameSender;
     final border = BorderSide(
@@ -39,7 +42,14 @@ class RoomMessage extends StatelessWidget {
               element.type == EventTypes.Reaction &&
               element.relationshipEventId == event.eventId,
         )
-        .toList();
+        .map(
+          (event) =>
+              (event.content.tryGetMap<String, Object?>(
+                'm.relates_to',
+              )?['key'] as String?) ??
+              event.text,
+        )
+        .toSet();
 
     return Padding(
       padding: EdgeInsets.only(
@@ -89,10 +99,13 @@ class RoomMessage extends StatelessWidget {
                             width: constraints.maxWidth - 74,
                             child: RoomMessageContent(event: event),
                           ),
-                          Row(
-                            children: reactionEvents
-                                .map((e) => ReactionChip(event: e))
-                                .toList(),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: reactionEvents
+                                  .map((e) => ReactionChip(content: e))
+                                  .toList(),
+                            ),
                           ),
                         ],
                       ),

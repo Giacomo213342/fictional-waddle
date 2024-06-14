@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:matrix/matrix.dart';
-
 class ReactionChip extends StatelessWidget {
-  const ReactionChip({super.key, required this.event});
+  const ReactionChip({super.key, required this.content});
 
-  final Event event;
+  final String content;
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +17,7 @@ class ReactionChip extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
             horizontal: 2,
           ),
-          label: Text(
-            (event.content.tryGetMap<String, Object?>(
-                  'm.relates_to',
-                )?['key'] as String?) ??
-                event.text,
-          ),
+          label: Text(content),
         ),
       ),
     );
