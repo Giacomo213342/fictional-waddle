@@ -8,6 +8,7 @@ import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../widgets/matrix/avatar_builder/room_avatar.dart';
 import '../../room/room.dart';
 import '../room_list.dart';
+import 'room_list_trailing.dart';
 
 class RoomListTile extends StatelessWidget {
   const RoomListTile(this.controller, {super.key, required this.room});
@@ -27,7 +28,9 @@ class RoomListTile extends StatelessWidget {
       child: Link(
         uri: Uri.parse(path),
         builder: (context, followLink) {
+          final lastEvent = room.lastEvent;
           return ListTile(
+            visualDensity: VisualDensity.compact,
             // make the tle keyboard focusable by request
             focusNode: RoomListController.getFocusNode(room.id),
             onTap: () => context.go(path),
@@ -35,7 +38,22 @@ class RoomListTile extends StatelessWidget {
               room: room,
               dimension: 36,
             ),
-            title: Text(room.getLocalizedDisplayname()),
+            title: Text(
+              room.getLocalizedDisplayname(),
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: lastEvent == null
+                ? null
+                : Text(
+                    lastEvent.calcLocalizedBodyFallback(
+                      const MatrixDefaultLocalizations(),
+                      hideReply: true,
+                      hideEdit: true,
+                      withSenderNamePrefix: true,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+            trailing: RoomListTrailing(room: room),
           );
         },
       ),

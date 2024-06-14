@@ -5,6 +5,7 @@ import 'package:matrix/matrix.dart';
 import '../../../utils/matrix/is_display_event_extension.dart';
 import '../room.dart';
 import 'event/m_room_message.dart';
+import 'event/m_room_state.dart';
 
 class EventTile extends StatelessWidget {
   const EventTile({
@@ -41,6 +42,14 @@ class EventTile extends StatelessWidget {
           previousEvent: previousEvent,
           nextEvent: nextEvent,
         );
+      case EventTypes.RoomCreate:
+      case EventTypes.RoomPowerLevels:
+      case EventTypes.RoomJoinRules:
+      case EventTypes.HistoryVisibility:
+      case EventTypes.GuestAccess:
+      case EventTypes.Encryption:
+      case EventTypes.RoomMember:
+        return RoomState(event: event);
       default:
         return Text(event.type);
     }
