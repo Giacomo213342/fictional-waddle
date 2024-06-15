@@ -8,6 +8,7 @@ import 'package:matrix/encryption.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
 import '../../utils/matrix/matrix_state.dart';
+import '../../utils/runtime_suffix.dart';
 import '../fatal_error/fatal_error_page.dart';
 import '../room_list/room_list.dart';
 import 'components/ask_wipe_ssss_widget.dart';
@@ -186,8 +187,10 @@ class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
   Future<void> _storeCrossSigningKey() async {
     const storage = FlutterSecureStorage();
 
+    final suffix = getRuntimeSuffix();
+
     if (widget.passphrase != null) {
-      storage.delete(key: _ssssKeyStorage);
+      storage.delete(key: _ssssKeyStorage + suffix);
       return;
     }
 
@@ -196,6 +199,6 @@ class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
       return;
     }
 
-    await storage.write(key: _ssssKeyStorage, value: key);
+    await storage.write(key: _ssssKeyStorage + suffix, value: key);
   }
 }
