@@ -6,6 +6,7 @@ import 'package:matrix/matrix.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import '../../runtime_suffix.dart';
 import 'cipher.dart';
 import 'idb/stub.dart' if (dart.library.html) 'idb/web.dart';
 
@@ -26,11 +27,16 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(Client client) async {
 
   final cipher = await getDatabaseCipher();
 
-  final fileStoragePath = await getApplicationSupportDirectory();
-  final temporaryStorageDirectory = await getTemporaryDirectory();
-  final fileStorageLocation = Uri.file(temporaryStorageDirectory.path);
+  final suffix = getRuntimeSuffix();
 
-  final path = '${fileStoragePath.path}/${client.clientName}.sqlite';
+  final appDataDirectory = await getApplicationSupportDirectory();
+  final cacheDirectory = await getApplicationCacheDirectory();
+
+  final fileStorageLocation =
+      Uri.file('${cacheDirectory.path}/polycule$suffix/${client.clientName}');
+
+  final databasePath =
+      '${appDataDirectory.path}$suffix/${client.clientName}.sqlite';
 
   // fix dlopen for old Android
   await applyWorkaroundToOpenSqlCipherOnOldAndroidVersions();
@@ -43,7 +49,7 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(Client client) async {
   // initialize the encryption helper
   final helper = SQfLiteEncryptionHelper(
     factory: databaseFactory,
-    path: path,
+    path: databasePath,
     cipher: cipher,
   );
 
@@ -54,7 +60,7 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(Client client) async {
     await helper.ensureDatabaseFileEncrypted();
 
     database = await databaseFactory.openDatabase(
-      path,
+      databasePath,
       options: OpenDatabaseOptions(
         version: 1,
         // most important : apply encryption when opening the DB
@@ -62,13 +68,13 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(Client client) async {
       ),
     );
   } catch (e, s) {
-    final file = File(path);
+    final file = File(databasePath);
     if (await file.exists()) {
-      await file.copy('$path.broken');
+      await file.copy('$databasePath.broken');
       Logs()
           .wtf('Copied broken DB state for backup. Now reinitializing.', e, s);
     }
-    await databaseFactory.deleteDatabase(path).catchError((_) {});
+    await databaseFactory.deleteDatabase(databasePath).catchError((_) {});
 
     rethrow;
   }

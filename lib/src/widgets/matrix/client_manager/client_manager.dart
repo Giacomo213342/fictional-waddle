@@ -20,6 +20,7 @@ import '../../../pages/splash_screen/splash_screen.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../utils/matrix/database/polycule_database_builder.dart';
 import '../../../utils/matrix/uia_helper.dart';
+import '../../../utils/runtime_suffix.dart';
 import '../key_verification/key_verification_request_widget.dart';
 import '../uia_dialog.dart';
 import 'client_manager_view.dart';
@@ -87,6 +88,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
   Future<void>? waiForInitialization = _initializer.future;
 
+  final suffix = getRuntimeSuffix();
+
   @override
   void initState() {
     _loadClients();
@@ -121,7 +124,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     storageLock = Completer<void>();
 
     const storage = FlutterSecureStorage();
-    final json = await storage.read(key: _clientNamesKey);
+    final json = await storage.read(key: _clientNamesKey + suffix);
     if (json != null) {
       final identifiers = (jsonDecode(json) as Iterable).whereType<int>();
       for (final identifier in identifiers) {
@@ -345,7 +348,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     final clientIdentifiers =
         activeClients.map((e) => e.clientName.clientIdentifier);
     await storage.write(
-      key: _clientNamesKey,
+      key: _clientNamesKey + suffix,
       value: jsonEncode(clientIdentifiers.toList()),
     );
     storageLock?.complete();
@@ -387,7 +390,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     const storage = FlutterSecureStorage();
 
     final storedJson = await storage.read(
-      key: _clientNamesKey,
+      key: _clientNamesKey + suffix,
     );
 
     Set<int> identifiers = {};
@@ -399,7 +402,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       identifiers.add(identifier);
 
       await storage.write(
-        key: _clientNamesKey,
+        key: _clientNamesKey + suffix,
         value: jsonEncode(identifiers.toList()),
       );
     }
