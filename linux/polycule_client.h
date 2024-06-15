@@ -1,18 +1,18 @@
-#ifndef FLUTTER_MY_APPLICATION_H_
-#define FLUTTER_MY_APPLICATION_H_
+#ifndef FLUTTER_POLYCULE_CLIENT_H_
+#define FLUTTER_POLYCULE_CLIENT_H_
 
 #include <gtk/gtk.h>
 
-G_DECLARE_FINAL_TYPE(MyApplication, my_application, MY, APPLICATION,
+G_DECLARE_FINAL_TYPE(PolyculeClient, polycule_client, POLYCULE, CLIENT,
                      GtkApplication)
 
 /**
- * my_application_new:
+ * polycule_client_new:
  *
  * Creates a new Flutter-based application.
  *
- * Returns: a new #MyApplication.
+ * Returns: a new #PolyculeClient.
  */
-MyApplication* my_application_new();
+PolyculeClient* polycule_client_new();
 
-#endif  // FLUTTER_MY_APPLICATION_H_
+#endif  // FLUTTER_POLYCULE_CLIENT_H_
