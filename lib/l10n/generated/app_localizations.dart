@@ -636,6 +636,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Send'**
   String get send;
+
+  /// No description provided for @typeGroupImages.
+  ///
+  /// In en, this message translates to:
+  /// **'Images'**
+  String get typeGroupImages;
+
+  /// No description provided for @typeGroupVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get typeGroupVideos;
+
+  /// No description provided for @typeGroupAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get typeGroupAudio;
+
+  /// No description provided for @typeGroupFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'All files'**
+  String get typeGroupFiles;
+
+  /// No description provided for @msgTypeText.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a regular text message.'**
+  String get msgTypeText;
+
+  /// No description provided for @msgTypeEmote.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your mood.'**
+  String get msgTypeEmote;
+
+  /// No description provided for @msgTypeNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Send an informative message bots cannot reply to.'**
+  String get msgTypeNotice;
+
+  /// No description provided for @msgTypeImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Send an image file.'**
+  String get msgTypeImage;
+
+  /// No description provided for @msgTypeVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a video file.'**
+  String get msgTypeVideo;
+
+  /// No description provided for @msgTypeAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Send an audio file.'**
+  String get msgTypeAudio;
+
+  /// No description provided for @msgTypeFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a file.'**
+  String get msgTypeFile;
+
+  /// No description provided for @msgTypeLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your location.'**
+  String get msgTypeLocation;
+
+  /// No description provided for @msgTypeSticker.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a sticker.'**
+  String get msgTypeSticker;
+
+  /// No description provided for @msgTypeBadEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'Annoy your peer with a message they cannot decrypt.'**
+  String get msgTypeBadEncrypted;
+
+  /// No description provided for @msgTypeNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Send no message.'**
+  String get msgTypeNone;
+
+  /// No description provided for @filesSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{files, plural, =0{No files} =1{One file} other{{files} files}} selected. Sending files is not supported yet.}'**
+  String filesSelected(int files);
 }
 
 class _AppLocalizationsDelegate

@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
+import '../../utils/file_selector.dart';
 import '../room_list/room_list.dart';
 import 'room_view.dart';
 
@@ -27,8 +30,23 @@ class RoomController extends State<RoomPage> {
   bool loading = false;
 
   final messageController = TextEditingController();
+  final msgtypeController = TextEditingController(text: MessageTypes.Text);
+
+  String sendMsgType = MessageTypes.Text;
 
   Room get room => widget.room;
+
+  @override
+  void initState() {
+    messageController.addListener(_adjustMessageType);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    messageController.removeListener(_adjustMessageType);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => RoomView(this);
@@ -47,7 +65,9 @@ class RoomController extends State<RoomPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context).youCannotJoinThisRoom),
+            content: Text(
+              AppLocalizations.of(context).youCannotJoinThisRoom,
+            ),
           ),
         );
       }
@@ -60,11 +80,68 @@ class RoomController extends State<RoomPage> {
 
   Future<void> sendMessage() async {
     final message = messageController.text;
+    final msgType = sendMsgType;
     messageController.text = '';
+    setState(() {
+      sendMsgType = MessageTypes.Text;
+    });
     try {
       await room.sendTextEvent(message);
     } catch (_) {
+      setState(() {
+        sendMsgType = msgType;
+      });
       messageController.text = message;
+    }
+  }
+
+  void setSendMsgType([String? msgType]) {
+    setState(() {
+      sendMsgType = msgType ?? MessageTypes.Text;
+    });
+    switch (sendMsgType) {
+      case MessageTypes.Emote:
+        if (!messageController.text.startsWith('/me')) {
+          messageController.value = messageController.value.replaced(
+            const TextRange(start: 0, end: 0),
+            '/me ',
+          );
+        }
+        break;
+      case MessageTypes.Text:
+      case MessageTypes.Notice:
+        if (messageController.text.startsWith('/me')) {
+          messageController.value = messageController.value.replaced(
+            TextRange(start: 0, end: min(4, messageController.text.length)),
+            '',
+          );
+        }
+        break;
+    }
+    msgtypeController.text = sendMsgType;
+  }
+
+  Future<void> sendFile(String? msgType) async {
+    final selector = FileSelector(msgType);
+    final files = await selector.selectAndPreviewFile(context);
+    if (!mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context).filesSelected(files.length)),
+      ),
+    );
+    setSendMsgType();
+  }
+
+  void _adjustMessageType() {
+    if (messageController.text.startsWith('/me') &&
+        sendMsgType != MessageTypes.Emote) {
+      setSendMsgType(MessageTypes.Emote);
+    } else if (sendMsgType == MessageTypes.Emote &&
+        !messageController.text.startsWith('/me')) {
+      setSendMsgType(MessageTypes.Text);
     }
   }
 }

@@ -327,4 +327,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get send => 'Send';
+
+  @override
+  String get typeGroupImages => 'Images';
+
+  @override
+  String get typeGroupVideos => 'Videos';
+
+  @override
+  String get typeGroupAudio => 'Audio';
+
+  @override
+  String get typeGroupFiles => 'All files';
+
+  @override
+  String get msgTypeText => 'Send a regular text message.';
+
+  @override
+  String get msgTypeEmote => 'Describe your mood.';
+
+  @override
+  String get msgTypeNotice =>
+      'Send an informative message bots cannot reply to.';
+
+  @override
+  String get msgTypeImage => 'Send an image file.';
+
+  @override
+  String get msgTypeVideo => 'Send a video file.';
+
+  @override
+  String get msgTypeAudio => 'Send an audio file.';
+
+  @override
+  String get msgTypeFile => 'Send a file.';
+
+  @override
+  String get msgTypeLocation => 'Share your location.';
+
+  @override
+  String get msgTypeSticker => 'Send a sticker.';
+
+  @override
+  String get msgTypeBadEncrypted =>
+      'Annoy your peer with a message they cannot decrypt.';
+
+  @override
+  String get msgTypeNone => 'Send no message.';
+
+  @override
+  String filesSelected(int files) {
+    String _temp0 = intl.Intl.pluralLogic(
+      files,
+      locale: localeName,
+      other: '$files files',
+      one: 'One file',
+      zero: 'No files',
+    );
+    return '$_temp0 selected. Sending files is not supported yet.';
+  }
 }
