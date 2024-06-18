@@ -19,7 +19,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appSlogan =>
-      'A simple and beautiful matrix client written in Flutter.';
+      'A geeky and efficient [matrix] client for power users.';
 
   @override
   String get repoLabel => 'Source code (GitLab)';

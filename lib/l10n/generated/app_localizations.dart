@@ -112,7 +112,7 @@ abstract class AppLocalizations {
   /// No description provided for @appSlogan.
   ///
   /// In en, this message translates to:
-  /// **'A simple and beautiful matrix client written in Flutter.'**
+  /// **'A geeky and efficient [matrix] client for power users.'**
   String get appSlogan;
 
   /// No description provided for @repoLabel.

@@ -15,34 +15,32 @@
         https://gitlab.com/polycule_client/polycule/-/raw/main/assets/logo/logo-circle.png
     </icon>
 
-    <summary>
+    <summary xml:lang="en">
         A geeky and efficient [matrix] client for power users.
     </summary>
 
     <description>
-        <p>
-            <strong>Is it usable yet ? - No. Absolutely not.</strong>
+        <p xml:lang="en">
+            <em>Is it usable yet ? - No. Absolutely not.</em>
         </p>
-        <p>
-            As of now, it's nothing than a fancy homeserver picker - though much more stuff already happening in
-            background.
-        </p>
-        <p>
+        <p xml:lang="en">
             Beep boop and I had too much time during boring work meetings. Using this client as
             a small piece to practice some matrix related stuff.
         </p>
-        <p>
+        <p xml:lang="en">
             I'm especially considering to experiment with Sliding Sync and Flutter Linux-native integrations.
         </p>
-        <strong>
-            Features
-        </strong>
+        <p xml:lang="en">
+            <em>
+                Features
+            </em>
+        </p>
         <ul>
-            <li>keyboard optimized</li>
-            <li>no matrix.org !</li>
-            <li>fast and efficient</li>
-            <li>terminal style design</li>
-            <li>cross-platform</li>
+            <li xml:lang="en">keyboard optimized</li>
+            <li xml:lang="en">no matrix.org !</li>
+            <li xml:lang="en">fast and efficient</li>
+            <li xml:lang="en">terminal style design</li>
+            <li xml:lang="en">cross-platform</li>
         </ul>
     </description>
 

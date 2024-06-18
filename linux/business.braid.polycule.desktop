@@ -3,6 +3,7 @@ Type=Application
 
 Name=< polycule >
 Comment=A geeky and efficient [matrix] client for power users.
+Comment[en]=A geeky and efficient [matrix] client for power users.
 Keywords=matrix;chat;element
 
 Exec=polycule %u
