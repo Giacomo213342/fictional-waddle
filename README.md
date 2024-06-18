@@ -41,27 +41,27 @@ might be quite similar in both clients - they both have a similar code base we k
 
 | Feature                   |             Supported             |
 |---------------------------|:---------------------------------:|
-| Homeserver selection      |        :check_mark_button:        |
-| Homeserver proposals      |        :check_mark_button:        |
+| Homeserver selection      |        :white_check_mark:         |
+| Homeserver proposals      |        :white_check_mark:         |
 | Login                     |                                   |
-| ... password              |        :check_mark_button:        |
-| ... SSO                   |        :cross_mark_button:        |
-| ... native OIDC ready     |        :cross_mark_button:        |
+| ... password              |        :white_check_mark:         |
+| ... SSO                   |   :negative_squared_cross_mark:   |
+| ... native OIDC ready     |   :negative_squared_cross_mark:   |
 | Multi account             |                                   |
-| ... routing               |        :check_mark_button:        |
-| ... login                 |        :check_mark_button:        |
-| ... incoming URI handling |        :cross_mark_button:        |
+| ... routing               |        :white_check_mark:         |
+| ... login                 |        :white_check_mark:         |
+| ... incoming URI handling |   :negative_squared_cross_mark:   |
 | Room list                 | :record_button: - bad performance |
 | Room timeline             | :record_button: - bad performance |
-| Sliding sync              |        :cross_mark_button:        |
-| Sending files             |        :cross_mark_button:        |
+| Sliding sync              |   :negative_squared_cross_mark:   |
+| Sending files             |   :negative_squared_cross_mark:   |
 | HTML renderer             |   :record_button: - early state   |
-| User profile              |        :cross_mark_button:        |
-| Room details              |        :cross_mark_button:        |
-| Account settings          |        :cross_mark_button:        |
-| \[matrix\] widgets        |        :cross_mark_button:        |
-| VoIP signaling            |        :cross_mark_button:        |
-| Emoji picker              |        :cross_mark_button:        |
+| User profile              |   :negative_squared_cross_mark:   |
+| Room details              |   :negative_squared_cross_mark:   |
+| Account settings          |   :negative_squared_cross_mark:   |
+| \[matrix\] widgets        |   :negative_squared_cross_mark:   |
+| VoIP signaling            |   :negative_squared_cross_mark:   |
+| Emoji picker              |   :negative_squared_cross_mark:   |
 
 *Can you daily drive it ?* - Yes, I do.
 
