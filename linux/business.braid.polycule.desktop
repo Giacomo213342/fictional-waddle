@@ -2,7 +2,7 @@
 Type=Application
 
 Name=< polycule >
-Comment=A simple and beautiful matrix client written in Flutter.
+Comment=A geeky and efficient [matrix] client for power users.
 Keywords=matrix;chat;element
 
 Exec=polycule %u
