@@ -10,8 +10,10 @@ environment:
 dependencies:
   animations: ^2.0.11
   blurhash_dart: ^1.2.1
+  cross_file: ^0.3.4+1
   diacritic: ^0.1.5
   dynamic_color: ^1.6.9
+  file_selector: ^1.0.3
   flutter:
     sdk: flutter
   flutter_html: ^3.0.0-beta.2

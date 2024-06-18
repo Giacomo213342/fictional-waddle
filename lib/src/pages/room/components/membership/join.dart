@@ -39,30 +39,21 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
         child: AsciiProgressIndicator(),
       );
     }
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final timelineSize = widget.room.canSendDefaultMessages
-            ? constraints.maxHeight - 80
-            : constraints.maxHeight;
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: timelineSize,
-              child: TimelineView(
-                controller: widget.controller,
-                room: widget.room,
-                timeline: timeline,
-                listKey: listKey,
-              ),
-            ),
-            if (widget.room.canSendDefaultMessages)
-              Expanded(
-                child: MessageInput(controller: widget.controller),
-              ),
-          ],
-        );
-      },
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: TimelineView(
+            controller: widget.controller,
+            room: widget.room,
+            timeline: timeline,
+            listKey: listKey,
+          ),
+        ),
+        if (widget.room.canSendDefaultMessages)
+          MessageInput(controller: widget.controller),
+      ],
     );
   }
 

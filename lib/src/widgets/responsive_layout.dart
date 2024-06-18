@@ -24,7 +24,7 @@ class ResponsiveLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
         builder: (context, constraints) {
-          if (constraints.maxWidth > 960) {
+          if (constraints.maxWidth > 950) {
             return Row(
               children: [
                 SizedBox(

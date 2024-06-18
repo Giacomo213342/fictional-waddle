@@ -192,5 +192,28 @@
   "regionAccountSwitcher": "Screen region: Account switcher.",
   "regionChatContents": "Screen region: Chat content.",
   "loadingHomeservers": "Loading homeservers. Progress unknown. Please wait.",
-  "send": "Send"
+  "send": "Send",
+  "typeGroupImages": "Images",
+  "typeGroupVideos": "Videos",
+  "typeGroupAudio": "Audio",
+  "typeGroupFiles": "All files",
+  "msgTypeText": "Send a regular text message.",
+  "msgTypeEmote": "Describe your mood.",
+  "msgTypeNotice": "Send an informative message bots cannot reply to.",
+  "msgTypeImage": "Send an image file.",
+  "msgTypeVideo": "Send a video file.",
+  "msgTypeAudio": "Send an audio file.",
+  "msgTypeFile": "Send a file.",
+  "msgTypeLocation": "Share your location.",
+  "msgTypeSticker": "Send a sticker.",
+  "msgTypeBadEncrypted": "Annoy your peer with a message they cannot decrypt.",
+  "msgTypeNone": "Send no message.",
+  "filesSelected": "{files, plural, =0{No files} =1{One file} other{{files} files}} selected. Sending files is not supported yet.}",
+  "@filesSelected": {
+    "placeholders": {
+      "files": {
+        "type": "int"
+      }
+    }
+  }
 }

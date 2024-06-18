@@ -29,14 +29,19 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(Client client) async {
 
   final suffix = getRuntimeSuffix();
 
-  final appDataDirectory = await getApplicationSupportDirectory();
-  final cacheDirectory = await getApplicationCacheDirectory();
+  final applicationCacheDirectory = await getApplicationCacheDirectory();
+  final cacheDirectory = Directory(
+    '${applicationCacheDirectory.path}$suffix/${client.clientName}',
+  );
+  if (!await cacheDirectory.exists()) {
+    await cacheDirectory.create(recursive: true);
+  }
 
-  final fileStorageLocation =
-      Uri.file('${cacheDirectory.path}/polycule$suffix/${client.clientName}');
+  final fileStorageLocation = Uri.file(cacheDirectory.path);
+  final persistentAppDataDirectory = await getApplicationSupportDirectory();
 
   final databasePath =
-      '${appDataDirectory.path}$suffix/${client.clientName}.sqlite';
+      '${persistentAppDataDirectory.path}$suffix/${client.clientName}.sqlite';
 
   // fix dlopen for old Android
   await applyWorkaroundToOpenSqlCipherOnOldAndroidVersions();
