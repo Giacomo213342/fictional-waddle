@@ -215,5 +215,8 @@
         "type": "int"
       }
     }
-  }
+  },
+  "yesterday": "Yesterday",
+  "thisMonth": "This month",
+  "lastMonth": "Last month"
 }

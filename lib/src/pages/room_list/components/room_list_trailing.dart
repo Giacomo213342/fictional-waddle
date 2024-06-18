@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:intl/intl.dart';
 import 'package:matrix/matrix.dart';
+
+import '../../../widgets/human_date.dart';
 
 class RoomListTrailing extends StatelessWidget {
   const RoomListTrailing({
@@ -31,10 +32,7 @@ class RoomListTrailing extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             if (lastEvent != null)
-              Text(
-                DateFormat(DateFormat.HOUR24_MINUTE)
-                    .format(lastEvent.originServerTs),
-              ),
+              Text(lastEvent.originServerTs.humanShortDate(context: context)),
             Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

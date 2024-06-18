@@ -386,4 +386,13 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0 selected. Sending files is not supported yet.';
   }
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get thisMonth => 'This month';
+
+  @override
+  String get lastMonth => 'Last month';
 }

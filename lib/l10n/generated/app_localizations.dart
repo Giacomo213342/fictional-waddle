@@ -732,6 +732,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{files, plural, =0{No files} =1{One file} other{{files} files}} selected. Sending files is not supported yet.}'**
   String filesSelected(int files);
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get thisMonth;
+
+  /// No description provided for @lastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Last month'**
+  String get lastMonth;
 }
 
 class _AppLocalizationsDelegate
