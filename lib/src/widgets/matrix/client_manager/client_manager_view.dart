@@ -15,7 +15,7 @@ class ClientManagerView extends StatelessWidget {
     return Material(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final tabBarOnTop = constraints.maxWidth > 950;
+          final tabBarOnTop = constraints.maxWidth > 764;
           return Column(
             children: [
               if (tabBarOnTop) ClientTabBar(manager),
