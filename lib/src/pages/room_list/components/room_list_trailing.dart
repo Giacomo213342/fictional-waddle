@@ -17,10 +17,9 @@ class RoomListTrailing extends StatelessWidget {
     final lastEvent = room.lastEvent;
     final color = Theme.of(context).colorScheme.tertiary;
     return DefaultTextStyle(
-      style: TextStyle(
-        fontSize: 12,
-        color: color,
-      ),
+      style: Theme.of(context).textTheme.labelMedium!.copyWith(
+            color: color,
+          ),
       child: IconTheme(
         data: IconThemeData(
           size: 12,
@@ -32,7 +31,12 @@ class RoomListTrailing extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             if (lastEvent != null)
-              Text(lastEvent.originServerTs.humanShortDate(context: context)),
+              Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Text(
+                  lastEvent.originServerTs.humanShortDate(context: context),
+                ),
+              ),
             Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

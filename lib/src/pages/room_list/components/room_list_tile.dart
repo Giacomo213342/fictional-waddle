@@ -56,13 +56,17 @@ class RoomListTileState extends State<RoomListTile> {
             subtitle: lastEvent == null
                 ? null
                 : Text(
-                    lastEvent.calcLocalizedBodyFallback(
-                      const MatrixDefaultLocalizations(),
-                      hideReply: true,
-                      hideEdit: true,
-                      withSenderNamePrefix: true,
-                    ),
+                    lastEvent
+                        .calcLocalizedBodyFallback(
+                          const MatrixDefaultLocalizations(),
+                          hideReply: true,
+                          hideEdit: true,
+                          withSenderNamePrefix: true,
+                        )
+                        // unicode bullet
+                        .replaceAll('\n', ' \u2022 '),
                     overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
             trailing: RoomListTrailing(room: room),
           );
