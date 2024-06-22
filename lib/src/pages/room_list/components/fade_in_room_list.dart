@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../room_list.dart';
-import 'room_list_tile.dart';
+import 'sliding_sync_proxy.dart';
 
 class FadeInRoomList extends StatefulWidget {
   const FadeInRoomList(this.controller, {super.key});
@@ -23,7 +23,6 @@ class _FadeInRoomListState extends State<FadeInRoomList>
 
   @override
   Widget build(BuildContext context) {
-    final rooms = widget.controller.client.rooms;
     final animation = makeAnimation();
 
     return AnimatedBuilder(
@@ -32,13 +31,7 @@ class _FadeInRoomListState extends State<FadeInRoomList>
         opacity: .5 + (animation.value - .5).abs(),
         child: child,
       ),
-      child: ListView.builder(
-        itemBuilder: (context, index) => RoomListTile(
-          widget.controller,
-          room: rooms[index],
-        ),
-        itemCount: rooms.length,
-      ),
+      child: SlidingSyncProxy(controller: widget.controller),
     );
   }
 

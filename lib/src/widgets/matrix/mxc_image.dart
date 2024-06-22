@@ -39,6 +39,7 @@ class MxcImage extends StatelessWidget {
         return Image.memory(
           key: ValueKey(downloadUri),
           bytes,
+          gaplessPlayback: true,
           fit: BoxFit.cover,
           width: width,
           height: height,

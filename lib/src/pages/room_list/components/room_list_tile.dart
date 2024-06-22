@@ -10,11 +10,21 @@ import '../../room/room.dart';
 import '../room_list.dart';
 import 'room_list_trailing.dart';
 
-class RoomListTile extends StatelessWidget {
+class RoomListTile extends StatefulWidget {
   const RoomListTile(this.controller, {super.key, required this.room});
 
   final Room room;
   final RoomListController controller;
+
+  @override
+  State<RoomListTile> createState() => RoomListTileState();
+}
+
+class RoomListTileState extends State<RoomListTile> {
+  Room? updatedRoom;
+
+  // this is a bit more efficient than always iterating over the room list
+  Room get room => updatedRoom ?? widget.room;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +45,7 @@ class RoomListTile extends StatelessWidget {
             focusNode: RoomListController.getFocusNode(room.id),
             onTap: () => context.go(path),
             leading: RoomAvatar(
+              key: ValueKey(room.id),
               room: room,
               dimension: 36,
             ),
@@ -58,5 +69,15 @@ class RoomListTile extends StatelessWidget {
         },
       ),
     );
+  }
+
+  void rebuildRoomData() {
+    final newRoom = widget.controller.client.rooms.singleWhere(
+      (room) => room.id == widget.room.id,
+    );
+
+    setState(() {
+      updatedRoom = newRoom;
+    });
   }
 }

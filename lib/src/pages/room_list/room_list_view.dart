@@ -15,35 +15,34 @@ class RoomListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<SyncUpdate>(
-      stream: controller.client.onSync.stream,
-      builder: (context, snapshot) {
-        return Scaffold(
-          appBar: AppBar(
-            title: FutureBuilder<String?>(
-              future: Future.value(),
-              builder: (context, snapshot) {
-                return Text(
-                  AppLocalizations.of(context)
-                      .hajUser(controller.client.userID),
-                );
-              },
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: FutureBuilder<String?>(
+          future: Future.value(),
+          builder: (context, snapshot) {
+            return Text(
+              AppLocalizations.of(context).hajUser(controller.client.userID),
+            );
+          },
+        ),
+      ),
+      body: Column(
+        children: [
+          InitialSyncTile(client: controller.client),
+          Expanded(
+            child: FadeInRoomList(controller),
           ),
-          body: Column(
-            children: [
-              InitialSyncTile(client: controller.client),
-              Expanded(
-                child: FadeInRoomList(controller),
-              ),
-              SyncUpdateStatusRow(
+          StreamBuilder<SyncUpdate>(
+            stream: controller.client.onSync.stream,
+            builder: (context, snapshot) {
+              return SyncUpdateStatusRow(
                 syncUpdate: snapshot.data,
                 timestamp: DateTime.now(),
-              ),
-            ],
+              );
+            },
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }
