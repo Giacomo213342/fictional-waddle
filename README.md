@@ -51,7 +51,7 @@ might be quite similar in both clients - they both have a similar code base we k
 | ... routing               |        :white_check_mark:         |
 | ... login                 |        :white_check_mark:         |
 | ... incoming URI handling |   :negative_squared_cross_mark:   |
-| Room list                 | :record_button: - bad performance |
+| Room list                 |        :white_check_mark:         |
 | Room timeline             | :record_button: - bad performance |
 | Sliding sync              |   :negative_squared_cross_mark:   |
 | Sending files             |   :negative_squared_cross_mark:   |

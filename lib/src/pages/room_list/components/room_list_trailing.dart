@@ -39,7 +39,8 @@ class RoomListTrailing extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.baseline,
               textBaseline: TextBaseline.ideographic,
               children: [
-                if (room.isUnreadOrInvited) const Icon(Icons.alternate_email),
+                if (room.isUnreadOrInvited)
+                  const Icon(Icons.fiber_manual_record),
                 if (room.isFavourite) const Icon(Icons.favorite),
               ]
                   .map(
