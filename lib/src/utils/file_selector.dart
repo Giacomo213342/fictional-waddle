@@ -14,7 +14,7 @@ class FileSelector {
   final String? msgType;
 
   Future<List<XFile>> selectAndPreviewFile(BuildContext context) async {
-    final useUTI = !kIsWeb && Platform.isIOS || Platform.isMacOS;
+    final useUTI = kIsWeb ? false : Platform.isIOS || Platform.isMacOS;
 
     final xTypeGroups = <XTypeGroup>[
       XTypeGroup(
