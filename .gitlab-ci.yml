@@ -33,6 +33,45 @@ test:codestyle:
     - dart format lib test web --set-exit-if-changed
     - dart run import_sorter:main --exit-if-changed
 
+build:macos_debug:
+  stage: build
+  script:
+    - flutter pub get
+    - flutter gen-l10n
+    - flutter build macos --debug --build-number $CI_PIPELINE_ID
+    - mv build/macos/Build/Products/Debug/polycule.app polycule-$VERSION-debug.app
+  except:
+    - main
+    - tags
+  tags:
+    - macos
+    - nix-shell
+  artifacts:
+    paths:
+      - polycule-*.app
+
+build:macos_release:
+  stage: build
+  script:
+    - flutter pub get
+    - flutter gen-l10n
+    # only increment build number on branches
+    - if [ -z "$CI_COMMIT_TAG" ]; then
+        flutter build macos --build-number $CI_PIPELINE_ID --dart-define=POLYCULE_VERSION="$(git describe --always)";
+      else
+        flutter build macos --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
+      fi
+    - mv build/macos/Build/Products/Release/polycule.app polycule-$VERSION.app
+  only:
+    - main
+    - tags
+  tags:
+    - macos
+    - nix-shell
+  artifacts:
+    paths:
+      - polycule-*.app
+
 build:apk_debug:
   image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-android
   stage: build
