@@ -28,17 +28,17 @@ cache:
 .test:
   stage: test
   except:
-    - manual
+    - schedules
 
 .build:
   stage: build
   except:
-    - manual
+    - schedules
 
 .deploy:
   stage: deploy
   except:
-    - manual
+    - schedules
 
 test:codestyle:
   extends: .test
