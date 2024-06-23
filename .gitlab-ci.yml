@@ -1,6 +1,13 @@
 variables:
   FLUTTER_VERSION: 3.22.2
 
+include:
+  - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.16.1
+    inputs:
+      gitlab_access_token: $dependabot_gitlab_access_token
+    rules:
+      - if: $PACKAGE_MANAGER_SET
+
 image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-base
 
 before_script:
