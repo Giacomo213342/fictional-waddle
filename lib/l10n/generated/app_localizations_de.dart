@@ -10,7 +10,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get appName => '< polycule >';
 
   @override
-  String get about => 'About';
+  String get about => 'Info';
 
   @override
   String author(String author) {
