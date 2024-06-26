@@ -1,9 +1,9 @@
 {
-  "appName": "",
+  "appName": "< polycule >",
   "@appName": {},
-  "about": "",
+  "about": "Om",
   "@about": {},
-  "author": "",
+  "author": "Utviklet av {author}",
   "@author": {
     "placeholders": {
       "author": {
@@ -11,33 +11,33 @@
       }
     }
   },
-  "appSlogan": "",
+  "appSlogan": "En nerdete og effektiv [matrix]-klient for superbrukere.",
   "@appSlogan": {},
-  "repoLabel": "",
+  "repoLabel": "Kildekode (GitLab)",
   "@repoLabel": {},
-  "releaseNotes": "",
+  "releaseNotes": "Utgivelsesnotater",
   "@releaseNotes": {},
-  "buyMeACoffee": "",
+  "buyMeACoffee": "Spander drikke",
   "@buyMeACoffee": {},
-  "homeserverHeadline": "",
+  "homeserverHeadline": "Heihei. Velkommen til < polycule >",
   "@homeserverHeadline": {
     "description": "Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'."
   },
-  "aMatrixClient": "",
+  "aMatrixClient": "- enda en [matrix]-klient",
   "@aMatrixClient": {},
-  "connectToHomeserver": "",
+  "connectToHomeserver": "Koble til din hjemmetjener",
   "@connectToHomeserver": {},
-  "discoverHomeservers": "",
+  "discoverHomeservers": "Oppdag nye hjemmetjenere",
   "@discoverHomeservers": {},
-  "newToMatrixLong": "",
+  "newToMatrixLong": "Finn passende hjemmetjenere i [matrix]-universet. Dette kobler til joinmatrix.org.",
   "@newToMatrixLong": {},
-  "connect": "",
+  "connect": "Koble til",
   "@connect": {},
-  "homeserverNotValid": "",
+  "homeserverNotValid": "Angi en gyldig hjemmetjener.",
   "@homeserverNotValid": {},
-  "pleaseProvideHomeserver": "",
+  "pleaseProvideHomeserver": "Angi en hjemmetjener.",
   "@pleaseProvideHomeserver": {},
-  "errorConnectingToHomeserver": "",
+  "errorConnectingToHomeserver": "Kunne ikke koble til {homeserver}-hjemmetjeneren. Sjekk hva du valgte.",
   "@errorConnectingToHomeserver": {
     "placeholders": {
       "homeserver": {
@@ -45,7 +45,7 @@
       }
     }
   },
-  "connectingToHomeserver": "",
+  "connectingToHomeserver": "Kobler til {homeserver} …",
   "@connectingToHomeserver": {
     "placeholders": {
       "homeserver": {
@@ -53,7 +53,7 @@
       }
     }
   },
-  "welcomeToHomeserver": "",
+  "welcomeToHomeserver": "Velkommen til {homeserver}.",
   "@welcomeToHomeserver": {
     "placeholders": {
       "homeserver": {
@@ -61,27 +61,27 @@
       }
     }
   },
-  "howWouldYouLikeToConnect": "",
+  "howWouldYouLikeToConnect": "Hvordan ønsker du å koble til?",
   "@howWouldYouLikeToConnect": {},
-  "loginPassword": "",
+  "loginPassword": "Logg inn med passord",
   "@loginPassword": {},
-  "username": "",
+  "username": "brukernavn",
   "@username": {},
-  "email": "",
+  "email": "e-post",
   "@email": {},
-  "password": "",
+  "password": "passord",
   "@password": {},
-  "pleaseProvideEmail": "",
+  "pleaseProvideEmail": "Angi din e-postadresse.",
   "@pleaseProvideEmail": {},
-  "pleaseProvidePassword": "",
+  "pleaseProvidePassword": "Skriv inn passordet ditt.",
   "@pleaseProvidePassword": {},
-  "pleaseProvideUsername": "",
+  "pleaseProvideUsername": "Skriv inn brukernavnet ditt.",
   "@pleaseProvideUsername": {},
-  "emailMinimals": "",
+  "emailMinimals": "E-postadressen din må inneholde et brukernavn, et «@»-symbol, og domenet ditt.",
   "@emailMinimals": {},
-  "mxidSyntax": "",
+  "mxidSyntax": "Tillatte tegn: a-z, 0–9 og symbolene «., _, =, -, /,+»",
   "@mxidSyntax": {},
-  "clientDisplayName": "",
+  "clientDisplayName": "< polycule > på {platform}",
   "@clientDisplayName": {
     "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
     "placeholders": {
@@ -91,11 +91,11 @@
       }
     }
   },
-  "platformWeb": "",
+  "platformWeb": "veven",
   "@platformWeb": {},
-  "loginError": "",
+  "loginError": "Kunne ikke logge inn. Sjekk identitetsdetaljene dine.",
   "@loginError": {},
-  "loginErrorMessage": "",
+  "loginErrorMessage": "Kunne ikke logge inn: {message}",
   "@loginErrorMessage": {
     "placeholders": {
       "message": {
@@ -103,7 +103,7 @@
       }
     }
   },
-  "hajUser": "",
+  "hajUser": "Heihei {localpart}.",
   "@hajUser": {
     "placeholders": {
       "localpart": {
@@ -111,15 +111,15 @@
       }
     }
   },
-  "syncInProgress": "",
+  "syncInProgress": "Synkroniserer …",
   "@syncInProgress": {},
-  "initialSync": "",
+  "initialSync": "Opprinnelig synkronisering …",
   "@initialSync": {},
-  "syncOffline": "",
+  "syncOffline": "Synkronisering forstyrret",
   "@syncOffline": {},
-  "syncFunctional": "",
+  "syncFunctional": "Synkronisert",
   "@syncFunctional": {},
-  "lastSyncReceived": "",
+  "lastSyncReceived": "Siste synkronisering: {timestamp} ({duration} ms)",
   "@lastSyncReceived": {
     "placeholders": {
       "timestamp": {
@@ -131,9 +131,9 @@
       }
     }
   },
-  "authenticationRequired": "",
+  "authenticationRequired": "Identitetsbekreftelse påkrevd",
   "@authenticationRequired": {},
-  "authenticateForAccount": "",
+  "authenticateForAccount": "Bekreft din identitet med detaljene tilhørende {mxid}.",
   "@authenticateForAccount": {
     "placeholders": {
       "mxid": {
@@ -141,41 +141,41 @@
       }
     }
   },
-  "passphraseNotEmpty": "",
+  "passphraseNotEmpty": "Du må skrive inn et passord",
   "@passphraseNotEmpty": {},
-  "cancel": "",
+  "cancel": "Avbryt",
   "@cancel": {},
-  "noMatch": "",
+  "noMatch": "Samsvarer ikke",
   "@noMatch": {},
-  "keysMatch": "",
+  "keysMatch": "Samsvarer",
   "@keysMatch": {},
-  "wipeAccount": "",
+  "wipeAccount": "Slett konto",
   "@wipeAccount": {},
-  "wipeAccountWarning": "",
+  "wipeAccountWarning": "Har du mistet enheten din kan du tømme og tilbakestille kontoen din. Alle meldinger og sludringer vil gå tapt.",
   "@wipeAccountWarning": {},
-  "deleteAll": "",
+  "deleteAll": "Slett alt",
   "@deleteAll": {},
-  "previous": "",
+  "previous": "Forrige",
   "@previous": {},
-  "next": "",
+  "next": "Neste",
   "@next": {},
-  "connectPreviousDevice": "",
+  "connectPreviousDevice": "Koble til forrige enhet",
   "@connectPreviousDevice": {},
-  "connectPreviousDeviceLong": "",
+  "connectPreviousDeviceLong": "Bekreft eksisterende enhet.",
   "@connectPreviousDeviceLong": {},
-  "deviceNotAvailable": "",
+  "deviceNotAvailable": "Jeg har ikke tilgang til enheten min.",
   "@deviceNotAvailable": {},
-  "compareSasNumbers": "",
+  "compareSasNumbers": "Sammenlign sikkerhetsnummer",
   "@compareSasNumbers": {},
-  "compareSasExplanation": "",
+  "compareSasExplanation": "Sjekk at nummerne på enheten din samsvarer med dem på enheten som forespør bekreftelse.",
   "@compareSasExplanation": {},
-  "incomingVerificationRequest": "",
+  "incomingVerificationRequest": "Innkommende bekreftelsesforespørsel",
   "@incomingVerificationRequest": {},
-  "waitingForVerification": "",
+  "waitingForVerification": "Venter på bekreftelse …",
   "@waitingForVerification": {},
-  "waitingForVerificationFallback": "",
+  "waitingForVerificationFallback": "Bekreft med din andre enhet, eller skriv inn gjenopprettelsespassordet.",
   "@waitingForVerificationFallback": {},
-  "incomingVerificationRequestUser": "",
+  "incomingVerificationRequestUser": "{user} ønsker å bekrefte",
   "@incomingVerificationRequestUser": {
     "placeholders": {
       "user": {
@@ -184,51 +184,51 @@
       }
     }
   },
-  "incomingVerificationRequestMyself": "",
+  "incomingVerificationRequestMyself": "En annen enhet forespurte bekreftelse.",
   "@incomingVerificationRequestMyself": {},
-  "incomingVerificationRequestLong": "",
+  "incomingVerificationRequestLong": "Håndter innkommende bekreftelsesforespørsel nå?",
   "@incomingVerificationRequestLong": {},
-  "reject": "",
+  "reject": "Avslå",
   "@reject": {},
-  "proceed": "",
+  "proceed": "Fortsett",
   "@proceed": {},
-  "enterRecoveryPhrase": "",
+  "enterRecoveryPhrase": "Skriv inn gjenopprettingspassord",
   "@enterRecoveryPhrase": {},
-  "keyVerificationErrorGeneric": "",
+  "keyVerificationErrorGeneric": "Kunne ikke bekrefte enheten din.",
   "@keyVerificationErrorGeneric": {},
-  "keyVerificationErrorUser": "",
+  "keyVerificationErrorUser": "Bekreftelsen ble avslått.",
   "@keyVerificationErrorUser": {},
-  "close": "",
+  "close": "Lukk",
   "@close": {},
-  "verificationSuccessful": "",
+  "verificationSuccessful": "Tast bekreftet",
   "@verificationSuccessful": {},
-  "verifyLogin": "",
+  "verifyLogin": "Bekreft din nye innlogging",
   "@verifyLogin": {},
-  "finish": "",
+  "finish": "Fullfør",
   "@finish": {},
-  "or": "",
+  "or": "eller",
   "@or": {},
-  "verifyWithOtherDevice": "",
+  "verifyWithOtherDevice": "Bekreft med annen enhet",
   "@verifyWithOtherDevice": {},
-  "verifyMethodsNotAvailable": "",
+  "verifyMethodsNotAvailable": "Ingen identitetsbekreftelsesmetode tilgjengelig?",
   "@verifyMethodsNotAvailable": {},
-  "verifyWithPassphrase": "",
+  "verifyWithPassphrase": "Bekreft med passord",
   "@verifyWithPassphrase": {},
-  "passphraseNoWhitespace": "",
+  "passphraseNoWhitespace": "Passordet kan ikke inneholde blanktegn.",
   "@passphraseNoWhitespace": {},
-  "errorTryAgain": "",
+  "errorTryAgain": "Noe gikk galt. Prøv igjen.",
   "@errorTryAgain": {},
-  "submit": "",
+  "submit": "send inn",
   "@submit": {},
-  "togglePassword": "",
+  "togglePassword": "Veksle passordsynlighet",
   "@togglePassword": {},
-  "loggingInToClient": "",
+  "loggingInToClient": "Logg inn på konto",
   "@loggingInToClient": {},
-  "pendingInvite": "",
+  "pendingInvite": "Ventende invitasjon",
   "@pendingInvite": {},
-  "invite": "",
+  "invite": "Invitasjon",
   "@invite": {},
-  "inviteLongRoom": "",
+  "inviteLongRoom": "Du er invitert til å ta del i rommet «{roomname}».",
   "@inviteLongRoom": {
     "description": "Please keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
     "placeholders": {
@@ -237,9 +237,9 @@
       }
     }
   },
-  "inviteLongDM": "",
+  "inviteLongDM": "Du er invitert til å diskutere med « {displayname} ».",
   "@inviteLongDM": {},
-  "roomParticipants": "",
+  "roomParticipants": "{deltagere, plural, =0{Ingen deltagere} =1{Én deltager} other{{deltagere} deltagere}}",
   "@roomParticipants": {
     "placeholders": {
       "participants": {
@@ -247,53 +247,53 @@
       }
     }
   },
-  "joinRoom": "",
+  "joinRoom": "Ta del i rommet",
   "@joinRoom": {},
-  "knockRoom": "",
+  "knockRoom": "Bank på for å ta del",
   "@knockRoom": {},
-  "youCannotJoinThisRoom": "",
+  "youCannotJoinThisRoom": "Du kan ikke ta del i dette rommet.",
   "@youCannotJoinThisRoom": {},
-  "addAccount": "",
+  "addAccount": "Legg til enda en konto",
   "@addAccount": {},
-  "regionAccountSwitcher": "",
+  "regionAccountSwitcher": "Skjermområde: Kontobytter",
   "@regionAccountSwitcher": {},
-  "regionChatContents": "",
+  "regionChatContents": "Skjermområde: sludringsinnhold.",
   "@regionChatContents": {},
-  "loadingHomeservers": "",
+  "loadingHomeservers": "Laster inn hjemmetjenere … Ukjent framdrift. Vent …",
   "@loadingHomeservers": {},
-  "send": "",
+  "send": "Send",
   "@send": {},
-  "typeGroupImages": "",
+  "typeGroupImages": "Bilder",
   "@typeGroupImages": {},
-  "typeGroupVideos": "",
+  "typeGroupVideos": "Videoer",
   "@typeGroupVideos": {},
-  "typeGroupAudio": "",
+  "typeGroupAudio": "Lyd",
   "@typeGroupAudio": {},
-  "typeGroupFiles": "",
+  "typeGroupFiles": "Alle filer",
   "@typeGroupFiles": {},
-  "msgTypeText": "",
+  "msgTypeText": "Send en vanlig tekstmelding.",
   "@msgTypeText": {},
-  "msgTypeEmote": "",
+  "msgTypeEmote": "Beskriv humøret ditt.",
   "@msgTypeEmote": {},
-  "msgTypeNotice": "",
+  "msgTypeNotice": "Send en informativ melding botter ikke kan besvare.",
   "@msgTypeNotice": {},
-  "msgTypeImage": "",
+  "msgTypeImage": "Send en bildefil.",
   "@msgTypeImage": {},
-  "msgTypeVideo": "",
+  "msgTypeVideo": "Send en videofil.",
   "@msgTypeVideo": {},
-  "msgTypeAudio": "",
+  "msgTypeAudio": "Send en lydfil.",
   "@msgTypeAudio": {},
-  "msgTypeFile": "",
+  "msgTypeFile": "Send en fil.",
   "@msgTypeFile": {},
-  "msgTypeLocation": "",
+  "msgTypeLocation": "Del din posisjon.",
   "@msgTypeLocation": {},
-  "msgTypeSticker": "",
+  "msgTypeSticker": "Send et klistremerke.",
   "@msgTypeSticker": {},
-  "msgTypeBadEncrypted": "",
+  "msgTypeBadEncrypted": "Irriter motparten med en melding vedkommende ikke kan dekryptere.",
   "@msgTypeBadEncrypted": {},
-  "msgTypeNone": "",
+  "msgTypeNone": "Ikke send noen melding.",
   "@msgTypeNone": {},
-  "filesSelected": "",
+  "filesSelected": "{filer, plural, =0{Ingen filer} =1{Én fil} other{{filer} files}} valgt. Filsending støttes ikke enda.}",
   "@filesSelected": {
     "placeholders": {
       "files": {
@@ -301,10 +301,10 @@
       }
     }
   },
-  "yesterday": "",
+  "yesterday": "I går",
   "@yesterday": {},
-  "thisMonth": "",
+  "thisMonth": "Denne måneden",
   "@thisMonth": {},
-  "lastMonth": "",
+  "lastMonth": "Forrige måned",
   "@lastMonth": {}
 }
