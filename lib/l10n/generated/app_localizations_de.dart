@@ -2,9 +2,9 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations.dart';
 
-/// The translations for English (`en`).
-class AppLocalizationsEn extends AppLocalizations {
-  AppLocalizationsEn([String locale = 'en']) : super(locale);
+/// The translations for German (`de`).
+class AppLocalizationsDe extends AppLocalizations {
+  AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
   String get appName => '< polycule >';

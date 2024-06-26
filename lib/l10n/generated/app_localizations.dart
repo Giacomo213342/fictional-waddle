@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart' deferred as app_localizations_de;
 import 'app_localizations_en.dart' deferred as app_localizations_en;
 import 'app_localizations_nb.dart' deferred as app_localizations_nb;
 
@@ -91,6 +92,7 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
     Locale('en'),
     Locale('nb')
   ];
@@ -591,7 +593,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{participants, plural, =0{No participants} =1{1 participant} other{{participants} participants}}'**
-  String roomParticipants(int participants, num deltagere);
+  String roomParticipants(int participants);
 
   /// No description provided for @joinRoom.
   ///
@@ -735,7 +737,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{files, plural, =0{No files} =1{One file} other{{files} files}} selected. Sending files is not supported yet.}'**
-  String filesSelected(int files, num filer);
+  String filesSelected(int files);
 
   /// No description provided for @yesterday.
   ///
@@ -767,7 +769,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'nb'].contains(locale.languageCode);
+      <String>['de', 'en', 'nb'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -776,6 +778,10 @@ class _AppLocalizationsDelegate
 Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return app_localizations_de
+          .loadLibrary()
+          .then((dynamic _) => app_localizations_de.AppLocalizationsDe());
     case 'en':
       return app_localizations_en
           .loadLibrary()

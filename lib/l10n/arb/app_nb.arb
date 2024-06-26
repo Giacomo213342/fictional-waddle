@@ -239,7 +239,7 @@
   },
   "inviteLongDM": "Du er invitert til å diskutere med « {displayname} ».",
   "@inviteLongDM": {},
-  "roomParticipants": "{deltagere, plural, =0{Ingen deltagere} =1{Én deltager} other{{deltagere} deltagere}}",
+  "roomParticipants": "{participants, plural, =0{Ingen deltagere} =1{Én deltager} other{{participants} deltagere}}",
   "@roomParticipants": {
     "placeholders": {
       "participants": {
@@ -293,7 +293,7 @@
   "@msgTypeBadEncrypted": {},
   "msgTypeNone": "Ikke send noen melding.",
   "@msgTypeNone": {},
-  "filesSelected": "{filer, plural, =0{Ingen filer} =1{Én fil} other{{filer} files}} valgt. Filsending støttes ikke enda.}",
+  "filesSelected": "{files, plural, =0{Ingen filer} =1{Én fil} other{{files} files}} valgt. Filsending støttes ikke enda.}",
   "@filesSelected": {
     "placeholders": {
       "files": {

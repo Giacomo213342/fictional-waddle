@@ -293,11 +293,11 @@ class AppLocalizationsNb extends AppLocalizations {
   }
 
   @override
-  String roomParticipants(int participants, num deltagere) {
+  String roomParticipants(int participants) {
     String _temp0 = intl.Intl.pluralLogic(
-      deltagere,
+      participants,
       locale: localeName,
-      other: '$deltagere deltagere',
+      other: '$participants deltagere',
       one: 'Én deltager',
       zero: 'Ingen deltagere',
     );
@@ -377,11 +377,11 @@ class AppLocalizationsNb extends AppLocalizations {
   String get msgTypeNone => 'Ikke send noen melding.';
 
   @override
-  String filesSelected(int files, num filer) {
+  String filesSelected(int files) {
     String _temp0 = intl.Intl.pluralLogic(
-      filer,
+      files,
       locale: localeName,
-      other: '$filer files',
+      other: '$files files',
       one: 'Én fil',
       zero: 'Ingen filer',
     );
