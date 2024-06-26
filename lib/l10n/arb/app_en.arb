@@ -1,6 +1,8 @@
 {
   "appName": "< polycule >",
+  "@appName": {},
   "about": "About",
+  "@about": {},
   "author": "Author: {author}",
   "@author": {
     "placeholders": {
@@ -10,21 +12,32 @@
     }
   },
   "appSlogan": "A geeky and efficient [matrix] client for power users.",
+  "@appSlogan": {},
   "repoLabel": "Source code (GitLab)",
+  "@repoLabel": {},
   "releaseNotes": "Release notes",
+  "@releaseNotes": {},
   "buyMeACoffee": "Buy me a coffee",
-  "homeserverHeadline": "Haj ! Welcome to < polycule >",
+  "@buyMeACoffee": {},
+  "homeserverHeadline": "Haj! Welcome to < polycule >",
   "@homeserverHeadline": {
     "description": "Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'."
   },
   "aMatrixClient": "- yet another [matrix] client",
+  "@aMatrixClient": {},
   "connectToHomeserver": "Connect to your homeserver",
+  "@connectToHomeserver": {},
   "discoverHomeservers": "Discover new homeservers",
+  "@discoverHomeservers": {},
   "newToMatrixLong": "Find eligible homeservers from the [matrix] universe. This will connect to joinmatrix.org.",
+  "@newToMatrixLong": {},
   "connect": "Connect",
-  "homeserverNotValid": "This is no valid homeserver input.",
+  "@connect": {},
+  "homeserverNotValid": "Enter a valid homeserver.",
+  "@homeserverNotValid": {},
   "pleaseProvideHomeserver": "Please provide a homeserver.",
-  "errorConnectingToHomeserver": "Error connecting to server {homeserver}. Please check your selection.",
+  "@pleaseProvideHomeserver": {},
+  "errorConnectingToHomeserver": "Could not connect to the {homeserver} homeserver. Please check your selection.",
   "@errorConnectingToHomeserver": {
     "placeholders": {
       "homeserver": {
@@ -40,7 +53,7 @@
       }
     }
   },
-  "welcomeToHomeserver": "Welcome to {homeserver} !",
+  "welcomeToHomeserver": "Welcome to {homeserver}.",
   "@welcomeToHomeserver": {
     "placeholders": {
       "homeserver": {
@@ -48,16 +61,26 @@
       }
     }
   },
-  "howWouldYouLikeToConnect": "How would you like to connect ?",
-  "loginPassword": "Login using password",
+  "howWouldYouLikeToConnect": "How would you like to connect?",
+  "@howWouldYouLikeToConnect": {},
+  "loginPassword": "Log in with password",
+  "@loginPassword": {},
   "username": "username",
-  "email": "email",
+  "@username": {},
+  "email": "e-mail address",
+  "@email": {},
   "password": "password",
-  "pleaseProvideEmail": "Please provide your email.",
+  "@password": {},
+  "pleaseProvideEmail": "Please provide your e-mail address.",
+  "@pleaseProvideEmail": {},
   "pleaseProvidePassword": "Please enter your password.",
+  "@pleaseProvidePassword": {},
   "pleaseProvideUsername": "Please enter your username.",
-  "emailMinimals": "Your email should at least contain the @ symbol, a local part and your domain.",
-  "mxidSyntax": "Allowed characters : a-z, 0-9 as well as the symbols ., _, =, -, /, and +.",
+  "@pleaseProvideUsername": {},
+  "emailMinimals": "Your e-mail address must contain a username, an @ symbol, and your domain.",
+  "@emailMinimals": {},
+  "mxidSyntax": "Allowed characters: a-z, 0–9 as well as the symbols ., _, =, -, /, and +.",
+  "@mxidSyntax": {},
   "clientDisplayName": "< polycule > on {platform}",
   "@clientDisplayName": {
     "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
@@ -69,8 +92,10 @@
     }
   },
   "platformWeb": "web",
-  "loginError": "Error during login, please check your credentials.",
-  "loginErrorMessage": "Error during login : {message}",
+  "@platformWeb": {},
+  "loginError": "Could not log in. Please check your credentials.",
+  "@loginError": {},
+  "loginErrorMessage": "Could not log in: {message}",
   "@loginErrorMessage": {
     "placeholders": {
       "message": {
@@ -78,7 +103,7 @@
       }
     }
   },
-  "hajUser": "Haj {localpart} !",
+  "hajUser": "Haj {localpart}.",
   "@hajUser": {
     "placeholders": {
       "localpart": {
@@ -86,11 +111,15 @@
       }
     }
   },
-  "syncInProgress": "Sync in progress",
-  "initialSync": "Initial sync in progress",
+  "syncInProgress": "Syncing…",
+  "@syncInProgress": {},
+  "initialSync": "Initial syncing…",
+  "@initialSync": {},
   "syncOffline": "Sync interrupted",
+  "@syncOffline": {},
   "syncFunctional": "Sync state healthy",
-  "lastSyncReceived": "Last sync : {timestamp} ({duration} ms)",
+  "@syncFunctional": {},
+  "lastSyncReceived": "Last sync: {timestamp} ({duration} ms)",
   "@lastSyncReceived": {
     "placeholders": {
       "timestamp": {
@@ -103,6 +132,7 @@
     }
   },
   "authenticationRequired": "Authentication required",
+  "@authenticationRequired": {},
   "authenticateForAccount": "Please authenticate with your credentials for {mxid}.",
   "@authenticateForAccount": {
     "placeholders": {
@@ -111,23 +141,40 @@
       }
     }
   },
-  "passphraseNotEmpty": "The passphrase can't be empty",
+  "passphraseNotEmpty": "You must enter a password",
+  "@passphraseNotEmpty": {},
   "cancel": "Cancel",
+  "@cancel": {},
   "noMatch": "No match",
+  "@noMatch": {},
   "keysMatch": "Keys match",
+  "@keysMatch": {},
   "wipeAccount": "Wipe account",
+  "@wipeAccount": {},
   "wipeAccountWarning": "If you lost your device, you can wipe and reset your account. All messages and chats will be lost.",
+  "@wipeAccountWarning": {},
   "deleteAll": "Delete all",
+  "@deleteAll": {},
   "previous": "Previous",
+  "@previous": {},
   "next": "Next",
+  "@next": {},
   "connectPreviousDevice": "Connect previous device",
+  "@connectPreviousDevice": {},
   "connectPreviousDeviceLong": "Please verify existing device.",
+  "@connectPreviousDeviceLong": {},
   "deviceNotAvailable": "I don't have my device available.",
+  "@deviceNotAvailable": {},
   "compareSasNumbers": "Compare security numbers",
+  "@compareSasNumbers": {},
   "compareSasExplanation": "Check if the numbers on your device are identical with the numbers on the other device requesting the verification.",
+  "@compareSasExplanation": {},
   "incomingVerificationRequest": "Incoming verification request",
-  "waitingForVerification": "Waiting for verification",
-  "waitingForVerificationFallback": "Please verify using your second device or enter your recovery phrase.",
+  "@incomingVerificationRequest": {},
+  "waitingForVerification": "Waiting for verification…",
+  "@waitingForVerification": {},
+  "waitingForVerificationFallback": "Please verify using your second device or enter your recovery password.",
+  "@waitingForVerificationFallback": {},
   "incomingVerificationRequestUser": "{user} wants to verify",
   "@incomingVerificationRequestUser": {
     "placeholders": {
@@ -138,27 +185,49 @@
     }
   },
   "incomingVerificationRequestMyself": "There is an incoming verification request to verify another device for your account.",
-  "incomingVerificationRequestLong": "There is an incoming verification request, do you want to handle the verification request?",
+  "@incomingVerificationRequestMyself": {},
+  "incomingVerificationRequestLong": "Handle incoming verification request now?",
+  "@incomingVerificationRequestLong": {},
   "reject": "Reject",
+  "@reject": {},
   "proceed": "Proceed",
-  "enterRecoveryPhrase": "Enter recovery phrase",
-  "keyVerificationErrorGeneric": "There was an error verifying your device.",
+  "@proceed": {},
+  "enterRecoveryPhrase": "Enter recovery password",
+  "@enterRecoveryPhrase": {},
+  "keyVerificationErrorGeneric": "Could not verify your device.",
+  "@keyVerificationErrorGeneric": {},
   "keyVerificationErrorUser": "The verification was rejected.",
+  "@keyVerificationErrorUser": {},
   "close": "Close",
-  "verificationSuccessful": "Key verification successful",
+  "@close": {},
+  "verificationSuccessful": "Key verified",
+  "@verificationSuccessful": {},
   "verifyLogin": "Verify your new login",
+  "@verifyLogin": {},
   "finish": "Finish",
+  "@finish": {},
   "or": "or",
+  "@or": {},
   "verifyWithOtherDevice": "Verify with other device",
-  "verifyMethodsNotAvailable": "You don't have a verification method available?",
-  "verifyWithPassphrase": "Verify with passphrase",
-  "passphraseNoWhitespace": "The passphrase cannot contain any whitespace characters!",
+  "@verifyWithOtherDevice": {},
+  "verifyMethodsNotAvailable": "No verification method available?",
+  "@verifyMethodsNotAvailable": {},
+  "verifyWithPassphrase": "Verify with password",
+  "@verifyWithPassphrase": {},
+  "passphraseNoWhitespace": "The passphrase cannot contain any whitespace characters.",
+  "@passphraseNoWhitespace": {},
   "errorTryAgain": "An error occurred. Please try again.",
+  "@errorTryAgain": {},
   "submit": "submit",
+  "@submit": {},
   "togglePassword": "Toggle password visibility",
-  "loggingInToClient": "Login to account",
+  "@togglePassword": {},
+  "loggingInToClient": "Log in on account",
+  "@loggingInToClient": {},
   "pendingInvite": "Pending invite",
+  "@pendingInvite": {},
   "invite": "Invite",
+  "@invite": {},
   "inviteLongRoom": "You are invited to join the room : « {roomname} ».",
   "@inviteLongRoom": {
     "description": "Please keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
@@ -169,14 +238,7 @@
     }
   },
   "inviteLongDM": "You are invited to discuss with « {displayname} ».",
-  "@intiveLongDM": {
-    "description": "Please keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
-    "placeholders": {
-      "displayname": {
-        "type": "String"
-      }
-    }
-  },
+  "@inviteLongDM": {},
   "roomParticipants": "{participants, plural, =0{No participants} =1{1 participant} other{{participants} participants}}",
   "@roomParticipants": {
     "placeholders": {
@@ -186,28 +248,51 @@
     }
   },
   "joinRoom": "Join room",
+  "@joinRoom": {},
   "knockRoom": "Knock to join",
+  "@knockRoom": {},
   "youCannotJoinThisRoom": "You cannot join this room.",
+  "@youCannotJoinThisRoom": {},
   "addAccount": "Add another account",
+  "@addAccount": {},
   "regionAccountSwitcher": "Screen region: Account switcher.",
-  "regionChatContents": "Screen region: Chat content.",
-  "loadingHomeservers": "Loading homeservers. Progress unknown. Please wait.",
+  "@regionAccountSwitcher": {},
+  "regionChatContents": "Screen region: chat content.",
+  "@regionChatContents": {},
+  "loadingHomeservers": "Loading homeservers… Progress unknown. Please wait…",
+  "@loadingHomeservers": {},
   "send": "Send",
+  "@send": {},
   "typeGroupImages": "Images",
+  "@typeGroupImages": {},
   "typeGroupVideos": "Videos",
+  "@typeGroupVideos": {},
   "typeGroupAudio": "Audio",
+  "@typeGroupAudio": {},
   "typeGroupFiles": "All files",
+  "@typeGroupFiles": {},
   "msgTypeText": "Send a regular text message.",
+  "@msgTypeText": {},
   "msgTypeEmote": "Describe your mood.",
+  "@msgTypeEmote": {},
   "msgTypeNotice": "Send an informative message bots cannot reply to.",
+  "@msgTypeNotice": {},
   "msgTypeImage": "Send an image file.",
+  "@msgTypeImage": {},
   "msgTypeVideo": "Send a video file.",
+  "@msgTypeVideo": {},
   "msgTypeAudio": "Send an audio file.",
+  "@msgTypeAudio": {},
   "msgTypeFile": "Send a file.",
+  "@msgTypeFile": {},
   "msgTypeLocation": "Share your location.",
+  "@msgTypeLocation": {},
   "msgTypeSticker": "Send a sticker.",
+  "@msgTypeSticker": {},
   "msgTypeBadEncrypted": "Annoy your peer with a message they cannot decrypt.",
+  "@msgTypeBadEncrypted": {},
   "msgTypeNone": "Send no message.",
+  "@msgTypeNone": {},
   "filesSelected": "{files, plural, =0{No files} =1{One file} other{{files} files}} selected. Sending files is not supported yet.}",
   "@filesSelected": {
     "placeholders": {
@@ -217,6 +302,9 @@
     }
   },
   "yesterday": "Yesterday",
+  "@yesterday": {},
   "thisMonth": "This month",
-  "lastMonth": "Last month"
+  "@thisMonth": {},
+  "lastMonth": "Last month",
+  "@lastMonth": {}
 }
