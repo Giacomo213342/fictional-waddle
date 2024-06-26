@@ -1,17 +1,18 @@
-**Not usable yet.**
+**Is it usable yet ? - No. Absolutely not.**
 
-During boring work meetings Beep boop and I are using this client as
-practice for matrix.
+As of now, it's nothing than a fancy homeserver picker - though much more stuff already happening in background.
 
-A fancy homeserver picker as of now, with more things in development.
+Beep boop and I had too much time during boring work meetings. Using this client as
+a small piece to practice some matrix related stuff.
 
-Experimenting with [Sliding Sync](https://github.com/matrix-org/matrix-spec-proposals/blob/kegan/sync-v3/proposals/3575-sync.md) and
+I'm especially considering to experiment
+with [Sliding Sync](https://github.com/matrix-org/matrix-spec-proposals/blob/kegan/sync-v3/proposals/3575-sync.md) and
 Flutter Linux-native integrations.
 
 ## Features
 
 - keyboard optimized
-- no matrix.org!
+- no matrix.org !
 - fast and efficient
 - terminal style design
 - cross-platform
