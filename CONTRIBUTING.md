@@ -13,15 +13,19 @@ What you need :
 
 Flutter is currently packaged as Alpine package or as SNAP. The Arch User Repository also ships build files for it. On other distributions or operating systems, please check [docs.flutter.dev](https://docs.flutter.dev/get-started/install).
 
+### Don't know Flutter ?
+
+In case you don't know Flutter, how about contributing to the translations on [Weblate](https://hosted.weblate.org/projects/polycule/) ?
+
 ### OpenSSL
 
-The OpenSSL part might be a bit difficult : We require a statically compiled versio of OpenSSL in order to compile some native code.
+Database encryption requires OpenSSL to be installed on your system.
 
 Use the following packages :
 
 - Ubuntu : `libssl-dev`
 - Fedora : `openssl-devel`
-- Arch : The AUR contains build files for `openssl-static`
+- Arch : `openssl`
 
 ### OLM
 

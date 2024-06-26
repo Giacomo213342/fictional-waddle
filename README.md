@@ -1,5 +1,8 @@
 # ![polycule logo](assets/logo/logo-circle.svg) < polycule >
 
+[![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/polycule_client%2Fpolycule?style=for-the-badge&logo=gitlab)](https://gitlab.com/polycule_client/polycule/-/pipelines)
+[![Weblate project translated](https://img.shields.io/weblate/progress/polycule?style=for-the-badge&logo=weblate)](https://hosted.weblate.org/projects/polycule/)
+
 A geeky and efficient \[matrix\] client for power users.
 
 ## About
