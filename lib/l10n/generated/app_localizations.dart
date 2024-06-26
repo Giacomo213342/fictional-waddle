@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart' deferred as app_localizations_en;
+import 'app_localizations_nb.dart' deferred as app_localizations_nb;
 
 /// Callers can lookup localized strings with an instance of AppLocalizations
 /// returned by `AppLocalizations.of(context)`.
@@ -89,7 +90,10 @@ abstract class AppLocalizations {
   ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('nb')
+  ];
 
   /// No description provided for @appName.
   ///
@@ -136,7 +140,7 @@ abstract class AppLocalizations {
   /// Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'.
   ///
   /// In en, this message translates to:
-  /// **'Haj ! Welcome to < polycule >'**
+  /// **'Haj! Welcome to < polycule >'**
   String get homeserverHeadline;
 
   /// No description provided for @aMatrixClient.
@@ -172,7 +176,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeserverNotValid.
   ///
   /// In en, this message translates to:
-  /// **'This is no valid homeserver input.'**
+  /// **'Enter a valid homeserver.'**
   String get homeserverNotValid;
 
   /// No description provided for @pleaseProvideHomeserver.
@@ -184,7 +188,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorConnectingToHomeserver.
   ///
   /// In en, this message translates to:
-  /// **'Error connecting to server {homeserver}. Please check your selection.'**
+  /// **'Could not connect to the {homeserver} homeserver. Please check your selection.'**
   String errorConnectingToHomeserver(String homeserver);
 
   /// No description provided for @connectingToHomeserver.
@@ -196,19 +200,19 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeToHomeserver.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to {homeserver} !'**
+  /// **'Welcome to {homeserver}.'**
   String welcomeToHomeserver(String homeserver);
 
   /// No description provided for @howWouldYouLikeToConnect.
   ///
   /// In en, this message translates to:
-  /// **'How would you like to connect ?'**
+  /// **'How would you like to connect?'**
   String get howWouldYouLikeToConnect;
 
   /// No description provided for @loginPassword.
   ///
   /// In en, this message translates to:
-  /// **'Login using password'**
+  /// **'Log in with password'**
   String get loginPassword;
 
   /// No description provided for @username.
@@ -220,7 +224,7 @@ abstract class AppLocalizations {
   /// No description provided for @email.
   ///
   /// In en, this message translates to:
-  /// **'email'**
+  /// **'e-mail address'**
   String get email;
 
   /// No description provided for @password.
@@ -232,7 +236,7 @@ abstract class AppLocalizations {
   /// No description provided for @pleaseProvideEmail.
   ///
   /// In en, this message translates to:
-  /// **'Please provide your email.'**
+  /// **'Please provide your e-mail address.'**
   String get pleaseProvideEmail;
 
   /// No description provided for @pleaseProvidePassword.
@@ -250,13 +254,13 @@ abstract class AppLocalizations {
   /// No description provided for @emailMinimals.
   ///
   /// In en, this message translates to:
-  /// **'Your email should at least contain the @ symbol, a local part and your domain.'**
+  /// **'Your e-mail address must contain a username, an @ symbol, and your domain.'**
   String get emailMinimals;
 
   /// No description provided for @mxidSyntax.
   ///
   /// In en, this message translates to:
-  /// **'Allowed characters : a-z, 0-9 as well as the symbols ., _, =, -, /, and +.'**
+  /// **'Allowed characters: a-z, 0–9 as well as the symbols ., _, =, -, /, and +.'**
   String get mxidSyntax;
 
   /// Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.
@@ -274,31 +278,31 @@ abstract class AppLocalizations {
   /// No description provided for @loginError.
   ///
   /// In en, this message translates to:
-  /// **'Error during login, please check your credentials.'**
+  /// **'Could not log in. Please check your credentials.'**
   String get loginError;
 
   /// No description provided for @loginErrorMessage.
   ///
   /// In en, this message translates to:
-  /// **'Error during login : {message}'**
+  /// **'Could not log in: {message}'**
   String loginErrorMessage(String message);
 
   /// No description provided for @hajUser.
   ///
   /// In en, this message translates to:
-  /// **'Haj {localpart} !'**
+  /// **'Haj {localpart}.'**
   String hajUser(String? localpart);
 
   /// No description provided for @syncInProgress.
   ///
   /// In en, this message translates to:
-  /// **'Sync in progress'**
+  /// **'Syncing…'**
   String get syncInProgress;
 
   /// No description provided for @initialSync.
   ///
   /// In en, this message translates to:
-  /// **'Initial sync in progress'**
+  /// **'Initial syncing…'**
   String get initialSync;
 
   /// No description provided for @syncOffline.
@@ -316,7 +320,7 @@ abstract class AppLocalizations {
   /// No description provided for @lastSyncReceived.
   ///
   /// In en, this message translates to:
-  /// **'Last sync : {timestamp} ({duration} ms)'**
+  /// **'Last sync: {timestamp} ({duration} ms)'**
   String lastSyncReceived(DateTime timestamp, Object duration);
 
   /// No description provided for @authenticationRequired.
@@ -334,7 +338,7 @@ abstract class AppLocalizations {
   /// No description provided for @passphraseNotEmpty.
   ///
   /// In en, this message translates to:
-  /// **'The passphrase can\'t be empty'**
+  /// **'You must enter a password'**
   String get passphraseNotEmpty;
 
   /// No description provided for @cancel.
@@ -424,13 +428,13 @@ abstract class AppLocalizations {
   /// No description provided for @waitingForVerification.
   ///
   /// In en, this message translates to:
-  /// **'Waiting for verification'**
+  /// **'Waiting for verification…'**
   String get waitingForVerification;
 
   /// No description provided for @waitingForVerificationFallback.
   ///
   /// In en, this message translates to:
-  /// **'Please verify using your second device or enter your recovery phrase.'**
+  /// **'Please verify using your second device or enter your recovery password.'**
   String get waitingForVerificationFallback;
 
   /// No description provided for @incomingVerificationRequestUser.
@@ -448,7 +452,7 @@ abstract class AppLocalizations {
   /// No description provided for @incomingVerificationRequestLong.
   ///
   /// In en, this message translates to:
-  /// **'There is an incoming verification request, do you want to handle the verification request?'**
+  /// **'Handle incoming verification request now?'**
   String get incomingVerificationRequestLong;
 
   /// No description provided for @reject.
@@ -466,13 +470,13 @@ abstract class AppLocalizations {
   /// No description provided for @enterRecoveryPhrase.
   ///
   /// In en, this message translates to:
-  /// **'Enter recovery phrase'**
+  /// **'Enter recovery password'**
   String get enterRecoveryPhrase;
 
   /// No description provided for @keyVerificationErrorGeneric.
   ///
   /// In en, this message translates to:
-  /// **'There was an error verifying your device.'**
+  /// **'Could not verify your device.'**
   String get keyVerificationErrorGeneric;
 
   /// No description provided for @keyVerificationErrorUser.
@@ -490,7 +494,7 @@ abstract class AppLocalizations {
   /// No description provided for @verificationSuccessful.
   ///
   /// In en, this message translates to:
-  /// **'Key verification successful'**
+  /// **'Key verified'**
   String get verificationSuccessful;
 
   /// No description provided for @verifyLogin.
@@ -520,19 +524,19 @@ abstract class AppLocalizations {
   /// No description provided for @verifyMethodsNotAvailable.
   ///
   /// In en, this message translates to:
-  /// **'You don\'t have a verification method available?'**
+  /// **'No verification method available?'**
   String get verifyMethodsNotAvailable;
 
   /// No description provided for @verifyWithPassphrase.
   ///
   /// In en, this message translates to:
-  /// **'Verify with passphrase'**
+  /// **'Verify with password'**
   String get verifyWithPassphrase;
 
   /// No description provided for @passphraseNoWhitespace.
   ///
   /// In en, this message translates to:
-  /// **'The passphrase cannot contain any whitespace characters!'**
+  /// **'The passphrase cannot contain any whitespace characters.'**
   String get passphraseNoWhitespace;
 
   /// No description provided for @errorTryAgain.
@@ -556,7 +560,7 @@ abstract class AppLocalizations {
   /// No description provided for @loggingInToClient.
   ///
   /// In en, this message translates to:
-  /// **'Login to account'**
+  /// **'Log in on account'**
   String get loggingInToClient;
 
   /// No description provided for @pendingInvite.
@@ -587,7 +591,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{participants, plural, =0{No participants} =1{1 participant} other{{participants} participants}}'**
-  String roomParticipants(int participants);
+  String roomParticipants(int participants, num deltagere);
 
   /// No description provided for @joinRoom.
   ///
@@ -622,13 +626,13 @@ abstract class AppLocalizations {
   /// No description provided for @regionChatContents.
   ///
   /// In en, this message translates to:
-  /// **'Screen region: Chat content.'**
+  /// **'Screen region: chat content.'**
   String get regionChatContents;
 
   /// No description provided for @loadingHomeservers.
   ///
   /// In en, this message translates to:
-  /// **'Loading homeservers. Progress unknown. Please wait.'**
+  /// **'Loading homeservers… Progress unknown. Please wait…'**
   String get loadingHomeservers;
 
   /// No description provided for @send.
@@ -731,7 +735,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{files, plural, =0{No files} =1{One file} other{{files} files}} selected. Sending files is not supported yet.}'**
-  String filesSelected(int files);
+  String filesSelected(int files, num filer);
 
   /// No description provided for @yesterday.
   ///
@@ -763,7 +767,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en'].contains(locale.languageCode);
+      <String>['en', 'nb'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -776,6 +780,10 @@ Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
       return app_localizations_en
           .loadLibrary()
           .then((dynamic _) => app_localizations_en.AppLocalizationsEn());
+    case 'nb':
+      return app_localizations_nb
+          .loadLibrary()
+          .then((dynamic _) => app_localizations_nb.AppLocalizationsNb());
   }
 
   throw FlutterError(
