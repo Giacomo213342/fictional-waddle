@@ -31,7 +31,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get buyMeACoffee => 'Buy me a coffee';
 
   @override
-  String get homeserverHeadline => 'Haj! Welcome to < polycule >';
+  String get homeserverHeadline => 'Haj ! Welcome to < polycule >';
 
   @override
   String get aMatrixClient => '- yet another [matrix] client';
@@ -50,43 +50,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get connect => 'Connect';
 
   @override
-  String get homeserverNotValid => 'Enter a valid homeserver.';
+  String get homeserverNotValid => 'This is no valid homeserver input.';
 
   @override
   String get pleaseProvideHomeserver => 'Please provide a homeserver.';
 
   @override
   String errorConnectingToHomeserver(String homeserver) {
-    return 'Could not connect to the $homeserver homeserver. Please check your selection.';
+    return 'Could not connect $homeserver. Please check your selection.';
   }
 
   @override
   String connectingToHomeserver(String homeserver) {
-    return 'Connecting to $homeserver ...';
+    return 'Connecting to $homeserver …';
   }
 
   @override
   String welcomeToHomeserver(String homeserver) {
-    return 'Welcome to $homeserver.';
+    return 'Welcome to $homeserver !';
   }
 
   @override
-  String get howWouldYouLikeToConnect => 'How would you like to connect?';
+  String get howWouldYouLikeToConnect => 'How would you like to connect ?';
 
   @override
-  String get loginPassword => 'Log in with password';
+  String get loginPassword => 'Login using password';
 
   @override
   String get username => 'username';
 
   @override
-  String get email => 'e-mail address';
+  String get email => 'email';
 
   @override
   String get password => 'password';
 
   @override
-  String get pleaseProvideEmail => 'Please provide your e-mail address.';
+  String get pleaseProvideEmail => 'Please provide your email.';
 
   @override
   String get pleaseProvidePassword => 'Please enter your password.';
@@ -96,11 +96,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emailMinimals =>
-      'Your e-mail address must contain a username, an @ symbol, and your domain.';
+      'Your email must least contain the @ symbol, a local part and your domain.';
 
   @override
   String get mxidSyntax =>
-      'Allowed characters: a-z, 0–9 as well as the symbols ., _, =, -, /, and +.';
+      'Allowed characters : a-z, 0-9 as well as the symbols ., _, =, -, /, and +.';
 
   @override
   String clientDisplayName(String platform) {
@@ -111,23 +111,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get platformWeb => 'web';
 
   @override
-  String get loginError => 'Could not log in. Please check your credentials.';
+  String get loginError => 'Could not log in ; please check your credentials.';
 
   @override
   String loginErrorMessage(String message) {
-    return 'Could not log in: $message';
+    return 'Could not log in : $message';
   }
 
   @override
   String hajUser(String? localpart) {
-    return 'Haj $localpart.';
+    return 'Haj $localpart !';
   }
 
   @override
-  String get syncInProgress => 'Syncing…';
+  String get syncInProgress => 'Sync in progress';
 
   @override
-  String get initialSync => 'Initial syncing…';
+  String get initialSync => 'Initial sync in progress';
 
   @override
   String get syncOffline => 'Sync interrupted';
@@ -140,7 +140,7 @@ class AppLocalizationsEn extends AppLocalizations {
     final intl.DateFormat timestampDateFormat = intl.DateFormat.jms(localeName);
     final String timestampString = timestampDateFormat.format(timestamp);
 
-    return 'Last sync: $timestampString ($duration ms)';
+    return 'Last sync : $timestampString ($duration ms)';
   }
 
   @override
@@ -152,7 +152,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get passphraseNotEmpty => 'You must enter a password';
+  String get passphraseNotEmpty => 'The passphrase can\'t be empty';
 
   @override
   String get cancel => 'Cancel';
@@ -199,11 +199,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get incomingVerificationRequest => 'Incoming verification request';
 
   @override
-  String get waitingForVerification => 'Waiting for verification…';
+  String get waitingForVerification => 'Waiting for verification';
 
   @override
   String get waitingForVerificationFallback =>
-      'Please verify using your second device or enter your recovery password.';
+      'Please verify using your second device or enter your recovery phrase.';
 
   @override
   String incomingVerificationRequestUser(String? user) {
@@ -216,7 +216,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get incomingVerificationRequestLong =>
-      'Handle incoming verification request now?';
+      'There is an incoming verification request, do you want to handle the verification request?';
 
   @override
   String get reject => 'Reject';
@@ -225,10 +225,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get proceed => 'Proceed';
 
   @override
-  String get enterRecoveryPhrase => 'Enter recovery password';
+  String get enterRecoveryPhrase => 'Enter recovery phrase';
 
   @override
-  String get keyVerificationErrorGeneric => 'Could not verify your device.';
+  String get keyVerificationErrorGeneric =>
+      'There was an error verifying your device.';
 
   @override
   String get keyVerificationErrorUser => 'The verification was rejected.';
@@ -237,7 +238,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get close => 'Close';
 
   @override
-  String get verificationSuccessful => 'Key verified';
+  String get verificationSuccessful => 'Key verification successful';
 
   @override
   String get verifyLogin => 'Verify your new login';
@@ -252,14 +253,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verifyWithOtherDevice => 'Verify with other device';
 
   @override
-  String get verifyMethodsNotAvailable => 'No verification method available?';
+  String get verifyMethodsNotAvailable =>
+      'You don\'t have a verification method available?';
 
   @override
-  String get verifyWithPassphrase => 'Verify with password';
+  String get verifyWithPassphrase => 'Verify with passphrase';
 
   @override
   String get passphraseNoWhitespace =>
-      'The passphrase cannot contain any whitespace characters.';
+      'The passphrase cannot contain any whitespace characters!';
 
   @override
   String get errorTryAgain => 'An error occurred. Please try again.';
@@ -271,7 +273,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get togglePassword => 'Toggle password visibility';
 
   @override
-  String get loggingInToClient => 'Log in on account';
+  String get loggingInToClient => 'Login to account';
 
   @override
   String get pendingInvite => 'Pending invite';
@@ -317,11 +319,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get regionAccountSwitcher => 'Screen region: Account switcher.';
 
   @override
-  String get regionChatContents => 'Screen region: chat content.';
+  String get regionChatContents => 'Screen region: Chat content.';
 
   @override
   String get loadingHomeservers =>
-      'Loading homeservers… Progress unknown. Please wait…';
+      'Loading homeservers. Progress unknown. Please wait.';
 
   @override
   String get send => 'Send';

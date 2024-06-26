@@ -24,7 +24,7 @@
   "connect": "Connect",
   "homeserverNotValid": "This is no valid homeserver input.",
   "pleaseProvideHomeserver": "Please provide a homeserver.",
-  "errorConnectingToHomeserver": "Error connecting to server {homeserver}. Please check your selection.",
+  "errorConnectingToHomeserver": "Could not connect {homeserver}. Please check your selection.",
   "@errorConnectingToHomeserver": {
     "placeholders": {
       "homeserver": {
@@ -32,7 +32,7 @@
       }
     }
   },
-  "connectingToHomeserver": "Connecting to {homeserver} ...",
+  "connectingToHomeserver": "Connecting to {homeserver} …",
   "@connectingToHomeserver": {
     "placeholders": {
       "homeserver": {
@@ -56,7 +56,7 @@
   "pleaseProvideEmail": "Please provide your email.",
   "pleaseProvidePassword": "Please enter your password.",
   "pleaseProvideUsername": "Please enter your username.",
-  "emailMinimals": "Your email should at least contain the @ symbol, a local part and your domain.",
+  "emailMinimals": "Your email must least contain the @ symbol, a local part and your domain.",
   "mxidSyntax": "Allowed characters : a-z, 0-9 as well as the symbols ., _, =, -, /, and +.",
   "clientDisplayName": "< polycule > on {platform}",
   "@clientDisplayName": {
@@ -69,8 +69,8 @@
     }
   },
   "platformWeb": "web",
-  "loginError": "Error during login, please check your credentials.",
-  "loginErrorMessage": "Error during login : {message}",
+  "loginError": "Could not log in ; please check your credentials.",
+  "loginErrorMessage": "Could not log in : {message}",
   "@loginErrorMessage": {
     "placeholders": {
       "message": {

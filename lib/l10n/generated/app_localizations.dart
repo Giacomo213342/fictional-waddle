@@ -140,7 +140,7 @@ abstract class AppLocalizations {
   /// Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'.
   ///
   /// In en, this message translates to:
-  /// **'Haj! Welcome to < polycule >'**
+  /// **'Haj ! Welcome to < polycule >'**
   String get homeserverHeadline;
 
   /// No description provided for @aMatrixClient.
@@ -176,7 +176,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeserverNotValid.
   ///
   /// In en, this message translates to:
-  /// **'Enter a valid homeserver.'**
+  /// **'This is no valid homeserver input.'**
   String get homeserverNotValid;
 
   /// No description provided for @pleaseProvideHomeserver.
@@ -188,31 +188,31 @@ abstract class AppLocalizations {
   /// No description provided for @errorConnectingToHomeserver.
   ///
   /// In en, this message translates to:
-  /// **'Could not connect to the {homeserver} homeserver. Please check your selection.'**
+  /// **'Could not connect {homeserver}. Please check your selection.'**
   String errorConnectingToHomeserver(String homeserver);
 
   /// No description provided for @connectingToHomeserver.
   ///
   /// In en, this message translates to:
-  /// **'Connecting to {homeserver} ...'**
+  /// **'Connecting to {homeserver} …'**
   String connectingToHomeserver(String homeserver);
 
   /// No description provided for @welcomeToHomeserver.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to {homeserver}.'**
+  /// **'Welcome to {homeserver} !'**
   String welcomeToHomeserver(String homeserver);
 
   /// No description provided for @howWouldYouLikeToConnect.
   ///
   /// In en, this message translates to:
-  /// **'How would you like to connect?'**
+  /// **'How would you like to connect ?'**
   String get howWouldYouLikeToConnect;
 
   /// No description provided for @loginPassword.
   ///
   /// In en, this message translates to:
-  /// **'Log in with password'**
+  /// **'Login using password'**
   String get loginPassword;
 
   /// No description provided for @username.
@@ -224,7 +224,7 @@ abstract class AppLocalizations {
   /// No description provided for @email.
   ///
   /// In en, this message translates to:
-  /// **'e-mail address'**
+  /// **'email'**
   String get email;
 
   /// No description provided for @password.
@@ -236,7 +236,7 @@ abstract class AppLocalizations {
   /// No description provided for @pleaseProvideEmail.
   ///
   /// In en, this message translates to:
-  /// **'Please provide your e-mail address.'**
+  /// **'Please provide your email.'**
   String get pleaseProvideEmail;
 
   /// No description provided for @pleaseProvidePassword.
@@ -254,13 +254,13 @@ abstract class AppLocalizations {
   /// No description provided for @emailMinimals.
   ///
   /// In en, this message translates to:
-  /// **'Your e-mail address must contain a username, an @ symbol, and your domain.'**
+  /// **'Your email must least contain the @ symbol, a local part and your domain.'**
   String get emailMinimals;
 
   /// No description provided for @mxidSyntax.
   ///
   /// In en, this message translates to:
-  /// **'Allowed characters: a-z, 0–9 as well as the symbols ., _, =, -, /, and +.'**
+  /// **'Allowed characters : a-z, 0-9 as well as the symbols ., _, =, -, /, and +.'**
   String get mxidSyntax;
 
   /// Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.
@@ -278,31 +278,31 @@ abstract class AppLocalizations {
   /// No description provided for @loginError.
   ///
   /// In en, this message translates to:
-  /// **'Could not log in. Please check your credentials.'**
+  /// **'Could not log in ; please check your credentials.'**
   String get loginError;
 
   /// No description provided for @loginErrorMessage.
   ///
   /// In en, this message translates to:
-  /// **'Could not log in: {message}'**
+  /// **'Could not log in : {message}'**
   String loginErrorMessage(String message);
 
   /// No description provided for @hajUser.
   ///
   /// In en, this message translates to:
-  /// **'Haj {localpart}.'**
+  /// **'Haj {localpart} !'**
   String hajUser(String? localpart);
 
   /// No description provided for @syncInProgress.
   ///
   /// In en, this message translates to:
-  /// **'Syncing…'**
+  /// **'Sync in progress'**
   String get syncInProgress;
 
   /// No description provided for @initialSync.
   ///
   /// In en, this message translates to:
-  /// **'Initial syncing…'**
+  /// **'Initial sync in progress'**
   String get initialSync;
 
   /// No description provided for @syncOffline.
@@ -320,7 +320,7 @@ abstract class AppLocalizations {
   /// No description provided for @lastSyncReceived.
   ///
   /// In en, this message translates to:
-  /// **'Last sync: {timestamp} ({duration} ms)'**
+  /// **'Last sync : {timestamp} ({duration} ms)'**
   String lastSyncReceived(DateTime timestamp, Object duration);
 
   /// No description provided for @authenticationRequired.
@@ -338,7 +338,7 @@ abstract class AppLocalizations {
   /// No description provided for @passphraseNotEmpty.
   ///
   /// In en, this message translates to:
-  /// **'You must enter a password'**
+  /// **'The passphrase can\'t be empty'**
   String get passphraseNotEmpty;
 
   /// No description provided for @cancel.
@@ -428,13 +428,13 @@ abstract class AppLocalizations {
   /// No description provided for @waitingForVerification.
   ///
   /// In en, this message translates to:
-  /// **'Waiting for verification…'**
+  /// **'Waiting for verification'**
   String get waitingForVerification;
 
   /// No description provided for @waitingForVerificationFallback.
   ///
   /// In en, this message translates to:
-  /// **'Please verify using your second device or enter your recovery password.'**
+  /// **'Please verify using your second device or enter your recovery phrase.'**
   String get waitingForVerificationFallback;
 
   /// No description provided for @incomingVerificationRequestUser.
@@ -452,7 +452,7 @@ abstract class AppLocalizations {
   /// No description provided for @incomingVerificationRequestLong.
   ///
   /// In en, this message translates to:
-  /// **'Handle incoming verification request now?'**
+  /// **'There is an incoming verification request, do you want to handle the verification request?'**
   String get incomingVerificationRequestLong;
 
   /// No description provided for @reject.
@@ -470,13 +470,13 @@ abstract class AppLocalizations {
   /// No description provided for @enterRecoveryPhrase.
   ///
   /// In en, this message translates to:
-  /// **'Enter recovery password'**
+  /// **'Enter recovery phrase'**
   String get enterRecoveryPhrase;
 
   /// No description provided for @keyVerificationErrorGeneric.
   ///
   /// In en, this message translates to:
-  /// **'Could not verify your device.'**
+  /// **'There was an error verifying your device.'**
   String get keyVerificationErrorGeneric;
 
   /// No description provided for @keyVerificationErrorUser.
@@ -494,7 +494,7 @@ abstract class AppLocalizations {
   /// No description provided for @verificationSuccessful.
   ///
   /// In en, this message translates to:
-  /// **'Key verified'**
+  /// **'Key verification successful'**
   String get verificationSuccessful;
 
   /// No description provided for @verifyLogin.
@@ -524,19 +524,19 @@ abstract class AppLocalizations {
   /// No description provided for @verifyMethodsNotAvailable.
   ///
   /// In en, this message translates to:
-  /// **'No verification method available?'**
+  /// **'You don\'t have a verification method available?'**
   String get verifyMethodsNotAvailable;
 
   /// No description provided for @verifyWithPassphrase.
   ///
   /// In en, this message translates to:
-  /// **'Verify with password'**
+  /// **'Verify with passphrase'**
   String get verifyWithPassphrase;
 
   /// No description provided for @passphraseNoWhitespace.
   ///
   /// In en, this message translates to:
-  /// **'The passphrase cannot contain any whitespace characters.'**
+  /// **'The passphrase cannot contain any whitespace characters!'**
   String get passphraseNoWhitespace;
 
   /// No description provided for @errorTryAgain.
@@ -560,7 +560,7 @@ abstract class AppLocalizations {
   /// No description provided for @loggingInToClient.
   ///
   /// In en, this message translates to:
-  /// **'Log in on account'**
+  /// **'Login to account'**
   String get loggingInToClient;
 
   /// No description provided for @pendingInvite.
@@ -626,13 +626,13 @@ abstract class AppLocalizations {
   /// No description provided for @regionChatContents.
   ///
   /// In en, this message translates to:
-  /// **'Screen region: chat content.'**
+  /// **'Screen region: Chat content.'**
   String get regionChatContents;
 
   /// No description provided for @loadingHomeservers.
   ///
   /// In en, this message translates to:
-  /// **'Loading homeservers… Progress unknown. Please wait…'**
+  /// **'Loading homeservers. Progress unknown. Please wait.'**
   String get loadingHomeservers;
 
   /// No description provided for @send.
