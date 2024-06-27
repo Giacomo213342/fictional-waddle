@@ -1,3 +1,6 @@
 {
-  "about": "Info"
+  "about": "Info",
+  "@about": {},
+  "aMatrixClient": "- noch ein [matrix] client",
+  "@aMatrixClient": {}
 }
