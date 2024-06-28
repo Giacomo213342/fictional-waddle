@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../mxc_image.dart';
+import '../mxc_uri_image.dart';
 import 'components/monogram_text.dart';
 
 class UserAvatar extends StatelessWidget {
@@ -44,7 +44,7 @@ class UserAvatar extends StatelessWidget {
               ),
             ),
             if (uri != null)
-              MxcImage(
+              MxcUriImage(
                 uri: uri,
                 client: client,
                 width: dimension,

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart' hide Element, Text;
 
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html_audio/flutter_html_audio.dart';
 import 'package:flutter_html_svg/flutter_html_svg.dart';
 import 'package:flutter_html_table/flutter_html_table.dart';
-import 'package:flutter_html_video/flutter_html_video.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:linkify/linkify.dart';
@@ -77,8 +75,6 @@ class TextMessage extends StatelessWidget {
       onlyRenderTheseTags: MatrixHtmlTags.allowed,
       extensions: const [
         TableHtmlExtension(),
-        AudioHtmlExtension(),
-        VideoHtmlExtension(),
         SvgHtmlExtension(),
       ],
       shrinkWrap: true,

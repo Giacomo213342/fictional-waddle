@@ -30,6 +30,9 @@ in mkShell {
     mkdir -p "$HOME/.bin"
     ln -sf /usr/bin/clang "$HOME/.bin"
     ln -sf /usr/bin/clang++ "$HOME/.bin"
+    # same for package:media_kit relying on bsdtar
+    ln -sf /usr/bin/tar "$HOME/.bin"
+    ln -sf /usr/bin/cut "$HOME/.bin"
 
     export LANG=en_US.UTF-8
 

@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-class MxcImage extends StatelessWidget {
-  const MxcImage({
+class MxcUriImage extends StatelessWidget {
+  const MxcUriImage({
     super.key,
     required this.uri,
     required this.client,
