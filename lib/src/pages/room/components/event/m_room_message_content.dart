@@ -4,6 +4,7 @@ import 'package:matrix/matrix.dart';
 
 import 'm_room_message/m_image.dart';
 import 'm_room_message/m_text.dart';
+import 'm_room_message/m_video.dart';
 
 class RoomMessageContent extends StatelessWidget {
   const RoomMessageContent({super.key, required this.event});
@@ -18,6 +19,8 @@ class RoomMessageContent extends StatelessWidget {
       case MessageTypes.Sticker:
       case MessageTypes.Image:
         return ImageMessage(event: event);
+      case MessageTypes.Video:
+        return VideoMessage(event: event);
       case MessageTypes.Text:
       case MessageTypes.Emote:
         return TextMessage(

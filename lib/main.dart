@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:matrix/matrix.dart';
+import 'package:media_kit/media_kit.dart';
 
 import 'src/../l10n/generated/app_localizations.dart';
 import 'src/router/router.dart';
@@ -14,7 +15,11 @@ void main(List<String>? args) {
   Logs().level = Level.verbose;
   // used to capture errors in main thread
   runZonedGuarded(
-    () => runApp(const PolyculeClient()),
+    () {
+      WidgetsFlutterBinding.ensureInitialized();
+      MediaKit.ensureInitialized();
+      runApp(const PolyculeClient());
+    },
     (error, stack) {
       // TODO: de-obfuscate web stack traces using source maps
       Logs().wtf('Error launching main applications', error, stack);
@@ -36,11 +41,12 @@ class PolyculeClient extends StatelessWidget {
           supportedLocales: AppLocalizations.supportedLocales,
           onGenerateTitle: (context) => AppLocalizations.of(context).appName,
           theme: ThemeData(
-            fontFamily: !kIsWeb && Platform.isWindows ? 'Arial' : 'Sono',
+            fontFamily:
+                !kIsWeb && Platform.isWindows ? 'Arial' : 'GL Suetterlin',
             fontFamilyFallback: const ['Noto Color Emoji'],
             colorScheme: lightDynamic ??
                 ColorScheme.fromSeed(
-                  seedColor: Colors.indigo,
+                  seedColor: Colors.pink,
                   brightness: Brightness.light,
                 ),
             brightness: Brightness.light,
@@ -57,7 +63,7 @@ class PolyculeClient extends StatelessWidget {
             brightness: Brightness.dark,
             useMaterial3: true,
           ),
-          themeMode: ThemeMode.dark,
+          themeMode: ThemeMode.system,
           routerConfig: router,
         );
       },
