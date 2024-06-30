@@ -34,7 +34,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get homeserverHeadline => 'Haj ! Welcome to < polycule >';
 
   @override
-  String get aMatrixClient => '- yet another [matrix] client';
+  String get aMatrixClient => '- noch irgendein [matrix] client';
 
   @override
   String get connectToHomeserver => 'Connect to your homeserver';

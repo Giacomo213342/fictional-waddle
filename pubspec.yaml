@@ -56,6 +56,12 @@ dev_dependencies:
     sdk: flutter
 
 dependency_overrides:
+  # https://github.com/media-kit/media-kit/issues/886
+  media_kit:
+    git:
+      url: https://github.com/TheOneWithTheBraid/media-kit.git
+      ref: braid/stub-template
+      path: media_kit
   # https://github.com/media-kit/media-kit/issues/357
   media_kit_libs_linux:
     git:

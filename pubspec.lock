@@ -632,10 +632,11 @@ packages:
   media_kit:
     dependency: "direct main"
     description:
-      name: media_kit
-      sha256: "3289062540e3b8b9746e5c50d95bd78a9289826b7227e253dff806d002b9e67a"
-      url: "https://pub.dev"
-    source: hosted
+      path: media_kit
+      ref: "braid/stub-template"
+      resolved-ref: "5df2d517b5db4bf9678c2be4f5ad8fb8531e6dc7"
+      url: "https://github.com/TheOneWithTheBraid/media-kit.git"
+    source: git
     version: "1.1.10+1"
   media_kit_libs_android_video:
     dependency: transitive
