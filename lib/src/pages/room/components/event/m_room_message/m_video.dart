@@ -6,6 +6,7 @@ import 'package:matrix/matrix.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
+import '../../../../../widgets/ascii_progress_indicator.dart';
 import '../../../../../widgets/matrix/blur_hash_spinner.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
 import '../../../../../widgets/matrix/tumbnail_aspect_ratio.dart';
@@ -50,16 +51,22 @@ class _VideoMessageState extends State<VideoMessage>
         child: MxcEncryptedFileBuilder<Playable, MatrixFile>(
           event: widget.event,
           attachmentTransformer: _makePlayable,
-          // thumbnail: ThumbnailRequest.thumbnailOnly,
           builder: (context, thumbnail, attachment) {
             final playable = attachment.data;
             final thumb = thumbnail.data;
             if (playable == null) {
               if (thumb is MatrixFile) {
-                return Image.memory(
-                  thumb.bytes,
-                  gaplessPlayback: true,
-                  fit: BoxFit.contain,
+                return Stack(
+                  alignment: Alignment.center,
+                  fit: StackFit.expand,
+                  children: [
+                    Image.memory(
+                      thumb.bytes,
+                      gaplessPlayback: true,
+                      fit: BoxFit.contain,
+                    ),
+                    const Center(child: AsciiProgressIndicator()),
+                  ],
                 );
               }
               return BlurHashSpinner(event: widget.event);

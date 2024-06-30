@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
+import 'm_room_message/m_audio.dart';
 import 'm_room_message/m_image.dart';
 import 'm_room_message/m_text.dart';
 import 'm_room_message/m_video.dart';
@@ -21,6 +22,8 @@ class RoomMessageContent extends StatelessWidget {
         return ImageMessage(event: event);
       case MessageTypes.Video:
         return VideoMessage(event: event);
+      case MessageTypes.Audio:
+        return AudioMessage(event: event);
       case MessageTypes.Text:
       case MessageTypes.Emote:
         return TextMessage(

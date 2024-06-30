@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:matrix/matrix.dart';
 import 'package:media_kit/media_kit.dart';
 
@@ -18,6 +19,7 @@ void main(List<String>? args) {
     () {
       WidgetsFlutterBinding.ensureInitialized();
       MediaKit.ensureInitialized();
+      JustAudioMediaKit.ensureInitialized();
       runApp(const PolyculeClient());
     },
     (error, stack) {
