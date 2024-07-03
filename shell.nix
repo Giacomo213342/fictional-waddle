@@ -33,6 +33,7 @@ in mkShell {
     # same for package:media_kit relying on bsdtar
     ln -sf /usr/bin/tar "$HOME/.bin"
     ln -sf /usr/bin/cut "$HOME/.bin"
+    ln -sf /usr/bin/sed "$HOME/.bin"
 
     export LANG=en_US.UTF-8
 
