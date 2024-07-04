@@ -35,7 +35,7 @@ dependencies:
   just_audio_media_kit: ^2.0.4
   just_waveform: ^0.0.5
   linkify: ^5.0.0
-  matrix: ^0.29.8
+  matrix: ^0.30.0
   matrix_homeserver_recommendations: ^0.4.0
   media_kit: ^1.1.10+1
   media_kit_libs_video: ^1.0.4
