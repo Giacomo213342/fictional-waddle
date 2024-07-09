@@ -396,4 +396,13 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get lastMonth => 'Forrige måned';
+
+  @override
+  String get download => 'Download';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get saveAs => 'Save as';
 }

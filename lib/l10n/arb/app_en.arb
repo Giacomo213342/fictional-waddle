@@ -218,5 +218,8 @@
   },
   "yesterday": "Yesterday",
   "thisMonth": "This month",
-  "lastMonth": "Last month"
+  "lastMonth": "Last month",
+  "download": "Download",
+  "share": "Share",
+  "saveAs": "Save as"
 }
