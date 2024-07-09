@@ -7,6 +7,7 @@ import 'package:matrix/matrix.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../utils/file_selector.dart';
 import '../room_list/room_list.dart';
+import 'components/timeline_event_tile.dart';
 import 'room_view.dart';
 
 class RoomPage extends StatefulWidget {
@@ -33,6 +34,8 @@ class RoomController extends State<RoomPage> {
   final msgtypeController = TextEditingController(text: MessageTypes.Text);
 
   String sendMsgType = MessageTypes.Text;
+
+  final eventKeyRegistry = <int, GlobalKey<TimelineEventTileState>>{};
 
   Room get room => widget.room;
 

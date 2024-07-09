@@ -395,4 +395,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get lastMonth => 'Last month';
+
+  @override
+  String get download => 'Download';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get saveAs => 'Save as';
 }

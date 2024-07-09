@@ -756,6 +756,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last month'**
   String get lastMonth;
+
+  /// No description provided for @download.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get download;
+
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @saveAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as'**
+  String get saveAs;
 }
 
 class _AppLocalizationsDelegate
