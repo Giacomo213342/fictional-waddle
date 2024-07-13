@@ -22,16 +22,16 @@ class PolyculeThemeBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
-        final darkColorScheme = //darkDynamic ??
+        final darkColorScheme = darkDynamic ??
             ColorScheme.fromSeed(
-          seedColor: PolyColors.cyan,
-          brightness: Brightness.dark,
-        );
-        final lightColorScheme = //lightDynamic ??
+              seedColor: PolyColors.cyan,
+              brightness: Brightness.dark,
+            );
+        final lightColorScheme = lightDynamic ??
             ColorScheme.fromSeed(
-          seedColor: PolyColors.pink,
-          brightness: Brightness.light,
-        );
+              seedColor: PolyColors.pink,
+              brightness: Brightness.light,
+            );
 
         final dark = buildPolyculeTheme(
           colorScheme: darkColorScheme,

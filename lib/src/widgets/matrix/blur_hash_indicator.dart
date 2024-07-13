@@ -5,8 +5,8 @@ import 'package:blurhash_dart/blurhash_dart.dart';
 import 'package:image/image.dart' hide Image;
 import 'package:matrix/matrix.dart';
 
-import '../../theme/polycule_text_shadow.dart';
 import '../ascii_progress_indicator.dart';
+import '../polycule_text_shadow.dart';
 
 class BlurHashIndicator extends StatelessWidget {
   const BlurHashIndicator({

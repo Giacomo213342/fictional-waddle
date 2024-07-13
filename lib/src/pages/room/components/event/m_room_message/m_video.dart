@@ -6,12 +6,12 @@ import 'package:matrix/matrix.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
-import '../../../../../theme/polycule_text_shadow.dart';
 import '../../../../../widgets/ascii_progress_indicator.dart';
 import '../../../../../widgets/matrix/blur_hash_indicator.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
 import '../../../../../widgets/matrix/retry_download_button.dart';
 import '../../../../../widgets/matrix/tumbnail_aspect_ratio.dart';
+import '../../../../../widgets/polycule_text_shadow.dart';
 
 class VideoMessage extends StatefulWidget {
   const VideoMessage({
