@@ -258,6 +258,10 @@ class AppLocalizationsNb extends AppLocalizations {
       'Ingen identitetsbekreftelsesmetode tilgjengelig?';
 
   @override
+  String get resetAccountWarning =>
+      'You will use all your past messages. This cannot be undone.';
+
+  @override
   String get verifyWithPassphrase => 'Bekreft med passord';
 
   @override

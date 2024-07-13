@@ -454,7 +454,7 @@ abstract class AppLocalizations {
   /// No description provided for @incomingVerificationRequestLong.
   ///
   /// In en, this message translates to:
-  /// **'There is an incoming verification request, do you want to handle the verification request?'**
+  /// **'There is an incoming verification request, do you want to handle the verification request ?'**
   String get incomingVerificationRequestLong;
 
   /// No description provided for @reject.
@@ -526,8 +526,14 @@ abstract class AppLocalizations {
   /// No description provided for @verifyMethodsNotAvailable.
   ///
   /// In en, this message translates to:
-  /// **'You don\'t have a verification method available?'**
+  /// **'You don\'t have a verification method available ?'**
   String get verifyMethodsNotAvailable;
+
+  /// No description provided for @resetAccountWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'You will use all your past messages. This cannot be undone.'**
+  String get resetAccountWarning;
 
   /// No description provided for @verifyWithPassphrase.
   ///
@@ -538,7 +544,7 @@ abstract class AppLocalizations {
   /// No description provided for @passphraseNoWhitespace.
   ///
   /// In en, this message translates to:
-  /// **'The passphrase cannot contain any whitespace characters!'**
+  /// **'The passphrase cannot contain any whitespace characters !'**
   String get passphraseNoWhitespace;
 
   /// No description provided for @errorTryAgain.
