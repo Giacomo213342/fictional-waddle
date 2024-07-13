@@ -9,6 +9,7 @@ typedef ThumbnailAttachmentBuilder<T, U> = Widget Function(
   BuildContext context,
   AsyncSnapshot<U?> thumbnail,
   AsyncSnapshot<T?> attachment,
+  VoidCallback? retryCallback,
 );
 
 enum ThumbnailRequest {
@@ -71,7 +72,9 @@ class _MxcEncryptedFileBuilderState<T, U>
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder.call(context, thumbnail, attachment);
+    final retryCallback =
+        attachment.hasError || thumbnail.hasError ? retry : null;
+    return widget.builder.call(context, thumbnail, attachment, retryCallback);
   }
 
   @override
@@ -125,7 +128,7 @@ class _MxcEncryptedFileBuilderState<T, U>
     try {
       final operation = thumbnailOperation = CancelableOperation.fromFuture(
         downloadThumbnail()
-            .then(widget.thumbnailTransformer ?? (file) => file as U),
+            .then(widget.thumbnailTransformer ?? (file) => file as U?),
         onCancel: () {
           thumbnail = const AsyncSnapshot.withData(ConnectionState.none, null);
           if (mounted) {
@@ -158,7 +161,7 @@ class _MxcEncryptedFileBuilderState<T, U>
     try {
       final operation = attachmentOperation = CancelableOperation.fromFuture(
         downloadAttachment()
-            .then(widget.attachmentTransformer ?? (file) => file as T),
+            .then(widget.attachmentTransformer ?? (file) => file as T?),
         onCancel: () {
           attachment = const AsyncSnapshot.withData(ConnectionState.none, null);
           if (mounted) {
@@ -182,6 +185,15 @@ class _MxcEncryptedFileBuilderState<T, U>
       if (mounted) {
         setState(() {});
       }
+    }
+  }
+
+  void retry() {
+    if (thumbnail.hasError) {
+      startThumbnailOperation();
+    }
+    if (attachment.hasError) {
+      startAttachmentOperation();
     }
   }
 }

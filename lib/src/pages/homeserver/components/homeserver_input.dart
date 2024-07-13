@@ -46,7 +46,7 @@ class _HomeserverInputState extends State<HomeserverInput> {
     final input = controller.text;
     final uri = _parseHomeserverInput(input);
 
-    context.push(LoginPage.makeRouteName(uri));
+    context.pushMultiClient(LoginPage.makeRouteName(uri));
   }
 
   @override

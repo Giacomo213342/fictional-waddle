@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:go_router/go_router.dart';
 
+import '../pages/application_settings/application_settings.dart';
 import '../pages/fatal_error/fatal_error_page.dart';
 import '../pages/homeserver/homeserver.dart';
 import '../pages/login/login.dart';
@@ -41,6 +42,17 @@ class PolyculeRouter extends GoRouter {
                     GoRoute(
                       path: SplashPage.routeName.asMultiClientRoute(),
                       builder: (context, state) => const SplashPage(),
+                    ),
+                    ResponsiveShellRoute(
+                      builder: (context, state) =>
+                          const ApplicationSettingsPage(),
+                      routes: [
+                        GoRoute(
+                          path: ApplicationSettingsPage.routeName,
+                          builder: (context, state) =>
+                              const PolyculePlaceholder(),
+                        ),
+                      ],
                     ),
                     MustBeLoggedOutRoute(
                       path: HomeserverPage.routeName.asMultiClientRoute(),

@@ -29,7 +29,7 @@ class _FileMessageState extends State<FileMessage>
       child: MxcEncryptedFileBuilder<MatrixFile, MatrixFile>(
         event: widget.event,
         thumbnail: ThumbnailRequest.attachmentOnly,
-        builder: (context, thumbnail, attachment) {
+        builder: (context, thumbnail, attachment, retryCallback) {
           return IntrinsicWidth(
             child: ListTile(
               leading: const Icon(Icons.attach_file),

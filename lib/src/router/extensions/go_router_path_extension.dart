@@ -14,12 +14,12 @@ extension GoRouterPathExtension on String {
 extension GoRouterMultiClient on BuildContext {
   RegExp get _clientRegex => RegExp(r'^/client/(\d+)/?');
 
-  void go(String location, {Object? extra}) {
+  void goMultiClient(String location, {Object? extra}) {
     location = clientifyLocation(location);
     return GoRouter.of(this).go(location, extra: extra);
   }
 
-  Future<T?> push<T>(String location, {Object? extra}) {
+  Future<T?> pushMultiClient<T>(String location, {Object? extra}) {
     location = clientifyLocation(location);
     return GoRouter.of(this).push<T>(location, extra: extra);
   }

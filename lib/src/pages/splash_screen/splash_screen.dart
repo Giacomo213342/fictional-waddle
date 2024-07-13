@@ -33,18 +33,18 @@ class SplashController extends MatrixState<SplashPage> {
         );
       } catch (e) {
         WidgetsBinding.instance.addPostFrameCallback(
-          (_) => context.go(FatalErrorPage.routeName),
+          (_) => context.goMultiClient(FatalErrorPage.routeName),
         );
         rethrow;
       }
       if (mounted) {
         WidgetsBinding.instance.addPostFrameCallback(
-          (_) => context.go(HomeserverPage.routeName),
+          (_) => context.goMultiClient(HomeserverPage.routeName),
         );
       }
     } else {
       WidgetsBinding.instance.addPostFrameCallback(
-        (_) => context.go(RoomListPage.routeName),
+        (_) => context.goMultiClient(RoomListPage.routeName),
       );
     }
   }

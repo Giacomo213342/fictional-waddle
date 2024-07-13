@@ -68,7 +68,7 @@ class _BenchmarkWidgetState extends State<BenchmarkWidget> {
     );
   }
 
-  void _connect() => context.push(uri);
+  void _connect() => context.pushMultiClient(uri);
 
   void _launchUrl(String? url, Map<String, String> attributes, element) {
     if (url != null) {

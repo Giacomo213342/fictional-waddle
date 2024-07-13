@@ -61,7 +61,7 @@ class _AudioMessageState extends State<AudioMessage>
         event: widget.event,
         attachmentTransformer: _makeAudio,
         thumbnail: ThumbnailRequest.attachmentOnly,
-        builder: (context, thumbnail, attachment) {
+        builder: (context, thumbnail, attachment, retryCallback) {
           return ListTile(
             leading: AnimatedBuilder(
               builder: (context, _) {

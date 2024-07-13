@@ -7,12 +7,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:go_router/go_router.dart' hide GoRouterHelper;
+import 'package:go_router/go_router.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 import 'package:olm/olm.dart' as olm;
 import 'package:path_provider/path_provider.dart';
 
+import '../../../pages/application_settings/application_settings.dart';
 import '../../../pages/fatal_error/fatal_error_page.dart';
 import '../../../pages/homeserver/homeserver.dart';
 import '../../../pages/room_list/room_list.dart';
@@ -216,7 +217,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     _loginClients.add(identifier);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.go('/client/$identifier${SplashPage.routeName}');
+      context.goMultiClient('/client/$identifier${SplashPage.routeName}');
     });
   }
 
@@ -224,7 +225,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     final identifier = client.clientName.clientIdentifier;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.go('/client/$identifier${SplashPage.routeName}');
+      context.goMultiClient('/client/$identifier${SplashPage.routeName}');
     });
   }
 
@@ -263,14 +264,14 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
             'Launching with OLM version ${olm.get_library_version().join('.')}',
           );
         } on ArgumentError catch (e) {
-          context.go(FatalErrorPage.routeName, extra: e);
+          context.goMultiClient(FatalErrorPage.routeName, extra: e);
           return;
         }
 
         if (client.clientName.clientIdentifier ==
             getActiveClient().clientName.clientIdentifier) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.go(RoomListPage.routeName);
+            context.goMultiClient(RoomListPage.routeName);
           });
         }
 
@@ -283,7 +284,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         if (client.clientName.clientIdentifier ==
             getActiveClient().clientName.clientIdentifier) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.go(HomeserverPage.routeName);
+            context.goMultiClient(HomeserverPage.routeName);
           });
         }
         _removeFromClientList(client);
@@ -362,7 +363,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     if (widget.activeClientIdentifier == identifier) {
       final newIdentifier = activeClients.first.clientName.clientIdentifier;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.go('/client/$newIdentifier${SplashPage.routeName}');
+        context.goMultiClient('/client/$newIdentifier${SplashPage.routeName}');
       });
     }
   }
@@ -419,6 +420,10 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     _loginClients.remove(client.clientName.clientIdentifier);
 
     await _removeFromClientList(client);
+  }
+
+  void openSettings() {
+    context.push(ApplicationSettingsPage.routeName);
   }
 }
 

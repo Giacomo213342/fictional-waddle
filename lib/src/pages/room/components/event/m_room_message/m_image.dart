@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../../../../../widgets/matrix/blur_hash_spinner.dart';
+import '../../../../../widgets/ascii_progress_indicator.dart';
+import '../../../../../widgets/matrix/blur_hash_indicator.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
+import '../../../../../widgets/matrix/retry_download_button.dart';
 import '../../../../../widgets/matrix/tumbnail_aspect_ratio.dart';
 
 class ImageMessage extends StatelessWidget {
@@ -20,10 +22,18 @@ class ImageMessage extends StatelessWidget {
         child: MxcEncryptedFileBuilder<MatrixFile, MatrixFile>(
           event: event,
           thumbnail: ThumbnailRequest.thumbnailOnly,
-          builder: (context, thumbnail, attachment) {
+          builder: (context, thumbnail, attachment, retryCallback) {
             final data = thumbnail.data ?? attachment.data;
+
             if (data == null) {
-              return BlurHashSpinner(event: event);
+              final label = (thumbnail.hasError || attachment.hasError)
+                  ? RetryDownloadButton(callback: retryCallback)
+                  : const AsciiProgressIndicator();
+
+              return BlurHashIndicator(
+                event: event,
+                label: label,
+              );
             }
             return Image.memory(
               data.bytes,

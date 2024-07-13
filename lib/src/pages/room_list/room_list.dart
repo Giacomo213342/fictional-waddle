@@ -52,7 +52,7 @@ class RoomListController extends MatrixState<RoomListPage> {
         await client.encryption?.crossSigning.isCached() == false ||
         await client.encryption?.keyManager.isCached() == false) {
       if (mounted) {
-        context.go(SsssBootstrapPage.routeName);
+        context.goMultiClient(SsssBootstrapPage.routeName);
       }
     }
   }

@@ -33,7 +33,7 @@ class RoomListTileState extends State<RoomListTile> {
       bindings: <ShortcutActivator, VoidCallback>{
         // open the room on arrow press
         const SingleActivator(LogicalKeyboardKey.arrowRight): () =>
-            context.go(path),
+            context.goMultiClient(path),
       },
       child: Link(
         uri: Uri.parse(path),
@@ -43,7 +43,7 @@ class RoomListTileState extends State<RoomListTile> {
             visualDensity: VisualDensity.compact,
             // make the tle keyboard focusable by request
             focusNode: RoomListController.getFocusNode(room.id),
-            onTap: () => context.go(path),
+            onTap: () => context.goMultiClient(path),
             leading: RoomAvatar(
               key: ValueKey(room.id),
               room: room,

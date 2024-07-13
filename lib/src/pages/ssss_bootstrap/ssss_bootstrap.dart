@@ -98,14 +98,14 @@ class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
         _nextStage(() => bootstrap.askSetupOnlineKeyBackup(true));
         break;
       case BootstrapState.error:
-        _nextStage(() => context.go(FatalErrorPage.routeName));
+        _nextStage(() => context.goMultiClient(FatalErrorPage.routeName));
         break;
       case BootstrapState.done:
         if (widget.passphrase != null) {
           Navigator.of(context).pop();
           return;
         }
-        _nextStage(() => context.go(RoomListPage.routeName));
+        _nextStage(() => context.goMultiClient(RoomListPage.routeName));
         break;
     }
     setState(() => this.bootstrap = bootstrap);
@@ -141,7 +141,7 @@ class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
       keyVerificationRequest = null;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.go(RoomListPage.routeName);
+      context.goMultiClient(RoomListPage.routeName);
     });
   }
 

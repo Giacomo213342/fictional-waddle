@@ -6,9 +6,11 @@ import 'package:matrix/matrix.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
+import '../../../../../theme/polycule_text_shadow.dart';
 import '../../../../../widgets/ascii_progress_indicator.dart';
-import '../../../../../widgets/matrix/blur_hash_spinner.dart';
+import '../../../../../widgets/matrix/blur_hash_indicator.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
+import '../../../../../widgets/matrix/retry_download_button.dart';
 import '../../../../../widgets/matrix/tumbnail_aspect_ratio.dart';
 
 class VideoMessage extends StatefulWidget {
@@ -51,10 +53,13 @@ class _VideoMessageState extends State<VideoMessage>
         child: MxcEncryptedFileBuilder<Playable, MatrixFile>(
           event: widget.event,
           attachmentTransformer: _makePlayable,
-          builder: (context, thumbnail, attachment) {
+          builder: (context, thumbnail, attachment, retryCallback) {
             final playable = attachment.data;
             final thumb = thumbnail.data;
             if (playable == null) {
+              final label = attachment.hasError
+                  ? RetryDownloadButton(callback: retryCallback)
+                  : const AsciiProgressIndicator();
               if (thumb is MatrixFile) {
                 return Stack(
                   alignment: Alignment.center,
@@ -65,11 +70,15 @@ class _VideoMessageState extends State<VideoMessage>
                       gaplessPlayback: true,
                       fit: BoxFit.contain,
                     ),
-                    const Center(child: AsciiProgressIndicator()),
+                    PolyculeTextShadow(child: Center(child: label)),
                   ],
                 );
               }
-              return BlurHashSpinner(event: widget.event);
+
+              return BlurHashIndicator(
+                event: widget.event,
+                label: label,
+              );
             }
             return MaterialDesktopVideoControlsTheme(
               normal: MaterialDesktopVideoControlsThemeData(

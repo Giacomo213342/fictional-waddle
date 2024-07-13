@@ -409,4 +409,14 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get saveAs => 'Save as';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get errorDownloadingAttachment =>
+      'Error downloading the message attachment.';
+
+  @override
+  String get retry => 'Retry';
 }

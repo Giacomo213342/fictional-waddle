@@ -780,6 +780,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save as'**
   String get saveAs;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @errorDownloadingAttachment.
+  ///
+  /// In en, this message translates to:
+  /// **'Error downloading the message attachment.'**
+  String get errorDownloadingAttachment;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
 }
 
 class _AppLocalizationsDelegate

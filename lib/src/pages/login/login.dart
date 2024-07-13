@@ -77,7 +77,7 @@ class LoginController extends MatrixState<LoginPage> {
       if (Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
       }
-      context.go(HomeserverPage.routeName);
+      context.goMultiClient(HomeserverPage.routeName);
     });
     return null;
   }
