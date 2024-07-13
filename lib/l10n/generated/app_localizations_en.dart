@@ -216,7 +216,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get incomingVerificationRequestLong =>
-      'There is an incoming verification request, do you want to handle the verification request?';
+      'There is an incoming verification request, do you want to handle the verification request ?';
 
   @override
   String get reject => 'Reject';
@@ -254,14 +254,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get verifyMethodsNotAvailable =>
-      'You don\'t have a verification method available?';
+      'You don\'t have a verification method available ?';
+
+  @override
+  String get resetAccountWarning =>
+      'You will use all your past messages. This cannot be undone.';
 
   @override
   String get verifyWithPassphrase => 'Verify with passphrase';
 
   @override
   String get passphraseNoWhitespace =>
-      'The passphrase cannot contain any whitespace characters!';
+      'The passphrase cannot contain any whitespace characters !';
 
   @override
   String get errorTryAgain => 'An error occurred. Please try again.';
