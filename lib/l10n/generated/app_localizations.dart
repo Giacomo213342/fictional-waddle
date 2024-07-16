@@ -7,6 +7,7 @@ import 'package:intl/intl.dart' as intl;
 import 'app_localizations_de.dart' deferred as app_localizations_de;
 import 'app_localizations_en.dart' deferred as app_localizations_en;
 import 'app_localizations_nb.dart' deferred as app_localizations_nb;
+import 'app_localizations_nl.dart' deferred as app_localizations_nl;
 
 /// Callers can lookup localized strings with an instance of AppLocalizations
 /// returned by `AppLocalizations.of(context)`.
@@ -94,7 +95,8 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('de'),
     Locale('en'),
-    Locale('nb')
+    Locale('nb'),
+    Locale('nl')
   ];
 
   /// No description provided for @appName.
@@ -811,7 +813,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['de', 'en', 'nb'].contains(locale.languageCode);
+      <String>['de', 'en', 'nb', 'nl'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -832,6 +834,10 @@ Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
       return app_localizations_nb
           .loadLibrary()
           .then((dynamic _) => app_localizations_nb.AppLocalizationsNb());
+    case 'nl':
+      return app_localizations_nl
+          .loadLibrary()
+          .then((dynamic _) => app_localizations_nl.AppLocalizationsNl());
   }
 
   throw FlutterError(
