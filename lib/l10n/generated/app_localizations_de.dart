@@ -7,7 +7,7 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get appName => '< polycule >';
+  String get appName => '< polykül >';
 
   @override
   String get about => 'Info';
