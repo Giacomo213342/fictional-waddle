@@ -505,10 +505,10 @@ packages:
     dependency: "direct main"
     description:
       name: just_audio_media_kit
-      sha256: bbecbd43959c230d9f9610df0e0165855e711b4c960ce730c08f31107cc3bd26
+      sha256: "7f57d317fafa04cb3e70b924e8f632ffb7eca7a97a369e1e44738ed89fbd5da1"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.4"
+    version: "2.0.5"
   just_audio_platform_interface:
     dependency: transitive
     description:
