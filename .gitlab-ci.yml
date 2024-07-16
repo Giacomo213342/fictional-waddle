@@ -55,6 +55,7 @@ build:macos_debug:
     - flutter pub get
     - flutter gen-l10n
     - flutter build macos --debug --build-number $CI_PIPELINE_ID
+    - rm -rf polycule-$VERSION-debug.app
     - mv build/macos/Build/Products/Debug/polycule.app polycule-$VERSION-debug.app
   except:
     - schedules
@@ -79,6 +80,7 @@ build:macos_release:
       else
         flutter build macos --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
       fi
+    - rm -rf polycule-$VERSION.app
     - mv build/macos/Build/Products/Release/polycule.app polycule-$VERSION.app
   only:
     - main
