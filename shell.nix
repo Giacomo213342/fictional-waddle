@@ -23,7 +23,7 @@ in mkShell {
   shellHook =
   ''
     # configure the dependency cache persistent
-    export FLUTTER_VERSION="3.22.2"
+    export FLUTTER_VERSION="3.22.3"
     export FLUTTER_HOME="$HOME/build/flutter-$FLUTTER_VERSION"
 
     # ugly workaround to prevent use of nix-provided clang

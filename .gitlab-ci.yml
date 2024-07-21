@@ -1,8 +1,8 @@
 variables:
-  FLUTTER_VERSION: 3.22.2
+  FLUTTER_VERSION: 3.22.3
 
 include:
-  - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.17.0
+  - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.19.0
     inputs:
       gitlab_access_token: $dependabot_gitlab_access_token
       stage_name: scan
