@@ -88,6 +88,17 @@ flutter:
       fonts:
         - asset: assets/fonts/GlSuetterlin-j710.otf
           weight: 200
+    - family: Inclusive Sans
+      fonts:
+        - asset: assets/fonts/InclusiveSans-Regular.ttf
+        - asset: assets/fonts/InclusiveSans-Italic.ttf
+          style: italic
+    - family: OpenDyslexic
+      fonts:
+        - asset: assets/fonts/OpenDyslexic3-Regular.ttf
+        - asset: assets/fonts/OpenDyslexic3-Bold.ttf
+          weight: 700
+
 
 import_sorter:
   comments: false

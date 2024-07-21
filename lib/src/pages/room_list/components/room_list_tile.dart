@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/link.dart';
 
@@ -10,11 +11,21 @@ import '../../room/room.dart';
 import '../room_list.dart';
 import 'room_list_trailing.dart';
 
+typedef ClientifyLocationCallback = String Function(String location);
+
 class RoomListTile extends StatefulWidget {
-  const RoomListTile(this.controller, {super.key, required this.room});
+  const RoomListTile(
+    this.controller, {
+    super.key,
+    required this.room,
+    this.clientifyLocationCallback,
+    this.onActivate,
+  });
 
   final Room room;
   final RoomListController controller;
+  final ClientifyLocationCallback? clientifyLocationCallback;
+  final VoidCallback? onActivate;
 
   @override
   State<RoomListTile> createState() => RoomListTileState();
@@ -28,12 +39,17 @@ class RoomListTileState extends State<RoomListTile> {
 
   @override
   Widget build(BuildContext context) {
-    final path = RoomPage.makeRouteName(room.id);
+    String location = RoomPage.makeRouteName(room.id);
+    final path = widget.clientifyLocationCallback?.call(location) ??
+        context.clientifyLocation(location);
+
     return CallbackShortcuts(
       bindings: <ShortcutActivator, VoidCallback>{
         // open the room on arrow press
-        const SingleActivator(LogicalKeyboardKey.arrowRight): () =>
-            context.goMultiClient(path),
+        const SingleActivator(LogicalKeyboardKey.arrowRight): () {
+          widget.onActivate?.call();
+          context.go(path);
+        },
       },
       child: Link(
         uri: Uri.parse(path),
@@ -43,7 +59,12 @@ class RoomListTileState extends State<RoomListTile> {
             visualDensity: VisualDensity.compact,
             // make the tle keyboard focusable by request
             focusNode: RoomListController.getFocusNode(room.id),
-            onTap: () => context.goMultiClient(path),
+            onTap: followLink == null
+                ? null
+                : () {
+                    widget.onActivate?.call();
+                    followLink.call();
+                  },
             leading: RoomAvatar(
               key: ValueKey(room.id),
               room: room,
