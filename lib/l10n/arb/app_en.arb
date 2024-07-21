@@ -225,5 +225,6 @@
   "saveAs": "Save as",
   "settings": "Settings",
   "errorDownloadingAttachment": "Error downloading the message attachment.",
-  "retry": "Retry"
+  "retry": "Retry",
+  "searchPromptLabel": "Command, user, room name or MXID"
 }

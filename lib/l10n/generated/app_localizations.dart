@@ -800,6 +800,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get retry;
+
+  /// No description provided for @searchPromptLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Command, user, room name or MXID'**
+  String get searchPromptLabel;
 }
 
 class _AppLocalizationsDelegate

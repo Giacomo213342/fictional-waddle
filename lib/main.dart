@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -9,10 +10,10 @@ import 'package:media_kit/media_kit.dart';
 import 'src/polycule.dart';
 
 void main(List<String>? args) {
-  Logs().level = Level.verbose;
   // used to capture errors in main thread
   runZonedGuarded(
     () {
+      Logs().level = Level.verbose;
       WidgetsFlutterBinding.ensureInitialized();
       MediaKit.ensureInitialized();
       JustAudioMediaKit.ensureInitialized();
@@ -20,7 +21,12 @@ void main(List<String>? args) {
     },
     (error, stack) {
       // TODO: de-obfuscate web stack traces using source maps
-      Logs().wtf('Error launching main applications', error, stack);
+      log(
+        'Error launching main applications',
+        error: error,
+        stackTrace: stack,
+        name: 'zone_guard',
+      );
     },
   );
 }

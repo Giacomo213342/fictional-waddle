@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:dynamic_color/dynamic_color.dart';
 
+import 'fonts.dart';
 import 'poly_colors.dart';
 
 typedef PolyculeThemeCallback = Widget Function(
@@ -53,28 +54,46 @@ class PolyculeThemeBuilder extends StatelessWidget {
     required ColorScheme colorScheme,
     required Brightness brightness,
   }) {
+    final defaultSide = BorderSide(width: 1, color: colorScheme.primary);
+    final defaultBorder = Border.fromBorderSide(defaultSide);
     return ThemeData(
-      fontFamily: _fontFamily(brightness),
-      fontFamilyFallback: const ['Noto Color Emoji'],
+      fontFamily: _fontFamily(brightness).name,
+      fontFamilyFallback: [
+        PolyculeFonts.notoColorEmoji.name,
+        PolyculeFonts.notoSans.name,
+      ],
       colorScheme: colorScheme,
       cardTheme: CardTheme(
         margin: const EdgeInsets.all(16),
-        shape: Border.all(width: 1, color: colorScheme.primary),
+        shape: defaultBorder,
+      ),
+      searchBarTheme: SearchBarThemeData(
+        backgroundColor: WidgetStatePropertyAll<Color>(colorScheme.surface),
+        shape: WidgetStatePropertyAll<OutlinedBorder>(
+          RoundedRectangleBorder(
+            side: defaultSide,
+            borderRadius: BorderRadius.zero,
+          ),
+        ),
+      ),
+      searchViewTheme: const SearchViewThemeData(
+        shape: RoundedRectangleBorder(),
       ),
       brightness: brightness,
       useMaterial3: true,
     );
   }
 
-  String _fontFamily(Brightness brightness) {
+  PolyculeFonts _fontFamily(Brightness brightness) {
     if (!kIsWeb && Platform.isWindows) {
-      return 'Arial';
+      return PolyculeFonts.arial;
     }
+
     switch (brightness) {
       case Brightness.dark:
-        return 'Sono';
+        return PolyculeFonts.sono;
       case Brightness.light:
-        return 'GL Suetterlin';
+        return PolyculeFonts.glSuetterlin;
     }
   }
 }

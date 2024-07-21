@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../../../l10n/generated/app_localizations.dart';
 import 'components/fade_in_room_list.dart';
 import 'components/initial_sync_tile.dart';
+import 'components/room_search_bar.dart';
 import 'components/sync_update_status_row.dart';
 import 'room_list.dart';
 
@@ -15,33 +16,33 @@ class RoomListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: FutureBuilder<String?>(
-          future: Future.value(),
-          builder: (context, snapshot) {
-            return Text(
-              AppLocalizations.of(context).hajUser(controller.client.userID),
-            );
-          },
+    return CallbackShortcuts(
+      bindings: <ShortcutActivator, VoidCallback>{
+        const SingleActivator(LogicalKeyboardKey.slash): controller.command,
+        const SingleActivator(LogicalKeyboardKey.semicolon): controller.search,
+        const CharacterActivator(':'): controller.search,
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          flexibleSpace: RoomSearchBar(controller: controller),
         ),
-      ),
-      body: Column(
-        children: [
-          InitialSyncTile(client: controller.client),
-          Expanded(
-            child: FadeInRoomList(controller),
-          ),
-          StreamBuilder<SyncUpdate>(
-            stream: controller.client.onSync.stream,
-            builder: (context, snapshot) {
-              return SyncUpdateStatusRow(
-                syncUpdate: snapshot.data,
-                timestamp: DateTime.now(),
-              );
-            },
-          ),
-        ],
+        body: Column(
+          children: [
+            InitialSyncTile(client: controller.client),
+            Expanded(
+              child: FadeInRoomList(controller),
+            ),
+            StreamBuilder<SyncUpdate>(
+              stream: controller.client.onSync.stream,
+              builder: (context, snapshot) {
+                return SyncUpdateStatusRow(
+                  syncUpdate: snapshot.data,
+                  timestamp: DateTime.now(),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -418,4 +418,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retry => 'Retry';
+
+  @override
+  String get searchPromptLabel => 'Command, user, room name or MXID';
 }
