@@ -15,29 +15,31 @@ class RoomSearchBar extends StatelessWidget {
     return SearchAnchor(
       searchController: controller.searchController,
       builder: (context, searchController) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(
-            // 16 - 1 px of border gap
-            horizontal: 15,
-            vertical: 4,
-          ),
-          child: SearchBar(
-            controller: searchController,
-            focusNode: controller.searchFocus,
-            onTap: () {
-              searchController.openView();
-            },
-            onChanged: (_) {
-              searchController.openView();
-            },
-            onSubmitted: controller.searchSubmitted,
-            hintText: AppLocalizations.of(context).hajUser(
-              controller.client.userID,
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              // 16 - 1 px of border gap
+              horizontal: 15,
+              vertical: 4,
             ),
-            leading: IconButton(
-              onPressed: searchController.openView,
-              tooltip: MaterialLocalizations.of(context).searchFieldLabel,
-              icon: const Icon(Icons.search),
+            child: SearchBar(
+              controller: searchController,
+              focusNode: controller.searchFocus,
+              onTap: () {
+                searchController.openView();
+              },
+              onChanged: (_) {
+                searchController.openView();
+              },
+              onSubmitted: controller.searchSubmitted,
+              hintText: AppLocalizations.of(context).hajUser(
+                controller.client.userID,
+              ),
+              leading: IconButton(
+                onPressed: searchController.openView,
+                tooltip: MaterialLocalizations.of(context).searchFieldLabel,
+                icon: const Icon(Icons.search),
+              ),
             ),
           ),
         );
