@@ -12,11 +12,11 @@ class RoomSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SearchAnchor(
-      searchController: controller.searchController,
-      builder: (context, searchController) {
-        return SafeArea(
-          child: Padding(
+    return SafeArea(
+      child: SearchAnchor(
+        searchController: controller.searchController,
+        builder: (context, searchController) {
+          return Padding(
             padding: const EdgeInsets.symmetric(
               // 16 - 1 px of border gap
               horizontal: 15,
@@ -41,27 +41,27 @@ class RoomSearchBar extends StatelessWidget {
                 icon: const Icon(Icons.search),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
 
-      headerHeight: 56 - 1,
-      suggestionsBuilder: (_, searchController) =>
-          controller.filterRooms(searchController.text).map(
-                (room) => RoomListTile(
-                  controller,
-                  room: room,
-                  clientifyLocationCallback: context.clientifyLocation,
-                  onActivate: () => searchController.closeView(
-                    room.getLocalizedDisplayname(),
+        headerHeight: 56 - 1,
+        suggestionsBuilder: (_, searchController) =>
+            controller.filterRooms(searchController.text).map(
+                  (room) => RoomListTile(
+                    controller,
+                    room: room,
+                    clientifyLocationCallback: context.clientifyLocation,
+                    onActivate: () => searchController.closeView(
+                      room.getLocalizedDisplayname(),
+                    ),
                   ),
                 ),
-              ),
-      viewOnSubmitted: controller.searchSubmitted,
+        viewOnSubmitted: controller.searchSubmitted,
 
-      // viewBackgroundColor: Colors.transparent,
-      viewConstraints: const BoxConstraints(minHeight: double.maxFinite),
-      viewHintText: AppLocalizations.of(context).searchPromptLabel,
+        // viewBackgroundColor: Colors.transparent,
+        viewConstraints: const BoxConstraints(minHeight: double.maxFinite),
+        viewHintText: AppLocalizations.of(context).searchPromptLabel,
+      ),
     );
   }
 }
