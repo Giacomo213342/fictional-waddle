@@ -42,11 +42,11 @@ class ClientManagerWidget extends StatefulWidget {
   ) =>
       ClientManagerWidget(
         activeClientIdentifier:
-            ClientManager.extractClientIdentifierFromRoute(state) ?? 1,
+            ClientManager.extractClientIdentifierFromRoute(state),
         child: child,
       );
 
-  final int activeClientIdentifier;
+  final int? activeClientIdentifier;
   final Widget child;
 
   @override
@@ -202,7 +202,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   Client getActiveClient() {
     final matchingClients = activeClients.where(
       (client) =>
-          client.clientName.clientIdentifier == widget.activeClientIdentifier,
+          client.clientName.clientIdentifier ==
+          (widget.activeClientIdentifier ?? 1),
     );
     if (matchingClients.isNotEmpty) {
       return matchingClients.single;

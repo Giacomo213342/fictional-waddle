@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../widgets/placeholder.dart';
+import 'package:url_launcher/link.dart';
+
+import '../../../l10n/generated/app_localizations.dart';
 import 'application_settings.dart';
+import 'pages/appearance.dart';
 
 class ApplicationSettingsView extends StatelessWidget {
   const ApplicationSettingsView({super.key, required this.controller});
@@ -12,9 +15,34 @@ class ApplicationSettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('There could be settings.'),
+        title: Text(AppLocalizations.of(context).polyculeSettings),
+        automaticallyImplyLeading: false,
       ),
-      body: const PolyculePlaceholder(),
+      body: ListView(
+        children: [
+          Link(
+            uri: controller.makeSettingsUri(AppearanceSettingsPage.routeName),
+            builder: (context, followLink) => ListTile(
+              leading: const Icon(Icons.color_lens),
+              title: Text(
+                AppLocalizations.of(context).appearanceAccessibilitySettings,
+              ),
+              onTap: followLink,
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.translate),
+            title: Text(AppLocalizations.of(context).language),
+            onTap: controller.showLanguageDialog,
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.info),
+            title: Text(AppLocalizations.of(context).aboutPolycule),
+            onTap: controller.showAboutDialog,
+          ),
+        ],
+      ),
     );
   }
 }

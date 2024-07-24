@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../client_manager.dart';
+import 'settings_button.dart';
 import 'tab.dart';
 
 class ClientTabBar extends StatelessWidget {
@@ -47,14 +48,7 @@ class ClientTabBar extends StatelessWidget {
                 );
               }
               if (index == ClientManager.activeClients.length + 1) {
-                return SizedBox.square(
-                  dimension: 48,
-                  child: IconButton(
-                    tooltip: AppLocalizations.of(context).settings,
-                    onPressed: manager.openSettings,
-                    icon: const Icon(Icons.settings),
-                  ),
-                );
+                return SettingsButton(manager: manager);
               }
 
               return InheritedProvider<GetClientCallback>(
