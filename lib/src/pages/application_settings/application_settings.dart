@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/about_dialog.dart';
+import '../../widgets/settings_manager.dart';
 import 'application_settings_view.dart';
+import 'components/language_dialog.dart';
 
 class ApplicationSettingsPage extends StatefulWidget {
   const ApplicationSettingsPage({super.key});
@@ -16,4 +19,22 @@ class ApplicationSettingsController extends State<ApplicationSettingsPage> {
   @override
   Widget build(BuildContext context) =>
       ApplicationSettingsView(controller: this);
+
+  Uri makeSettingsUri(String routeName) {
+    return Uri.parse('${ApplicationSettingsPage.routeName}/$routeName');
+  }
+
+  Future<void> showLanguageDialog() async {
+    final result = await showAdaptiveDialog<LocaleResponse>(
+      context: context,
+      builder: (context) => const LanguageDialog(),
+    );
+    if (result == null || !mounted) {
+      return;
+    }
+
+    SettingsManager.of(context).locale.value = result.locale;
+  }
+
+  void showAboutDialog() => showInfoDialog(context);
 }

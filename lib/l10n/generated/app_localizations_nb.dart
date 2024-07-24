@@ -422,4 +422,58 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get searchPromptLabel => 'Command, user, room name or MXID';
+
+  @override
+  String get appearanceAccessibilitySettings => 'Appearance and accessibility';
+
+  @override
+  String get polyculeSettings => 'Configure your < polycule >';
+
+  @override
+  String get systemLanguage => 'Device language';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get dark => 'Dark terminal';
+
+  @override
+  String get light => 'Light rose';
+
+  @override
+  String get systemTheme => 'System theme';
+
+  @override
+  String get fontAccessibility => 'Font accessibility';
+
+  @override
+  String get inclusiveSans => 'Increased readability font';
+
+  @override
+  String get openDyslexic => 'Dyslexia-assisting font';
+
+  @override
+  String get defaultFont => 'Default font';
+
+  @override
+  String get color => 'Color settings';
+
+  @override
+  String get systemColor => 'System color';
+
+  @override
+  String get defaultColor => 'Theme default color';
+
+  @override
+  String get customColor => 'Custom color';
+
+  @override
+  String get highContrast => 'High contrast';
+
+  @override
+  String get aboutPolycule => 'About < polycule >';
 }

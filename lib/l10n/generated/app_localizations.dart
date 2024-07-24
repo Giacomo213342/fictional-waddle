@@ -806,6 +806,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Command, user, room name or MXID'**
   String get searchPromptLabel;
+
+  /// No description provided for @appearanceAccessibilitySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance and accessibility'**
+  String get appearanceAccessibilitySettings;
+
+  /// No description provided for @polyculeSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure your < polycule >'**
+  String get polyculeSettings;
+
+  /// No description provided for @systemLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Device language'**
+  String get systemLanguage;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @dark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark terminal'**
+  String get dark;
+
+  /// No description provided for @light.
+  ///
+  /// In en, this message translates to:
+  /// **'Light rose'**
+  String get light;
+
+  /// No description provided for @systemTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'System theme'**
+  String get systemTheme;
+
+  /// No description provided for @fontAccessibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Font accessibility'**
+  String get fontAccessibility;
+
+  /// No description provided for @inclusiveSans.
+  ///
+  /// In en, this message translates to:
+  /// **'Increased readability font'**
+  String get inclusiveSans;
+
+  /// No description provided for @openDyslexic.
+  ///
+  /// In en, this message translates to:
+  /// **'Dyslexia-assisting font'**
+  String get openDyslexic;
+
+  /// No description provided for @defaultFont.
+  ///
+  /// In en, this message translates to:
+  /// **'Default font'**
+  String get defaultFont;
+
+  /// No description provided for @color.
+  ///
+  /// In en, this message translates to:
+  /// **'Color settings'**
+  String get color;
+
+  /// No description provided for @systemColor.
+  ///
+  /// In en, this message translates to:
+  /// **'System color'**
+  String get systemColor;
+
+  /// No description provided for @defaultColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme default color'**
+  String get defaultColor;
+
+  /// No description provided for @customColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom color'**
+  String get customColor;
+
+  /// No description provided for @highContrast.
+  ///
+  /// In en, this message translates to:
+  /// **'High contrast'**
+  String get highContrast;
+
+  /// No description provided for @aboutPolycule.
+  ///
+  /// In en, this message translates to:
+  /// **'About < polycule >'**
+  String get aboutPolycule;
 }
 
 class _AppLocalizationsDelegate
