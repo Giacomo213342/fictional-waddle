@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../mxc_uri_image.dart';
-import 'components/monogram_text.dart';
+import 'mxc_avatar.dart';
 
 class UserAvatar extends StatelessWidget {
   const UserAvatar({
@@ -19,48 +18,14 @@ class UserAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final factor = dimension / 48;
-    final style = Theme.of(context).textTheme.headlineMedium;
-    double? size = style?.fontSize;
-    if (size != null) {
-      size *= factor;
-    }
-
     final uri = user.avatarUrl;
+    final monogram = user.calcDisplayname();
 
-    return Semantics(
-      excludeSemantics: true,
-      child: SizedBox.square(
-        dimension: dimension,
-        child: Stack(
-          alignment: Alignment.center,
-          fit: StackFit.expand,
-          children: [
-            Center(
-              child: MonogramText(
-                user.calcDisplayname(),
-                style: style?.copyWith(fontSize: size),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            if (uri != null)
-              MxcUriImage(
-                uri: uri,
-                client: client,
-                width: dimension,
-                height: dimension,
-              ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 2,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return MxcAvatar(
+      uri: uri,
+      client: client,
+      monogram: monogram,
+      dimension: dimension,
     );
   }
 }

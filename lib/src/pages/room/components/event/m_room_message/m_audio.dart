@@ -55,81 +55,83 @@ class _AudioMessageState extends State<AudioMessage>
   Widget build(BuildContext context) {
     super.build(context);
     JustAudioMediaKit.title = AppLocalizations.of(context).appName;
-    return SizedBox(
-      height: 96,
-      child: MxcEncryptedFileBuilder<Duration, MatrixFile>(
-        event: widget.event,
-        attachmentTransformer: _makeAudio,
-        thumbnail: ThumbnailRequest.attachmentOnly,
-        builder: (context, thumbnail, attachment, retryCallback) {
-          return ListTile(
-            leading: AnimatedBuilder(
-              builder: (context, _) {
-                return IconButton(
-                  onPressed:
-                      attachment.data is Duration ? _togglePlayback : null,
-                  icon: AnimatedIcon(
-                    icon: AnimatedIcons.play_pause,
-                    progress: iconAnimation,
-                  ),
-                );
-              },
-              animation: iconAnimation,
-            ),
-            title: SizedBox(
-              child: StreamBuilder<Duration>(
-                stream: player.positionStream,
-                builder: (context, snapshot) {
-                  int position = snapshot.data?.inMilliseconds ?? 0;
-                  var durationMilliseconds = player.duration?.inMilliseconds;
-                  if (durationMilliseconds == null ||
-                      durationMilliseconds == 0) {
-                    durationMilliseconds = 1;
-                  }
-                  return Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Flexible(
-                        flex: position,
-                        child: Container(
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      ),
-                      Transform.scale(
-                        scale: 3,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const SizedBox.square(dimension: 4),
-                        ),
-                      ),
-                      Flexible(
-                        flex: durationMilliseconds - position,
-                        child: Container(
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Text(
-                          '${snapshot.data?.inSeconds ?? 0} / ${player.duration?.inSeconds ?? 0}',
-                        ),
-                      ),
-                    ],
+    return SelectionArea(
+      child: SizedBox(
+        height: 96,
+        child: MxcEncryptedFileBuilder<Duration, MatrixFile>(
+          event: widget.event,
+          attachmentTransformer: _makeAudio,
+          thumbnail: ThumbnailRequest.attachmentOnly,
+          builder: (context, thumbnail, attachment, retryCallback) {
+            return ListTile(
+              leading: AnimatedBuilder(
+                builder: (context, _) {
+                  return IconButton(
+                    onPressed:
+                        attachment.data is Duration ? _togglePlayback : null,
+                    icon: AnimatedIcon(
+                      icon: AnimatedIcons.play_pause,
+                      progress: iconAnimation,
+                    ),
                   );
                 },
+                animation: iconAnimation,
               ),
-            ),
-          );
-        },
+              title: SizedBox(
+                child: StreamBuilder<Duration>(
+                  stream: player.positionStream,
+                  builder: (context, snapshot) {
+                    int position = snapshot.data?.inMilliseconds ?? 0;
+                    var durationMilliseconds = player.duration?.inMilliseconds;
+                    if (durationMilliseconds == null ||
+                        durationMilliseconds == 0) {
+                      durationMilliseconds = 1;
+                    }
+                    return Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Flexible(
+                          flex: position,
+                          child: Container(
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                        Transform.scale(
+                          scale: 3,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const SizedBox.square(dimension: 4),
+                          ),
+                        ),
+                        Flexible(
+                          flex: durationMilliseconds - position,
+                          child: Container(
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Text(
+                            '${snapshot.data?.inSeconds ?? 0} / ${player.duration?.inSeconds ?? 0}',
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

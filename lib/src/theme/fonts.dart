@@ -8,8 +8,11 @@ enum PolyculeFonts {
   /// Noto Color Emoji - emoji fallback font
   notoColorEmoji('Noto Color Emoji'),
 
-  /// Noto Sana - noto fallbacl font
-  notoSans('Noto Color Emoji'),
+  /// Noto Sans - noto fallback font
+  notoSans('Noto Sans'),
+
+  /// Noto Sans Mono - noto fallback monospace font
+  notoSansMono('Noto Sans Mono'),
 
   /// GL Suetterlin - German hand writing
   glSuetterlin('GL Suetterlin'),

@@ -5,11 +5,12 @@ import 'package:flutter_html_svg/flutter_html_svg.dart';
 import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
-import 'package:linkify/linkify.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../../theme/fonts.dart';
 import '../../../../../theme/poly_colors.dart';
+import '../../../../../utils/linkify_node.dart';
 import '../../../../../utils/matrix/matrix_html_tags.dart';
 
 class TextMessage extends StatelessWidget {
@@ -55,10 +56,10 @@ class TextMessage extends StatelessWidget {
       html = '\u2022 $html';
     }
     final parsed = parse(html, generateSpans: true);
-    final dom = _linkifyTree(parsed.documentElement!);
+    final dom = parsed.linkify();
 
-    return Html.fromElement(
-      documentElement: dom,
+    return Html.fromDom(
+      document: dom as Document,
       style: {
         'body': zeroPaddingStyle,
         'a': linkStyle,
@@ -71,64 +72,42 @@ class TextMessage extends StatelessWidget {
                 textScaleFactor,
           ),
         ),
+        'pre': Style(
+          display: Display.block,
+          margin: Margins.symmetric(horizontal: 0, vertical: 2),
+          backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+          color: Theme.of(context).colorScheme.onTertiaryContainer,
+          textOverflow: TextOverflow.visible,
+          padding: HtmlPaddings.all(8),
+          border: Border.symmetric(
+            horizontal: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ),
+        'code': Style(
+          // we use Noto Mono for code blocks. Additionally add Emoji support
+          fontFamily: PolyculeFonts.notoSansMono.name,
+          fontFamilyFallback: [
+            PolyculeFonts.notoColorEmoji.name,
+            PolyculeFonts.notoSans.name,
+          ],
+          // prevent inline markdown
+          fontStyle: FontStyle.normal,
+          fontWeight: FontWeight.normal,
+        ),
       },
       onlyRenderTheseTags: MatrixHtmlTags.allowed,
       extensions: const [
         TableHtmlExtension(),
         SvgHtmlExtension(),
       ],
-      shrinkWrap: true,
+      shrinkWrap: false,
       onLinkTap: (url, attributes, element) {
         if (url != null) {
-          launchUrl(
-            Uri.parse(url),
-            mode: LaunchMode.externalApplication,
-          );
+          launchUrl(Uri.parse(url));
         }
       },
     );
-  }
-
-  Element _linkifyTree(Element element) {
-    final nodes = element.nodes;
-    if (!element.hasChildNodes()) {
-      if (element is Text) {
-        return _linkifyTextNode(element as Text);
-      }
-      return element;
-    }
-    for (int i = 0; i < element.nodes.length; i++) {
-      final node = nodes[i];
-      if (node is Element) {
-        final newNode = _linkifyTree(node);
-        element.nodes[i] = newNode;
-      } else if (node is Text) {
-        element.nodes[i] = _linkifyTextNode(node);
-      }
-    }
-    return element;
-  }
-
-  Element _linkifyTextNode(Text node) {
-    final linkified = linkify(
-      node.text,
-      options: const LinkifyOptions(
-        humanize: false,
-        looseUrl: true,
-        defaultToHttps: true,
-      ),
-    );
-    final newNode = Element.tag('span');
-    for (final element in linkified) {
-      if (element is TextElement) {
-        newNode.nodes.add(Text(element.text));
-      } else if (element is LinkableElement) {
-        final anchor = Element.tag('a');
-        anchor.attributes['href'] = element.url;
-        anchor.nodes.add(Text(element.originText));
-        newNode.nodes.add(anchor);
-      }
-    }
-    return newNode;
   }
 }

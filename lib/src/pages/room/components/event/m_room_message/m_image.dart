@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../../widgets/ascii_progress_indicator.dart';
+import '../../../../../widgets/matrix/avatar_builder/mxc_avatar.dart';
 import '../../../../../widgets/matrix/blur_hash_indicator.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
 import '../../../../../widgets/matrix/retry_download_button.dart';
@@ -25,20 +26,36 @@ class ImageMessage extends StatelessWidget {
           builder: (context, thumbnail, attachment, retryCallback) {
             final data = thumbnail.data ?? attachment.data;
 
-            if (data == null) {
-              final label = (thumbnail.hasError || attachment.hasError)
-                  ? RetryDownloadButton(callback: retryCallback)
-                  : const AsciiProgressIndicator();
+            final label = (thumbnail.hasError || attachment.hasError)
+                ? RetryDownloadButton(callback: retryCallback)
+                : const AsciiProgressIndicator();
 
-              return BlurHashIndicator(
-                event: event,
-                label: label,
-              );
-            }
-            return Image.memory(
-              data.bytes,
-              gaplessPlayback: true,
-              fit: BoxFit.contain,
+            return Stack(
+              alignment: Alignment.center,
+              fit: StackFit.expand,
+              children: [
+                AnimatedOpacity(
+                  opacity: data == null ? 1 : 0,
+                  duration: MxcAvatar.kFadeDuration,
+                  curve: Curves.easeInOut,
+                  child: BlurHashIndicator(
+                    event: event,
+                    label: label,
+                  ),
+                ),
+                AnimatedOpacity(
+                  opacity: data == null ? 0 : 1,
+                  duration: MxcAvatar.kFadeDuration,
+                  curve: Curves.easeInOut,
+                  child: data == null
+                      ? null
+                      : Image.memory(
+                          data.bytes,
+                          gaplessPlayback: true,
+                          fit: BoxFit.contain,
+                        ),
+                ),
+              ],
             );
           },
         ),

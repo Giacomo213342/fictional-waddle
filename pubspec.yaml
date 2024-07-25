@@ -85,6 +85,9 @@ flutter:
     - family: Noto Color Emoji
       fonts:
         - asset: assets/fonts/NotoColorEmoji-Regular.ttf
+    - family: Noto Sans Mono
+      fonts:
+       - asset: assets/fonts/NotoSansMono-VariableFont.ttf
     - family: GL Suetterlin
       fonts:
         - asset: assets/fonts/GlSuetterlin-j710.otf

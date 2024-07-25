@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../../../../widgets/matrix/avatar_builder/user_avatar.dart';
 import '../../../../widgets/matrix/reaction_chip.dart';
+import '../message_user_avatar.dart';
 import 'm_room_message_content.dart';
 
 class RoomMessage extends StatelessWidget {
@@ -30,26 +30,23 @@ class RoomMessage extends StatelessWidget {
         [EventTypes.Message, EventTypes.Sticker].contains(previousEvent?.type);
     final nextMessageSameSender = nextEvent?.senderId == event.senderId &&
         [EventTypes.Message, EventTypes.Sticker].contains(nextEvent?.type);
-    final showOtherSenderAvatar = !isOwnMessage && !previousMessageSameSender;
-    final showOwnAvatar = isOwnMessage && !previousMessageSameSender;
+    final showOtherSenderAvatar = !isOwnMessage && !nextMessageSameSender;
+    final showOwnAvatar = isOwnMessage && !nextMessageSameSender;
     final border = BorderSide(
       color: Theme.of(context).colorScheme.primary,
     );
 
-    var reactionEvents = timeline.events
-        .where(
-          (element) =>
-              element.type == EventTypes.Reaction &&
-              element.relationshipEventId == event.eventId,
-        )
-        .map(
-          (event) =>
-              (event.content.tryGetMap<String, Object?>(
-                'm.relates_to',
-              )?['key'] as String?) ??
-              event.text,
-        )
-        .toSet();
+    final reactionEvents =
+        timeline.aggregatedEvents[event.eventId]?[RelationshipTypes.reaction]
+                ?.map(
+                  (event) =>
+                      (event.content.tryGetMap<String, Object?>(
+                        'm.relates_to',
+                      )?['key'] as String?) ??
+                      event.text,
+                )
+                .toSet() ??
+            {};
 
     return Padding(
       padding: EdgeInsets.only(
@@ -61,15 +58,15 @@ class RoomMessage extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               SelectionArea(
                 child: SizedBox.square(
                   dimension: 32,
                   child: showOtherSenderAvatar
-                      ? UserAvatar(
-                          user: event.senderFromMemoryOrFallback,
-                          client: client,
-                          dimension: 32,
+                      ? MessageUserAvatar(
+                          event: event,
                         )
                       : null,
                 ),
@@ -117,10 +114,8 @@ class RoomMessage extends StatelessWidget {
                 child: SizedBox.square(
                   dimension: 32,
                   child: showOwnAvatar
-                      ? UserAvatar(
-                          user: event.senderFromMemoryOrFallback,
-                          client: client,
-                          dimension: 32,
+                      ? MessageUserAvatar(
+                          event: event,
                         )
                       : null,
                 ),
