@@ -7,6 +7,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
 import '../../../../../widgets/ascii_progress_indicator.dart';
+import '../../../../../widgets/matrix/avatar_builder/mxc_avatar.dart';
 import '../../../../../widgets/matrix/blur_hash_indicator.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
 import '../../../../../widgets/matrix/retry_download_button.dart';
@@ -45,67 +46,71 @@ class _VideoMessageState extends State<VideoMessage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final theme = Theme.of(context);
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 512, maxWidth: 512),
-      child: ThumbnailAspectRatio(
-        event: widget.event,
-        child: MxcEncryptedFileBuilder<Playable, MatrixFile>(
+
+    return SelectionArea(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxHeight: 512, maxWidth: 512),
+        child: ThumbnailAspectRatio(
           event: widget.event,
-          attachmentTransformer: _makePlayable,
-          builder: (context, thumbnail, attachment, retryCallback) {
-            final playable = attachment.data;
-            final thumb = thumbnail.data;
-            if (playable == null) {
+          child: MxcEncryptedFileBuilder<Playable, MatrixFile>(
+            event: widget.event,
+            attachmentTransformer: _makePlayable,
+            builder: (context, thumbnail, attachment, retryCallback) {
+              final playable = attachment.data;
+              final thumb = thumbnail.data;
+
               final label = attachment.hasError
                   ? RetryDownloadButton(callback: retryCallback)
                   : const AsciiProgressIndicator();
-              if (thumb is MatrixFile) {
-                return Stack(
-                  alignment: Alignment.center,
-                  fit: StackFit.expand,
-                  children: [
-                    Image.memory(
-                      thumb.bytes,
-                      gaplessPlayback: true,
-                      fit: BoxFit.contain,
-                    ),
-                    PolyculeTextShadow(child: Center(child: label)),
-                  ],
-                );
-              }
 
-              return BlurHashIndicator(
-                event: widget.event,
-                label: label,
+              return Stack(
+                alignment: Alignment.center,
+                fit: StackFit.expand,
+                children: [
+                  AnimatedOpacity(
+                    opacity: playable == null && thumb == null ? 1 : 0,
+                    duration: MxcAvatar.kFadeDuration,
+                    curve: Curves.easeInOut,
+                    child: BlurHashIndicator(
+                      event: widget.event,
+                      label: label,
+                    ),
+                  ),
+                  AnimatedOpacity(
+                    opacity: thumb == null ? 0 : 1,
+                    duration: MxcAvatar.kFadeDuration,
+                    curve: Curves.easeInOut,
+                    child: thumb == null
+                        ? null
+                        : Stack(
+                            alignment: Alignment.center,
+                            fit: StackFit.expand,
+                            children: [
+                              Image.memory(
+                                thumb.bytes,
+                                gaplessPlayback: true,
+                                fit: BoxFit.contain,
+                              ),
+                              PolyculeTextShadow(child: Center(child: label)),
+                            ],
+                          ),
+                  ),
+                  AnimatedOpacity(
+                    opacity: playable == null ? 0 : 1,
+                    duration: MxcAvatar.kFadeDuration,
+                    curve: Curves.easeInOut,
+                    child: playable == null
+                        ? null
+                        : Video(
+                            controller: controller!,
+                            fill: Colors.transparent,
+                            controls: AdaptiveVideoControls,
+                          ),
+                  ),
+                ],
               );
-            }
-            return MaterialDesktopVideoControlsTheme(
-              normal: MaterialDesktopVideoControlsThemeData(
-                seekBarPositionColor: theme.colorScheme.primary,
-                seekBarThumbColor: theme.colorScheme.primary,
-              ),
-              fullscreen: MaterialDesktopVideoControlsThemeData(
-                seekBarPositionColor: theme.colorScheme.primary,
-                seekBarThumbColor: theme.colorScheme.primary,
-              ),
-              child: MaterialVideoControlsTheme(
-                normal: MaterialVideoControlsThemeData(
-                  seekBarPositionColor: theme.colorScheme.primary,
-                  seekBarThumbColor: theme.colorScheme.primary,
-                ),
-                fullscreen: MaterialVideoControlsThemeData(
-                  seekBarPositionColor: theme.colorScheme.primary,
-                  seekBarThumbColor: theme.colorScheme.primary,
-                ),
-                child: Video(
-                  controller: controller!,
-                  fill: Colors.transparent,
-                  controls: AdaptiveVideoControls,
-                ),
-              ),
-            );
-          },
+            },
+          ),
         ),
       ),
     );
