@@ -244,5 +244,16 @@
   "defaultColor": "Theme default color",
   "customColor": "Custom color",
   "highContrast": "High contrast",
-  "aboutPolycule": "About < polycule >"
+  "aboutPolycule": "About < polycule >",
+  "contentNotice": "CN : « {notice} »",
+  "@contentNotice": {
+    "description": "A content notice warning about spoilers or sensitive contents of a message.\nPlease keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
+    "placeholders": {
+      "notice": {
+        "description": "The warning/notice message.",
+        "type": "String"
+      }
+    }
+  },
+  "contentNoticeFallback": "Content notice"
 }

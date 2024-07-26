@@ -33,13 +33,16 @@ class MxcImageExtension extends ImageExtension {
                 height = double.tryParse(heightString);
               }
             }
+            final src = extensionContext.attributes['src']!;
+
             return Tooltip(
               message: extensionContext.attributes['alt'],
               child: SizedBox(
                 height: height,
                 width: width,
                 child: MxcUriImageBuilder(
-                  uri: Uri.parse(extensionContext.attributes['src']!),
+                  key: ValueKey(src),
+                  uri: Uri.parse(src),
                   client: client,
                   width: width,
                   height: height,

@@ -914,6 +914,19 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'About < polycule >'**
   String get aboutPolycule;
+
+  /// A content notice warning about spoilers or sensitive contents of a message.
+  /// Please keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.
+  ///
+  /// In en, this message translates to:
+  /// **'CN : « {notice} »'**
+  String contentNotice(String notice);
+
+  /// No description provided for @contentNoticeFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Content notice'**
+  String get contentNoticeFallback;
 }
 
 class _AppLocalizationsDelegate

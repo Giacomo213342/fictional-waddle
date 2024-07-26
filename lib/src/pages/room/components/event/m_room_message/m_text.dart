@@ -4,7 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_svg/flutter_html_svg.dart';
 import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:html/dom.dart';
-import 'package:html/parser.dart';
+import 'package:html/parser.dart' hide HtmlParser;
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,11 +14,30 @@ import '../../../../../utils/linkify_node.dart';
 import '../../../../../utils/matrix/matrix_html_tags.dart';
 import 'html/code_block_extension.dart';
 import 'html/mxc_image_extension.dart';
+import 'html/spoiler_extension.dart';
 
-class TextMessage extends StatelessWidget {
+final _eventKeyRegistry = <String, GlobalKey<State<HtmlParser>>>{};
+
+class TextMessage extends StatefulWidget {
   const TextMessage({super.key, required this.event});
 
   final Event event;
+
+  @override
+  State<TextMessage> createState() => _TextMessageState();
+}
+
+class _TextMessageState extends State<TextMessage> {
+  Set<String?> openContentNotices = {};
+
+  @override
+  void didUpdateWidget(covariant TextMessage oldWidget) {
+    if (oldWidget.event.formattedText != widget.event.formattedText ||
+        oldWidget.event.text != widget.event.text) {
+      setState(() {});
+    }
+    super.didUpdateWidget(oldWidget);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +56,7 @@ class TextMessage extends StatelessWidget {
     );
 
     double textScaleFactor = 1;
-    if (event.onlyEmotes) {
+    if (widget.event.onlyEmotes) {
       textScaleFactor = 4;
     }
     final fontSize =
@@ -49,50 +68,57 @@ class TextMessage extends StatelessWidget {
     );
 
     String html;
-    if (event.isRichMessage) {
-      html = event.formattedText;
+    if (widget.event.isRichMessage) {
+      html = widget.event.formattedText;
     } else {
-      html = event.text;
+      html = widget.event.text;
     }
 
-    if (event.messageType == MessageTypes.Emote) {
+    // in case the message was redacted or similar
+    if (html.isEmpty) {
+      html = widget.event.calcLocalizedBodyFallback(
+        const MatrixDefaultLocalizations(),
+        hideReply: true,
+        hideEdit: false,
+      );
+    }
+
+    if (widget.event.messageType == MessageTypes.Emote) {
       // Unicode Bullet
       html = '\u2022 $html';
     }
     final parsed = parse(html, generateSpans: true);
-    final dom = parsed.linkify();
+    final dom = parsed.linkify() as Document;
 
     return Html.fromDom(
-      document: dom as Document,
+      anchorKey: _eventKeyRegistry[html + widget.event.eventId] ??=
+          GlobalKey<State<HtmlParser>>(),
+      document: dom,
       style: {
         'body': zeroPaddingStyle,
         'a': linkStyle,
-        'h1, h2, h3, h4, h5, h6': zeroPaddingStyle,
+        'h1, h2, h3, h4, h5, h6': zeroPaddingStyle.copyWith(
+          lineHeight: LineHeight.number(1.5),
+        ),
         'h1': Style(
           fontSize: FontSize(fontSize * 2),
-          lineHeight: LineHeight.number(1.5),
           fontWeight: FontWeight.w600,
         ),
         'h2': Style(
           fontSize: FontSize(fontSize * 1.75),
-          lineHeight: LineHeight.number(1.5),
           fontWeight: FontWeight.w500,
         ),
         'h3': Style(
           fontSize: FontSize(fontSize * 1.5),
-          lineHeight: LineHeight.number(1.5),
         ),
         'h4': Style(
           fontSize: FontSize(fontSize * 1.25),
-          lineHeight: LineHeight.number(1.5),
         ),
         'h5': Style(
           fontSize: FontSize(fontSize * 1.25),
-          lineHeight: LineHeight.number(1.5),
         ),
         'h6': Style(
           fontSize: FontSize(fontSize),
-          lineHeight: LineHeight.number(1.5),
         ),
         // Add maxLines restriction for reply message widget
         'html': zeroPaddingStyle.copyWith(
@@ -126,9 +152,13 @@ class TextMessage extends StatelessWidget {
       },
       onlyRenderTheseTags: MatrixHtmlTags.allowed,
       extensions: [
-        MxcImageExtension(event.room.client),
+        MxcImageExtension(widget.event.room.client),
         ImageExtension(),
         CodeBlockExtension(),
+        SpoilerExtension(
+          openNotices: openContentNotices,
+          onToggleNotice: toggleNotice,
+        ),
         const TableHtmlExtension(),
         const SvgHtmlExtension(),
       ],
@@ -139,5 +169,15 @@ class TextMessage extends StatelessWidget {
         }
       },
     );
+  }
+
+  void toggleNotice(String? notice) {
+    setState(() {
+      if (openContentNotices.contains(notice)) {
+        openContentNotices.remove(notice);
+      } else {
+        openContentNotices.add(notice);
+      }
+    });
   }
 }
