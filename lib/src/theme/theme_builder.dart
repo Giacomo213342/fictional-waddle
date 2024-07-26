@@ -4,7 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 
+import '../widgets/placeholder.dart';
 import '../widgets/settings_manager.dart';
 import 'fonts.dart';
 import 'poly_colors.dart';
@@ -18,6 +20,31 @@ typedef PolyculeThemeCallback = Widget Function(
 
 class PolyculeThemeBuilder extends StatelessWidget {
   const PolyculeThemeBuilder({super.key, required this.builder});
+
+  static Widget injectInheritedThemes(BuildContext context, Widget? child) {
+    final theme = Theme.of(context);
+    return MaterialDesktopVideoControlsTheme(
+      normal: MaterialDesktopVideoControlsThemeData(
+        seekBarPositionColor: theme.colorScheme.primary,
+        seekBarThumbColor: theme.colorScheme.primary,
+      ),
+      fullscreen: MaterialDesktopVideoControlsThemeData(
+        seekBarPositionColor: theme.colorScheme.primary,
+        seekBarThumbColor: theme.colorScheme.primary,
+      ),
+      child: MaterialVideoControlsTheme(
+        normal: MaterialVideoControlsThemeData(
+          seekBarPositionColor: theme.colorScheme.primary,
+          seekBarThumbColor: theme.colorScheme.primary,
+        ),
+        fullscreen: MaterialVideoControlsThemeData(
+          seekBarPositionColor: theme.colorScheme.primary,
+          seekBarThumbColor: theme.colorScheme.primary,
+        ),
+        child: child ?? const PolyculePlaceholder(),
+      ),
+    );
+  }
 
   final PolyculeThemeCallback builder;
 

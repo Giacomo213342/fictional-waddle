@@ -42,29 +42,29 @@ might be quite similar in both clients - they both have a similar code base we k
 
 ## Roadmap
 
-| Feature                   |             Supported             |
-|---------------------------|:---------------------------------:|
-| Homeserver selection      |        :white_check_mark:         |
-| Homeserver proposals      |        :white_check_mark:         |
-| Login                     |                                   |
-| ... password              |        :white_check_mark:         |
-| ... SSO                   |   :negative_squared_cross_mark:   |
-| ... native OIDC ready     |   :negative_squared_cross_mark:   |
-| Multi account             |                                   |
-| ... routing               |        :white_check_mark:         |
-| ... login                 |        :white_check_mark:         |
-| ... incoming URI handling |   :negative_squared_cross_mark:   |
-| Room list                 |        :white_check_mark:         |
-| Room timeline             | :record_button: - bad performance |
-| Sliding sync              |   :negative_squared_cross_mark:   |
-| Sending files             |   :negative_squared_cross_mark:   |
-| HTML renderer             |   :record_button: - early state   |
-| User profile              |   :negative_squared_cross_mark:   |
-| Room details              |   :negative_squared_cross_mark:   |
-| Account settings          |   :negative_squared_cross_mark:   |
-| \[matrix\] widgets        |   :negative_squared_cross_mark:   |
-| VoIP signaling            |   :negative_squared_cross_mark:   |
-| Emoji picker              |   :negative_squared_cross_mark:   |
+| Feature                   |             Supported              |
+|---------------------------|:----------------------------------:|
+| Homeserver selection      |         :white_check_mark:         |
+| Homeserver proposals      |         :white_check_mark:         |
+| Login                     |                                    |
+| ... password              |         :white_check_mark:         |
+| ... SSO                   |   :negative_squared_cross_mark:    |
+| ... native OIDC ready     |   :negative_squared_cross_mark:    |
+| Multi account             |                                    |
+| ... routing               |         :white_check_mark:         |
+| ... login                 |         :white_check_mark:         |
+| ... incoming URI handling |   :negative_squared_cross_mark:    |
+| Room list                 |         :white_check_mark:         |
+| Room timeline             |         :white_check_mark:         |
+| Sliding sync              |   :negative_squared_cross_mark:    |
+| Sending files             |   :negative_squared_cross_mark:    |
+| HTML renderer             | :record_button: - work in progress |
+| User profile              |   :negative_squared_cross_mark:    |
+| Room details              |   :negative_squared_cross_mark:    |
+| Account settings          |   :negative_squared_cross_mark:    |
+| \[matrix\] widgets        |   :negative_squared_cross_mark:    |
+| VoIP signaling            |   :negative_squared_cross_mark:    |
+| Emoji picker              |   :negative_squared_cross_mark:    |
 
 *Can you daily drive it ?* - Yes, I do.
 

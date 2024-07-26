@@ -1,9 +1,11 @@
 import 'package:html/dom.dart';
 import 'package:linkify/linkify.dart';
+import 'package:matrix/matrix.dart';
 
 extension LinkifyTree on Node {
   Node linkify() {
     final node = this;
+
     if (node is Text) {
       return node._linkifyText();
     }
@@ -32,7 +34,7 @@ extension LinkifyText on Text {
       text,
       options: const LinkifyOptions(
         humanize: false,
-        looseUrl: true,
+        looseUrl: false,
         defaultToHttps: true,
       ),
     );
@@ -45,6 +47,10 @@ extension LinkifyText on Text {
         anchor.attributes['href'] = element.url;
         anchor.nodes.add(Text(element.originText));
         newNode.nodes.add(anchor);
+      } else {
+        Logs().e(
+          'Unable to match linkify element of type ${element.runtimeType}',
+        );
       }
     }
     return newNode;
