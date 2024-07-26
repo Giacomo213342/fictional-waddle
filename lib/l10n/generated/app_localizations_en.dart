@@ -475,4 +475,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutPolycule => 'About < polycule >';
+
+  @override
+  String contentNotice(String notice) {
+    return 'CN : « $notice »';
+  }
+
+  @override
+  String get contentNoticeFallback => 'Content notice';
 }

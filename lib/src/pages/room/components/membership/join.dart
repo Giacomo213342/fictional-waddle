@@ -64,23 +64,10 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
                     timeline: timeline,
                   );
                 }
-
-                final nextEvent = timeline.getNextDisplayEvent(index);
-                final previousEvent = timeline.getPreviousDisplayEvent(index);
-                final event = timeline.events[index].getDisplayEvent(timeline);
-
-                return SizeTransition(
-                  sizeFactor: animation,
-                  child: TimelineEventTile(
-                    key: widget.controller.eventKeyRegistry[index] ??=
-                        GlobalKey<TimelineEventTileState>(),
-                    event: event,
-                    previousEvent: previousEvent,
-                    nextEvent: nextEvent,
-                    room: widget.room,
-                    controller: widget.controller,
-                    timeline: timeline,
-                  ),
+                return buildTransitionedTile(
+                  animation: animation,
+                  index: index,
+                  timeline: timeline,
                 );
               },
             ),
@@ -89,6 +76,33 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
         if (widget.room.canSendDefaultMessages)
           MessageInput(controller: widget.controller),
       ],
+    );
+  }
+
+  Widget buildTransitionedTile({
+    required Animation<double> animation,
+    required int index,
+    required Timeline timeline,
+    Event? event,
+    Event? previousEvent,
+    Event? nextEvent,
+  }) {
+    nextEvent ??= timeline.getNextDisplayEvent(index);
+    previousEvent ??= timeline.getPreviousDisplayEvent(index);
+    event ??= timeline.events[index].getDisplayEvent(timeline);
+
+    return SizeTransition(
+      sizeFactor: animation,
+      child: TimelineEventTile(
+        key: widget.controller.eventKeyRegistry[index] ??=
+            GlobalKey<TimelineEventTileState>(),
+        event: event,
+        previousEvent: previousEvent,
+        nextEvent: nextEvent,
+        room: widget.room,
+        controller: widget.controller,
+        timeline: timeline,
+      ),
     );
   }
 
@@ -116,43 +130,36 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
     listKey.currentState!.removeItem(
       index,
       (context, animation) {
-        final nextEvent = widget.controller.eventKeyRegistry[index]
-                ?.currentState?.widget.nextEvent ??
-            timeline.getNextDisplayEvent(index);
-        final previousEvent = widget.controller.eventKeyRegistry[index]
-                ?.currentState?.widget.previousEvent ??
-            timeline.getPreviousDisplayEvent(index);
-        final event = widget.controller.eventKeyRegistry[index]?.currentState
-                ?.widget.event ??
-            timeline.events[index].getDisplayEvent(timeline);
+        final oldWidget =
+            widget.controller.eventKeyRegistry[index]?.currentState?.widget;
 
-        return SizeTransition(
-          sizeFactor: animation,
-          child: TimelineEventTile(
-            key: widget.controller.eventKeyRegistry[index] ??=
-                GlobalKey<TimelineEventTileState>(),
-            event: event,
-            previousEvent: previousEvent,
-            nextEvent: nextEvent,
-            room: widget.room,
-            controller: widget.controller,
-            timeline: timeline,
-          ),
+        final nextEvent = oldWidget?.nextEvent;
+        final previousEvent = oldWidget?.previousEvent;
+        final event = oldWidget?.event;
+
+        return buildTransitionedTile(
+          animation: animation,
+          index: index,
+          timeline: timeline,
+          event: event,
+          previousEvent: previousEvent,
+          nextEvent: nextEvent,
         );
       },
     );
   }
 
   void _changeEvent(int index) {
-    listKey.currentState?.insertItem(index, duration: Duration.zero);
-    listKey.currentState?.removeItem(
-      index,
-      (context, animation) {
-        return Container();
-      },
-      duration: Duration.zero,
-    );
-
-    widget.controller.eventKeyRegistry[index]?.currentState;
+    final state = widget.controller.eventKeyRegistry[index]?.currentState;
+    if (state != null) {
+      state.updateEvent();
+    } else {
+      listKey.currentState?.insertItem(index, duration: Duration.zero);
+      listKey.currentState?.removeItem(
+        index,
+        (context, animation) => SizedBox.fromSize(size: Size.zero),
+        duration: Duration.zero,
+      );
+    }
   }
 }

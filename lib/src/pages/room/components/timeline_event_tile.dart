@@ -62,6 +62,7 @@ class TimelineEventTileState extends State<TimelineEventTile>
     if (!event.isDisplayEvent) {
       return const SizedBox();
     }
+
     return FadeTransition(
       opacity: _opacityController,
       child: switch (event.type) {

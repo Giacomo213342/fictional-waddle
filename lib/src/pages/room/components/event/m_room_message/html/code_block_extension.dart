@@ -102,6 +102,8 @@ class CodeBlockExtension extends HtmlExtension {
                 Align(
                   alignment: Alignment.topRight,
                   child: IconButton(
+                    tooltip: MaterialLocalizations.of(context.buildContext!)
+                        .copyButtonLabel,
                     onPressed: () => Clipboard.setData(
                       ClipboardData(text: element.text),
                     ),
