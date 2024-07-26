@@ -12,6 +12,8 @@ import '../../../../../theme/fonts.dart';
 import '../../../../../theme/poly_colors.dart';
 import '../../../../../utils/linkify_node.dart';
 import '../../../../../utils/matrix/matrix_html_tags.dart';
+import 'html/code_block_extension.dart';
+import 'html/mxc_image_extension.dart';
 
 class TextMessage extends StatelessWidget {
   const TextMessage({super.key, required this.event});
@@ -38,6 +40,8 @@ class TextMessage extends StatelessWidget {
     if (event.onlyEmotes) {
       textScaleFactor = 4;
     }
+    final fontSize =
+        (DefaultTextStyle.of(context).style.fontSize ?? 12) * textScaleFactor;
 
     final linkStyle = Style(
       color: PolyColors.cyan,
@@ -64,13 +68,36 @@ class TextMessage extends StatelessWidget {
         'body': zeroPaddingStyle,
         'a': linkStyle,
         'h1, h2, h3, h4, h5, h6': zeroPaddingStyle,
+        'h1': Style(
+          fontSize: FontSize(fontSize * 2),
+          lineHeight: LineHeight.number(1.5),
+          fontWeight: FontWeight.w600,
+        ),
+        'h2': Style(
+          fontSize: FontSize(fontSize * 1.75),
+          lineHeight: LineHeight.number(1.5),
+          fontWeight: FontWeight.w500,
+        ),
+        'h3': Style(
+          fontSize: FontSize(fontSize * 1.5),
+          lineHeight: LineHeight.number(1.5),
+        ),
+        'h4': Style(
+          fontSize: FontSize(fontSize * 1.25),
+          lineHeight: LineHeight.number(1.5),
+        ),
+        'h5': Style(
+          fontSize: FontSize(fontSize * 1.25),
+          lineHeight: LineHeight.number(1.5),
+        ),
+        'h6': Style(
+          fontSize: FontSize(fontSize),
+          lineHeight: LineHeight.number(1.5),
+        ),
         // Add maxLines restriction for reply message widget
         'html': zeroPaddingStyle.copyWith(
           textOverflow: TextOverflow.fade,
-          fontSize: FontSize(
-            (DefaultTextStyle.of(context).style.fontSize ?? 12) *
-                textScaleFactor,
-          ),
+          fontSize: FontSize(fontSize),
         ),
         'pre': Style(
           display: Display.block,
@@ -98,9 +125,12 @@ class TextMessage extends StatelessWidget {
         ),
       },
       onlyRenderTheseTags: MatrixHtmlTags.allowed,
-      extensions: const [
-        TableHtmlExtension(),
-        SvgHtmlExtension(),
+      extensions: [
+        MxcImageExtension(event.room.client),
+        ImageExtension(),
+        CodeBlockExtension(),
+        const TableHtmlExtension(),
+        const SvgHtmlExtension(),
       ],
       shrinkWrap: false,
       onLinkTap: (url, attributes, element) {
