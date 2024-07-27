@@ -13,6 +13,7 @@ import 'package:matrix/matrix.dart';
 import 'package:olm/olm.dart' as olm;
 import 'package:path_provider/path_provider.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../pages/application_settings/application_settings.dart';
 import '../../../pages/fatal_error/fatal_error_page.dart';
 import '../../../pages/homeserver/homeserver.dart';
@@ -163,7 +164,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   Client _buildClient(int identifier) {
     final client = Client(
       _makeClientName(identifier),
-      databaseBuilder: polyculeDatabaseBuilder,
+      databaseBuilder: _databaseBuilder,
       verificationMethods: {
         KeyVerificationMethod.numbers,
         KeyVerificationMethod.reciprocate,
@@ -426,6 +427,12 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   void openSettings() {
     context.push(ApplicationSettingsPage.routeName);
   }
+
+  Future<DatabaseApi> _databaseBuilder(Client client) =>
+      polyculeDatabaseBuilder(
+        client,
+        AppLocalizations.of(context),
+      );
 }
 
 Future<void> _migrateLegacySqliteDatabasePath() async {

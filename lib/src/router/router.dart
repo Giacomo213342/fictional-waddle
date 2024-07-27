@@ -14,8 +14,10 @@ import '../pages/ssss_bootstrap/ssss_bootstrap.dart';
 import '../widgets/placeholder.dart';
 import 'extensions/go_router_path_extension.dart';
 import 'extensions/homeserver_uri_route.dart';
+import 'extensions/matrix_deeplink_route.dart';
 import 'extensions/matrix_injected_route.dart';
 import 'extensions/must_be_logged_out_route.dart';
+import 'extensions/polycule_deeplink_route.dart';
 import 'extensions/requires_login_route.dart';
 import 'extensions/responsive_shell_route.dart';
 import 'extensions/room_available_route.dart';
@@ -32,6 +34,8 @@ class PolyculeRouter extends GoRouter {
                   builder: (context, state) =>
                       FatalErrorPage(error: state.extra),
                 ),
+                PolyculeDeeplinkRoute(),
+                MatrixDeeplinkRoute(),
                 MatrixInjectedRoute(
                   routes: [
                     // in order to handle `/`

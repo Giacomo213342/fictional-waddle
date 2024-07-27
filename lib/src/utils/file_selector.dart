@@ -29,7 +29,10 @@ class FileSelector {
         xTypeGroups.insertAll(0, [
           XTypeGroup(
             label: AppLocalizations.of(context).typeGroupImages,
-            mimeTypes: const ['image/*', 'application/json'],
+            mimeTypes: const [
+              'image/*',
+              // Lottie files : application/json
+            ],
             uniformTypeIdentifiers: const ['public.image'],
           ),
         ]);

@@ -255,5 +255,6 @@
       }
     }
   },
-  "contentNoticeFallback": "Content notice"
+  "contentNoticeFallback": "Content notice",
+  "webUriHandlerTitle": "< polycule > [matrix] client"
 }
