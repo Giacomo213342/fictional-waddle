@@ -483,4 +483,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contentNoticeFallback => 'Content notice';
+
+  @override
+  String get webUriHandlerTitle => '< polycule > [matrix] client';
 }

@@ -927,6 +927,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Content notice'**
   String get contentNoticeFallback;
+
+  /// No description provided for @webUriHandlerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'< polycule > [matrix] client'**
+  String get webUriHandlerTitle;
 }
 
 class _AppLocalizationsDelegate

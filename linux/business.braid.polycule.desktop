@@ -6,7 +6,7 @@ Comment=A geeky and efficient [matrix] client for power users.
 Comment[en]=A geeky and efficient [matrix] client for power users.
 Keywords=matrix;chat;element
 
-Exec=polycule %u
+Exec=polycule %U
 SingleMainWindow=true
 StartupWMClass=polycule
 Terminal=false
@@ -14,3 +14,4 @@ StartupNotify=false
 Icon=business.braid.polycule
 Categories=Office
 X-Purism-FormFactor=Workstation;Mobile;
+MimeType=x-scheme-handler/matrix;x-scheme-handler/web+polycule;

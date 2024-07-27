@@ -11,7 +11,7 @@ enum PolyculeFonts {
   /// Noto Sans - noto fallback font
   notoSans('Noto Sans'),
 
-  /// Noto Sans Mono - noto fallback monospace font
+  /// Noto Sans Mono - noto monospace font
   notoSansMono('Noto Sans Mono'),
 
   /// GL Suetterlin - German hand writing
@@ -21,7 +21,10 @@ enum PolyculeFonts {
   openDyslexic('OpenDyslexic'),
 
   /// Inclusive Sans - sans-serif font with accessible typeface
-  inclusiveSans('Inclusive Sans');
+  inclusiveSans('Inclusive Sans'),
+
+  /// Roboto - Flutter fallback font
+  roboto('Roboto');
 
   const PolyculeFonts(this.name);
 

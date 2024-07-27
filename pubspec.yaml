@@ -12,6 +12,8 @@ dependencies:
   async: ^2.11.0
   blurhash_dart: ^1.2.1
   cross_file: ^0.3.4+1
+  # required for native iOS icons
+  cupertino_icons: ^1.0.8
   diacritic: ^0.1.5
   diffutil_dart: ^4.0.1
   dynamic_color: ^1.6.9
@@ -103,7 +105,26 @@ flutter:
         - asset: assets/fonts/OpenDyslexic3-Regular.ttf
         - asset: assets/fonts/OpenDyslexic3-Bold.ttf
           weight: 700
+    # we do not want to contact Google Fonts
+    #
+    # We might encounter connections to Google Fonts. To prevent this, we can specify custom assets for the given fonts.
+    #
+    # keep in sync with : $FLUTTER_ROOT/bin/cache/flutter_web_sdk/lib/_engine/engine/font_fallback_data.dart
+    #
+    # Source : https://github.com/flutter/engine/blob/3.22.3/lib/web_ui/dev/roll_fallback_fonts.dart
+    #
+    # Currently, we do not need Noto fallback fonts since both Noto Mono and Noto Color Emoji are bundled
+    #
+    # Additional source for Noto Color Emoji Compat :
+    # Source : https://mvnrepository.com/artifact/androidx.emoji/emoji-bundled/
 
+    # Roboto fallback font
+    #
+    # Hard coded into engine
+    # Source : https://github.com/flutter/engine/blob/3.22.3/lib/web_ui/lib/src/engine/canvaskit/fonts.dart#L16
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
 
 import_sorter:
   comments: false

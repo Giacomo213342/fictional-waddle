@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "black",
     "theme_color": "#3F51B5",
-    "description": "A simple and beautiful matrix client written in Flutter.",
+    "description": "A geeky and efficient [matrix] client for power users.",
     "orientation": "any",
     "prefer_related_applications": true,
     "icons": [
@@ -30,6 +30,18 @@
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"
+        }
+    ],
+    "protocol_handlers": [
+        {
+            "protocol": "matrix",
+            "name": "< polycule > [matrix] client",
+            "uriTemplate": "#/matrix/%s"
+        },
+        {
+            "protocol": "web+polycule",
+            "name": "< polycule > [matrix] client",
+            "uriTemplate": "#/polycule/%s"
         }
     ]
 }
