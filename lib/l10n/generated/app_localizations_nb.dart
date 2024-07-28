@@ -487,4 +487,12 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get webUriHandlerTitle => '< polycule > [matrix] client';
+
+  @override
+  String jumpToMessage(String message) {
+    return 'Jump to message $message';
+  }
+
+  @override
+  String get selectAccount => 'Select account to continue';
 }

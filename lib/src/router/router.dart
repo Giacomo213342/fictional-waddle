@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
 
+import '../pages/account_selector/account_selector.dart';
 import '../pages/application_settings/application_settings.dart';
 import '../pages/application_settings/pages/appearance.dart';
 import '../pages/fatal_error/fatal_error_page.dart';
@@ -35,7 +37,6 @@ class PolyculeRouter extends GoRouter {
                       FatalErrorPage(error: state.extra),
                 ),
                 PolyculeDeeplinkRoute(),
-                MatrixDeeplinkRoute(),
                 MatrixInjectedRoute(
                   routes: [
                     // in order to handle `/`
@@ -46,7 +47,17 @@ class PolyculeRouter extends GoRouter {
                     // in order to initialize particular client
                     GoRoute(
                       path: SplashPage.routeName.asMultiClientRoute(),
-                      builder: (context, state) => const SplashPage(),
+                      builder: (context, state) => SplashPage(
+                        key: ValueKey(state.uri.toString()),
+                      ),
+                    ),
+                    GoRoute(
+                      path: AccountSelectorPage.routeName,
+                      builder: (context, state) => AccountSelectorPage(
+                        redirect: Uri.decodeComponent(
+                          state.uri.queryParameters['redirect']!,
+                        ).parseIdentifierIntoParts(),
+                      ),
                     ),
                     ResponsiveShellRoute(
                       builder: (context, state) =>
@@ -101,6 +112,7 @@ class PolyculeRouter extends GoRouter {
                     ),
                   ],
                 ),
+                MatrixDeeplinkRoute(),
               ],
             ),
           ),

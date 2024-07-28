@@ -2,6 +2,8 @@ import 'package:html/dom.dart';
 import 'package:linkify/linkify.dart';
 import 'package:matrix/matrix.dart';
 
+import '../widgets/matrix/client_manager/client_manager.dart';
+
 extension LinkifyTree on Node {
   Node linkify() {
     final node = this;
@@ -37,6 +39,11 @@ extension LinkifyText on Text {
         looseUrl: false,
         defaultToHttps: true,
       ),
+      linkifiers: [
+        const MatrixLinkifier(),
+        const UrlLinkifier(),
+        const EmailLinkifier(),
+      ],
     );
     final newNode = Element.tag('span');
     for (final element in linkified) {
@@ -54,5 +61,33 @@ extension LinkifyText on Text {
       }
     }
     return newNode;
+  }
+}
+
+class MatrixLinkifier extends Linkifier {
+  const MatrixLinkifier();
+
+  @override
+  List<LinkifyElement> parse(elements, options) {
+    final list = <LinkifyElement>[];
+
+    for (var element in elements) {
+      if (element is TextElement) {
+        final result = element.text.parseIdentifierIntoParts();
+
+        if (result == null) {
+          list.add(element);
+        } else {
+          String uri = result.toMatrixToUrl();
+          String text = result.primaryIdentifier;
+
+          list.add(LinkableElement(text, uri));
+        }
+      } else {
+        list.add(element);
+      }
+    }
+
+    return list;
   }
 }

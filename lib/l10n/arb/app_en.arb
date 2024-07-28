@@ -256,5 +256,14 @@
     }
   },
   "contentNoticeFallback": "Content notice",
-  "webUriHandlerTitle": "< polycule > [matrix] client"
+  "webUriHandlerTitle": "< polycule > [matrix] client",
+  "jumpToMessage": "Jump to message {message}",
+  "@jumpToMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "selectAccount": "Select account to continue"
 }
