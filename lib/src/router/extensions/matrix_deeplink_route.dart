@@ -3,16 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
+
+import '../../pages/account_selector/account_selector.dart';
 
 class MatrixDeeplinkRoute extends GoRoute {
   MatrixDeeplinkRoute({super.pageBuilder, super.builder})
       : super(
-          path: '$routeName/:$pathParameter',
+          path: '/:$pathParameter',
           redirect: _matrixDeeplinkRedirect,
         );
 
-  static const routeName = '/matrix';
   static const pathParameter = 'deeplink';
   static const protocolName = 'matrix';
 
@@ -21,9 +21,7 @@ class MatrixDeeplinkRoute extends GoRoute {
     GoRouterState state,
   ) async {
     String parameter = state.pathParameters[pathParameter]!;
-    String decodedUri = Uri.decodeComponent(parameter);
-    Logs().d('Received matrix deep link : $decodedUri');
 
-    return '/';
+    return AccountSelectorPage.makeRedirectRoute(parameter);
   }
 }

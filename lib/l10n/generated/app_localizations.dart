@@ -933,6 +933,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'< polycule > [matrix] client'**
   String get webUriHandlerTitle;
+
+  /// No description provided for @jumpToMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump to message {message}'**
+  String jumpToMessage(String message);
+
+  /// No description provided for @selectAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Select account to continue'**
+  String get selectAccount;
 }
 
 class _AppLocalizationsDelegate

@@ -1,25 +1,26 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import 'package:app_links/app_links.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 import 'package:olm/olm.dart' as olm;
-import 'package:path_provider/path_provider.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../pages/account_selector/account_selector.dart';
 import '../../../pages/application_settings/application_settings.dart';
 import '../../../pages/fatal_error/fatal_error_page.dart';
 import '../../../pages/homeserver/homeserver.dart';
 import '../../../pages/room_list/room_list.dart';
 import '../../../pages/splash_screen/splash_screen.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
+import '../../../router/extensions/polycule_deeplink_route.dart';
 import '../../../utils/matrix/database/polycule_database_builder.dart';
 import '../../../utils/matrix/uia_helper.dart';
 import '../../../utils/runtime_suffix.dart';
@@ -59,6 +60,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
   static const _storageLockKey = 'storage_lock';
 
+  StreamSubscription<Uri>? _appLinkSubscription;
+
   static String _makeClientName(int identifier) =>
       'polycule_client_$identifier';
 
@@ -95,6 +98,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   @override
   void initState() {
     _loadClients();
+    _subscribeDeepLinks();
     super.initState();
   }
 
@@ -106,10 +110,6 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       return _initializer.future;
     }
     _initializationStarted = true;
-
-    if (!kIsWeb) {
-      await _migrateLegacySqliteDatabasePath();
-    }
 
     final future = storageLock?.future;
     if (future != null) {
@@ -186,6 +186,9 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     _sasVerificationListener[identifier] = client
         .onKeyVerificationRequest.stream
         .listen(_handleSasVerificationRequest);
+    client.init(
+      waitForFirstSync: false,
+    );
     return client;
   }
 
@@ -245,6 +248,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     for (final subscription in _sasVerificationListener.values) {
       subscription?.cancel();
     }
+    _appLinkSubscription?.cancel();
     super.dispose();
   }
 
@@ -269,9 +273,11 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
           context.goMultiClient(FatalErrorPage.routeName, extra: e);
           return;
         }
-
         if (client.clientName.clientIdentifier ==
-            getActiveClient().clientName.clientIdentifier) {
+                getActiveClient().clientName.clientIdentifier &&
+            !GoRouterState.of(context).uri.path.startsWith(
+                  AccountSelectorPage.routeName,
+                )) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             context.goMultiClient(RoomListPage.routeName);
           });
@@ -284,12 +290,18 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       case LoginState.softLoggedOut:
       case LoginState.loggedOut:
         if (client.clientName.clientIdentifier ==
-            getActiveClient().clientName.clientIdentifier) {
+                getActiveClient().clientName.clientIdentifier &&
+            !GoRouterState.of(context).uri.path.startsWith(
+                  AccountSelectorPage.routeName,
+                )) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             context.goMultiClient(HomeserverPage.routeName);
           });
         }
-        _removeFromClientList(client);
+
+        if (!_loginClients.contains(client.clientName.clientIdentifier)) {
+          _removeFromClientList(client);
+        }
         break;
     }
   }
@@ -317,8 +329,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
   Future<void> _removeFromClientList(Client client) async {
     // if it's the only client left, we need to keep it running
-    if (activeClients.length <= 1 ||
-        _loginClients.contains(client.clientName.clientIdentifier)) {
+    if (activeClients.length <= 1) {
       return;
     }
 
@@ -364,9 +375,18 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
     if (widget.activeClientIdentifier == identifier) {
       final newIdentifier = activeClients.first.clientName.clientIdentifier;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.goMultiClient('/client/$newIdentifier${SplashPage.routeName}');
-      });
+      if (!mounted) {
+        return;
+      }
+      if (!GoRouterState.of(context)
+          .uri
+          .path
+          .startsWith(AccountSelectorPage.routeName)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          context
+              .goMultiClient('/client/$newIdentifier${SplashPage.routeName}');
+        });
+      }
     }
   }
 
@@ -433,24 +453,35 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         client,
         AppLocalizations.of(context),
       );
-}
 
-Future<void> _migrateLegacySqliteDatabasePath() async {
-  final fileStoragePath = await getApplicationSupportDirectory();
-  final legacyPath = '${fileStoragePath.path}/polycule.sqlite';
-  final newPath = '${fileStoragePath.path}/polycule_client_1.sqlite';
+  Future<void> _subscribeDeepLinks() async {
+    _appLinkSubscription = AppLinks().uriLinkStream.listen(_handleDeeplink);
 
-  final legacyFile = File(legacyPath);
-  if (!await legacyFile.exists()) {
-    return;
+    final initialLink = await AppLinks().getInitialLink();
+    if (initialLink == null) {
+      return;
+    }
+    _handleDeeplink(initialLink);
   }
 
-  await legacyFile.copy(newPath);
-  if (!await File(newPath).exists()) {
-    return;
-  }
+  void _handleDeeplink(Uri uri) {
+    final identifier = uri.toString().parseIdentifierIntoParts();
+    if (identifier != null) {
+      final mxid = identifier.toMatrixToUrl();
 
-  await legacyFile.delete();
+      if (mounted) {
+        context.go(AccountSelectorPage.makeRedirectRoute(mxid));
+      }
+      return;
+    }
+    if (uri.scheme == 'web+polycule') {
+      if (mounted) {
+        context.go(
+          '${PolyculeDeeplinkRoute.routeName}/${Uri.encodeComponent(uri.toString())}',
+        );
+      }
+    }
+  }
 }
 
 extension ClientIdentifier on String {
@@ -458,5 +489,20 @@ extension ClientIdentifier on String {
     final regex = RegExp(r'^\w+(\d+)$');
     final matches = regex.firstMatch(this);
     return int.parse(matches!.group(1)!);
+  }
+}
+
+extension MatrixToExtension on MatrixIdentifierStringExtensionResults {
+  String toMatrixToUrl() {
+    String uri = 'https://matrix.to/#/$primaryIdentifier';
+    final secondary = secondaryIdentifier;
+    if (secondary is String) {
+      uri += '/$secondary';
+    }
+    final query = queryString;
+    if (query is String) {
+      uri += '?$query';
+    }
+    return uri;
   }
 }

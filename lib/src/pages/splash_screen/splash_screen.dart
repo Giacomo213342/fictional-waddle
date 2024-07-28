@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
+import 'package:matrix/matrix.dart';
+
 import '../../router/extensions/go_router_path_extension.dart';
 import '../../utils/matrix/matrix_state.dart';
 import '../fatal_error/fatal_error_page.dart';
@@ -26,29 +28,45 @@ class SplashController extends MatrixState<SplashPage> {
   }
 
   Future<void> _checkLoginState() async {
-    if (!client.isLogged()) {
-      try {
-        await client.init(
-          waitForFirstSync: false,
-        );
-      } catch (e) {
-        WidgetsBinding.instance.addPostFrameCallback(
-          (_) => context.goMultiClient(FatalErrorPage.routeName),
-        );
-        rethrow;
+    if (client.isLogged()) {
+      _roomList();
+    }
+    try {
+      final loginState = client.onLoginStateChanged.value ??
+          await client.onLoginStateChanged.stream.first.timeout(
+            const Duration(seconds: 45),
+          );
+
+      if (loginState != LoginState.loggedIn) {
+        _loginView();
       }
-      if (mounted) {
-        WidgetsBinding.instance.addPostFrameCallback(
-          (_) => context.goMultiClient(HomeserverPage.routeName),
-        );
-      }
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) => context.goMultiClient(RoomListPage.routeName),
-      );
+    } on TimeoutException {
+      _fatalError();
+    } catch (e) {
+      _loginView();
     }
   }
 
+  void _loginView() => WidgetsBinding.instance.addPostFrameCallback(
+        (_) => context.goMultiClient(HomeserverPage.routeName),
+      );
+
+  void _roomList() => WidgetsBinding.instance.addPostFrameCallback(
+        (_) => context.goMultiClient(RoomListPage.routeName),
+      );
+
+  void _fatalError() => WidgetsBinding.instance.addPostFrameCallback(
+        (_) => context.goMultiClient(FatalErrorPage.routeName),
+      );
+
   @override
   Widget build(BuildContext context) => SplashPageView(this);
+
+  @override
+  void didUpdateWidget(covariant SplashPage oldWidget) {
+    if (oldWidget.key != widget.key) {
+      _checkLoginState();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
 }
