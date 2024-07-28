@@ -47,7 +47,7 @@ class MatrixUriExtension extends HtmlExtension {
       if (query is String) {
         link += query;
       }
-      uri = Uri.parse('/matrix/${Uri.encodeComponent(link)}');
+      uri = Uri.parse('/${Uri.encodeComponent(link)}');
     } else {
       uri = Uri.parse(attribute);
     }
