@@ -23,12 +23,15 @@ import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../router/extensions/polycule_deeplink_route.dart';
 import '../../../utils/matrix/database/polycule_database_builder.dart';
 import '../../../utils/matrix/uia_helper.dart';
+import '../../../utils/matrix_to_extension.dart';
 import '../../../utils/runtime_suffix.dart';
 import '../key_verification/key_verification_request_widget.dart';
 import '../uia_dialog.dart';
 import 'client_manager_view.dart';
 
 typedef GetClientCallback = Client Function();
+
+const _kPolyculeUriScheme = 'web+polycule';
 
 class ClientManagerWidget extends StatefulWidget {
   const ClientManagerWidget({
@@ -465,7 +468,13 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   }
 
   void _handleDeeplink(Uri uri) {
-    final identifier = uri.toString().parseIdentifierIntoParts();
+    String link = uri.toString();
+
+    if (uri.scheme == _kPolyculeUriScheme) {
+      // check whether we got a matrix URL but as polycule deeplink
+      link = link.replaceFirst(_kPolyculeUriScheme, 'matrix');
+    }
+    final identifier = link.parseIdentifierIntoParts();
     if (identifier != null) {
       final mxid = identifier.toMatrixToUrl();
 
@@ -474,10 +483,10 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       }
       return;
     }
-    if (uri.scheme == 'web+polycule') {
+    if (uri.scheme == _kPolyculeUriScheme) {
       if (mounted) {
         context.go(
-          '${PolyculeDeeplinkRoute.routeName}/${Uri.encodeComponent(uri.toString())}',
+          '${PolyculeDeeplinkRoute.routeName}/${Uri.encodeComponent(link)}',
         );
       }
     }
@@ -489,20 +498,5 @@ extension ClientIdentifier on String {
     final regex = RegExp(r'^\w+(\d+)$');
     final matches = regex.firstMatch(this);
     return int.parse(matches!.group(1)!);
-  }
-}
-
-extension MatrixToExtension on MatrixIdentifierStringExtensionResults {
-  String toMatrixToUrl() {
-    String uri = 'https://matrix.to/#/$primaryIdentifier';
-    final secondary = secondaryIdentifier;
-    if (secondary is String) {
-      uri += '/$secondary';
-    }
-    final query = queryString;
-    if (query is String) {
-      uri += '?$query';
-    }
-    return uri;
   }
 }

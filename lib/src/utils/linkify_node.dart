@@ -2,7 +2,7 @@ import 'package:html/dom.dart';
 import 'package:linkify/linkify.dart';
 import 'package:matrix/matrix.dart';
 
-import '../widgets/matrix/client_manager/client_manager.dart';
+import 'matrix_to_extension.dart';
 
 extension LinkifyTree on Node {
   Node linkify() {
