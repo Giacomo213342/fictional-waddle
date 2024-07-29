@@ -209,14 +209,15 @@
   "msgTypeSticker": "Send a sticker.",
   "msgTypeBadEncrypted": "Annoy your peer with a message they cannot decrypt.",
   "msgTypeNone": "Send no message.",
-  "filesSelected": "{files, plural, =0{No files} =1{One file} other{{files} files}} selected. Sending files is not supported yet.}",
-  "@filesSelected": {
+  "sendingFiles": "{files, plural, =0{Sending no files.} =1{One file} other{{files} files}} sending ...}",
+  "@sendingFiles": {
     "placeholders": {
       "files": {
         "type": "int"
       }
     }
   },
+  "noFilesSelected": "No files selected.",
   "yesterday": "Yesterday",
   "thisMonth": "This month",
   "lastMonth": "Last month",
@@ -265,5 +266,33 @@
       }
     }
   },
-  "selectAccount": "Select account to continue"
+  "selectAccount": "Select account to continue",
+  "sendFiles": "Send files",
+  "checkingTotalSendSize": "Checking total send size ...",
+  "totalSendSize": "{size, plural, =0{Total send size : 0 bytes} =1{Total send size : 1 byte} other{Total send size : {size} bytes}}}",
+  "@totalSendSize": {
+    "placeholders": {
+      "size": {
+        "type": "int"
+      }
+    }
+  },
+  "fileSize": "{size, plural, =0{File size : 0 bytes} =1{File size : 1 byte} other{File size : {size} bytes}}}",
+  "@fileSize": {
+    "placeholders": {
+      "size": {
+        "type": "int"
+      }
+    }
+  },
+  "mimeType":"File type : {mimeType}",
+  "@mimeType": {
+    "placeholders": {
+      "mimeType": {
+        "type": "String?"
+      }
+    }
+  },
+  "compressFiles": "Compress files",
+  "compressFilesSubtitle": "For supported file types only"
 }

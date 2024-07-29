@@ -82,14 +82,26 @@ class RoomController extends State<RoomPage> {
   }
 
   Future<void> sendMessage() async {
-    final message = messageController.text;
+    final message = messageController.text.trim();
+    if (message.isEmpty) {
+      return;
+    }
     final msgType = sendMsgType;
     messageController.text = '';
     setState(() {
       sendMsgType = MessageTypes.Text;
     });
     try {
-      await room.sendTextEvent(message);
+      // some joke enabling to send notices ...
+      if (msgType == MessageTypes.Notice) {
+        final event = <String, String>{
+          'msgtype': msgType,
+          'body': message,
+        };
+        await room.sendEvent(event);
+      } else {
+        await room.sendTextEvent(message);
+      }
     } catch (_) {
       setState(() {
         sendMsgType = msgType;
@@ -126,15 +138,48 @@ class RoomController extends State<RoomPage> {
 
   Future<void> sendFile(String? msgType) async {
     final selector = FileSelector(msgType);
-    final files = await selector.selectAndPreviewFile(context);
+    if (await selector.selectFiles(context) != true) {
+      return;
+    }
     if (!mounted) {
       return;
     }
+    final selection = await selector.previewSelection(context);
+    if (!mounted) {
+      return;
+    }
+    final files = selection?.files;
+    if (selection == null || files == null || files.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).noFilesSelected),
+        ),
+      );
+      return;
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppLocalizations.of(context).filesSelected(files.length)),
+        content: Text(
+          AppLocalizations.of(context).sendingFiles(files.length),
+        ),
       ),
     );
+
+    final matrixFiles = await selector.makeMatrixFiles(
+      context,
+      room.client.nativeImplementations,
+    );
+    for (final tuple in matrixFiles) {
+      room.sendFileEvent(
+        tuple.file,
+        thumbnail: tuple.thumbnail,
+      );
+    }
+    if (!mounted) {
+      return;
+    }
+
     setSendMsgType();
   }
 

@@ -741,11 +741,17 @@ abstract class AppLocalizations {
   /// **'Send no message.'**
   String get msgTypeNone;
 
-  /// No description provided for @filesSelected.
+  /// No description provided for @sendingFiles.
   ///
   /// In en, this message translates to:
-  /// **'{files, plural, =0{No files} =1{One file} other{{files} files}} selected. Sending files is not supported yet.}'**
-  String filesSelected(int files);
+  /// **'{files, plural, =0{Sending no files.} =1{One file} other{{files} files}} sending ...}'**
+  String sendingFiles(int files);
+
+  /// No description provided for @noFilesSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No files selected.'**
+  String get noFilesSelected;
 
   /// No description provided for @yesterday.
   ///
@@ -945,6 +951,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select account to continue'**
   String get selectAccount;
+
+  /// No description provided for @sendFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Send files'**
+  String get sendFiles;
+
+  /// No description provided for @checkingTotalSendSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking total send size ...'**
+  String get checkingTotalSendSize;
+
+  /// No description provided for @totalSendSize.
+  ///
+  /// In en, this message translates to:
+  /// **'{size, plural, =0{Total send size : 0 bytes} =1{Total send size : 1 byte} other{Total send size : {size} bytes}}}'**
+  String totalSendSize(int size);
+
+  /// No description provided for @fileSize.
+  ///
+  /// In en, this message translates to:
+  /// **'{size, plural, =0{File size : 0 bytes} =1{File size : 1 byte} other{File size : {size} bytes}}}'**
+  String fileSize(int size);
+
+  /// No description provided for @mimeType.
+  ///
+  /// In en, this message translates to:
+  /// **'File type : {mimeType}'**
+  String mimeType(String? mimeType);
+
+  /// No description provided for @compressFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Compress files'**
+  String get compressFiles;
+
+  /// No description provided for @compressFilesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For supported file types only'**
+  String get compressFilesSubtitle;
 }
 
 class _AppLocalizationsDelegate

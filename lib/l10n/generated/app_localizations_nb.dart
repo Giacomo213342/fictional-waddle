@@ -381,16 +381,19 @@ class AppLocalizationsNb extends AppLocalizations {
   String get msgTypeNone => 'Ikke send noen melding.';
 
   @override
-  String filesSelected(int files) {
+  String sendingFiles(int files) {
     String _temp0 = intl.Intl.pluralLogic(
       files,
       locale: localeName,
       other: '$files files',
-      one: 'Én fil',
-      zero: 'Ingen filer',
+      one: 'One file',
+      zero: 'Sending no files.',
     );
-    return '$_temp0 valgt. Filsending støttes ikke enda.';
+    return '$_temp0 sending ...';
   }
+
+  @override
+  String get noFilesSelected => 'No files selected.';
 
   @override
   String get yesterday => 'I går';
@@ -495,4 +498,45 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get selectAccount => 'Select account to continue';
+
+  @override
+  String get sendFiles => 'Send files';
+
+  @override
+  String get checkingTotalSendSize => 'Checking total send size ...';
+
+  @override
+  String totalSendSize(int size) {
+    String _temp0 = intl.Intl.pluralLogic(
+      size,
+      locale: localeName,
+      other: 'Total send size : $size bytes',
+      one: 'Total send size : 1 byte',
+      zero: 'Total send size : 0 bytes',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String fileSize(int size) {
+    String _temp0 = intl.Intl.pluralLogic(
+      size,
+      locale: localeName,
+      other: 'File size : $size bytes',
+      one: 'File size : 1 byte',
+      zero: 'File size : 0 bytes',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mimeType(String? mimeType) {
+    return 'File type : $mimeType';
+  }
+
+  @override
+  String get compressFiles => 'Compress files';
+
+  @override
+  String get compressFilesSubtitle => 'For supported file types only';
 }
