@@ -70,7 +70,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
   static List<Client> activeClients = [];
 
-  static final _initializer = Completer<void>();
+  static final _initializer = Completer<bool>();
 
   static Client? getClientByIdentifier(int identifier) {
     return activeClients
@@ -94,7 +94,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
   bool _initializationStarted = false;
 
-  Future<void>? waiForInitialization = _initializer.future;
+  static Future<void>? waiForInitialization = _initializer.future;
 
   final suffix = getRuntimeSuffix();
 
@@ -105,9 +105,9 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     super.initState();
   }
 
-  Future<void> _loadClients() async {
+  Future<bool> _loadClients() async {
     if (activeClients.isNotEmpty) {
-      return;
+      return true;
     }
     if (_initializationStarted) {
       return _initializer.future;
@@ -153,8 +153,9 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     );
 
     setState(() {
-      _initializer.complete();
+      _initializer.complete(true);
     });
+    return true;
   }
 
   final Map<int, StreamSubscription<LoginState>?> _loginStateListener = {};
