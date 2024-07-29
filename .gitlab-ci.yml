@@ -272,6 +272,7 @@ pages:
   image: alpine:latest
   script:
     - mkdir -p public/web
+    - if [[ -n "$ASSETLINKS_JSON" && -f "$ASSETLINKS_JSON" ]]; then mkdir public/.well-known && cp "$ASSETLINKS_JSON" public/.well-known/assetlinks.json ; fi
     - cp -r polycule-web-$VERSION/* public/web/
   artifacts:
     paths:

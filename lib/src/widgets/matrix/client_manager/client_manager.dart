@@ -471,6 +471,9 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   void _handleDeeplink(Uri uri) {
     String link = uri.toString();
 
+    if (uri.scheme == 'https' && uri.host == 'polycule.im') {
+      context.go(uri.fragment.replaceFirst('#', ''));
+    }
     if (uri.scheme == _kPolyculeUriScheme) {
       // check whether we got a matrix URL but as polycule deeplink
       link = link.replaceFirst(_kPolyculeUriScheme, 'matrix');
