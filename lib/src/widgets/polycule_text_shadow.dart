@@ -8,7 +8,7 @@ class PolyculeTextShadow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTextStyle(
-      style: TextStyle(
+      style: DefaultTextStyle.of(context).style.copyWith(
         shadows: [
           Shadow(
             blurRadius: .5,
