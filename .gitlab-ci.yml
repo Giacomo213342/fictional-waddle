@@ -212,6 +212,8 @@ build:linux_x86_64:
       flutter build linux --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
       fi
     - mv ./build/linux/x64/release/bundle polycule-$VERSION-amd64
+  tags:
+    - x86_64
   artifacts:
     paths:
       - polycule-*-amd64
@@ -219,8 +221,6 @@ build:linux_x86_64:
 build:linux_aarch64:
   image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-linux
   extends: .build
-  tags:
-    - aarch64
   script:
     - apt update && apt install -y --no-install-recommends libssl-dev libmpv-dev libmimalloc-dev
     - export CMAKE_MAKE_PROGRAM=$(which cmake)
@@ -234,6 +234,8 @@ build:linux_aarch64:
       flutter build linux --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
       fi
     - mv ./build/linux/arm64/release/bundle polycule-$VERSION-aarch64
+  tags:
+    - aarch64
   allow_failure: true
   artifacts:
     paths:
@@ -250,6 +252,8 @@ build:debian_x86_64:
   script:
     - dpkg-buildpackage
     - mv ../polycule_*.deb .
+  tags:
+    - x86_64
   artifacts:
     paths:
       - polycule_*.deb
@@ -257,8 +261,6 @@ build:debian_x86_64:
 build:debian_aarch64:
   image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-debian
   extends: .build
-  tags:
-    - aarch64
   before_script:
     - apt update && apt install -y --no-install-recommends libssl-dev libmpv-dev libmimalloc-dev
     - export VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
@@ -269,6 +271,8 @@ build:debian_aarch64:
     - dpkg-buildpackage
     - mv ../polycule_*.deb .
   allow_failure: true
+  tags:
+    - aarch64
   artifacts:
     paths:
       - polycule_*.deb
