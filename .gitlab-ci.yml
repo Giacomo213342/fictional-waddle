@@ -105,6 +105,9 @@ build:apk_debug:
     - schedules
     - tags
     - main
+  tags:
+    - x86_64
+    - docker
   artifacts:
     paths:
       - polycule-*.apk
@@ -138,6 +141,9 @@ build:apk:
   only:
     - tags
     - main
+  tags:
+    - x86_64
+    - docker
   artifacts:
     paths:
       - polycule-*.apk
@@ -162,6 +168,9 @@ build:bundle:
   only:
     - tags
     - main
+  tags:
+    - x86_64
+    - docker
   artifacts:
     paths:
       - polycule-*.aab
