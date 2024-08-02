@@ -952,6 +952,18 @@ abstract class AppLocalizations {
   /// **'Select account to continue'**
   String get selectAccount;
 
+  /// No description provided for @sharingFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending {files, plural, =1{a file} other{{files} files}}.'**
+  String sharingFiles(int files);
+
+  /// No description provided for @sharingText.
+  ///
+  /// In en, this message translates to:
+  /// **'Share text to room'**
+  String get sharingText;
+
   /// No description provided for @sendFiles.
   ///
   /// In en, this message translates to:

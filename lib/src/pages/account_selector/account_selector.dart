@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../widgets/matrix/client_manager/client_manager.dart';
+import '../../widgets/sharing_intent_banner/sharing_intent_banner.dart';
 import '../room/room.dart';
 import 'account_selector_view.dart';
 
@@ -17,19 +18,28 @@ class AccountSelectorPage extends StatefulWidget {
   @override
   State<AccountSelectorPage> createState() => AccountSelectorController();
 
-  static String makeRedirectRoute(String parameter) {
-    return '$routeName?redirect=${Uri.encodeComponent(parameter)}';
+  static String makeRedirectRoute(String destination) {
+    return '$routeName?redirect=${Uri.encodeComponent(destination)}';
   }
 }
 
 class AccountSelectorController extends State<AccountSelectorPage> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkSharingData());
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) => AccountSelectorView(controller: this);
 
   Future<void> selectAccount(int identifier) async {
     final mxid = widget.redirect?.primaryIdentifier;
     if (mxid == null) {
-      context.pop();
+      context.pushReplacement(
+        '/client/$identifier',
+      );
       return;
     }
 
@@ -84,6 +94,18 @@ class AccountSelectorController extends State<AccountSelectorPage> {
         );
       }
       return;
+    }
+  }
+
+  void _checkSharingData() {
+    if (ClientManager.sharedFilesListener.value != null) {
+      ScaffoldMessenger.of(context).showMaterialBanner(
+        SharingIntentBanner.files(),
+      );
+    } else if (ClientManager.sharedTextListener.value != null) {
+      ScaffoldMessenger.of(context).showMaterialBanner(
+        SharingIntentBanner.text(),
+      );
     }
   }
 }

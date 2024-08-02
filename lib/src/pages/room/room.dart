@@ -6,6 +6,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../utils/file_selector.dart';
+import '../../widgets/matrix/client_manager/client_manager.dart';
 import '../room_list/room_list.dart';
 import 'components/timeline_event_tile.dart';
 import 'room_view.dart';
@@ -42,6 +43,9 @@ class RoomController extends State<RoomPage> {
   @override
   void initState() {
     messageController.addListener(_adjustMessageType);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => _sendSharedData());
+
     super.initState();
   }
 
@@ -144,6 +148,15 @@ class RoomController extends State<RoomPage> {
     if (!mounted) {
       return;
     }
+    await sendFileSelection(selector);
+    if (!mounted) {
+      return;
+    }
+
+    setSendMsgType();
+  }
+
+  Future<void> sendFileSelection(FileSelector selector) async {
     final selection = await selector.previewSelection(context);
     if (!mounted) {
       return;
@@ -176,11 +189,6 @@ class RoomController extends State<RoomPage> {
         thumbnail: tuple.thumbnail,
       );
     }
-    if (!mounted) {
-      return;
-    }
-
-    setSendMsgType();
   }
 
   void _adjustMessageType() {
@@ -191,5 +199,24 @@ class RoomController extends State<RoomPage> {
         !messageController.text.startsWith('/me')) {
       setSendMsgType(MessageTypes.Text);
     }
+  }
+
+  Future<void> _sendSharedData() async {
+    final message = ClientManager.sharedTextListener.value;
+    if (message != null) {
+      messageController.text = message;
+    }
+    final files = ClientManager.sharedFilesListener.value;
+    if (files != null) {
+      final selector = FileSelector(MessageTypes.File);
+      selector.files = files;
+      await sendFileSelection(selector);
+    } else {
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+    setSendMsgType();
   }
 }

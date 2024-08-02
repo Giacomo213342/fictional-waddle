@@ -6,11 +6,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:app_links/app_links.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 import 'package:olm/olm.dart' as olm;
+import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../pages/account_selector/account_selector.dart';
@@ -65,6 +67,12 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
   StreamSubscription<Uri>? _appLinkSubscription;
 
+  StreamSubscription<List<SharedMediaFile>>? _shareIntentSubscription;
+  StreamSubscription<String>? _shareTextSubscription;
+
+  static final sharedTextListener = ValueNotifier<String?>(null);
+  static final sharedFilesListener = ValueNotifier<List<XFile>?>(null);
+
   static String _makeClientName(int identifier) =>
       'polycule_client_$identifier';
 
@@ -102,6 +110,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   void initState() {
     _loadClients();
     _subscribeDeepLinks();
+    _subscribeShareIntents();
     super.initState();
   }
 
@@ -253,6 +262,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       subscription?.cancel();
     }
     _appLinkSubscription?.cancel();
+    _shareIntentSubscription?.cancel();
+    _shareTextSubscription?.cancel();
     super.dispose();
   }
 
@@ -494,6 +505,56 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         );
       }
     }
+  }
+
+  Future<void> _subscribeShareIntents() async {
+    _shareIntentSubscription =
+        ReceiveSharingIntentPlus.getMediaStream().listen(_handleShareIntent);
+    _shareTextSubscription =
+        ReceiveSharingIntentPlus.getTextStream().listen(_handleTextShare);
+
+    final initialShareIntent = await ReceiveSharingIntentPlus.getInitialMedia();
+    final initialShareText = await ReceiveSharingIntentPlus.getInitialText();
+
+    _handleShareIntent(initialShareIntent);
+    _handleTextShare(initialShareText);
+  }
+
+  void _handleShareIntent(List<SharedMediaFile> files) {
+    if (files.isEmpty) {
+      return;
+    }
+
+    // first empty both share listeners
+    sharedTextListener.value = null;
+    sharedFilesListener.value = null;
+
+    final xfiles = files.map((file) => XFile(file.path)).toList();
+    if (xfiles.isEmpty) {
+      return;
+    }
+
+    sharedFilesListener.value = xfiles;
+
+    if (!mounted) {
+      return;
+    }
+    context.go(AccountSelectorPage.makeRedirectRoute('/'));
+  }
+
+  static void claimShareIntent() {
+    // first empty both share listeners
+    sharedTextListener.value = null;
+    sharedFilesListener.value = null;
+
+    return ReceiveSharingIntentPlus.reset();
+  }
+
+  void _handleTextShare(String? text) {
+    if (text == null) {
+      return;
+    }
+    sharedTextListener.value = text;
   }
 }
 
