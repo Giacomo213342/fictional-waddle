@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -106,6 +107,9 @@ class RoomController extends State<RoomPage> {
       } else {
         await room.sendTextEvent(message);
       }
+      if (ClientManager.sharedTextListener.value != null) {
+        ClientManager.claimShareIntent();
+      }
     } catch (_) {
       setState(() {
         sendMsgType = msgType;
@@ -156,10 +160,10 @@ class RoomController extends State<RoomPage> {
     setSendMsgType();
   }
 
-  Future<void> sendFileSelection(FileSelector selector) async {
+  Future<bool> sendFileSelection(FileSelector selector) async {
     final selection = await selector.previewSelection(context);
     if (!mounted) {
-      return;
+      return false;
     }
     final files = selection?.files;
     if (selection == null || files == null || files.isEmpty) {
@@ -168,7 +172,7 @@ class RoomController extends State<RoomPage> {
           content: Text(AppLocalizations.of(context).noFilesSelected),
         ),
       );
-      return;
+      return false;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -184,11 +188,14 @@ class RoomController extends State<RoomPage> {
       room.client.nativeImplementations,
     );
     for (final tuple in matrixFiles) {
-      room.sendFileEvent(
-        tuple.file,
-        thumbnail: tuple.thumbnail,
+      unawaited(
+        room.sendFileEvent(
+          tuple.file,
+          thumbnail: tuple.thumbnail,
+        ),
       );
     }
+    return true;
   }
 
   void _adjustMessageType() {
@@ -210,7 +217,10 @@ class RoomController extends State<RoomPage> {
     if (files != null) {
       final selector = FileSelector(MessageTypes.File);
       selector.files = files;
-      await sendFileSelection(selector);
+      final result = await sendFileSelection(selector);
+      if (result) {
+        ClientManager.claimShareIntent();
+      }
     } else {
       return;
     }

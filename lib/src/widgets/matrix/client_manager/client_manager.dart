@@ -554,7 +554,16 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     if (text == null) {
       return;
     }
+    // first empty both share listeners
+    sharedTextListener.value = null;
+    sharedFilesListener.value = null;
+
     sharedTextListener.value = text;
+
+    if (!mounted) {
+      return;
+    }
+    context.go(AccountSelectorPage.makeRedirectRoute('/'));
   }
 }
 
