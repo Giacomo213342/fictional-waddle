@@ -500,6 +500,20 @@ class AppLocalizationsNb extends AppLocalizations {
   String get selectAccount => 'Select account to continue';
 
   @override
+  String sharingFiles(int files) {
+    String _temp0 = intl.Intl.pluralLogic(
+      files,
+      locale: localeName,
+      other: '$files files',
+      one: 'a file',
+    );
+    return 'Sending $_temp0.';
+  }
+
+  @override
+  String get sharingText => 'Share text to room';
+
+  @override
   String get sendFiles => 'Send files';
 
   @override
