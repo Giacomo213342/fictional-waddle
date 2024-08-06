@@ -163,7 +163,27 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
     final state =
         widget.controller.eventKeyRegistry[event.eventId]?.currentState;
     if (state != null) {
-      state.updateEvent(timeline.events[index]);
+      final previousEvent = timeline.getPreviousDisplayEvent(index);
+      final nextEvent = timeline.getNextDisplayEvent(index);
+      state.updateEvent(
+        event: timeline.events[index],
+        previousEvent: previousEvent,
+        nextEvent: nextEvent,
+      );
+      if (previousEvent != null) {
+        widget.controller.eventKeyRegistry[previousEvent.eventId]?.currentState
+            ?.updateEvent(
+          nextEvent: event,
+          highlight: false,
+        );
+      }
+      if (nextEvent != null) {
+        widget.controller.eventKeyRegistry[nextEvent.eventId]?.currentState
+            ?.updateEvent(
+          previousEvent: event,
+          highlight: false,
+        );
+      }
     } else {
       listKey.currentState?.removeItem(
         index,

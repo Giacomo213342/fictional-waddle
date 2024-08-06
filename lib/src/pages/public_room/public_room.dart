@@ -37,10 +37,10 @@ class PublicRoomController extends MatrixState<PublicRoomPage> {
   Widget build(BuildContext context) => PublicRoomView(controller: this);
 
   Future<void> _getRoomPreview() async {
-    Set<String?> via = widget.via;
-    if (via.isEmpty) {
-      via.add(null);
-    }
+    final via = {
+      ...widget.via,
+      null,
+    };
 
     for (final server in via) {
       final response = await client.queryPublicRooms(
@@ -57,7 +57,6 @@ class PublicRoomController extends MatrixState<PublicRoomPage> {
       });
       break;
     }
-    throw Error();
   }
 
   Future<void> knockRoom() => joinRoom();

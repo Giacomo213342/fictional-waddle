@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
+import '../../../utils/matrix/did_change_event.dart';
 import '../../../utils/matrix/is_display_event_extension.dart';
 import '../room.dart';
 import 'event/m_room_message.dart';
@@ -38,6 +39,8 @@ class TimelineEventTileState extends State<TimelineEventTile>
   late AnimationController _opacityController;
 
   Event? event;
+  Event? previousEvent;
+  Event? nextEvent;
 
   @override
   void initState() {
@@ -59,8 +62,8 @@ class TimelineEventTileState extends State<TimelineEventTile>
   @override
   Widget build(BuildContext context) {
     final event = this.event ?? widget.event;
-    final previousEvent = widget.previousEvent;
-    final nextEvent = widget.nextEvent;
+    final previousEvent = this.previousEvent ?? widget.previousEvent;
+    final nextEvent = this.nextEvent ?? widget.nextEvent;
 
     if (!event.shouldDisplayEvent) {
       return const SizedBox();
@@ -70,7 +73,10 @@ class TimelineEventTileState extends State<TimelineEventTile>
       opacity: _opacityController,
       child: switch (event.type) {
         EventTypes.Reaction || EventTypes.Redaction => const SizedBox(),
-        EventTypes.Sticker || EventTypes.Message => RoomMessage(
+        EventTypes.Sticker ||
+        EventTypes.Message ||
+        EventTypes.Encrypted =>
+          RoomMessage(
             event: event,
             timeline: widget.timeline,
             previousEvent: previousEvent,
@@ -98,19 +104,53 @@ class TimelineEventTileState extends State<TimelineEventTile>
 
   @override
   void didUpdateWidget(covariant TimelineEventTile oldWidget) {
-    if (oldWidget.event.attachmentMxcUrl != widget.event.attachmentMxcUrl ||
-        oldWidget.event.thumbnailMxcUrl != widget.event.thumbnailMxcUrl ||
-        oldWidget.event.body != widget.event.body ||
-        oldWidget.event.status != widget.event.status) {
+    if (widget.event.didChange(oldWidget.event)) {
       unawaited(updateEvent());
     }
+
+    final oldPrevious = oldWidget.previousEvent;
+    final previous = widget.previousEvent;
+    if (oldPrevious != null && previous != null) {
+      if (previous.didChange(oldPrevious)) {
+        unawaited(updateEvent());
+      }
+    } else if (oldPrevious == null || previous == null) {
+      unawaited(updateEvent());
+    }
+
+    final oldNext = oldWidget.nextEvent;
+    final next = widget.nextEvent;
+    if (oldNext != null && next != null) {
+      if (next.didChange(oldNext)) {
+        unawaited(updateEvent());
+      }
+    } else if (oldNext == null || next == null) {
+      unawaited(updateEvent());
+    }
+
     super.didUpdateWidget(oldWidget);
   }
 
-  Future<void> updateEvent([Event? event]) async {
+  Future<void> updateEvent({
+    Event? event,
+    Event? nextEvent,
+    Event? previousEvent,
+    bool highlight = true,
+  }) async {
     setState(() {
-      this.event = event;
+      if (event != null) {
+        this.event = event;
+      }
+      if (previousEvent != null) {
+        this.previousEvent = previousEvent;
+      }
+      if (nextEvent != null) {
+        this.nextEvent = nextEvent;
+      }
     });
+    if (!highlight) {
+      return;
+    }
     await _opacityController.animateBack(.5, curve: _kPulseCurve);
     await _opacityController.animateTo(1, curve: _kPulseCurve);
   }
