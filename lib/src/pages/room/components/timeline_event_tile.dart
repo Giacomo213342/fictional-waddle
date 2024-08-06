@@ -82,6 +82,11 @@ class TimelineEventTileState extends State<TimelineEventTile>
         EventTypes.HistoryVisibility ||
         EventTypes.GuestAccess ||
         EventTypes.Encryption ||
+        EventTypes.RoomName ||
+        EventTypes.RoomTopic ||
+        EventTypes.RoomAvatar ||
+        EventTypes.RoomAliases ||
+        EventTypes.RoomCanonicalAlias ||
         EventTypes.RoomMember =>
           RoomState(event: event),
         _ => Text(

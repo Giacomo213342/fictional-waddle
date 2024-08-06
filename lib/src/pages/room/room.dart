@@ -19,7 +19,7 @@ class RoomPage extends StatefulWidget {
   static const pathParameter = 'roomId';
 
   static String makeRouteName(String roomId) {
-    return '${RoomListPage.routeName}/$roomId';
+    return '${RoomListPage.routeName}/${Uri.encodeComponent(roomId)}';
   }
 
   final Room room;
@@ -71,6 +71,10 @@ class RoomController extends State<RoomPage> {
     });
     try {
       await room.join();
+      await room.client.waitForRoomInSync(
+        room.id,
+        join: true,
+      );
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -14,28 +14,44 @@ typedef RoomAvailableBuilder = Widget Function(
   Room room,
 );
 
+typedef RoomUnavailableBuilder = Widget Function(
+  BuildContext context,
+  GoRouterState state,
+  PublicRoomQueryFilter query,
+  Set<String> via,
+  String? action,
+);
+
 class RoomAvailableRoute extends RequiresLoginRoute {
   RoomAvailableRoute({
     required super.path,
     super.name,
     RoomAvailableBuilder? builder,
+    RoomUnavailableBuilder? roomUnavailableBuilder,
     super.pageBuilder,
     super.parentNavigatorKey,
     super.onExit,
     super.routes = const <RouteBase>[],
   }) : super(
-          builder: builder == null ? null : _roomInjectedBuilder(builder),
+          builder: builder == null
+              ? null
+              : _roomInjectedBuilder(
+                  builder,
+                  roomUnavailableBuilder,
+                ),
         );
 
   static GoRouterWidgetBuilder _roomInjectedBuilder(
     RoomAvailableBuilder builder,
+    RoomUnavailableBuilder? roomUnavailableBuilder,
   ) =>
       (
         BuildContext context,
         GoRouterState state,
       ) {
-        final identifier =
-            ClientManager.extractClientIdentifierFromRoute(state);
+        final identifier = ClientManager.extractClientIdentifierFromRoute(
+          state,
+        );
         if (identifier == null) {
           return const FatalErrorPage();
         }
@@ -47,9 +63,20 @@ class RoomAvailableRoute extends RequiresLoginRoute {
         if (roomId == null) {
           return const FatalErrorPage();
         }
-        final room = client.getRoomById(roomId);
+        final room =
+            client.getRoomById(roomId) ?? client.getRoomByAlias(roomId);
+
         if (room == null) {
-          return const FatalErrorPage();
+          return roomUnavailableBuilder?.call(
+                context,
+                state,
+                PublicRoomQueryFilter(
+                  genericSearchTerm: roomId,
+                ),
+                state.uri.queryParametersAll['via']?.toSet() ?? {},
+                state.uri.queryParameters['action'],
+              ) ??
+              const FatalErrorPage();
         }
 
         return builder.call(context, state, room);

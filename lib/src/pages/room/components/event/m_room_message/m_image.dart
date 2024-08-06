@@ -8,6 +8,7 @@ import '../../../../../widgets/matrix/blur_hash_indicator.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
 import '../../../../../widgets/matrix/retry_download_button.dart';
 import '../../../../../widgets/matrix/tumbnail_aspect_ratio.dart';
+import '../../../../../widgets/mimed_image.dart';
 
 class ImageMessage extends StatelessWidget {
   const ImageMessage({super.key, required this.event});
@@ -49,9 +50,9 @@ class ImageMessage extends StatelessWidget {
                   curve: Curves.easeInOut,
                   child: data == null
                       ? null
-                      : Image.memory(
-                          data.bytes,
-                          gaplessPlayback: true,
+                      : MimedImage(
+                          bytes: data.bytes,
+                          path: data.name,
                           fit: BoxFit.contain,
                         ),
                 ),

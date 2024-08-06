@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
 
 import '../pages/account_selector/account_selector.dart';
 import '../pages/application_settings/application_settings.dart';
@@ -9,6 +8,7 @@ import '../pages/application_settings/pages/appearance.dart';
 import '../pages/fatal_error/fatal_error_page.dart';
 import '../pages/homeserver/homeserver.dart';
 import '../pages/login/login.dart';
+import '../pages/public_room/public_room.dart';
 import '../pages/room/room.dart';
 import '../pages/room_list/room_list.dart';
 import '../pages/splash_screen/splash_screen.dart';
@@ -27,7 +27,7 @@ import 'extensions/room_available_route.dart';
 class PolyculeRouter extends GoRouter {
   PolyculeRouter()
       : super.routingConfig(
-          debugLogDiagnostics: true,
+          debugLogDiagnostics: kDebugMode,
           routingConfig: _ConstantRoutingConfig(
             RoutingConfig(
               routes: [
@@ -56,7 +56,7 @@ class PolyculeRouter extends GoRouter {
                       builder: (context, state) => AccountSelectorPage(
                         redirect: Uri.decodeComponent(
                           state.uri.queryParameters['redirect']!,
-                        ).parseIdentifierIntoParts(),
+                        ),
                       ),
                     ),
                     ResponsiveShellRoute(
@@ -104,6 +104,18 @@ class PolyculeRouter extends GoRouter {
                               path: RoomPage.pathParameter.asGoRouterPath(),
                               builder: (context, state, room) => RoomPage(
                                 room: room,
+                              ),
+                              roomUnavailableBuilder: (
+                                context,
+                                state,
+                                filter,
+                                via,
+                                action,
+                              ) =>
+                                  PublicRoomPage(
+                                filter: filter,
+                                via: via,
+                                action: action,
                               ),
                             ),
                           ],

@@ -12,6 +12,7 @@ import '../../../../../widgets/matrix/blur_hash_indicator.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
 import '../../../../../widgets/matrix/retry_download_button.dart';
 import '../../../../../widgets/matrix/tumbnail_aspect_ratio.dart';
+import '../../../../../widgets/mimed_image.dart';
 import '../../../../../widgets/polycule_text_shadow.dart';
 
 class VideoMessage extends StatefulWidget {
@@ -86,10 +87,10 @@ class _VideoMessageState extends State<VideoMessage>
                             alignment: Alignment.center,
                             fit: StackFit.expand,
                             children: [
-                              Image.memory(
-                                thumb.bytes,
-                                gaplessPlayback: true,
+                              MimedImage(
+                                bytes: thumb.bytes,
                                 fit: BoxFit.contain,
+                                path: thumb.name,
                               ),
                               PolyculeTextShadow(child: Center(child: label)),
                             ],

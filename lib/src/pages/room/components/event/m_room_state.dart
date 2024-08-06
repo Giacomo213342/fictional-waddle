@@ -21,7 +21,6 @@ class RoomState extends StatelessWidget {
                 event.calcLocalizedBodyFallback(
                   const MatrixDefaultLocalizations(),
                 ),
-            textAlign: TextAlign.center,
           );
         },
       ),

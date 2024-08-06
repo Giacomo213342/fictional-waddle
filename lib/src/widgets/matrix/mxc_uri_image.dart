@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 import 'package:matrix/matrix.dart';
 
+import '../mimed_image.dart';
+
 typedef MxcUriImageBuilderCallback = Widget Function(
   BuildContext context,
-  AsyncSnapshot<Image> image,
+  AsyncSnapshot<Widget> image,
   VoidCallback? retryCallback,
 );
 
@@ -26,7 +28,7 @@ class MxcUriImageBuilder extends StatefulWidget {
 
   static Widget defaultImageBuilder(
     BuildContext context,
-    AsyncSnapshot<Image> image,
+    AsyncSnapshot<Widget> image,
     VoidCallback? retryCallback,
   ) =>
       image.data ?? Container();
@@ -42,8 +44,8 @@ class MxcUriImageBuilder extends StatefulWidget {
 }
 
 class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
-  CancelableOperation<Image>? imageOperation;
-  AsyncSnapshot<Image> image = const AsyncSnapshot.nothing();
+  CancelableOperation<Widget>? imageOperation;
+  AsyncSnapshot<Widget> image = const AsyncSnapshot.nothing();
 
   @override
   void initState() {
@@ -102,14 +104,13 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
     return bytes;
   }
 
-  Future<Image> _buildCachedImageWidget(Uri uri) async {
+  Future<Widget> _buildCachedImageWidget(Uri uri) async {
     final bytes = await _downloadCacheMxc(uri);
 
-    return Image.memory(
+    return MimedImage(
       key: ValueKey(downloadUri),
-      bytes,
-      gaplessPlayback: true,
-      fit: BoxFit.cover,
+      bytes: bytes,
+      path: uri.path,
       width: widget.width,
       height: widget.height,
     );

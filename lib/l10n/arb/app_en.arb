@@ -323,5 +323,6 @@
   "compressFilesSubtitle": "For supported file types only",
   "cancelSending": "Cancel sending",
   "retrySending": "Retry sending",
-  "accountSettings": "Account settings"
+  "accountSettings": "Account settings",
+  "previewRoom": "Preview as guest"
 }
