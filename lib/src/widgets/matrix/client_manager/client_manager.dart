@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:app_links/app_links.dart';
@@ -470,13 +471,19 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       );
 
   Future<void> _subscribeDeepLinks() async {
-    _appLinkSubscription = AppLinks().uriLinkStream.listen(_handleDeeplink);
+    try {
+      _appLinkSubscription = AppLinks().uriLinkStream.listen(_handleDeeplink);
 
-    final initialLink = await AppLinks().getInitialLink();
-    if (initialLink == null) {
-      return;
+      final initialLink = await AppLinks().getInitialLink();
+      if (initialLink == null) {
+        return;
+      }
+      _handleDeeplink(initialLink);
+    } on MissingPluginException {
+      Logs().d(
+        'package:app_links is not supported on his device.',
+      );
     }
-    _handleDeeplink(initialLink);
   }
 
   void _handleDeeplink(Uri uri) {
@@ -508,16 +515,23 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   }
 
   Future<void> _subscribeShareIntents() async {
-    _shareIntentSubscription =
-        ReceiveSharingIntentPlus.getMediaStream().listen(_handleShareIntent);
-    _shareTextSubscription =
-        ReceiveSharingIntentPlus.getTextStream().listen(_handleTextShare);
+    try {
+      _shareIntentSubscription =
+          ReceiveSharingIntentPlus.getMediaStream().listen(_handleShareIntent);
+      _shareTextSubscription =
+          ReceiveSharingIntentPlus.getTextStream().listen(_handleTextShare);
 
-    final initialShareIntent = await ReceiveSharingIntentPlus.getInitialMedia();
-    final initialShareText = await ReceiveSharingIntentPlus.getInitialText();
+      final initialShareIntent =
+          await ReceiveSharingIntentPlus.getInitialMedia();
+      final initialShareText = await ReceiveSharingIntentPlus.getInitialText();
 
-    _handleShareIntent(initialShareIntent);
-    _handleTextShare(initialShareText);
+      _handleShareIntent(initialShareIntent);
+      _handleTextShare(initialShareText);
+    } on MissingPluginException {
+      Logs().d(
+        'package:receive_sharing_intent_plus is not supported on his device.',
+      );
+    }
   }
 
   void _handleShareIntent(List<SharedMediaFile> files) {

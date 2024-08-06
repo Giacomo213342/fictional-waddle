@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:cross_file/cross_file.dart';
 
+import '../../mimed_image.dart';
 import 'fallback_preview.dart';
 
 class ImagePreview extends StatelessWidget {
@@ -20,9 +21,9 @@ class ImagePreview extends StatelessWidget {
             return FallbackPreview(file: file);
           }
 
-          return Image.memory(
-            data,
-            gaplessPlayback: true,
+          return MimedImage(
+            bytes: data,
+            path: file.name,
             fit: BoxFit.contain,
           );
         },

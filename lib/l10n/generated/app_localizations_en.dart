@@ -574,4 +574,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountSettings => 'Account settings';
+
+  @override
+  String get previewRoom => 'Preview as guest';
 }

@@ -79,32 +79,32 @@ class MembershipInviteTile extends StatelessWidget {
                       ButtonBar(
                         alignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          switch (room.joinRules) {
-                            JoinRules.public ||
-                            JoinRules.invite =>
-                              ElevatedButton(
-                                onPressed: controller.loading
-                                    ? null
-                                    : controller.joinRoom,
-                                child:
-                                    Text(AppLocalizations.of(context).joinRoom),
-                              ),
-                            JoinRules.knock => ElevatedButton(
-                                onPressed: controller.loading
-                                    ? null
-                                    : controller.knockRoom,
-                                child: Text(
-                                  AppLocalizations.of(context).knockRoom,
+                          if (controller.loading)
+                            const CircularProgressIndicator()
+                          else
+                            switch (room.joinRules) {
+                              JoinRules.public ||
+                              JoinRules.invite =>
+                                ElevatedButton(
+                                  onPressed: controller.joinRoom,
+                                  child: Text(
+                                    AppLocalizations.of(context).joinRoom,
+                                  ),
                                 ),
-                              ),
-                            _ => ElevatedButton(
-                                onPressed: null,
-                                child: Text(
-                                  AppLocalizations.of(context)
-                                      .youCannotJoinThisRoom,
+                              JoinRules.knock => ElevatedButton(
+                                  onPressed: controller.knockRoom,
+                                  child: Text(
+                                    AppLocalizations.of(context).knockRoom,
+                                  ),
                                 ),
-                              ),
-                          },
+                              _ => ElevatedButton(
+                                  onPressed: null,
+                                  child: Text(
+                                    AppLocalizations.of(context)
+                                        .youCannotJoinThisRoom,
+                                  ),
+                                ),
+                            },
                         ],
                       ),
                     ],

@@ -13,7 +13,7 @@ class AccountSelectorPage extends StatefulWidget {
 
   static const routeName = '/accounts';
 
-  final MatrixIdentifierStringExtensionResults? redirect;
+  final String redirect;
 
   @override
   State<AccountSelectorPage> createState() => AccountSelectorController();
@@ -35,66 +35,18 @@ class AccountSelectorController extends State<AccountSelectorPage> {
   Widget build(BuildContext context) => AccountSelectorView(controller: this);
 
   Future<void> selectAccount(int identifier) async {
-    final mxid = widget.redirect?.primaryIdentifier;
-    if (mxid == null) {
-      context.pushReplacement(
-        '/client/$identifier',
-      );
-      return;
-    }
+    final matrixLink = widget.redirect.parseIdentifierIntoParts();
 
-    final prefix = mxid.substring(0, 1);
-
-    if (prefix == '!') {
-      context.pushReplacement(
-        '/client/$identifier${RoomPage.makeRouteName(mxid)}',
-      );
-      return;
+    if (matrixLink != null) {
+      return _matrixRedirect(identifier, matrixLink);
     }
-
-    final client = ClientManager.getClientByIdentifier(identifier);
-    if (client == null) {
-      context.pop();
-      return;
+    String path = widget.redirect;
+    if (path.startsWith('/')) {
+      path = path.replaceFirst('/', '');
     }
-
-    if (prefix == '#') {
-      String? roomId;
-      try {
-        roomId = client.getRoomByAlias(mxid)?.id ??
-            (await client.getRoomIdByAlias(mxid)).roomId;
-      } catch (e) {
-        if (mounted) {
-          context.pop();
-        }
-        return;
-      }
-      if (!mounted) {
-        return;
-      }
-      if (roomId == null) {
-        context.pushReplacement(
-          '/client/$identifier${RoomPage.makeRouteName(mxid)}',
-        );
-        return;
-      }
-      context.pushReplacement(
-        '/client/$identifier${RoomPage.makeRouteName(roomId)}',
-      );
-      return;
-    }
-
-    if (prefix == '@') {
-      final room = client.getDirectChatFromUserId(mxid);
-      if (room == null) {
-        context.pushReplacement('/client/$identifier/user/$mxid');
-      } else {
-        context.pushReplacement(
-          '/client/$identifier${RoomPage.makeRouteName(room)}',
-        );
-      }
-      return;
-    }
+    context.pushReplacement(
+      '/client/$identifier/$path}',
+    );
   }
 
   void _checkSharingData() {
@@ -106,6 +58,62 @@ class AccountSelectorController extends State<AccountSelectorPage> {
       ScaffoldMessenger.of(context).showMaterialBanner(
         SharingIntentBanner.text(),
       );
+    }
+  }
+
+  void _matrixRedirect(
+    int identifier,
+    MatrixIdentifierStringExtensionResults matrixLink,
+  ) {
+    final mxid = matrixLink.primaryIdentifier;
+
+    final prefix = mxid.substring(0, 1);
+
+    final client = ClientManager.getClientByIdentifier(identifier);
+    if (client == null) {
+      Navigator.of(context).pop();
+      return;
+    }
+    Room? room;
+
+    if (prefix == '@') {
+      final directChat = client.getDirectChatFromUserId(mxid);
+
+      // if we don't know the direct chat, show the user page
+      if (directChat == null) {
+        context.pushReplacement('/client/$identifier/user/$mxid');
+        return;
+      }
+      // otherwise set the room and let the room handler do the rest
+      room = client.getRoomById(directChat);
+    }
+
+    if (room != null || prefix == '#' || prefix == '!') {
+      room ??= client.getRoomByAlias(mxid);
+      room ??= client.getRoomById(mxid);
+
+      final query = matrixLink.queryString;
+      final event = matrixLink.secondaryIdentifier;
+
+      String path = '/client/$identifier';
+
+      // if known room, deep link the real room id
+      if (room is Room) {
+        path += RoomPage.makeRouteName(room.id);
+      } else {
+        // otherwise use the alias
+        path += RoomPage.makeRouteName(mxid);
+        // add via and action for unknown rooms
+        if (query != null) {
+          path += '?${matrixLink.queryString}';
+        }
+      }
+      if (event != null) {
+        path += '#${Uri.encodeComponent(event)}';
+      }
+
+      context.pushReplacement(path);
+      return;
     }
   }
 }

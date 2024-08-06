@@ -1035,6 +1035,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account settings'**
   String get accountSettings;
+
+  /// No description provided for @previewRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview as guest'**
+  String get previewRoom;
 }
 
 class _AppLocalizationsDelegate
