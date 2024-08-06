@@ -59,10 +59,11 @@ class RoomAvailableRoute extends RequiresLoginRoute {
         if (client == null) {
           return const FatalErrorPage();
         }
-        final roomId = state.pathParameters[RoomPage.pathParameter];
-        if (roomId == null) {
+        final parameter = state.pathParameters[RoomPage.pathParameter];
+        if (parameter == null) {
           return const FatalErrorPage();
         }
+        final roomId = Uri.decodeComponent(parameter);
         final room =
             client.getRoomById(roomId) ?? client.getRoomByAlias(roomId);
 

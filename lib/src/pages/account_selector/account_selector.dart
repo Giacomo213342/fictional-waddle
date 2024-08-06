@@ -50,6 +50,13 @@ class AccountSelectorController extends State<AccountSelectorPage> {
   }
 
   void _checkSharingData() {
+    // funny bug : any deeplink will meanwhile be interpreted as shared text
+    // easy workaround : if the shared text is equal to the redirect, we know
+    // it was the same data processed
+    if (ClientManager.sharedTextListener.value == widget.redirect) {
+      ClientManager.claimShareIntent();
+      return;
+    }
     if (ClientManager.sharedFilesListener.value != null) {
       ScaffoldMessenger.of(context).showMaterialBanner(
         SharingIntentBanner.files(),

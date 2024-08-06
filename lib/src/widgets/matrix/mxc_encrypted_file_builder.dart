@@ -131,8 +131,12 @@ class _MxcEncryptedFileBuilderState<T, U>
             .then(widget.thumbnailTransformer ?? (file) => file as U?),
         onCancel: () {
           thumbnail = const AsyncSnapshot.withData(ConnectionState.none, null);
-          if (mounted) {
-            setState(() {});
+          try {
+            if (mounted) {
+              setState(() {});
+            }
+          } catch (_) {
+            // canceled by dispose
           }
         },
       );
@@ -164,8 +168,12 @@ class _MxcEncryptedFileBuilderState<T, U>
             .then(widget.attachmentTransformer ?? (file) => file as T?),
         onCancel: () {
           attachment = const AsyncSnapshot.withData(ConnectionState.none, null);
-          if (mounted) {
-            setState(() {});
+          try {
+            if (mounted) {
+              setState(() {});
+            }
+          } catch (_) {
+            // canceled by dispose
           }
         },
       );

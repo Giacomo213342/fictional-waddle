@@ -26,12 +26,25 @@ class RoomMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final nextEvent = this.nextEvent?.getDisplayEvent(timeline);
+    final previousEvent = this.previousEvent?.getDisplayEvent(timeline);
+
     final isOwnMessage = event.senderId == client.userID;
-    final previousMessageSameSender = previousEvent?.senderId ==
-            event.senderId &&
-        [EventTypes.Message, EventTypes.Sticker].contains(previousEvent?.type);
-    final nextMessageSameSender = nextEvent?.senderId == event.senderId &&
-        [EventTypes.Message, EventTypes.Sticker].contains(nextEvent?.type);
+    final previousMessageSameSender = previousEvent == null
+        ? false
+        : previousEvent.senderId == event.senderId &&
+            (previousEvent.redacted ||
+                [EventTypes.Message, EventTypes.Sticker].contains(
+                  previousEvent.type,
+                ));
+    final nextMessageSameSender = nextEvent == null
+        ? false
+        : nextEvent.senderId == event.senderId &&
+            (nextEvent.redacted ||
+                [EventTypes.Message, EventTypes.Sticker].contains(
+                  nextEvent.type,
+                ));
+
     final showOtherSenderAvatar = !isOwnMessage && !nextMessageSameSender;
     final showOwnAvatar = isOwnMessage && !nextMessageSameSender;
     final border = BorderSide(
@@ -59,7 +72,10 @@ class RoomMessage extends StatelessWidget {
     Widget? prefix;
 
     Widget? editNotice;
-    if (editEvent != null) {
+
+    if (event.redacted) {
+      editNotice = const Icon(Icons.delete);
+    } else if (editEvent != null) {
       editNotice = Tooltip(
         message: editEvent.originServerTs
                 .isAfter(DateTime.now().subtract(const Duration(days: 1)))
