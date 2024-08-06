@@ -89,12 +89,12 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
   }) {
     nextEvent ??= timeline.getNextDisplayEvent(index);
     previousEvent ??= timeline.getPreviousDisplayEvent(index);
-    event ??= timeline.events[index].getDisplayEvent(timeline);
+    event ??= timeline.events[index];
 
     return SizeTransition(
       sizeFactor: animation,
       child: TimelineEventTile(
-        key: widget.controller.eventKeyRegistry[index] ??=
+        key: widget.controller.eventKeyRegistry[event.eventId] ??=
             GlobalKey<TimelineEventTileState>(),
         event: event,
         previousEvent: previousEvent,
@@ -127,39 +127,50 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
     if (timeline == null) {
       return;
     }
+    final event = timeline.events[index];
     listKey.currentState!.removeItem(
       index,
       (context, animation) {
-        final oldWidget =
-            widget.controller.eventKeyRegistry[index]?.currentState?.widget;
+        final oldWidget = widget.controller.eventKeyRegistry
+            .remove(event.eventId)
+            ?.currentState
+            ?.widget;
 
         final nextEvent = oldWidget?.nextEvent;
         final previousEvent = oldWidget?.previousEvent;
-        final event = oldWidget?.event;
+        final oldEvent = oldWidget?.event;
 
         return buildTransitionedTile(
           animation: animation,
           index: index,
           timeline: timeline,
-          event: event,
+          event: oldEvent,
           previousEvent: previousEvent,
           nextEvent: nextEvent,
         );
       },
     );
+    widget.controller.eventKeyRegistry.remove(event.eventId);
   }
 
   void _changeEvent(int index) {
-    final state = widget.controller.eventKeyRegistry[index]?.currentState;
+    final timeline = this.timeline;
+    if (timeline == null) {
+      return;
+    }
+    final event = timeline.events[index];
+
+    final state =
+        widget.controller.eventKeyRegistry[event.eventId]?.currentState;
     if (state != null) {
-      state.updateEvent();
+      state.updateEvent(timeline.events[index]);
     } else {
-      listKey.currentState?.insertItem(index, duration: Duration.zero);
       listKey.currentState?.removeItem(
         index,
         (context, animation) => SizedBox.fromSize(size: Size.zero),
         duration: Duration.zero,
       );
+      listKey.currentState?.insertItem(index, duration: Duration.zero);
     }
   }
 }

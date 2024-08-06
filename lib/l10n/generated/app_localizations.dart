@@ -327,6 +327,18 @@ abstract class AppLocalizations {
   /// **'Last sync : {timestamp} ({duration} ms)'**
   String lastSyncReceived(DateTime timestamp, Object duration);
 
+  /// No description provided for @editedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Edited: {timestamp}'**
+  String editedToday(DateTime timestamp);
+
+  /// No description provided for @editedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Edited: {timestamp}'**
+  String editedAt(String timestamp);
+
   /// No description provided for @authenticationRequired.
   ///
   /// In en, this message translates to:
@@ -1005,6 +1017,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'For supported file types only'**
   String get compressFilesSubtitle;
+
+  /// No description provided for @cancelSending.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel sending'**
+  String get cancelSending;
+
+  /// No description provided for @retrySending.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry sending'**
+  String get retrySending;
+
+  /// No description provided for @accountSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Account settings'**
+  String get accountSettings;
 }
 
 class _AppLocalizationsDelegate

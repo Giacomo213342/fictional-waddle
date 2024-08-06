@@ -14,7 +14,7 @@ extension NeighboringDisplayEvents on Timeline {
         previousEvent = null;
       }
     } while (previousEventIndex < events.length &&
-        !(previousEvent?.isDisplayEvent ?? false));
+        !(previousEvent?.shouldDisplayEvent ?? false));
 
     return previousEvent;
   }
@@ -29,7 +29,7 @@ extension NeighboringDisplayEvents on Timeline {
       } else {
         nextEvent = null;
       }
-    } while (nextEventIndex >= 0 && !(nextEvent?.isDisplayEvent ?? false));
+    } while (nextEventIndex >= 0 && !(nextEvent?.shouldDisplayEvent ?? false));
 
     return nextEvent;
   }

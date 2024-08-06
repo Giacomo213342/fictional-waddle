@@ -37,8 +37,11 @@ class TimelineEventTileState extends State<TimelineEventTile>
     with TickerProviderStateMixin<TimelineEventTile> {
   late AnimationController _opacityController;
 
+  Event? event;
+
   @override
   void initState() {
+    event = widget.event;
     _opacityController = AnimationController(
       value: 1,
       vsync: this,
@@ -55,11 +58,11 @@ class TimelineEventTileState extends State<TimelineEventTile>
 
   @override
   Widget build(BuildContext context) {
-    final event = widget.event;
+    final event = this.event ?? widget.event;
     final previousEvent = widget.previousEvent;
     final nextEvent = widget.nextEvent;
 
-    if (!event.isDisplayEvent) {
+    if (!event.shouldDisplayEvent) {
       return const SizedBox();
     }
 
@@ -81,7 +84,9 @@ class TimelineEventTileState extends State<TimelineEventTile>
         EventTypes.Encryption ||
         EventTypes.RoomMember =>
           RoomState(event: event),
-        _ => Text(event.type),
+        _ => Text(
+            event.calcLocalizedBodyFallback(const MatrixDefaultLocalizations()),
+          ),
       },
     );
   }
@@ -90,15 +95,17 @@ class TimelineEventTileState extends State<TimelineEventTile>
   void didUpdateWidget(covariant TimelineEventTile oldWidget) {
     if (oldWidget.event.attachmentMxcUrl != widget.event.attachmentMxcUrl ||
         oldWidget.event.thumbnailMxcUrl != widget.event.thumbnailMxcUrl ||
-        oldWidget.event.body != widget.event.body) {
-      setState(() {
-        unawaited(updateEvent());
-      });
+        oldWidget.event.body != widget.event.body ||
+        oldWidget.event.status != widget.event.status) {
+      unawaited(updateEvent());
     }
     super.didUpdateWidget(oldWidget);
   }
 
-  Future<void> updateEvent() async {
+  Future<void> updateEvent([Event? event]) async {
+    setState(() {
+      this.event = event;
+    });
     await _opacityController.animateBack(.5, curve: _kPulseCurve);
     await _opacityController.animateTo(1, curve: _kPulseCurve);
   }

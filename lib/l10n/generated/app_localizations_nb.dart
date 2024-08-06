@@ -145,6 +145,19 @@ class AppLocalizationsNb extends AppLocalizations {
   }
 
   @override
+  String editedToday(DateTime timestamp) {
+    final intl.DateFormat timestampDateFormat = intl.DateFormat.jm(localeName);
+    final String timestampString = timestampDateFormat.format(timestamp);
+
+    return 'Edited: $timestampString';
+  }
+
+  @override
+  String editedAt(String timestamp) {
+    return 'Edited: $timestamp';
+  }
+
+  @override
   String get authenticationRequired => 'Identitetsbekreftelse påkrevd';
 
   @override
@@ -553,4 +566,13 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get compressFilesSubtitle => 'For supported file types only';
+
+  @override
+  String get cancelSending => 'Cancel sending';
+
+  @override
+  String get retrySending => 'Retry sending';
+
+  @override
+  String get accountSettings => 'Account settings';
 }

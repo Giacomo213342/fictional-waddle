@@ -128,9 +128,11 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
             ConnectionState.none,
             TickerCanceled(),
           );
-          if (mounted) {
-            setState(() {});
-          }
+          try {
+            if (mounted) {
+              setState(() {});
+            }
+          } catch (_) {}
         },
       );
       image = const AsyncSnapshot.waiting();

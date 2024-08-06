@@ -7,6 +7,7 @@ import 'package:url_launcher/link.dart';
 
 import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../widgets/matrix/avatar_builder/room_avatar.dart';
+import '../../../widgets/matrix/avatar_builder/room_builder.dart';
 import '../../room/room.dart';
 import '../room_list.dart';
 import 'room_list_trailing.dart';
@@ -55,41 +56,47 @@ class RoomListTileState extends State<RoomListTile> {
         uri: Uri.parse(path),
         builder: (context, followLink) {
           final lastEvent = room.lastEvent;
-          return ListTile(
-            visualDensity: VisualDensity.compact,
-            // make the tle keyboard focusable by request
-            focusNode: RoomListController.getFocusNode(room.id),
-            onTap: followLink == null
-                ? null
-                : () {
-                    widget.onActivate?.call();
-                    followLink.call();
-                  },
-            leading: RoomAvatar(
-              key: ValueKey(room.id),
-              room: room,
-              dimension: 36,
-            ),
-            title: Text(
-              room.getLocalizedDisplayname(),
-              overflow: TextOverflow.ellipsis,
-            ),
-            subtitle: lastEvent == null
-                ? null
-                : Text(
-                    lastEvent
-                        .calcLocalizedBodyFallback(
-                          const MatrixDefaultLocalizations(),
-                          hideReply: true,
-                          hideEdit: true,
-                          withSenderNamePrefix: true,
-                        )
-                        // unicode bullet
-                        .replaceAll('\n', ' \u2022 '),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-            trailing: RoomListTrailing(room: room),
+          return RoomBuilder(
+            room: room,
+            builder: (context, snapshot) {
+              final room = snapshot.data ?? this.room;
+              return ListTile(
+                visualDensity: VisualDensity.compact,
+                // make the tle keyboard focusable by request
+                focusNode: RoomListController.getFocusNode(room.id),
+                onTap: followLink == null
+                    ? null
+                    : () {
+                        widget.onActivate?.call();
+                        followLink.call();
+                      },
+                leading: RoomAvatar(
+                  key: ValueKey(room.id),
+                  room: room,
+                  dimension: 36,
+                ),
+                title: Text(
+                  room.getLocalizedDisplayname(),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                subtitle: lastEvent == null
+                    ? null
+                    : Text(
+                        lastEvent
+                            .calcLocalizedBodyFallback(
+                              const MatrixDefaultLocalizations(),
+                              hideReply: true,
+                              hideEdit: true,
+                              withSenderNamePrefix: true,
+                            )
+                            // unicode bullet
+                            .replaceAll('\n', ' \u2022 '),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                trailing: RoomListTrailing(room: room),
+              );
+            },
           );
         },
       ),
