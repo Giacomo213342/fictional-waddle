@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
+import '../../../widgets/matrix/avatar_builder/profile_avatar_builder.dart';
 import '../room_list.dart';
 import 'room_list_tile.dart';
 
@@ -40,6 +41,17 @@ class RoomSearchBar extends StatelessWidget {
                 tooltip: MaterialLocalizations.of(context).searchFieldLabel,
                 icon: const Icon(Icons.search),
               ),
+              trailing: [
+                IconButton(
+                  onPressed: () {},
+                  tooltip: AppLocalizations.of(context).accountSettings,
+                  icon: ProfileAvatarBuilder(
+                    userId: controller.client.userID!,
+                    client: controller.client,
+                    dimension: 32,
+                  ),
+                ),
+              ],
             ),
           );
         },

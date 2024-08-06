@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
+import '../../../../../l10n/generated/app_localizations.dart';
+import '../../../../widgets/human_date.dart';
 import '../../../../widgets/matrix/reaction_chip.dart';
 import '../message_user_avatar.dart';
 import 'm_room_message_content.dart';
@@ -36,17 +38,55 @@ class RoomMessage extends StatelessWidget {
       color: Theme.of(context).colorScheme.primary,
     );
 
-    final reactionEvents =
-        timeline.aggregatedEvents[event.eventId]?[RelationshipTypes.reaction]
-                ?.map(
-                  (event) =>
-                      (event.content.tryGetMap<String, Object?>(
-                        'm.relates_to',
-                      )?['key'] as String?) ??
-                      event.text,
-                )
-                .toSet() ??
-            {};
+    final reactionEvents = event
+        .aggregatedEvents(timeline, RelationshipTypes.reaction)
+        .map(
+          (event) =>
+              (event.content.tryGetMap<String, Object?>(
+                'm.relates_to',
+              )?['key'] as String?) ??
+              event.text,
+        )
+        .toSet();
+
+    final edits =
+        event.aggregatedEvents(timeline, RelationshipTypes.edit).toList();
+    edits.sort(
+      (a, b) => a.originServerTs.compareTo(b.originServerTs),
+    );
+    final editEvent = edits.lastOrNull;
+
+    Widget? prefix;
+
+    if (showOtherSenderAvatar) {
+      prefix = MessageUserAvatar(
+        event: event,
+      );
+    } else if (event.status.isError) {
+      prefix = IconButton(
+        tooltip: AppLocalizations.of(context).retrySending,
+        onPressed: event.sendAgain,
+        icon: const Icon(Icons.restart_alt),
+      );
+    } else if (event.status.isSending) {
+      prefix = IconButton(
+        tooltip: AppLocalizations.of(context).cancelSending,
+        onPressed: event.cancelSend,
+        icon: const Icon(Icons.cancel_rounded),
+      );
+    } else if (editEvent != null) {
+      prefix = Tooltip(
+        message: editEvent.originServerTs
+                .isAfter(DateTime.now().subtract(const Duration(days: 1)))
+            ? AppLocalizations.of(context).editedToday(editEvent.originServerTs)
+            : AppLocalizations.of(context).editedAt(
+                editEvent.originServerTs.humanShortDate(context: context),
+              ),
+        child: const Icon(Icons.edit),
+      );
+    } else {
+      prefix = null;
+    }
 
     return Padding(
       padding: EdgeInsets.only(
@@ -61,14 +101,13 @@ class RoomMessage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              SelectionArea(
-                child: SizedBox.square(
-                  dimension: 32,
-                  child: showOtherSenderAvatar
-                      ? MessageUserAvatar(
-                          event: event,
-                        )
-                      : null,
+              IconTheme(
+                data: IconTheme.of(context).copyWith(size: 16),
+                child: SelectionArea(
+                  child: SizedBox.square(
+                    dimension: 32,
+                    child: prefix,
+                  ),
                 ),
               ),
               ConstrainedBox(
@@ -94,7 +133,9 @@ class RoomMessage extends StatelessWidget {
                         children: [
                           SizedBox(
                             width: constraints.maxWidth - 74,
-                            child: RoomMessageContent(event: event),
+                            child: RoomMessageContent(
+                              event: event.getDisplayEvent(timeline),
+                            ),
                           ),
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../widgets/matrix/avatar_builder/room_avatar.dart';
+import '../../widgets/matrix/avatar_builder/room_builder.dart';
 import 'components/room_body.dart';
 import 'room.dart';
 
@@ -27,12 +28,24 @@ class RoomView extends StatelessWidget {
           appBar: AppBar(
             leading: Padding(
               padding: const EdgeInsets.all(2),
-              child: RoomAvatar(
+              child: RoomBuilder(
                 room: controller.room,
-                dimension: 64,
+                builder: (context, snapshot) {
+                  final room = snapshot.data ?? controller.room;
+                  return RoomAvatar(
+                    room: room,
+                    dimension: 64,
+                  );
+                },
               ),
             ),
-            title: Text(controller.room.getLocalizedDisplayname()),
+            title: RoomBuilder(
+              room: controller.room,
+              builder: (context, snapshot) {
+                final room = snapshot.data ?? controller.room;
+                return Text(room.getLocalizedDisplayname());
+              },
+            ),
           ),
           body: Semantics(
             hint: AppLocalizations.of(context).regionChatContents,

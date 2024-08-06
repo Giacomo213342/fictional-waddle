@@ -1,8 +1,10 @@
 import 'package:matrix/matrix.dart';
 
 extension IsDisplayEventExtension on Event {
-  bool get isDisplayEvent => ![
+  bool get shouldDisplayEvent =>
+      ![
         RelationshipTypes.edit,
         RelationshipTypes.reaction,
-      ].contains(relationshipType);
+      ].contains(relationshipType) &&
+      ![EventTypes.Redaction].contains(type);
 }

@@ -4,7 +4,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/ascii_progress_indicator.dart';
-import '../../../widgets/matrix/avatar_builder/mxc_avatar.dart';
+import '../../../widgets/matrix/avatar_builder/profile_avatar_builder.dart';
 import '../../../widgets/matrix/client_manager/client_manager.dart';
 import '../account_selector.dart';
 
@@ -35,14 +35,10 @@ class AccountPreviewTile extends StatelessWidget {
         }
         final userId = client.userID!;
         return ListTile(
-          leading: FutureBuilder(
-            future: client.getAvatarUrl(userId),
-            builder: (context, snapshot) => MxcAvatar(
-              uri: snapshot.data,
-              client: client,
-              monogram: userId,
-              dimension: 32,
-            ),
+          leading: ProfileAvatarBuilder(
+            userId: userId,
+            client: client,
+            dimension: 32,
           ),
           title: Text(userId),
           onTap: () =>

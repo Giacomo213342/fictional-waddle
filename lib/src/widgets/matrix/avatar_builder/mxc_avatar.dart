@@ -45,6 +45,7 @@ class MxcAvatar extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(2.0),
               child: MxcUriImageBuilder(
+                key: ValueKey(uri),
                 uri: uri,
                 client: client,
                 width: dimension - 4,

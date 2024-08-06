@@ -102,6 +102,23 @@
       }
     }
   },
+  "editedToday": "Edited: {timestamp}",
+  "@editedToday": {
+    "placeholders": {
+      "timestamp": {
+        "type": "DateTime",
+        "format": "jm"
+      }
+    }
+  },
+  "editedAt": "Edited: {timestamp}",
+  "@editedAt": {
+    "placeholders": {
+      "timestamp": {
+        "type": "String"
+      }
+    }
+  },
   "authenticationRequired": "Authentication required",
   "authenticateForAccount": "Please authenticate with your credentials for {mxid}.",
   "@authenticateForAccount": {
@@ -294,7 +311,7 @@
       }
     }
   },
-  "mimeType":"File type : {mimeType}",
+  "mimeType": "File type : {mimeType}",
   "@mimeType": {
     "placeholders": {
       "mimeType": {
@@ -303,5 +320,8 @@
     }
   },
   "compressFiles": "Compress files",
-  "compressFilesSubtitle": "For supported file types only"
+  "compressFilesSubtitle": "For supported file types only",
+  "cancelSending": "Cancel sending",
+  "retrySending": "Retry sending",
+  "accountSettings": "Account settings"
 }

@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import 'package:async/async.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
@@ -37,7 +38,8 @@ class RoomController extends State<RoomPage> {
 
   String sendMsgType = MessageTypes.Text;
 
-  final eventKeyRegistry = <int, GlobalKey<TimelineEventTileState>>{};
+  final eventKeyRegistry = <String, GlobalKey<TimelineEventTileState>>{};
+  final Map<String, CancelableOperation<String?>> txids = {};
 
   Room get room => widget.room;
 
@@ -97,19 +99,21 @@ class RoomController extends State<RoomPage> {
       sendMsgType = MessageTypes.Text;
     });
     try {
+      String? eventId;
       // some joke enabling to send notices ...
       if (msgType == MessageTypes.Notice) {
         final event = <String, String>{
           'msgtype': msgType,
           'body': message,
         };
-        await room.sendEvent(event);
+        eventId = await room.sendEvent(event);
       } else {
-        await room.sendTextEvent(message);
+        eventId = await room.sendTextEvent(message);
       }
       if (ClientManager.sharedTextListener.value != null) {
         ClientManager.claimShareIntent();
       }
+      onMessageSent(eventId);
     } catch (_) {
       setState(() {
         sendMsgType = msgType;
@@ -188,12 +192,7 @@ class RoomController extends State<RoomPage> {
       room.client.nativeImplementations,
     );
     for (final tuple in matrixFiles) {
-      unawaited(
-        room.sendFileEvent(
-          tuple.file,
-          thumbnail: tuple.thumbnail,
-        ),
-      );
+      unawaited(_sendFileTransaction(tuple));
     }
     return true;
   }
@@ -228,5 +227,39 @@ class RoomController extends State<RoomPage> {
       return;
     }
     setSendMsgType();
+  }
+
+  void onMessageSent(String? eventId) {
+    if (eventId == null) {
+      return;
+    }
+    // TODO: maybe do something here
+  }
+
+  Future<void> cancelSend(Event event) async {
+    final txid = event.eventId;
+
+    await txids[txid]?.cancel();
+    txids.remove(txid);
+
+    room.sendingFilePlaceholders.remove(txid);
+    room.sendingFileThumbnails.remove(txid);
+
+    return event.cancelSend();
+  }
+
+  Future<void> _sendFileTransaction(MatrixFileTuple tuple) async {
+    final txid = room.client.generateUniqueTransactionId();
+    final operation = txids[txid] = CancelableOperation.fromFuture(
+      room.sendFileEvent(
+        tuple.file,
+        thumbnail: tuple.thumbnail,
+        txid: txid,
+      ),
+    );
+
+    await operation.value;
+
+    txids.remove(txid);
   }
 }
