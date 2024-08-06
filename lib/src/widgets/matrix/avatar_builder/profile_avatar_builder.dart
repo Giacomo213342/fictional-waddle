@@ -21,6 +21,7 @@ class ProfileAvatarBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<String>(
+      key: ValueKey(userId),
       stream: client.onUserProfileUpdate.stream.where((user) => user == userId),
       builder: (context, snapshot) {
         return FutureBuilder(

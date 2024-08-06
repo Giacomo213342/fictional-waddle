@@ -11,6 +11,7 @@ class RoomBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Room>(
+      key: ValueKey(room.id),
       initialData: room,
       stream: room.client.onRoomState.stream
           .where((update) => update.roomId == room.id)
