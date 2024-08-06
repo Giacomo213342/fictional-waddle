@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
@@ -58,6 +57,19 @@ class RoomMessage extends StatelessWidget {
 
     Widget? prefix;
 
+    Widget? editNotice;
+    if (editEvent != null) {
+      editNotice = Tooltip(
+        message: editEvent.originServerTs
+                .isAfter(DateTime.now().subtract(const Duration(days: 1)))
+            ? AppLocalizations.of(context).editedToday(editEvent.originServerTs)
+            : AppLocalizations.of(context).editedAt(
+                editEvent.originServerTs.humanShortDate(context: context),
+              ),
+        child: const Icon(Icons.edit),
+      );
+    }
+
     if (showOtherSenderAvatar) {
       prefix = MessageUserAvatar(
         event: event,
@@ -74,16 +86,8 @@ class RoomMessage extends StatelessWidget {
         onPressed: event.cancelSend,
         icon: const Icon(Icons.cancel_rounded),
       );
-    } else if (editEvent != null) {
-      prefix = Tooltip(
-        message: editEvent.originServerTs
-                .isAfter(DateTime.now().subtract(const Duration(days: 1)))
-            ? AppLocalizations.of(context).editedToday(editEvent.originServerTs)
-            : AppLocalizations.of(context).editedAt(
-                editEvent.originServerTs.humanShortDate(context: context),
-              ),
-        child: const Icon(Icons.edit),
-      );
+    } else if (isOwnMessage) {
+      prefix = editNotice;
     } else {
       prefix = null;
     }
@@ -158,7 +162,9 @@ class RoomMessage extends StatelessWidget {
                       ? MessageUserAvatar(
                           event: event,
                         )
-                      : null,
+                      : !isOwnMessage
+                          ? editNotice
+                          : null,
                 ),
               ),
             ],
