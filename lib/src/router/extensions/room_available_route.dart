@@ -20,6 +20,7 @@ typedef RoomUnavailableBuilder = Widget Function(
   PublicRoomQueryFilter query,
   Set<String> via,
   String? action,
+  String? eventId,
 );
 
 class RoomAvailableRoute extends RequiresLoginRoute {
@@ -68,14 +69,23 @@ class RoomAvailableRoute extends RequiresLoginRoute {
             client.getRoomById(roomId) ?? client.getRoomByAlias(roomId);
 
         if (room == null) {
+          final fragment = state.uri.fragment;
+          final eventId = Uri.decodeComponent(
+            fragment.isEmpty ? state.uri.pathSegments[1] : fragment,
+          );
+
           return roomUnavailableBuilder?.call(
                 context,
                 state,
                 PublicRoomQueryFilter(
                   genericSearchTerm: roomId,
                 ),
-                state.uri.queryParametersAll['via']?.toSet() ?? {},
+                state.uri.queryParametersAll['via']
+                        ?.map((d) => Uri.decodeComponent(d))
+                        .toSet() ??
+                    {},
                 state.uri.queryParameters['action'],
+                eventId,
               ) ??
               const FatalErrorPage();
         }

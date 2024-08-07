@@ -111,11 +111,13 @@ class PolyculeRouter extends GoRouter {
                                 filter,
                                 via,
                                 action,
+                                eventId,
                               ) =>
                                   PublicRoomPage(
                                 filter: filter,
                                 via: via,
                                 action: action,
+                                eventId: eventId,
                               ),
                             ),
                           ],

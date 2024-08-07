@@ -41,7 +41,7 @@ class MatrixUriExtension extends HtmlExtension {
       String link = identifiers.primaryIdentifier;
       final secondary = identifiers.secondaryIdentifier;
       if (secondary is String) {
-        link += secondary;
+        link += '/$secondary';
       }
       final query = identifiers.queryString;
       if (query is String) {
