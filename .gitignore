@@ -43,4 +43,4 @@ app.*.map.json
 /android/app/release
 l10n_errors.txt
 
-polycule-*/
+/polycule-*/
