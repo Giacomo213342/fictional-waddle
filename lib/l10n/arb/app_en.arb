@@ -324,5 +324,14 @@
   "cancelSending": "Cancel sending",
   "retrySending": "Retry sending",
   "accountSettings": "Account settings",
-  "previewRoom": "Preview as guest"
+  "previewRoom": "Preview as guest",
+  "joinMatrixCall": "Join [matrix] call",
+  "matrixCallTooltip": "Call ID : {roomId}",
+  "@matrixCallTooltip": {
+    "placeholders": {
+      "roomId": {
+        "type": "String"
+      }
+    }
+  }
 }

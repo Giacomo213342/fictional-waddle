@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../matrix/client_manager/client_manager.dart';
+import '../../intent_manager.dart';
 
 class CancelShareButton extends StatefulWidget {
   const CancelShareButton({super.key});
@@ -12,8 +12,8 @@ class CancelShareButton extends StatefulWidget {
 class _CancelShareButtonState extends State<CancelShareButton> {
   @override
   void initState() {
-    ClientManager.sharedFilesListener.addListener(_clearBanner);
-    ClientManager.sharedTextListener.addListener(_clearBanner);
+    IntentManager.sharedFilesListener.addListener(_clearBanner);
+    IntentManager.sharedTextListener.addListener(_clearBanner);
     super.initState();
   }
 
@@ -26,19 +26,19 @@ class _CancelShareButtonState extends State<CancelShareButton> {
 
   @override
   void dispose() {
-    ClientManager.sharedFilesListener.removeListener(_clearBanner);
-    ClientManager.sharedTextListener.removeListener(_clearBanner);
+    IntentManager.sharedFilesListener.removeListener(_clearBanner);
+    IntentManager.sharedTextListener.removeListener(_clearBanner);
     super.dispose();
   }
 
   void _cancelShare() {
-    ClientManager.claimShareIntent();
+    IntentManager.claimShareIntent();
     _clearBanner();
   }
 
   void _clearBanner() {
-    if (ClientManager.sharedFilesListener.value != null ||
-        ClientManager.sharedTextListener.value != null) {
+    if (IntentManager.sharedFilesListener.value != null ||
+        IntentManager.sharedTextListener.value != null) {
       return;
     }
     ScaffoldMessenger.of(context).clearMaterialBanners();

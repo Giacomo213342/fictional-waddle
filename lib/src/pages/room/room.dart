@@ -8,7 +8,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../utils/file_selector.dart';
-import '../../widgets/matrix/client_manager/client_manager.dart';
+import '../../widgets/intent_manager.dart';
 import '../room_list/room_list.dart';
 import 'components/timeline_event_tile.dart';
 import 'room_view.dart';
@@ -114,8 +114,8 @@ class RoomController extends State<RoomPage> {
       } else {
         eventId = await room.sendTextEvent(message);
       }
-      if (ClientManager.sharedTextListener.value != null) {
-        ClientManager.claimShareIntent();
+      if (IntentManager.sharedTextListener.value != null) {
+        IntentManager.claimShareIntent();
       }
       onMessageSent(eventId);
     } catch (_) {
@@ -212,17 +212,17 @@ class RoomController extends State<RoomPage> {
   }
 
   Future<void> _sendSharedData() async {
-    final message = ClientManager.sharedTextListener.value;
+    final message = IntentManager.sharedTextListener.value;
     if (message != null) {
       messageController.text = message;
     }
-    final files = ClientManager.sharedFilesListener.value;
+    final files = IntentManager.sharedFilesListener.value;
     if (files != null) {
       final selector = FileSelector(MessageTypes.File);
       selector.files = files;
       final result = await sendFileSelection(selector);
       if (result) {
-        ClientManager.claimShareIntent();
+        IntentManager.claimShareIntent();
       }
     } else {
       return;
