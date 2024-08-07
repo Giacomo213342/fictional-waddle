@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../../../../../l10n/generated/app_localizations.dart';
-import '../../../../widgets/human_date.dart';
-import '../../../../widgets/matrix/reaction_chip.dart';
-import '../message_user_avatar.dart';
+import '../../../../utils/matrix/same_message_bubble_extension.dart';
+import 'components/message_prefix.dart';
+import 'components/message_suffix.dart';
+import 'components/reaction_row.dart';
 import 'm_room_message_content.dart';
 
 class RoomMessage extends StatelessWidget {
@@ -30,37 +30,15 @@ class RoomMessage extends StatelessWidget {
     final previousEvent = this.previousEvent?.getDisplayEvent(timeline);
 
     final isOwnMessage = event.senderId == client.userID;
-    final previousMessageSameSender = previousEvent == null
-        ? false
-        : previousEvent.senderId == event.senderId &&
-            (previousEvent.redacted ||
-                [EventTypes.Message, EventTypes.Sticker].contains(
-                  previousEvent.type,
-                ));
-    final nextMessageSameSender = nextEvent == null
-        ? false
-        : nextEvent.senderId == event.senderId &&
-            (nextEvent.redacted ||
-                [EventTypes.Message, EventTypes.Sticker].contains(
-                  nextEvent.type,
-                ));
 
-    final showOtherSenderAvatar = !isOwnMessage && !nextMessageSameSender;
-    final showOwnAvatar = isOwnMessage && !nextMessageSameSender;
+    final previousMessageSameSender =
+        previousEvent?.isSameMessageBubble(event.senderId) ?? false;
+    final nextMessageSameSender =
+        nextEvent?.isSameMessageBubble(event.senderId) ?? false;
+
     final border = BorderSide(
       color: Theme.of(context).colorScheme.primary,
     );
-
-    final reactionEvents = event
-        .aggregatedEvents(timeline, RelationshipTypes.reaction)
-        .map(
-          (event) =>
-              (event.content.tryGetMap<String, Object?>(
-                'm.relates_to',
-              )?['key'] as String?) ??
-              event.text,
-        )
-        .toSet();
 
     final edits =
         event.aggregatedEvents(timeline, RelationshipTypes.edit).toList();
@@ -68,46 +46,6 @@ class RoomMessage extends StatelessWidget {
       (a, b) => a.originServerTs.compareTo(b.originServerTs),
     );
     final editEvent = edits.lastOrNull;
-
-    Widget? prefix;
-
-    Widget? editNotice;
-
-    if (event.redacted) {
-      editNotice = const Icon(Icons.delete);
-    } else if (editEvent != null) {
-      editNotice = Tooltip(
-        message: editEvent.originServerTs
-                .isAfter(DateTime.now().subtract(const Duration(days: 1)))
-            ? AppLocalizations.of(context).editedToday(editEvent.originServerTs)
-            : AppLocalizations.of(context).editedAt(
-                editEvent.originServerTs.humanShortDate(context: context),
-              ),
-        child: const Icon(Icons.edit),
-      );
-    }
-
-    if (showOtherSenderAvatar) {
-      prefix = MessageUserAvatar(
-        event: event,
-      );
-    } else if (event.status.isError) {
-      prefix = IconButton(
-        tooltip: AppLocalizations.of(context).retrySending,
-        onPressed: event.sendAgain,
-        icon: const Icon(Icons.restart_alt),
-      );
-    } else if (event.status.isSending) {
-      prefix = IconButton(
-        tooltip: AppLocalizations.of(context).cancelSending,
-        onPressed: event.cancelSend,
-        icon: const Icon(Icons.cancel_rounded),
-      );
-    } else if (isOwnMessage) {
-      prefix = editNotice;
-    } else {
-      prefix = null;
-    }
 
     return Padding(
       padding: EdgeInsets.only(
@@ -122,14 +60,11 @@ class RoomMessage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              IconTheme(
-                data: IconTheme.of(context).copyWith(size: 16),
-                child: SelectionArea(
-                  child: SizedBox.square(
-                    dimension: 32,
-                    child: prefix,
-                  ),
-                ),
+              MessagePrefix(
+                event: event,
+                editEvent: editEvent,
+                isOwnMessage: isOwnMessage,
+                nextMessageSameSender: nextMessageSameSender,
               ),
               ConstrainedBox(
                 constraints: const BoxConstraints(minHeight: 32),
@@ -158,13 +93,9 @@ class RoomMessage extends StatelessWidget {
                               event: event.getDisplayEvent(timeline),
                             ),
                           ),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: reactionEvents
-                                  .map((e) => ReactionChip(content: e))
-                                  .toList(),
-                            ),
+                          ReactionRow(
+                            event: event,
+                            timeline: timeline,
                           ),
                         ],
                       ),
@@ -172,17 +103,11 @@ class RoomMessage extends StatelessWidget {
                   ),
                 ),
               ),
-              SelectionArea(
-                child: SizedBox.square(
-                  dimension: 32,
-                  child: showOwnAvatar
-                      ? MessageUserAvatar(
-                          event: event,
-                        )
-                      : !isOwnMessage
-                          ? editNotice
-                          : null,
-                ),
+              MessageSuffix(
+                event: event,
+                editEvent: editEvent,
+                isOwnMessage: isOwnMessage,
+                nextMessageSameSender: nextMessageSameSender,
               ),
             ],
           );
