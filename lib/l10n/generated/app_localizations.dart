@@ -1043,6 +1043,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Preview as guest'**
   String get previewRoom;
+
+  /// No description provided for @joinMatrixCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Join [matrix] call'**
+  String get joinMatrixCall;
+
+  /// No description provided for @matrixCallTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Call ID : {roomId}'**
+  String matrixCallTooltip(String roomId);
 }
 
 class _AppLocalizationsDelegate

@@ -579,4 +579,12 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get previewRoom => 'Preview as guest';
+
+  @override
+  String get joinMatrixCall => 'Join [matrix] call';
+
+  @override
+  String matrixCallTooltip(String roomId) {
+    return 'Call ID : $roomId';
+  }
 }

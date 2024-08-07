@@ -3,17 +3,13 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:app_links/app_links.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 import 'package:olm/olm.dart' as olm;
-import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../pages/account_selector/account_selector.dart';
@@ -23,18 +19,14 @@ import '../../../pages/homeserver/homeserver.dart';
 import '../../../pages/room_list/room_list.dart';
 import '../../../pages/splash_screen/splash_screen.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
-import '../../../router/extensions/polycule_deeplink_route.dart';
 import '../../../utils/matrix/database/polycule_database_builder.dart';
 import '../../../utils/matrix/uia_helper.dart';
-import '../../../utils/matrix_to_extension.dart';
 import '../../../utils/runtime_suffix.dart';
 import '../key_verification/key_verification_request_widget.dart';
 import '../uia_dialog.dart';
 import 'client_manager_view.dart';
 
 typedef GetClientCallback = Client Function();
-
-const _kPolyculeUriScheme = 'web+polycule';
 
 class ClientManagerWidget extends StatefulWidget {
   const ClientManagerWidget({
@@ -65,14 +57,6 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   static const _clientNamesKey = 'client_names';
 
   static const _storageLockKey = 'storage_lock';
-
-  StreamSubscription<Uri>? _appLinkSubscription;
-
-  StreamSubscription<List<SharedMediaFile>>? _shareIntentSubscription;
-  StreamSubscription<String>? _shareTextSubscription;
-
-  static final sharedTextListener = ValueNotifier<String?>(null);
-  static final sharedFilesListener = ValueNotifier<List<XFile>?>(null);
 
   static String _makeClientName(int identifier) =>
       'polycule_client_$identifier';
@@ -110,8 +94,6 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   @override
   void initState() {
     _loadClients();
-    _subscribeDeepLinks();
-    _subscribeShareIntents();
     super.initState();
   }
 
@@ -262,9 +244,6 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     for (final subscription in _sasVerificationListener.values) {
       subscription?.cancel();
     }
-    _appLinkSubscription?.cancel();
-    _shareIntentSubscription?.cancel();
-    _shareTextSubscription?.cancel();
     super.dispose();
   }
 
@@ -469,127 +448,6 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         client,
         AppLocalizations.of(context),
       );
-
-  Future<void> _subscribeDeepLinks() async {
-    try {
-      _appLinkSubscription = AppLinks().uriLinkStream.listen(_handleDeeplink);
-
-      final initialLink = await AppLinks().getInitialLink();
-      if (initialLink == null) {
-        return;
-      }
-      _handleDeeplink(initialLink);
-    } on MissingPluginException {
-      Logs().d(
-        'package:app_links is not supported on his device.',
-      );
-    }
-  }
-
-  void _handleDeeplink(Uri uri) {
-    String link = Uri.decodeComponent(uri.toString());
-    final fragment = Uri.decodeComponent(uri.fragment);
-
-    if (uri.scheme == 'https' && uri.host == 'polycule.im') {
-      context.go(fragment);
-    }
-    if (uri.scheme == _kPolyculeUriScheme) {
-      // check whether we got a matrix URL but as polycule deeplink
-      link = link.replaceFirst(_kPolyculeUriScheme, 'matrix');
-    }
-    MatrixIdentifierStringExtensionResults? identifier =
-        link.parseIdentifierIntoParts();
-
-    // bug : the '$' often get lost in Android Intents
-    if (identifier == null &&
-        (fragment.split('/').elementAtOrNull(1)?.isValidMatrixId ?? false)) {
-      final secondary = link.split('/').last;
-      link = link.replaceFirst(secondary, '\$$secondary');
-      identifier = link.parseIdentifierIntoParts();
-    }
-
-    if (identifier != null) {
-      final mxid = identifier.toMatrixToUrl();
-
-      if (mounted) {
-        context.go(AccountSelectorPage.makeRedirectRoute(mxid));
-      }
-      return;
-    }
-    if (uri.scheme == _kPolyculeUriScheme) {
-      if (mounted) {
-        context.go(
-          '${PolyculeDeeplinkRoute.routeName}/${Uri.encodeComponent(link)}',
-        );
-      }
-    }
-  }
-
-  Future<void> _subscribeShareIntents() async {
-    try {
-      _shareIntentSubscription =
-          ReceiveSharingIntentPlus.getMediaStream().listen(_handleShareIntent);
-      _shareTextSubscription =
-          ReceiveSharingIntentPlus.getTextStream().listen(_handleTextShare);
-
-      final initialShareIntent =
-          await ReceiveSharingIntentPlus.getInitialMedia();
-      final initialShareText = await ReceiveSharingIntentPlus.getInitialText();
-
-      _handleShareIntent(initialShareIntent);
-      _handleTextShare(initialShareText);
-    } on MissingPluginException {
-      Logs().d(
-        'package:receive_sharing_intent_plus is not supported on his device.',
-      );
-    }
-  }
-
-  void _handleShareIntent(List<SharedMediaFile> files) {
-    if (files.isEmpty) {
-      return;
-    }
-
-    // first empty both share listeners
-    sharedTextListener.value = null;
-    sharedFilesListener.value = null;
-
-    final xfiles = files.map((file) => XFile(file.path)).toList();
-    if (xfiles.isEmpty) {
-      return;
-    }
-
-    sharedFilesListener.value = xfiles;
-
-    if (!mounted) {
-      return;
-    }
-    context.go(AccountSelectorPage.makeRedirectRoute('/'));
-  }
-
-  static void claimShareIntent() {
-    // first empty both share listeners
-    sharedTextListener.value = null;
-    sharedFilesListener.value = null;
-
-    return ReceiveSharingIntentPlus.reset();
-  }
-
-  void _handleTextShare(String? text) {
-    if (text == null) {
-      return;
-    }
-    // first empty both share listeners
-    sharedTextListener.value = null;
-    sharedFilesListener.value = null;
-
-    sharedTextListener.value = text;
-
-    if (!mounted) {
-      return;
-    }
-    context.go(AccountSelectorPage.makeRedirectRoute('/'));
-  }
 }
 
 extension ClientIdentifier on String {

@@ -40,6 +40,7 @@ extension LinkifyText on Text {
         defaultToHttps: true,
       ),
       linkifiers: [
+        const MatrixCallLinkifier(),
         const MatrixLinkifier(),
         const UrlLinkifier(),
         const EmailLinkifier(),
@@ -80,6 +81,54 @@ class MatrixLinkifier extends Linkifier {
         } else {
           String uri = result.toMatrixToUrl();
           String text = result.primaryIdentifier;
+
+          list.add(LinkableElement(text, uri));
+        }
+      } else {
+        list.add(element);
+      }
+    }
+
+    return list;
+  }
+}
+
+class MatrixCallLinkifier extends Linkifier {
+  const MatrixCallLinkifier();
+
+  @override
+  List<LinkifyElement> parse(elements, options) {
+    final list = <LinkifyElement>[];
+
+    for (var element in elements) {
+      if (element is TextElement) {
+        String? link = element.text;
+        bool? isElementCallLink;
+
+        if (link.startsWith('io.element.call')) {
+          final prefixedUri = Uri.tryParse(link);
+          final url = prefixedUri?.queryParameters['url'];
+          if (prefixedUri?.scheme == 'io.element.call' && url != null) {
+            isElementCallLink = true;
+            link = Uri.decodeComponent(url);
+          }
+        }
+        final uri = Uri.tryParse(link);
+
+        // check whether it's an Element Call link
+        isElementCallLink ??= uri?.host == 'call.element.io';
+
+        if (!isElementCallLink || uri == null) {
+          list.add(element);
+        } else {
+          String uri = Uri(
+            scheme: 'io.element.call',
+            path: '/',
+            queryParameters: {
+              'url': Uri.encodeComponent(link),
+            },
+          ).toString();
+          String text = link;
 
           list.add(LinkableElement(text, uri));
         }

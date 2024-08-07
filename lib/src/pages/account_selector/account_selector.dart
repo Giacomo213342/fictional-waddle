@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../widgets/intent_manager.dart';
 import '../../widgets/matrix/client_manager/client_manager.dart';
 import '../../widgets/sharing_intent_banner/sharing_intent_banner.dart';
 import '../room/room.dart';
@@ -35,6 +37,21 @@ class AccountSelectorController extends State<AccountSelectorPage> {
   Widget build(BuildContext context) => AccountSelectorView(controller: this);
 
   Future<void> selectAccount(int identifier) async {
+    // handle [matrix] calls
+    final matrixCallUri = Uri.tryParse(widget.redirect);
+    final matrixCallLink = matrixCallUri?.queryParameters['url'];
+
+    if (matrixCallUri?.scheme == 'io.element.call' && matrixCallLink != null) {
+      final uri = Uri.tryParse(Uri.decodeComponent(matrixCallLink));
+      if (uri != null) {
+        context.pushReplacement(
+          '/client/$identifier',
+        );
+        // redirect to the web browser
+        launchUrl(uri);
+      }
+    }
+
     final matrixLink = widget.redirect.parseIdentifierIntoParts();
 
     if (matrixLink != null) {
@@ -53,15 +70,15 @@ class AccountSelectorController extends State<AccountSelectorPage> {
     // funny bug : any deeplink will meanwhile be interpreted as shared text
     // easy workaround : if the shared text is equal to the redirect, we know
     // it was the same data processed
-    if (ClientManager.sharedTextListener.value == widget.redirect) {
-      ClientManager.claimShareIntent();
+    if (IntentManager.sharedTextListener.value == widget.redirect) {
+      IntentManager.claimShareIntent();
       return;
     }
-    if (ClientManager.sharedFilesListener.value != null) {
+    if (IntentManager.sharedFilesListener.value != null) {
       ScaffoldMessenger.of(context).showMaterialBanner(
         SharingIntentBanner.files(),
       );
-    } else if (ClientManager.sharedTextListener.value != null) {
+    } else if (IntentManager.sharedTextListener.value != null) {
       ScaffoldMessenger.of(context).showMaterialBanner(
         SharingIntentBanner.text(),
       );

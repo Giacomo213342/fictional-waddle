@@ -13,6 +13,7 @@ import '../../../../../theme/poly_colors.dart';
 import '../../../../../utils/linkify_node.dart';
 import '../../../../../utils/matrix/matrix_html_tags.dart';
 import 'html/code_block_extension.dart';
+import 'html/matrix_calls_extension.dart';
 import 'html/matrix_uri_extension.dart';
 import 'html/mxc_image_extension.dart';
 import 'html/spoiler_extension.dart';
@@ -160,6 +161,7 @@ class _TextMessageState extends State<TextMessage> {
           openNotices: openContentNotices,
           onToggleNotice: toggleNotice,
         ),
+        const MatrixCallsExtension(),
         MatrixUriExtension(event: widget.event),
         const TableHtmlExtension(),
         const SvgHtmlExtension(),
