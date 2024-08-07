@@ -487,16 +487,27 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   }
 
   void _handleDeeplink(Uri uri) {
-    String link = uri.toString();
+    String link = Uri.decodeComponent(uri.toString());
+    final fragment = Uri.decodeComponent(uri.fragment);
 
     if (uri.scheme == 'https' && uri.host == 'polycule.im') {
-      context.go(uri.fragment.replaceFirst('#', ''));
+      context.go(fragment);
     }
     if (uri.scheme == _kPolyculeUriScheme) {
       // check whether we got a matrix URL but as polycule deeplink
       link = link.replaceFirst(_kPolyculeUriScheme, 'matrix');
     }
-    final identifier = link.parseIdentifierIntoParts();
+    MatrixIdentifierStringExtensionResults? identifier =
+        link.parseIdentifierIntoParts();
+
+    // bug : the '$' often get lost in Android Intents
+    if (identifier == null &&
+        (fragment.split('/').elementAtOrNull(1)?.isValidMatrixId ?? false)) {
+      final secondary = link.split('/').last;
+      link = link.replaceFirst(secondary, '\$$secondary');
+      identifier = link.parseIdentifierIntoParts();
+    }
+
     if (identifier != null) {
       final mxid = identifier.toMatrixToUrl();
 

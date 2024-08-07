@@ -20,7 +20,7 @@ class MatrixDeeplinkRoute extends GoRoute {
     BuildContext context,
     GoRouterState state,
   ) async {
-    String parameter = state.pathParameters[pathParameter]!;
+    final parameter = Uri.decodeComponent(state.pathParameters[pathParameter]!);
 
     return AccountSelectorPage.makeRedirectRoute(parameter);
   }

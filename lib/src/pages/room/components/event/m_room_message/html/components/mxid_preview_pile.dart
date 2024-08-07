@@ -27,7 +27,7 @@ class MxidPreviewPile extends StatelessWidget {
     _LinkMetadata<String> fallback;
     Future<_LinkMetadata>? getMetadataFuture;
     if (mxid != null) {
-      final prefix = mxid.substring(0, 1);
+      final prefix = mxid.sigil;
       switch (prefix) {
         case '@':
           final fallbackUser = room.unsafeGetUserFromMemoryOrFallback(mxid);
@@ -103,10 +103,11 @@ class MxidPreviewPile extends StatelessWidget {
   }
 
   Future<_LinkMetadata<String?>> _getRoomPreview(String mxid) async {
-    Set<String?> via = this.via ?? {null};
-    if (via.isEmpty) {
-      via.add(null);
-    }
+    final via = {
+      ...?this.via,
+      mxid.domain,
+      null,
+    };
 
     for (final server in via) {
       final response = await this.room.client.queryPublicRooms(

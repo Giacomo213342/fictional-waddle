@@ -12,11 +12,13 @@ class PublicRoomPage extends StatefulWidget {
     required this.filter,
     required this.via,
     this.action,
+    this.eventId,
   });
 
   final PublicRoomQueryFilter filter;
   final Set<String> via;
   final String? action;
+  final String? eventId;
 
   @override
   State<PublicRoomPage> createState() => PublicRoomController();
@@ -26,6 +28,15 @@ class PublicRoomController extends MatrixState<PublicRoomPage> {
   PublicRoomsChunk? room;
 
   bool loading = false;
+
+  String? get eventId {
+    String? eventId = widget.eventId;
+    if (eventId == null) {
+      return null;
+    }
+    // yeah, a component can be twice URI encoded WTF
+    return Uri.decodeComponent(eventId);
+  }
 
   @override
   void initState() {
@@ -39,6 +50,7 @@ class PublicRoomController extends MatrixState<PublicRoomPage> {
   Future<void> _getRoomPreview() async {
     final via = {
       ...widget.via,
+      widget.filter.genericSearchTerm?.domain,
       null,
     };
 

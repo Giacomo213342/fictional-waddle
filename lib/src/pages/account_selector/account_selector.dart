@@ -74,7 +74,7 @@ class AccountSelectorController extends State<AccountSelectorPage> {
   ) {
     final mxid = matrixLink.primaryIdentifier;
 
-    final prefix = mxid.substring(0, 1);
+    final prefix = mxid.sigil;
 
     final client = ClientManager.getClientByIdentifier(identifier);
     if (client == null) {
