@@ -7,6 +7,7 @@ import 'package:matrix/matrix.dart';
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../widgets/matrix/avatar_builder/room_avatar.dart';
 import '../../../../widgets/matrix/avatar_builder/room_builder.dart';
+import '../../../../widgets/polycule_overflow_bar.dart';
 import '../../room.dart';
 
 class MembershipInviteTile extends StatelessWidget {
@@ -76,7 +77,7 @@ class MembershipInviteTile extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ButtonBar(
+                      PolyculeOverflowBar(
                         alignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           if (controller.loading)

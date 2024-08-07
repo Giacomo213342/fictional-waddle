@@ -20,7 +20,7 @@ class KeyVerificationContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: true,
-      onPopInvoked: (onPopInvoked) {
+      onPopInvokedWithResult: (onPopInvoked, _) {
         controller.cancelSasVerification();
       },
       child: Scaffold(

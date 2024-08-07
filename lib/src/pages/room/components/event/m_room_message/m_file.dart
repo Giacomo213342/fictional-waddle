@@ -4,6 +4,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
+import '../../../../../widgets/polycule_overflow_bar.dart';
 
 class FileMessage extends StatefulWidget {
   const FileMessage({
@@ -47,7 +48,7 @@ class _FileMessageState extends State<FileMessage>
                     );
                   },
                 ),
-                subtitle: ButtonBar(
+                subtitle: PolyculeOverflowBar(
                   children: [
                     IconButton(
                       onPressed: null,

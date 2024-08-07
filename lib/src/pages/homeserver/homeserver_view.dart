@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../widgets/ascii_progress_indicator.dart';
+import '../../widgets/polycule_overflow_bar.dart';
 import 'components/benchmark.dart';
 import 'components/homeserver_input.dart';
 import 'homeserver.dart';
@@ -79,7 +80,7 @@ class HomeserverView extends StatelessWidget {
                 ),
               ),
             ),
-            ButtonBar(
+            PolyculeOverflowBar(
               children: [
                 OutlinedButton.icon(
                   onPressed: controller.showAboutDialog,

@@ -1,5 +1,5 @@
 variables:
-  FLUTTER_VERSION: 3.22.3
+  FLUTTER_VERSION: 3.24.0
 
 include:
   - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.19.0
@@ -27,6 +27,8 @@ cache:
 
 .test:
   stage: test
+  tags:
+    - docker
   except:
     - schedules
 
@@ -37,6 +39,8 @@ cache:
 
 .deploy:
   stage: deploy
+  tags:
+    - docker
   except:
     - schedules
 
@@ -212,9 +216,11 @@ build:linux_x86_64:
       else
       flutter build linux --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
       fi
+    - rm -rf polycule-$VERSION-amd64
     - mv ./build/linux/x64/release/bundle polycule-$VERSION-amd64
   tags:
     - x86_64
+    - docker
   artifacts:
     paths:
       - polycule-*-amd64
@@ -234,10 +240,11 @@ build:linux_aarch64:
       else
       flutter build linux --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
       fi
+    - rm -rf polycule-$VERSION-aarch64
     - mv ./build/linux/arm64/release/bundle polycule-$VERSION-aarch64
   tags:
     - aarch64
-  allow_failure: true
+    - docker
   artifacts:
     paths:
       - polycule-*-aarch64
@@ -255,6 +262,7 @@ build:debian_x86_64:
     - mv ../polycule_*.deb .
   tags:
     - x86_64
+    - docker
   artifacts:
     paths:
       - polycule_*.deb
@@ -271,9 +279,9 @@ build:debian_aarch64:
   script:
     - dpkg-buildpackage
     - mv ../polycule_*.deb .
-  allow_failure: true
   tags:
     - aarch64
+    - docker
   artifacts:
     paths:
       - polycule_*.deb

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../polycule_overflow_bar.dart';
 import '../avatar_builder/mxc_avatar.dart';
 
 class PublicRoomTile extends StatelessWidget {
@@ -47,7 +48,7 @@ class PublicRoomTile extends StatelessWidget {
           title: Text(name),
           subtitle: topic == null ? null : SelectionArea(child: Text(topic)),
         ),
-        ButtonBar(
+        PolyculeOverflowBar(
           alignment: MainAxisAlignment.spaceEvenly,
           children: [
             /*if (controller.loading)
