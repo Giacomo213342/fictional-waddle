@@ -2,6 +2,7 @@
 Type=Application
 
 Name=< polycule >
+Name[nl]=< polycuul >
 Comment=A geeky and efficient [matrix] client for power users.
 Comment[en]=A geeky and efficient [matrix] client for power users.
 Keywords=matrix;chat;element
@@ -14,4 +15,4 @@ StartupNotify=false
 Icon=business.braid.polycule
 Categories=Office
 X-Purism-FormFactor=Workstation;Mobile;
-MimeType=x-scheme-handler/matrix;x-scheme-handler/web+polycule;
+MimeType=x-scheme-handler/matrix;x-scheme-handler/web+polycule;x-scheme-handler/io.element.call;
