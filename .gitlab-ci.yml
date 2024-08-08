@@ -2,7 +2,7 @@ variables:
   FLUTTER_VERSION: 3.24.0
 
 include:
-  - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.19.0
+  - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.20.1
     inputs:
       gitlab_access_token: $dependabot_gitlab_access_token
       stage_name: scan
@@ -16,6 +16,7 @@ before_script:
 
 stages:
   - scan
+  - check
   - test
   - build
   - deploy
@@ -24,6 +25,15 @@ cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
     - polycule-*
+
+.check:
+  stage: check
+  tags:
+    - docker
+  except:
+    - schedules
+    - tags
+    - main
 
 .test:
   stage: test
@@ -44,8 +54,8 @@ cache:
   except:
     - schedules
 
-test:codestyle:
-  extends: .test
+check:codestyle:
+  extends: .check
   script:
     - flutter pub get
     - flutter gen-l10n
@@ -290,7 +300,6 @@ pages:
   extends: .deploy
   dependencies:
     - build:web
-    - test:codestyle
   image: alpine:latest
   script:
     - mkdir -p public/web
