@@ -1079,10 +1079,11 @@ packages:
   sqlcipher_flutter_libs:
     dependency: "direct main"
     description:
-      name: sqlcipher_flutter_libs
-      sha256: "672e7f9d8a19896c3bfc44ca5f6fd8ee978970c5946817eeedf5e59c176aacf1"
-      url: "https://pub.dev"
-    source: hosted
+      path: sqlcipher_flutter_libs
+      ref: "braid/android-gradle"
+      resolved-ref: dfaff6affbcbe01c5add6d12bee2522e16a393c9
+      url: "https://github.com/TheOneWithTheBraid/sqlite3.dart.git"
+    source: git
     version: "0.6.3"
   sqlite3:
     dependency: transitive

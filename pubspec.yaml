@@ -76,6 +76,12 @@ dependency_overrides:
       url: https://github.com/TheOneWithTheBraid/media-kit.git
       ref: braid/system-libmimalloc
       path: libs/linux/media_kit_libs_linux
+  # https://github.com/simolus3/sqlite3.dart/pull/248
+  sqlcipher_flutter_libs:
+    git:
+      url: https://github.com/TheOneWithTheBraid/sqlite3.dart.git
+      ref: braid/android-gradle
+      path: sqlcipher_flutter_libs
 
 flutter:
   generate: true
