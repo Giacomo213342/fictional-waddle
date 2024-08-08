@@ -22,6 +22,7 @@ import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../utils/matrix/database/polycule_database_builder.dart';
 import '../../../utils/matrix/uia_helper.dart';
 import '../../../utils/runtime_suffix.dart';
+import '../../intent_manager.dart';
 import '../key_verification/key_verification_request_widget.dart';
 import '../uia_dialog.dart';
 import 'client_manager_view.dart';
@@ -231,7 +232,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   }
 
   @override
-  Widget build(BuildContext context) => ClientManagerView(this);
+  Widget build(BuildContext context) =>
+      IntentManagerWidget(child: ClientManagerView(this));
 
   @override
   void dispose() {
