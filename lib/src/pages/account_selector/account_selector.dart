@@ -44,11 +44,10 @@ class AccountSelectorController extends State<AccountSelectorPage> {
     if (matrixCallUri?.scheme == 'io.element.call' && matrixCallLink != null) {
       final uri = Uri.tryParse(Uri.decodeComponent(matrixCallLink));
       if (uri != null) {
-        context.pushReplacement(
-          '/client/$identifier',
-        );
+        context.pushReplacement('/client/$identifier');
         // redirect to the web browser
         launchUrl(uri);
+        return;
       }
     }
 
@@ -70,7 +69,10 @@ class AccountSelectorController extends State<AccountSelectorPage> {
     // funny bug : any deeplink will meanwhile be interpreted as shared text
     // easy workaround : if the shared text is equal to the redirect, we know
     // it was the same data processed
-    if (IntentManager.sharedTextListener.value == widget.redirect) {
+    final sharedText = IntentManager.sharedTextListener.value;
+
+    if (sharedText == widget.redirect ||
+        (sharedText?.startsWith('io.element.call:/') ?? false)) {
       IntentManager.claimShareIntent();
       return;
     }

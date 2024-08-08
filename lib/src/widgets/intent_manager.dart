@@ -89,11 +89,11 @@ class IntentManager extends State<IntentManagerWidget> {
       identifier = link.parseIdentifierIntoParts();
     }
 
-    if (identifier != null) {
-      final mxid = identifier.toMatrixToUrl();
+    if (identifier != null || uri.scheme == 'io.element.call') {
+      final mxid = identifier?.toMatrixToUrl();
 
       if (mounted) {
-        context.go(AccountSelectorPage.makeRedirectRoute(mxid));
+        context.go(AccountSelectorPage.makeRedirectRoute(mxid ?? link));
       }
       return;
     }
