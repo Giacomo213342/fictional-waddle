@@ -119,6 +119,10 @@ class PolyculeThemeBuilder extends StatelessWidget {
       searchViewTheme: const SearchViewThemeData(
         shape: RoundedRectangleBorder(),
       ),
+      snackBarTheme: const SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        showCloseIcon: true,
+      ),
       brightness: brightness,
       useMaterial3: true,
     );

@@ -25,14 +25,17 @@ class ResponsiveLayout extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth > 764) {
-            return Row(
-              children: [
-                SizedBox(
-                  width: 256 + 192,
-                  child: main,
-                ),
-                Expanded(child: secondary ?? placeholder),
-              ],
+            return Scaffold(
+              key: const ValueKey(ScaffoldMessenger),
+              body: Row(
+                children: [
+                  SizedBox(
+                    width: 256 + 192,
+                    child: main,
+                  ),
+                  Expanded(child: secondary ?? placeholder),
+                ],
+              ),
             );
           } else {
             Widget? child;

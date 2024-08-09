@@ -44,6 +44,8 @@ class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
 
   @override
   Widget build(BuildContext context) {
+    final density = Theme.of(context).visualDensity;
+    final densityOffset = density.vertical - density.baseSizeAdjustment.dx;
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -56,7 +58,9 @@ class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
                     Builder(
                       builder: (context) {
                         return SizedBox(
-                          height: (IconTheme.of(context).size ?? 24) + 16,
+                          height: (IconTheme.of(context).size ?? 24) +
+                              24 -
+                              densityOffset,
                           child: const Center(child: LinearProgressIndicator()),
                         );
                       },
