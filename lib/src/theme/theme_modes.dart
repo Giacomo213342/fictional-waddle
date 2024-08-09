@@ -30,4 +30,5 @@ enum PolyculeFontMode {
   theme,
   visionLimited,
   dyslexic,
+  serif,
 }

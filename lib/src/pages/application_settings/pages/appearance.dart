@@ -94,6 +94,12 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                 title: Text(AppLocalizations.of(context).openDyslexic),
                 onChanged: _setFontMode,
               ),
+              RadioListTile.adaptive(
+                value: PolyculeFontMode.serif,
+                groupValue: themeState.fontMode,
+                title: Text(AppLocalizations.of(context).serif),
+                onChanged: _setFontMode,
+              ),
             ],
           );
         },

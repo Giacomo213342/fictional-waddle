@@ -134,6 +134,9 @@ class PolyculeThemeBuilder extends StatelessWidget {
         if (!kIsWeb && Platform.isWindows) {
           return PolyculeFonts.arial;
         }
+        if (fontMode == PolyculeFontMode.serif) {
+          return PolyculeFonts.vollkorn;
+        }
 
         switch (brightness) {
           case Brightness.dark:

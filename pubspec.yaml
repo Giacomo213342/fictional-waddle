@@ -105,6 +105,11 @@ flutter:
       fonts:
         - asset: assets/fonts/GlSuetterlin-j710.otf
           weight: 200
+    - family: Vollkorn
+      fonts:
+        - asset: assets/fonts/Vollkorn-VariableFont.ttf
+        - asset: assets/fonts/Vollkorn-Italic-VariableFont.ttf
+          style: italic
     - family: Inclusive Sans
       fonts:
         - asset: assets/fonts/InclusiveSans-Regular.ttf

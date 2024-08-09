@@ -25,6 +25,7 @@ class SettingsInterface {
       fontMode: switch (storage['fontMode']) {
         'visionLimited' => PolyculeFontMode.visionLimited,
         'dyslexic' => PolyculeFontMode.dyslexic,
+        'serif' => PolyculeFontMode.serif,
         'theme' || null || _ => PolyculeFontMode.theme,
       },
     );
