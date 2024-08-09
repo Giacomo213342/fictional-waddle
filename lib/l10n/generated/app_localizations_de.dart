@@ -474,6 +474,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get openDyslexic => 'Dyslexia-assisting font';
 
   @override
+  String get serif => 'Serif font';
+
+  @override
   String get defaultFont => 'Default font';
 
   @override

@@ -256,6 +256,7 @@
   "fontAccessibility": "Font accessibility",
   "inclusiveSans": "Increased readability font",
   "openDyslexic": "Dyslexia-assisting font",
+  "serif": "Serif font",
   "defaultFont": "Default font",
   "color": "Color settings",
   "systemColor": "System color",

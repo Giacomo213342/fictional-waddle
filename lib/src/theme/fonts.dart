@@ -23,6 +23,9 @@ enum PolyculeFonts {
   /// Inclusive Sans - sans-serif font with accessible typeface
   inclusiveSans('Inclusive Sans'),
 
+  /// Vollkorn - serif font
+  vollkorn('Vollkorn'),
+
   /// Roboto - Flutter fallback font
   roboto('Roboto');
 

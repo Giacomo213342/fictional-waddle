@@ -893,6 +893,12 @@ abstract class AppLocalizations {
   /// **'Dyslexia-assisting font'**
   String get openDyslexic;
 
+  /// No description provided for @serif.
+  ///
+  /// In en, this message translates to:
+  /// **'Serif font'**
+  String get serif;
+
   /// No description provided for @defaultFont.
   ///
   /// In en, this message translates to:
