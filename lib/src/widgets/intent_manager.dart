@@ -30,6 +30,9 @@ class IntentManager extends State<IntentManagerWidget> {
   StreamSubscription<List<SharedMediaFile>>? _shareIntentSubscription;
   StreamSubscription<String>? _shareTextSubscription;
 
+  // prevent from interpreting a deep link as share
+  static final _shareCache = Cache<String>(const Duration(milliseconds: 200));
+
   static final sharedTextListener = ValueNotifier<String?>(null);
   static final sharedFilesListener = ValueNotifier<List<XFile>?>(null);
 
@@ -69,6 +72,9 @@ class IntentManager extends State<IntentManagerWidget> {
 
   void _handleDeeplink(Uri uri) {
     String link = Uri.decodeComponent(uri.toString());
+    // prevent from interpreting a deep link as share
+    _shareCache.data = link;
+
     final fragment = Uri.decodeComponent(uri.fragment);
 
     if (uri.scheme == 'https' && uri.host == 'polycule.im') {
@@ -156,8 +162,13 @@ class IntentManager extends State<IntentManagerWidget> {
     return ReceiveSharingIntentPlus.reset();
   }
 
-  void _handleTextShare(String? text) {
+  Future<void> _handleTextShare(String? text) async {
     if (text == null) {
+      return;
+    }
+    // prevent from interpreting a deep link as share
+    await Future.delayed(const Duration(milliseconds: 50));
+    if (_shareCache.data == text) {
       return;
     }
     // first empty both share listeners
@@ -170,5 +181,26 @@ class IntentManager extends State<IntentManagerWidget> {
       return;
     }
     context.go(AccountSelectorPage.makeRedirectRoute('/'));
+  }
+}
+
+class Cache<T> {
+  Cache(this.timeout);
+
+  final Duration timeout;
+
+  Timer? _timer;
+  T? _data;
+
+  T? get data => _data;
+
+  set data(T? data) {
+    _data = data;
+    _timer?.cancel();
+    _timer = Timer(timeout, _resetCache);
+  }
+
+  void _resetCache() {
+    _data = null;
   }
 }

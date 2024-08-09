@@ -37,6 +37,15 @@ class AccountSelectorController extends State<AccountSelectorPage> {
   Widget build(BuildContext context) => AccountSelectorView(controller: this);
 
   Future<void> selectAccount(int identifier) async {
+    // ignore any redirect in case we handle a share intent
+    if (IntentManager.sharedFilesListener.value != null ||
+        IntentManager.sharedTextListener.value != null) {
+      context.pushReplacement(
+        '/client/$identifier',
+      );
+      return;
+    }
+
     // handle [matrix] calls
     final matrixCallUri = Uri.tryParse(widget.redirect);
     final matrixCallLink = matrixCallUri?.queryParameters['url'];

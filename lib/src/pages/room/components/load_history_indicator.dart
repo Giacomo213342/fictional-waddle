@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../widgets/ascii_progress_indicator.dart';
 
@@ -18,9 +19,18 @@ class LoadHistoryIndicator extends StatelessWidget {
       return const SizedBox();
     }
 
+    _requestHistory();
+
+    return VisibilityDetector(
+      key: ValueKey(timeline.room.lastEvent?.eventId),
+      onVisibilityChanged: (VisibilityInfo info) => _requestHistory(),
+      child: const AsciiProgressIndicator(),
+    );
+  }
+
+  void _requestHistory() {
     if (!timeline.isRequestingHistory) {
       timeline.requestHistory();
     }
-    return const AsciiProgressIndicator();
   }
 }

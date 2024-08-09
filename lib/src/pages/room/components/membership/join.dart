@@ -127,7 +127,11 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
     if (timeline == null) {
       return;
     }
-    final event = timeline.events[index];
+    final event = timeline.events.elementAtOrNull(index);
+    if (event == null) {
+      return;
+    }
+
     listKey.currentState!.removeItem(
       index,
       (context, animation) {
@@ -158,7 +162,10 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
     if (timeline == null) {
       return;
     }
-    final event = timeline.events[index];
+    final event = timeline.events.elementAtOrNull(index);
+    if (event == null) {
+      return;
+    }
 
     final state =
         widget.controller.eventKeyRegistry[event.eventId]?.currentState;
@@ -166,7 +173,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
       final previousEvent = timeline.getPreviousDisplayEvent(index);
       final nextEvent = timeline.getNextDisplayEvent(index);
       state.updateEvent(
-        event: timeline.events[index],
+        event: event,
         previousEvent: previousEvent,
         nextEvent: nextEvent,
       );
