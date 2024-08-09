@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-const _kDefaultPadding = EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0);
+const _kDefaultPadding =
+    EdgeInsets.only(left: 24.0, top: 8.0, right: 24.0, bottom: 24.0);
 
 class PolyculeOverflowBar extends StatelessWidget {
   const PolyculeOverflowBar({
@@ -23,6 +24,7 @@ class PolyculeOverflowBar extends StatelessWidget {
       padding: Theme.of(context).dialogTheme.actionsPadding ?? _kDefaultPadding,
       child: OverflowBar(
         spacing: 8.0,
+        overflowSpacing: 8.0,
         overflowAlignment: overflowAlignment,
         overflowDirection: overflowDirection,
         alignment: alignment,

@@ -1014,6 +1014,24 @@ abstract class AppLocalizations {
   /// **'File type : {mimeType}'**
   String mimeType(String? mimeType);
 
+  /// No description provided for @matrixRoomShareSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Join the room « {roomname} » on [matrix]'**
+  String matrixRoomShareSubject(String roomname);
+
+  /// No description provided for @fileDownloadedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'File saved as « {name} ».'**
+  String fileDownloadedTo(String name);
+
+  /// No description provided for @openFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get openFile;
+
   /// No description provided for @compressFiles.
   ///
   /// In en, this message translates to:

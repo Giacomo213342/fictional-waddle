@@ -320,6 +320,23 @@
       }
     }
   },
+  "matrixRoomShareSubject": "Join the room « {roomname} » on [matrix]",
+  "@matrixRoomShareSubject": {
+    "placeholders": {
+      "roomname": {
+        "type": "String"
+      }
+    }
+  },
+  "fileDownloadedTo": "File saved as « {name} ».",
+  "@fileDownloadedTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openFile": "Open",
   "compressFiles": "Compress files",
   "compressFilesSubtitle": "For supported file types only",
   "cancelSending": "Cancel sending",
