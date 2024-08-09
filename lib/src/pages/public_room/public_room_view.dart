@@ -13,29 +13,27 @@ class PublicRoomView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final room = controller.room;
-    if (room == null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            controller.widget.filter.genericSearchTerm ??
-                AppLocalizations.of(context).appName,
-          ),
-        ),
-        body: const Center(child: AsciiProgressIndicator()),
-      );
-    }
+
     return Scaffold(
-      body: Center(
-        child: Card(
-          child: PublicRoomTile(
-            room: room,
-            client: controller.client,
-            onJoin: controller.joinRoom,
-            onKnock: controller.knockRoom,
-            onPreview: controller.joinGuest,
-            action: controller.widget.action,
-          ),
+      appBar: AppBar(
+        title: Text(
+          controller.widget.filter.genericSearchTerm ??
+              AppLocalizations.of(context).appName,
         ),
+      ),
+      body: Center(
+        child: room == null
+            ? const AsciiProgressIndicator()
+            : Card(
+                child: PublicRoomTile(
+                  room: room,
+                  onJoin: controller.joinRoom,
+                  onKnock: controller.knockRoom,
+                  onPreview: controller.joinGuest,
+                  action: controller.widget.action,
+                  loading: controller.loading,
+                ),
+              ),
       ),
     );
   }

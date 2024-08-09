@@ -566,6 +566,19 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String matrixRoomShareSubject(String roomname) {
+    return 'Join the room « $roomname » on [matrix]';
+  }
+
+  @override
+  String fileDownloadedTo(String name) {
+    return 'File saved as « $name ».';
+  }
+
+  @override
+  String get openFile => 'Open';
+
+  @override
   String get compressFiles => 'Compress files';
 
   @override

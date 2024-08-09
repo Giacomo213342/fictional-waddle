@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
-import '../../../../../widgets/polycule_overflow_bar.dart';
 
 class FileMessage extends StatefulWidget {
   const FileMessage({
@@ -26,51 +24,27 @@ class _FileMessageState extends State<FileMessage>
   Widget build(BuildContext context) {
     super.build(context);
     return SelectionArea(
-      child: SizedBox(
-        height: 96,
-        child: MxcEncryptedFileBuilder<MatrixFile, MatrixFile>(
-          event: widget.event,
-          thumbnail: ThumbnailRequest.attachmentOnly,
-          builder: (context, thumbnail, attachment, retryCallback) {
-            return IntrinsicWidth(
-              child: ListTile(
-                leading: const Icon(Icons.attach_file),
-                title: FutureBuilder<String>(
-                  future: widget.event
-                      .calcLocalizedBody(const MatrixDefaultLocalizations()),
-                  builder: (context, snapshot) {
-                    return Text(
-                      attachment.data?.name ??
-                          snapshot.data ??
-                          widget.event.calcLocalizedBodyFallback(
-                            const MatrixDefaultLocalizations(),
-                          ),
-                    );
-                  },
-                ),
-                subtitle: PolyculeOverflowBar(
-                  children: [
-                    IconButton(
-                      onPressed: null,
-                      icon: const Icon(Icons.share),
-                      tooltip: AppLocalizations.of(context).share,
-                    ),
-                    IconButton(
-                      onPressed: null,
-                      icon: const Icon(Icons.save_as),
-                      tooltip: AppLocalizations.of(context).saveAs,
-                    ),
-                    IconButton(
-                      onPressed: null,
-                      icon: const Icon(Icons.file_download),
-                      tooltip: AppLocalizations.of(context).download,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
+      child: MxcEncryptedFileBuilder<MatrixFile, MatrixFile>(
+        event: widget.event,
+        thumbnail: ThumbnailRequest.attachmentOnly,
+        builder: (context, thumbnail, attachment, retryCallback) {
+          return ListTile(
+            leading: const Icon(Icons.attach_file),
+            title: FutureBuilder<String>(
+              future: widget.event
+                  .calcLocalizedBody(const MatrixDefaultLocalizations()),
+              builder: (context, snapshot) {
+                return Text(
+                  attachment.data?.name ??
+                      snapshot.data ??
+                      widget.event.calcLocalizedBodyFallback(
+                        const MatrixDefaultLocalizations(),
+                      ),
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }
