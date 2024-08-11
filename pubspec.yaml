@@ -55,6 +55,7 @@ dependencies:
   sqflite: ^2.3.2
   sqflite_common_ffi: ^2.3.1
   sqlcipher_flutter_libs: ^0.6.1
+  unifiedpush: ^5.0.1
   unorm_dart: ^0.2.0
   url_launcher: ^6.2.6
   visibility_detector: ^0.4.0+2
@@ -78,6 +79,12 @@ dependency_overrides:
       url: https://github.com/TheOneWithTheBraid/media-kit.git
       ref: braid/system-libmimalloc
       path: libs/linux/media_kit_libs_linux
+  # https://github.com/UnifiedPush/flutter-connector/pull/154/files
+  unifiedpush_android:
+    git:
+      url: https://github.com/TheOneWithTheBraid/flutter-connector.git
+      ref: braid/update-gradle-configuration
+      path: unifiedpush_android
 
 flutter:
   generate: true

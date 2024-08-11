@@ -73,4 +73,6 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    implementation 'com.github.UnifiedPush:android-foss_embedded_fcm_distributor:main-SNAPSHOT'
+}
