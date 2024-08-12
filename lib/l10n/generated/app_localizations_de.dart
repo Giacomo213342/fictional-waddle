@@ -603,4 +603,49 @@ class AppLocalizationsDe extends AppLocalizations {
   String matrixCallTooltip(String roomId) {
     return 'Call ID : $roomId';
   }
+
+  @override
+  String get pushSettings => 'Push notifications';
+
+  @override
+  String get unifiedPushUnavailable =>
+      'UnifiedPush is not available on your device.';
+
+  @override
+  String get selectPushDistributor => 'Select your UnifiedPush distributor';
+
+  @override
+  String get disablePushNotifications => 'Disable push notifications';
+
+  @override
+  String get pushInformationPolycule =>
+      'Currently, < polycule > only supports push notifications on Android. Linux support is planned.';
+
+  @override
+  String get unifiedPushAbout =>
+      'You need to install a distributor for push notifications to work.\nYou can find more information at : https://unifiedpush.org/users/intro/';
+
+  @override
+  String get unifiedPushLink => 'https://unifiedpush.org/users/intro/';
+
+  @override
+  String get setupUnifiedPush => 'Setup UnifiedPush';
+
+  @override
+  String get googleFirebase => 'Google Firebase Cloud Messaging';
+
+  @override
+  String get newNotification => 'New message in < polycyule >';
+
+  @override
+  String get pushChannelName => 'Incoming messages';
+
+  @override
+  String get directChats => 'Direct message rooms';
+
+  @override
+  String get groups => 'Group rooms';
+
+  @override
+  String get unifiedPush => 'UnifiedPush';
 }

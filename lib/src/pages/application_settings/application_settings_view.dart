@@ -5,6 +5,7 @@ import 'package:url_launcher/link.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import 'application_settings.dart';
 import 'pages/appearance.dart';
+import 'pages/push.dart';
 
 class ApplicationSettingsView extends StatelessWidget {
   const ApplicationSettingsView({super.key, required this.controller});
@@ -26,6 +27,16 @@ class ApplicationSettingsView extends StatelessWidget {
               leading: const Icon(Icons.color_lens),
               title: Text(
                 AppLocalizations.of(context).appearanceAccessibilitySettings,
+              ),
+              onTap: followLink,
+            ),
+          ),
+          Link(
+            uri: controller.makeSettingsUri(PushSettingsPage.routeName),
+            builder: (context, followLink) => ListTile(
+              leading: const Icon(Icons.notifications),
+              title: Text(
+                AppLocalizations.of(context).pushSettings,
               ),
               onTap: followLink,
             ),

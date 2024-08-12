@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../pages/account_selector/account_selector.dart';
 import '../pages/application_settings/application_settings.dart';
 import '../pages/application_settings/pages/appearance.dart';
+import '../pages/application_settings/pages/push.dart';
 import '../pages/fatal_error/fatal_error_page.dart';
 import '../pages/homeserver/homeserver.dart';
 import '../pages/login/login.dart';
@@ -72,6 +73,11 @@ class PolyculeRouter extends GoRouter {
                               path: AppearanceSettingsPage.routeName,
                               builder: (context, state) =>
                                   const AppearanceSettingsPage(),
+                            ),
+                            GoRoute(
+                              path: PushSettingsPage.routeName,
+                              builder: (context, state) =>
+                                  const PushSettingsPage(),
                             ),
                           ],
                         ),
