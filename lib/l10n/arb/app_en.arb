@@ -351,5 +351,19 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pushSettings": "Push notifications",
+  "unifiedPushUnavailable": "UnifiedPush is not available on your device.",
+  "selectPushDistributor": "Select your UnifiedPush distributor",
+  "disablePushNotifications": "Disable push notifications",
+  "pushInformationPolycule": "Currently, < polycule > only supports push notifications on Android. Linux support is planned.",
+  "unifiedPushAbout": "You need to install a distributor for push notifications to work.\nYou can find more information at : https://unifiedpush.org/users/intro/",
+  "unifiedPushLink": "https://unifiedpush.org/users/intro/",
+  "setupUnifiedPush": "Setup UnifiedPush",
+  "googleFirebase": "Google Firebase Cloud Messaging",
+  "newNotification": "New message in < polycyule >",
+  "pushChannelName": "Incoming messages",
+  "directChats": "Direct message rooms",
+  "groups": "Group rooms",
+  "unifiedPush": "UnifiedPush"
 }

@@ -88,4 +88,26 @@ class SettingsInterface {
       value: locale?.toLanguageTag(),
     );
   }
+
+  Future<String?> getPushDistributor() async {
+    return kPolyculeSecureStorage.read(key: 'push_distributor');
+  }
+
+  Future<void> storePushDistributor(String? distributor) async {
+    return kPolyculeSecureStorage.write(
+      key: 'push_distributor',
+      value: distributor,
+    );
+  }
+
+  Future<String?> getPushKey(String clientName) async {
+    return kPolyculeSecureStorage.read(key: 'push_key_$clientName');
+  }
+
+  Future<void> storePushKey(String clientName, String endpoint) async {
+    return kPolyculeSecureStorage.write(
+      key: 'push_key_$clientName',
+      value: endpoint,
+    );
+  }
 }

@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/encryption.dart';
@@ -20,6 +21,7 @@ import '../../../pages/room_list/room_list.dart';
 import '../../../pages/splash_screen/splash_screen.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../utils/matrix/database/polycule_database_builder.dart';
+import '../../../utils/matrix/push_manager.dart';
 import '../../../utils/matrix/uia_helper.dart';
 import '../../../utils/runtime_suffix.dart';
 import '../../intent_manager.dart';
@@ -95,6 +97,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   @override
   void initState() {
     _loadClients();
+    _initializePushPlugin();
     super.initState();
   }
 
@@ -158,6 +161,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   final Map<int, StreamSubscription<KeyVerification>?>
       _sasVerificationListener = {};
 
+  static final Map<int, PushManager> pushManagers = {};
+
   Client _buildClient(int identifier) {
     final client = Client(
       _makeClientName(identifier),
@@ -183,6 +188,10 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     _sasVerificationListener[identifier] = client
         .onKeyVerificationRequest.stream
         .listen(_handleSasVerificationRequest);
+    pushManagers[identifier] = PushManager(
+      client,
+      AppLocalizations.of(context),
+    );
     client.init(
       waitForFirstSync: false,
     );
@@ -450,6 +459,18 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         client,
         AppLocalizations.of(context),
       );
+
+  Future<void> _initializePushPlugin() async {
+    final notificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    await notificationsPlugin.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings(
+          '@drawable/ic_launcher_foreground',
+        ),
+      ),
+    );
+  }
 }
 
 extension ClientIdentifier on String {

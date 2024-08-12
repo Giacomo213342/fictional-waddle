@@ -1079,6 +1079,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Call ID : {roomId}'**
   String matrixCallTooltip(String roomId);
+
+  /// No description provided for @pushSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Push notifications'**
+  String get pushSettings;
+
+  /// No description provided for @unifiedPushUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'UnifiedPush is not available on your device.'**
+  String get unifiedPushUnavailable;
+
+  /// No description provided for @selectPushDistributor.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your UnifiedPush distributor'**
+  String get selectPushDistributor;
+
+  /// No description provided for @disablePushNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable push notifications'**
+  String get disablePushNotifications;
+
+  /// No description provided for @pushInformationPolycule.
+  ///
+  /// In en, this message translates to:
+  /// **'Currently, < polycule > only supports push notifications on Android. Linux support is planned.'**
+  String get pushInformationPolycule;
+
+  /// No description provided for @unifiedPushAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'You need to install a distributor for push notifications to work.\nYou can find more information at : https://unifiedpush.org/users/intro/'**
+  String get unifiedPushAbout;
+
+  /// No description provided for @unifiedPushLink.
+  ///
+  /// In en, this message translates to:
+  /// **'https://unifiedpush.org/users/intro/'**
+  String get unifiedPushLink;
+
+  /// No description provided for @setupUnifiedPush.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup UnifiedPush'**
+  String get setupUnifiedPush;
+
+  /// No description provided for @googleFirebase.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Firebase Cloud Messaging'**
+  String get googleFirebase;
+
+  /// No description provided for @newNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'New message in < polycyule >'**
+  String get newNotification;
+
+  /// No description provided for @pushChannelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming messages'**
+  String get pushChannelName;
+
+  /// No description provided for @directChats.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct message rooms'**
+  String get directChats;
+
+  /// No description provided for @groups.
+  ///
+  /// In en, this message translates to:
+  /// **'Group rooms'**
+  String get groups;
+
+  /// No description provided for @unifiedPush.
+  ///
+  /// In en, this message translates to:
+  /// **'UnifiedPush'**
+  String get unifiedPush;
 }
 
 class _AppLocalizationsDelegate

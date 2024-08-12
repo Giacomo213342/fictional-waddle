@@ -30,10 +30,15 @@ class SettingsManager extends InheritedWidget {
     final storedLocale = await _settingsInterface.getLocale();
     locale.value = storedLocale;
     locale.addListener(_storeLocale);
+
+    final storedPushDistributor = await _settingsInterface.getPushDistributor();
+    pushDistributor.value = storedPushDistributor;
+    pushDistributor.addListener(_storePushDistributor);
   }
 
   final theme = ValueNotifier(ThemeState());
   final locale = ValueNotifier<Locale?>(null);
+  final pushDistributor = ValueNotifier<String?>(null);
 
   static SettingsManager? maybeOf(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<SettingsManager>();
@@ -55,6 +60,10 @@ class SettingsManager extends InheritedWidget {
 
   Future<void> _storeLocale() async {
     await _settingsInterface.storeLocale(locale.value);
+  }
+
+  Future<void> _storePushDistributor() async {
+    await _settingsInterface.storePushDistributor(pushDistributor.value);
   }
 }
 
