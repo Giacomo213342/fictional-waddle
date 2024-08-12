@@ -68,7 +68,7 @@ class RoomAvailableRoute extends RequiresLoginRoute {
         final room =
             client.getRoomById(roomId) ?? client.getRoomByAlias(roomId);
 
-        if (room == null) {
+        if (room == null || room.isSpace) {
           final fragment = state.uri.fragment;
           final eventId = Uri.decodeComponent(
             fragment.isEmpty ? state.uri.pathSegments[1] : fragment,

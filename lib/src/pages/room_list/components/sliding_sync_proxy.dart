@@ -27,7 +27,7 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
 
   @override
   void initState() {
-    roomsCache = [...widget.controller.client.rooms];
+    roomsCache = [...widget.controller.filteredRooms];
 
     _slidingSyncListener =
         widget.controller.client.onSync.stream.listen(_simulateSlidingSync);
@@ -39,7 +39,7 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
     return AnimatedList(
       key: listKey,
       itemBuilder: (context, index, animation) {
-        final room = widget.controller.client.rooms[index];
+        final room = widget.controller.filteredRooms[index];
         final key = roomTileKeys[room.id] ??= GlobalKey<RoomListTileState>();
         return SizeTransition(
           sizeFactor: animation,
@@ -66,7 +66,7 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
       return;
     }
 
-    final rooms = widget.controller.client.rooms;
+    final rooms = widget.controller.filteredRooms;
 
     final diffResult = calculateListDiff<Room>(
       roomsCache,

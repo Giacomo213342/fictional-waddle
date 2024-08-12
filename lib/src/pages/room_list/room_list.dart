@@ -25,6 +25,9 @@ class RoomListController extends MatrixState<RoomListPage> {
   final searchController = SearchController();
   final searchFocus = FocusNode();
 
+  List<Room> get filteredRooms =>
+      client.rooms.where((r) => !r.isSpace && !r.isArchived).toList();
+
   /// provides the [FocusNode] for the room list tile of the given Room [id].
   static FocusNode getFocusNode(String id) {
     FocusNode? node = _focusNodes[id];
