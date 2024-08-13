@@ -50,7 +50,7 @@ class RoomListController extends MatrixState<RoomListPage> {
 
   List<Room> filterRooms(String filter) {
     filter = filter.toLowerCase();
-    return client.rooms
+    return filteredRooms
         .where(
           (room) =>
               room.name.toLowerCase().contains(filter) ||
@@ -84,7 +84,7 @@ class RoomListController extends MatrixState<RoomListPage> {
   /// checks whether our room list contains any item and tries to focus it
   /// In case of success, it cancels the further sync listener
   void _focusFirstRoom() {
-    final firstRoom = client.rooms.firstOrNull;
+    final firstRoom = filteredRooms.firstOrNull;
     if (firstRoom == null) {
       return;
     }

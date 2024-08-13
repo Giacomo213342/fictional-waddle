@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
@@ -9,8 +7,6 @@ import '../../../utils/matrix/is_display_event_extension.dart';
 import '../room.dart';
 import 'event/m_room_message.dart';
 import 'event/m_room_state.dart';
-
-const _kPulseCurve = Curves.easeInOutBack;
 
 class TimelineEventTile extends StatefulWidget {
   const TimelineEventTile({
@@ -36,8 +32,6 @@ class TimelineEventTile extends StatefulWidget {
 
 class TimelineEventTileState extends State<TimelineEventTile>
     with TickerProviderStateMixin<TimelineEventTile> {
-  late AnimationController _opacityController;
-
   Event? event;
   Event? previousEvent;
   Event? nextEvent;
@@ -45,18 +39,7 @@ class TimelineEventTileState extends State<TimelineEventTile>
   @override
   void initState() {
     event = widget.event;
-    _opacityController = AnimationController(
-      value: 1,
-      vsync: this,
-      duration: const Duration(milliseconds: 150),
-    );
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _opacityController.dispose();
-    super.dispose();
   }
 
   @override
@@ -69,74 +52,70 @@ class TimelineEventTileState extends State<TimelineEventTile>
       return const SizedBox();
     }
 
-    return FadeTransition(
-      opacity: _opacityController,
-      child: switch (event.type) {
-        EventTypes.Reaction || EventTypes.Redaction => const SizedBox(),
-        EventTypes.Sticker ||
-        EventTypes.Message ||
-        EventTypes.Encrypted =>
-          RoomMessage(
-            event: event,
-            timeline: widget.timeline,
-            previousEvent: previousEvent,
-            nextEvent: nextEvent,
-          ),
-        EventTypes.RoomCreate ||
-        EventTypes.RoomPowerLevels ||
-        EventTypes.RoomJoinRules ||
-        EventTypes.HistoryVisibility ||
-        EventTypes.GuestAccess ||
-        EventTypes.Encryption ||
-        EventTypes.RoomName ||
-        EventTypes.RoomTopic ||
-        EventTypes.RoomAvatar ||
-        EventTypes.RoomAliases ||
-        EventTypes.RoomCanonicalAlias ||
-        EventTypes.RoomMember =>
-          RoomState(event: event),
-        _ => Text(
-            event.calcLocalizedBodyFallback(const MatrixDefaultLocalizations()),
-          ),
-      },
-    );
+    return switch (event.type) {
+      EventTypes.Reaction || EventTypes.Redaction => const SizedBox(),
+      EventTypes.Sticker ||
+      EventTypes.Message ||
+      EventTypes.Encrypted =>
+        RoomMessage(
+          event: event,
+          timeline: widget.timeline,
+          previousEvent: previousEvent,
+          nextEvent: nextEvent,
+        ),
+      EventTypes.RoomCreate ||
+      EventTypes.RoomPowerLevels ||
+      EventTypes.RoomJoinRules ||
+      EventTypes.HistoryVisibility ||
+      EventTypes.GuestAccess ||
+      EventTypes.Encryption ||
+      EventTypes.RoomName ||
+      EventTypes.RoomTopic ||
+      EventTypes.RoomAvatar ||
+      EventTypes.RoomAliases ||
+      EventTypes.RoomCanonicalAlias ||
+      EventTypes.RoomMember =>
+        RoomState(event: event),
+      _ => Text(
+          event.calcLocalizedBodyFallback(const MatrixDefaultLocalizations()),
+        ),
+    };
   }
 
   @override
   void didUpdateWidget(covariant TimelineEventTile oldWidget) {
     if (widget.event.didChange(oldWidget.event)) {
-      unawaited(updateEvent());
+      updateEvent();
     }
 
     final oldPrevious = oldWidget.previousEvent;
     final previous = widget.previousEvent;
     if (oldPrevious != null && previous != null) {
       if (previous.didChange(oldPrevious)) {
-        unawaited(updateEvent());
+        updateEvent();
       }
     } else if (oldPrevious == null || previous == null) {
-      unawaited(updateEvent());
+      updateEvent();
     }
 
     final oldNext = oldWidget.nextEvent;
     final next = widget.nextEvent;
     if (oldNext != null && next != null) {
       if (next.didChange(oldNext)) {
-        unawaited(updateEvent());
+        updateEvent();
       }
     } else if (oldNext == null || next == null) {
-      unawaited(updateEvent());
+      updateEvent();
     }
 
     super.didUpdateWidget(oldWidget);
   }
 
-  Future<void> updateEvent({
+  void updateEvent({
     Event? event,
     Event? nextEvent,
     Event? previousEvent,
-    bool highlight = true,
-  }) async {
+  }) {
     setState(() {
       if (event != null) {
         this.event = event;
@@ -148,10 +127,5 @@ class TimelineEventTileState extends State<TimelineEventTile>
         this.nextEvent = nextEvent;
       }
     });
-    if (!highlight) {
-      return;
-    }
-    await _opacityController.animateBack(.5, curve: _kPulseCurve);
-    await _opacityController.animateTo(1, curve: _kPulseCurve);
   }
 }
