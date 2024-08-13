@@ -17,7 +17,10 @@ class EditTooltip extends StatelessWidget {
               .isAfter(DateTime.now().subtract(const Duration(days: 1)))
           ? AppLocalizations.of(context).editedToday(editEvent.originServerTs)
           : AppLocalizations.of(context).editedAt(
-              editEvent.originServerTs.humanShortDate(context: context),
+              editEvent.originServerTs.humanShortDate(
+                context: context,
+                fullLength: true,
+              ),
             ),
       child: const Icon(Icons.edit),
     );

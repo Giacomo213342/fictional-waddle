@@ -16,25 +16,35 @@ final _audioMessageKeyRegistry = <String, GlobalKey<State<AudioMessage>>>{};
 final _fileMessageKeyRegistry = <String, GlobalKey<State<FileMessage>>>{};
 
 class RoomMessageContent extends StatelessWidget {
-  const RoomMessageContent({super.key, required this.event});
+  const RoomMessageContent({
+    super.key,
+    required this.event,
+    this.replyToEventId,
+  });
 
   final Event event;
+  final String? replyToEventId;
 
   Client get client => event.room.client;
 
   @override
   Widget build(BuildContext context) {
+    final replyToEventId = this.replyToEventId;
+    final globalKeyRegistryKey = replyToEventId == null
+        ? event.eventId
+        : '${event.eventId}-$replyToEventId';
+
     switch (event.messageType) {
       case MessageTypes.Sticker:
         return ImageMessage(
-          key: _imageMessageKeyRegistry[event.eventId] ??= GlobalKey(),
+          key: _imageMessageKeyRegistry[globalKeyRegistryKey] ??= GlobalKey(),
           event: event,
         );
       case MessageTypes.Image:
         return AttachmentToolbar(
           event: event,
           child: ImageMessage(
-            key: _imageMessageKeyRegistry[event.eventId] ??= GlobalKey(),
+            key: _imageMessageKeyRegistry[globalKeyRegistryKey] ??= GlobalKey(),
             event: event,
           ),
         );
@@ -42,7 +52,7 @@ class RoomMessageContent extends StatelessWidget {
         return AttachmentToolbar(
           event: event,
           child: VideoMessage(
-            key: _videoMessageKeyRegistry[event.eventId] ??=
+            key: _videoMessageKeyRegistry[globalKeyRegistryKey] ??=
                 GlobalKey<State<VideoMessage>>(),
             event: event,
           ),
@@ -51,7 +61,7 @@ class RoomMessageContent extends StatelessWidget {
         return AttachmentToolbar(
           event: event,
           child: AudioMessage(
-            key: _audioMessageKeyRegistry[event.eventId] ??=
+            key: _audioMessageKeyRegistry[globalKeyRegistryKey] ??=
                 GlobalKey<State<AudioMessage>>(),
             event: event,
           ),
@@ -60,7 +70,7 @@ class RoomMessageContent extends StatelessWidget {
         return AttachmentToolbar(
           event: event,
           child: FileMessage(
-            key: _fileMessageKeyRegistry[event.eventId] ??=
+            key: _fileMessageKeyRegistry[globalKeyRegistryKey] ??=
                 GlobalKey<State<FileMessage>>(),
             event: event,
           ),
@@ -68,9 +78,10 @@ class RoomMessageContent extends StatelessWidget {
       case MessageTypes.Text:
       case MessageTypes.Emote:
         return TextMessage(
-          key: _textMessageKeyRegistry[event.eventId] ??=
+          key: _textMessageKeyRegistry[globalKeyRegistryKey] ??=
               GlobalKey<State<TextMessage>>(),
           event: event,
+          globalKeyRegistryKey: globalKeyRegistryKey,
         );
       default:
         return Text(event.messageType);

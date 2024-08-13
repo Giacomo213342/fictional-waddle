@@ -6,6 +6,7 @@ import '../../../../utils/matrix/same_message_bubble_extension.dart';
 import 'components/message_prefix.dart';
 import 'components/message_suffix.dart';
 import 'components/reaction_row.dart';
+import 'm_reply_container.dart';
 import 'm_room_message_content.dart';
 
 class RoomMessage extends StatelessWidget {
@@ -86,7 +87,26 @@ class RoomMessage extends StatelessWidget {
                       padding: const EdgeInsets.all(1),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          FutureBuilder(
+                            future: event.getReplyEvent(timeline),
+                            builder: (context, snapshot) {
+                              final replyEvent = snapshot.data;
+
+                              return AnimatedSize(
+                                duration: const Duration(milliseconds: 150),
+                                alignment: Alignment.centerLeft,
+                                child: replyEvent == null
+                                    ? SizedBox(width: constraints.maxWidth - 74)
+                                    : ReplyContainer(
+                                        replyEvent: replyEvent,
+                                        replyToEventId: event.eventId,
+                                        constraints: constraints,
+                                      ),
+                              );
+                            },
+                          ),
                           SizedBox(
                             width: constraints.maxWidth - 74,
                             child: RoomMessageContent(

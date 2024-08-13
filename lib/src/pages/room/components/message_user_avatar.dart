@@ -17,7 +17,7 @@ class MessageUserAvatar extends StatelessWidget {
         final user = snapshot.data ?? event.senderFromMemoryOrFallback;
 
         return Tooltip(
-          message: user.displayName,
+          message: user.displayName ?? user.id,
           child: UserAvatar(
             user: user,
             client: event.room.client,

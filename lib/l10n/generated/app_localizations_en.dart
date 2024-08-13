@@ -167,6 +167,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String replyUserSentDate(Object username, Object formattedDate) {
+    return '$username wrote $formattedDate :';
+  }
+
+  @override
   String get passphraseNotEmpty => 'The passphrase can\'t be empty';
 
   @override

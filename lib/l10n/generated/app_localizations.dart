@@ -353,6 +353,12 @@ abstract class AppLocalizations {
   /// **'Please authenticate with your credentials for {mxid}.'**
   String authenticateForAccount(Object mxid);
 
+  /// No description provided for @replyUserSentDate.
+  ///
+  /// In en, this message translates to:
+  /// **'{username} wrote {formattedDate} :'**
+  String replyUserSentDate(Object username, Object formattedDate);
+
   /// No description provided for @passphraseNotEmpty.
   ///
   /// In en, this message translates to:

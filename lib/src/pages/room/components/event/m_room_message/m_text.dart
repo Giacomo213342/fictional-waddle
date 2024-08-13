@@ -21,9 +21,14 @@ import 'html/spoiler_extension.dart';
 final _eventKeyRegistry = <String, GlobalKey<State<HtmlParser>>>{};
 
 class TextMessage extends StatefulWidget {
-  const TextMessage({super.key, required this.event});
+  const TextMessage({
+    super.key,
+    required this.event,
+    this.globalKeyRegistryKey,
+  });
 
   final Event event;
+  final String? globalKeyRegistryKey;
 
   @override
   State<TextMessage> createState() => _TextMessageState();
@@ -92,8 +97,10 @@ class _TextMessageState extends State<TextMessage> {
     final parsed = parse(html, generateSpans: true);
     final dom = parsed.linkify() as Document;
 
+    final globalKeyRegistryKey =
+        widget.globalKeyRegistryKey ?? widget.event.eventId;
     return Html.fromDom(
-      anchorKey: _eventKeyRegistry[html + widget.event.eventId] ??=
+      anchorKey: _eventKeyRegistry[html + globalKeyRegistryKey] ??=
           GlobalKey<State<HtmlParser>>(),
       document: dom,
       style: {

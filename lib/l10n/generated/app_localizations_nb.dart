@@ -168,6 +168,11 @@ class AppLocalizationsNb extends AppLocalizations {
   }
 
   @override
+  String replyUserSentDate(Object username, Object formattedDate) {
+    return '$username wrote $formattedDate :';
+  }
+
+  @override
   String get passphraseNotEmpty => 'Du må skrive inn et passord';
 
   @override

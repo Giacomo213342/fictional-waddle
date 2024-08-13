@@ -128,6 +128,17 @@
       }
     }
   },
+  "replyUserSentDate": "{username} wrote {formattedDate} :",
+  "@replyUserSentDate": {
+    "placeholders": {
+      "username": {
+        "format": "String"
+      },
+      "formattedDate": {
+        "format": "String"
+      }
+    }
+  },
   "passphraseNotEmpty": "The passphrase can't be empty",
   "cancel": "Cancel",
   "noMatch": "No match",
