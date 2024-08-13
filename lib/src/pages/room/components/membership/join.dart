@@ -181,14 +181,12 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
         widget.controller.eventKeyRegistry[previousEvent.eventId]?.currentState
             ?.updateEvent(
           nextEvent: event,
-          highlight: false,
         );
       }
       if (nextEvent != null) {
         widget.controller.eventKeyRegistry[nextEvent.eventId]?.currentState
             ?.updateEvent(
           previousEvent: event,
-          highlight: false,
         );
       }
     } else {
