@@ -12,7 +12,7 @@ class ResponsiveShellRoute extends ShellRoute {
     super.restorationScopeId,
   }) : super(
           builder: (context, state, child) => ResponsiveLayout(
-            path: state.fullPath,
+            uri: state.uri,
             main: builder.call(context, state),
             secondary: child,
           ),

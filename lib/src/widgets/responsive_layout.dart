@@ -7,13 +7,13 @@ import 'placeholder.dart';
 class ResponsiveLayout extends StatelessWidget {
   const ResponsiveLayout({
     super.key,
-    required this.path,
+    required this.uri,
     required this.main,
     required this.secondary,
     this.placeholder = const PolyculePlaceholder(),
   });
 
-  final String? path;
+  final Uri? uri;
 
   final Widget main;
 
@@ -33,7 +33,9 @@ class ResponsiveLayout extends StatelessWidget {
                     width: 256 + 192,
                     child: main,
                   ),
-                  Expanded(child: secondary ?? placeholder),
+                  Expanded(
+                    child: _buildAnimation(context, secondary ?? placeholder),
+                  ),
                 ],
               ),
             );
@@ -41,7 +43,7 @@ class ResponsiveLayout extends StatelessWidget {
             Widget? child;
             bool reverse = false;
             final segments =
-                path?.replaceFirst('/client/:client', '').split('/');
+                uri?.path.replaceFirst(RegExp(r'/client/\d+'), '').split('/');
             if (segments == null) {
               child = main;
             } else {
@@ -53,24 +55,35 @@ class ResponsiveLayout extends StatelessWidget {
             }
             child ??= secondary ?? main;
 
-            return PageTransitionSwitcher(
-              reverse: reverse,
-              transitionBuilder: (
-                Widget child,
-                Animation<double> primaryAnimation,
-                Animation<double> secondaryAnimation,
-              ) {
-                return SharedAxisTransition(
-                  animation: primaryAnimation,
-                  secondaryAnimation: secondaryAnimation,
-                  transitionType: SharedAxisTransitionType.scaled,
-                  fillColor: Theme.of(context).colorScheme.surface,
-                  child: child,
-                );
-              },
-              child: child,
-            );
+            return _buildAnimation(context, child, reverse);
           }
         },
       );
+
+  Widget _buildAnimation(
+    BuildContext context,
+    Widget child, [
+    bool reverse = false,
+  ]) {
+    return PageTransitionSwitcher(
+      reverse: reverse,
+      transitionBuilder: (
+        Widget child,
+        Animation<double> primaryAnimation,
+        Animation<double> secondaryAnimation,
+      ) {
+        return SharedAxisTransition(
+          animation: primaryAnimation,
+          secondaryAnimation: secondaryAnimation,
+          transitionType: SharedAxisTransitionType.scaled,
+          fillColor: Theme.of(context).colorScheme.surface,
+          child: child,
+        );
+      },
+      child: Container(
+        key: ValueKey(uri?.toString()),
+        child: child,
+      ),
+    );
+  }
 }
