@@ -16,3 +16,5 @@ Icon=business.braid.polycule
 Categories=Office
 X-Purism-FormFactor=Workstation;Mobile;
 MimeType=x-scheme-handler/matrix;x-scheme-handler/web+polycule;x-scheme-handler/io.element.call;
+DBusActivatable=true
+
