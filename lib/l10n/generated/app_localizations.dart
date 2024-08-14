@@ -359,6 +359,12 @@ abstract class AppLocalizations {
   /// **'{username} wrote {formattedDate} :'**
   String replyUserSentDate(Object username, Object formattedDate);
 
+  /// No description provided for @view.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get view;
+
   /// No description provided for @passphraseNotEmpty.
   ///
   /// In en, this message translates to:

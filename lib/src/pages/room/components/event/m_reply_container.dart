@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 import 'package:matrix/matrix.dart';
 
 import 'components/reply_user_prefix.dart';
-import 'm_room_message_content.dart';
+import 'm_room_message/m_text.dart';
 
 class ReplyContainer extends StatelessWidget {
   const ReplyContainer({
@@ -21,7 +20,10 @@ class ReplyContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4.0),
+      padding: const EdgeInsets.only(
+        left: 4.0,
+        bottom: 4.0,
+      ),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color:
@@ -41,13 +43,11 @@ class ReplyContainer extends StatelessWidget {
             onTap: () {},
             child: SelectionArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 4.0,
-                  vertical: 4.0,
+                padding: const EdgeInsets.only(
+                  left: 4.0,
                 ),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                    maxHeight: 128,
                     maxWidth: constraints.maxWidth - 86,
                   ),
                   child: Column(
@@ -55,13 +55,21 @@ class ReplyContainer extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      const SizedBox(height: 4),
                       ReplyUserPrefix(replyEvent: replyEvent),
-                      IntrinsicHeight(
-                        child: OverflowBox(
-                          fit: OverflowBoxFit.deferToChild,
-                          child: RoomMessageContent(
-                            event: replyEvent,
-                            replyToEventId: replyToEventId,
+                      const SizedBox(height: 4),
+                      ClipRect(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 96),
+                          child: IntrinsicHeight(
+                            child: Padding(
+                              padding: const EdgeInsets.all(.0),
+                              child: TextMessage(
+                                event: replyEvent,
+                                globalKeyRegistryKey:
+                                    replyEvent.eventId + replyToEventId,
+                              ),
+                            ),
                           ),
                         ),
                       ),

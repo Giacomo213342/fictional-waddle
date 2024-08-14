@@ -173,6 +173,9 @@ class AppLocalizationsNb extends AppLocalizations {
   }
 
   @override
+  String get view => 'View';
+
+  @override
   String get passphraseNotEmpty => 'Du må skrive inn et passord';
 
   @override

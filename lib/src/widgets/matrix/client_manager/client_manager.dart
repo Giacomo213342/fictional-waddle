@@ -97,7 +97,9 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   @override
   void initState() {
     _loadClients();
-    _initializePushPlugin();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _initializePushPlugin(),
+    );
     super.initState();
   }
 
@@ -464,9 +466,13 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     final notificationsPlugin = FlutterLocalNotificationsPlugin();
 
     await notificationsPlugin.initialize(
-      const InitializationSettings(
-        android: AndroidInitializationSettings(
+      InitializationSettings(
+        android: const AndroidInitializationSettings(
           '@drawable/ic_launcher_foreground',
+        ),
+        linux: LinuxInitializationSettings(
+          defaultActionName: AppLocalizations.of(context).view,
+          defaultIcon: ThemeLinuxIcon('business.braid.polycule'),
         ),
       ),
     );

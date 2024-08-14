@@ -139,6 +139,7 @@
       }
     }
   },
+  "view": "View",
   "passphraseNotEmpty": "The passphrase can't be empty",
   "cancel": "Cancel",
   "noMatch": "No match",
