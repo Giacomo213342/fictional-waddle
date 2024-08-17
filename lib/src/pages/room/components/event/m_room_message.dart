@@ -48,6 +48,13 @@ class RoomMessage extends StatelessWidget {
     );
     final editEvent = edits.lastOrNull;
 
+    Event? replyEventFallback;
+    if (event.relationshipType == RelationshipTypes.reply) {
+      replyEventFallback = timeline.events
+          .where((e) => e.eventId == event.relationshipEventId)
+          .singleOrNull;
+    }
+
     return Padding(
       padding: EdgeInsets.only(
         left: 4,
@@ -90,17 +97,19 @@ class RoomMessage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           FutureBuilder(
+                            initialData: replyEventFallback,
                             future: event.getReplyEvent(timeline),
                             builder: (context, snapshot) {
-                              final replyEvent = snapshot.data;
-
+                              final replyEvent =
+                                  snapshot.data ?? replyEventFallback;
                               return AnimatedSize(
                                 duration: const Duration(milliseconds: 150),
                                 alignment: Alignment.centerLeft,
                                 child: replyEvent == null
                                     ? SizedBox(width: constraints.maxWidth - 74)
                                     : ReplyContainer(
-                                        replyEvent: replyEvent,
+                                        replyEvent: replyEvent
+                                            .getDisplayEvent(timeline),
                                         replyToEventId: event.eventId,
                                         constraints: constraints,
                                       ),
