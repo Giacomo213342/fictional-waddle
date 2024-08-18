@@ -203,9 +203,9 @@ build:web:
     - flutter gen-l10n
     - dart compile js web/web_worker.dart -m -o web/web_worker.dart.js
     - if [ -z "$CI_COMMIT_TAG" ]; then
-      flutter build web --build-number $CI_PIPELINE_ID --no-web-resources-cdn --base-href "/web/" --source-maps --dart-define=POLYCULE_VERSION="$(git describe --always)";
+      flutter build web --build-number $CI_PIPELINE_ID --native-null-assertions --no-web-resources-cdn --base-href "/web/" --source-maps --dart-define=POLYCULE_VERSION="$(git describe --always)";
       else
-      flutter build web --build-number $CI_PIPELINE_ID --no-web-resources-cdn --base-href "/web/" --source-maps --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
+      flutter build web --build-number $CI_PIPELINE_ID --native-null-assertions --no-web-resources-cdn --base-href "/web/" --source-maps --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
       fi
     - rm -rf polycule-web-$VERSION
     - mv build/web polycule-web-$VERSION
