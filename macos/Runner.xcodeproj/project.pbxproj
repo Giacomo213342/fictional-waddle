@@ -268,7 +268,6 @@
 					33CC10EC2044A3C60003C045 = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 1100;
-						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 1;
@@ -567,10 +566,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/DebugProfile.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 365RL8B93Q;
+				DEVELOPMENT_TEAM = C9G4D7FTFK;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "< polycule >";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
@@ -578,6 +577,93 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"Ass\"",
+					"-framework",
+					"\"Avcodec\"",
+					"-framework",
+					"\"Avfilter\"",
+					"-framework",
+					"\"Avformat\"",
+					"-framework",
+					"\"Avutil\"",
+					"-framework",
+					"\"Dav1d\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"Freetype\"",
+					"-framework",
+					"\"Fribidi\"",
+					"-framework",
+					"\"Harfbuzz\"",
+					"-framework",
+					"\"Mbedcrypto\"",
+					"-framework",
+					"\"Mbedtls\"",
+					"-framework",
+					"\"Mbedx509\"",
+					"-framework",
+					"\"Mpv\"",
+					"-framework",
+					"\"Png16\"",
+					"-framework",
+					"\"SQLCipher\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"Swresample\"",
+					"-framework",
+					"\"Swscale\"",
+					"-framework",
+					"\"Uchardet\"",
+					"-framework",
+					"\"Xml2\"",
+					"-framework",
+					"\"app_links\"",
+					"-framework",
+					"\"audio_session\"",
+					"-framework",
+					"\"dynamic_color\"",
+					"-framework",
+					"\"file_selector_macos\"",
+					"-framework",
+					"\"flutter_local_notifications\"",
+					"-framework",
+					"\"flutter_secure_storage_macos\"",
+					"-framework",
+					"\"just_audio\"",
+					"-framework",
+					"\"just_waveform\"",
+					"-framework",
+					"\"media_kit_libs_macos_video\"",
+					"-framework",
+					"\"media_kit_native_event_loop\"",
+					"-framework",
+					"\"media_kit_video\"",
+					"-framework",
+					"\"package_info_plus\"",
+					"-framework",
+					"\"path_provider_foundation\"",
+					"-framework",
+					"\"screen_brightness_macos\"",
+					"-framework",
+					"\"share_plus\"",
+					"-framework",
+					"\"sqflite\"",
+					"-framework",
+					"\"sqlcipher_flutter_libs\"",
+					"-framework",
+					"\"url_launcher_macos\"",
+					"-framework",
+					"\"wakelock_plus\"",
+					"-framework",
+					"\"SQLCipher\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = business.braid.polycule.macos;
+				PRODUCT_COPYRIGHT = "Copyright © 2024 < polycule> authors. EUPL-1.2 licensed.";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 			};
@@ -697,10 +783,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/DebugProfile.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 365RL8B93Q;
+				DEVELOPMENT_TEAM = C9G4D7FTFK;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "< polycule >";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
@@ -708,6 +794,93 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"Ass\"",
+					"-framework",
+					"\"Avcodec\"",
+					"-framework",
+					"\"Avfilter\"",
+					"-framework",
+					"\"Avformat\"",
+					"-framework",
+					"\"Avutil\"",
+					"-framework",
+					"\"Dav1d\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"Freetype\"",
+					"-framework",
+					"\"Fribidi\"",
+					"-framework",
+					"\"Harfbuzz\"",
+					"-framework",
+					"\"Mbedcrypto\"",
+					"-framework",
+					"\"Mbedtls\"",
+					"-framework",
+					"\"Mbedx509\"",
+					"-framework",
+					"\"Mpv\"",
+					"-framework",
+					"\"Png16\"",
+					"-framework",
+					"\"SQLCipher\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"Swresample\"",
+					"-framework",
+					"\"Swscale\"",
+					"-framework",
+					"\"Uchardet\"",
+					"-framework",
+					"\"Xml2\"",
+					"-framework",
+					"\"app_links\"",
+					"-framework",
+					"\"audio_session\"",
+					"-framework",
+					"\"dynamic_color\"",
+					"-framework",
+					"\"file_selector_macos\"",
+					"-framework",
+					"\"flutter_local_notifications\"",
+					"-framework",
+					"\"flutter_secure_storage_macos\"",
+					"-framework",
+					"\"just_audio\"",
+					"-framework",
+					"\"just_waveform\"",
+					"-framework",
+					"\"media_kit_libs_macos_video\"",
+					"-framework",
+					"\"media_kit_native_event_loop\"",
+					"-framework",
+					"\"media_kit_video\"",
+					"-framework",
+					"\"package_info_plus\"",
+					"-framework",
+					"\"path_provider_foundation\"",
+					"-framework",
+					"\"screen_brightness_macos\"",
+					"-framework",
+					"\"share_plus\"",
+					"-framework",
+					"\"sqflite\"",
+					"-framework",
+					"\"sqlcipher_flutter_libs\"",
+					"-framework",
+					"\"url_launcher_macos\"",
+					"-framework",
+					"\"wakelock_plus\"",
+					"-framework",
+					"\"SQLCipher\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = business.braid.polycule.macos;
+				PRODUCT_COPYRIGHT = "Copyright © 2024 < polycule> authors. EUPL-1.2 licensed.";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -721,10 +894,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Release.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 365RL8B93Q;
+				DEVELOPMENT_TEAM = C9G4D7FTFK;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "< polycule >";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
@@ -732,6 +905,93 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"Ass\"",
+					"-framework",
+					"\"Avcodec\"",
+					"-framework",
+					"\"Avfilter\"",
+					"-framework",
+					"\"Avformat\"",
+					"-framework",
+					"\"Avutil\"",
+					"-framework",
+					"\"Dav1d\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"Freetype\"",
+					"-framework",
+					"\"Fribidi\"",
+					"-framework",
+					"\"Harfbuzz\"",
+					"-framework",
+					"\"Mbedcrypto\"",
+					"-framework",
+					"\"Mbedtls\"",
+					"-framework",
+					"\"Mbedx509\"",
+					"-framework",
+					"\"Mpv\"",
+					"-framework",
+					"\"Png16\"",
+					"-framework",
+					"\"SQLCipher\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"Swresample\"",
+					"-framework",
+					"\"Swscale\"",
+					"-framework",
+					"\"Uchardet\"",
+					"-framework",
+					"\"Xml2\"",
+					"-framework",
+					"\"app_links\"",
+					"-framework",
+					"\"audio_session\"",
+					"-framework",
+					"\"dynamic_color\"",
+					"-framework",
+					"\"file_selector_macos\"",
+					"-framework",
+					"\"flutter_local_notifications\"",
+					"-framework",
+					"\"flutter_secure_storage_macos\"",
+					"-framework",
+					"\"just_audio\"",
+					"-framework",
+					"\"just_waveform\"",
+					"-framework",
+					"\"media_kit_libs_macos_video\"",
+					"-framework",
+					"\"media_kit_native_event_loop\"",
+					"-framework",
+					"\"media_kit_video\"",
+					"-framework",
+					"\"package_info_plus\"",
+					"-framework",
+					"\"path_provider_foundation\"",
+					"-framework",
+					"\"screen_brightness_macos\"",
+					"-framework",
+					"\"share_plus\"",
+					"-framework",
+					"\"sqflite\"",
+					"-framework",
+					"\"sqlcipher_flutter_libs\"",
+					"-framework",
+					"\"url_launcher_macos\"",
+					"-framework",
+					"\"wakelock_plus\"",
+					"-framework",
+					"\"SQLCipher\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = business.braid.polycule.macos;
+				PRODUCT_COPYRIGHT = "Copyright © 2024 < polycule> authors. EUPL-1.2 licensed.";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 			};

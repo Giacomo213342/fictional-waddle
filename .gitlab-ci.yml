@@ -71,6 +71,7 @@ build:macos_debug:
     - flutter build macos --debug --build-number $CI_PIPELINE_ID
     - rm -rf polycule-$VERSION-debug.app
     - mv build/macos/Build/Products/Debug/polycule.app polycule-$VERSION-debug.app
+    - cp /nix/store/*-olm-*/lib/libolm.3.dylib polycule-$VERSION-debug.app/Contents/Frameworks
   except:
     - schedules
     - tags
@@ -96,6 +97,7 @@ build:macos_release:
       fi
     - rm -rf polycule-$VERSION.app
     - mv build/macos/Build/Products/Release/polycule.app polycule-$VERSION.app
+    - cp /nix/store/*-olm-*/lib/libolm.3.dylib polycule-$VERSION.app/Contents/Frameworks
   only:
     - main
     - tags
