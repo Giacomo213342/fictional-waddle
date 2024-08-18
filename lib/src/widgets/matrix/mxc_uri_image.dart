@@ -54,7 +54,7 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
     super.initState();
   }
 
-  Uri? get downloadUri => widget.uri?.getThumbnail(
+  Future<Uri>? getDownloadUri() => widget.uri?.getThumbnailUri(
         widget.client,
         width: widget.width,
         height: widget.height,
@@ -108,7 +108,7 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
     final bytes = await _downloadCacheMxc(uri);
 
     return MimedImage(
-      key: ValueKey(downloadUri),
+      key: ValueKey(widget.uri),
       bytes: bytes,
       path: uri.path,
       width: widget.width,
@@ -117,7 +117,7 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
   }
 
   Future<void> startImageOperation() async {
-    final uri = downloadUri;
+    final uri = await getDownloadUri();
     if (uri == null) {
       return;
     }

@@ -44,3 +44,4 @@ app.*.map.json
 l10n_errors.txt
 
 /polycule-*/
+.buildenv
