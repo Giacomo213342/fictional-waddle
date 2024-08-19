@@ -46,6 +46,7 @@ l10n_errors.txt
 /polycule-*/
 .buildenv
 
+*.jar
 *.aab
 *.apk
 *.apks
