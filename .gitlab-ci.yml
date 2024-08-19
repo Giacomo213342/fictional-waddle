@@ -115,7 +115,6 @@ before_script:
   before_script:
     - *versioning-setup
     - *keystore-setup
-    - export BUNDLETOOL_ARGS=$([ -n "$KEY_BASE64" ] && echo "--ks=\"android/app/keystore.jks\" --ks-pass=file:\"$KEYSTORE_PASS_FILE\" --ks-key-alias=\"$KEYSTORE_ALIAS\" --key-pass=file:\"$KEYSTORE_KEY_FILE\"" || echo "")
     - curl -L -O https://github.com/google/bundletool/releases/download/$BUNDLETOOL_VERSION/bundletool-all-$BUNDLETOOL_VERSION.jar
     - export BUNDLETOOL="java -jar $(pwd)/bundletool-all-$BUNDLETOOL_VERSION.jar"
   after_script:
@@ -202,7 +201,7 @@ build:apk:debug:
   needs:
     - build:bundle:debug
   script:
-    - $BUNDLETOOL build-apks --aapt2="$(which aapt2)" $BUNDLETOOL_ARGS --mode=universal --bundle=polycule-$POLYCULE_VERSION-debug.aab --output=polycule-$POLYCULE_VERSION-debug.apks
+    - $BUNDLETOOL build-apks --aapt2="$(which aapt2)" --mode=universal --bundle=polycule-$POLYCULE_VERSION-debug.aab --output=polycule-$POLYCULE_VERSION-debug.apks
   <<: *unsigned
 
 build:apk:
@@ -210,7 +209,7 @@ build:apk:
   needs:
     - build:bundle
   script:
-    - $BUNDLETOOL build-apks --aapt2="$(which aapt2)" $BUNDLETOOL_ARGS --mode=universal --bundle=polycule-$POLYCULE_VERSION.aab --output=polycule-$POLYCULE_VERSION.apks
+    - $BUNDLETOOL build-apks --aapt2="$(which aapt2)" --ks="android/app/keystore.jks" --ks-pass=file:"${KEYSTORE_PASS_FILE}" --ks-key-alias="${KEYSTORE_ALIAS}" --key-pass=file:"${KEYSTORE_KEY_FILE}" --mode=universal --bundle=polycule-$POLYCULE_VERSION.aab --output=polycule-$POLYCULE_VERSION.apks
   <<: *signed
 
 build:web:
