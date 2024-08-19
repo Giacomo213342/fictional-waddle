@@ -9,4 +9,4 @@
 build:
 	cp assets/logo/logo-circle.svg linux/business.braid.polycule.svg
 	ln -s /opt/polycule/polycule linux/polycule
-	flutter build linux
+	flutter build linux --dart-define=POLYCULE_IS_STABLE=${POLYCULE_IS_STABLE} --dart-define=POLYCULE_VERSION=${POLYCULE_VERSION}
