@@ -1,5 +1,6 @@
 variables:
   FLUTTER_VERSION: 3.24.0
+  BUNDLETOOL_VERSION: 1.17.1
 
 include:
   - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.20.1
@@ -10,9 +11,6 @@ include:
       - if: $PACKAGE_MANAGER_SET
 
 image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-base
-
-before_script:
-  - export VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
 
 stages:
   - scan
@@ -26,6 +24,45 @@ cache:
   paths:
     - polycule-*
 
+.versioning-setup: &versioning-setup
+  - export PUBSPEC_VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
+  - export POLYCULE_VERSION="$(git describe --always)"
+  - export POLYCULE_IS_STABLE=$([ -n "$CI_COMMIT_TAG" ] && echo "true" || echo "false")
+  - export FLUTTER_ARGS="--build-number $CI_PIPELINE_ID --dart-define=POLYCULE_IS_STABLE=$POLYCULE_IS_STABLE --dart-define=POLYCULE_VERSION=$POLYCULE_VERSION"
+
+.flutter-setup: &flutter-setup
+  - flutter pub get
+  - flutter gen-l10n
+
+.keystore-setup: &keystore-setup
+  - |
+    [ -n "$KEY_BASE64" ] && cat "$KEY_BASE64" | base64 -d > android/app/keystore.jks || true
+
+.reproducible-before: &reproducible-before
+  - export BUILD_DIR="$(pwd)"
+  - cd ..
+  - mv "$BUILD_DIR" /tmp/build
+  - pushd /tmp/build
+
+.reproducible-after: &reproducible-after
+  - popd
+  - mv /tmp/build "$BUILD_DIR"
+  - cd "$BUILD_DIR"
+
+.signed: &signed
+  only:
+    - main
+    - tags
+
+.unsigned: &unsigned
+  except:
+    - schedules
+    - tags
+    - main
+
+before_script:
+  - *versioning-setup
+
 .check:
   stage: check
   tags:
@@ -34,6 +71,8 @@ cache:
     - schedules
     - tags
     - main
+  before_script:
+    - *flutter-setup
 
 .test:
   stage: test
@@ -41,9 +80,14 @@ cache:
     - docker
   except:
     - schedules
+  before_script:
+    - *flutter-setup
 
 .build:
   stage: build
+  before_script:
+    - *versioning-setup
+    - *flutter-setup
   except:
     - schedules
 
@@ -54,28 +98,55 @@ cache:
   except:
     - schedules
 
+.android:
+  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-android
+  extends: .build
+  before_script:
+    - *versioning-setup
+    - *flutter-setup
+    - *keystore-setup
+  tags:
+    - x86_64
+    - docker
+
+.bundletool:
+  extends: .android
+  before_script:
+    - *versioning-setup
+    - *keystore-setup
+    - export BUNDLETOOL_ARGS=$([ -n "$KEY_BASE64" ] && echo "--ks=\"android/app/keystore.jks\" --ks-pass=\"file:$KEYSTORE_PASS_FILE\" --ks-key-alias=\"$KEYSTORE_ALIAS\" --key-pass=\"file:$KEYSTORE_KEY_FILE\"" || echo "")
+    - curl -L -O https://github.com/google/bundletool/releases/download/$BUNDLETOOL_VERSION/bundletool-all-$BUNDLETOOL_VERSION.jar
+    - export BUNDLETOOL="java -jar $(pwd)/bundletool-all-$BUNDLETOOL_VERSION.jar"
+  after_script:
+    - unzip polycule-*.apks universal.apk
+    - universal.apk polycule-$POLYCULE_VERSION.apk
+  artifacts:
+    paths:
+      - polycule-*.apk
+
+.linux:
+  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-linux
+  extends: .build
+  before_script:
+    - *versioning-setup
+    - *flutter-setup
+    - apt update && apt install -y --no-install-recommends libssl-dev libmpv-dev libmimalloc-dev
+
 check:codestyle:
   extends: .check
   script:
-    - flutter pub get
-    - flutter gen-l10n
     - dart analyze --fatal-infos
     - dart format lib test web --set-exit-if-changed
     - dart run import_sorter:main --exit-if-changed
 
-build:macos_debug:
+build:macos:debug:
   extends: .build
   script:
-    - flutter pub get
-    - flutter gen-l10n
-    - flutter build macos --debug --build-number $CI_PIPELINE_ID
-    - rm -rf polycule-$VERSION-debug.app
-    - mv build/macos/Build/Products/Debug/polycule.app polycule-$VERSION-debug.app
-    - cp /nix/store/*-olm-*/lib/libolm.3.dylib polycule-$VERSION-debug.app/Contents/Frameworks
-  except:
-    - schedules
-    - tags
-    - main
+    - flutter build macos --debug $FLUTTER_ARGS
+    - rm -rf polycule-$POLYCULE_VERSION-debug.app
+    - mv build/macos/Build/Products/Debug/polycule.app polycule-$POLYCULE_VERSION-debug.app
+    - cp /nix/store/*-olm-*/lib/libolm.3.dylib polycule-$POLYCULE_VERSION-debug.app/Contents/Frameworks
+  <<: *unsigned
   tags:
     - macos
     - nix-shell
@@ -84,23 +155,14 @@ build:macos_debug:
     paths:
       - polycule-*.app
 
-build:macos_release:
+build:macos:
   extends: .build
   script:
-    - flutter pub get
-    - flutter gen-l10n
-    # only increment build number on branches
-    - if [ -z "$CI_COMMIT_TAG" ]; then
-        flutter build macos --build-number $CI_PIPELINE_ID --dart-define=POLYCULE_VERSION="$(git describe --always)";
-      else
-        flutter build macos --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
-      fi
-    - rm -rf polycule-$VERSION.app
-    - mv build/macos/Build/Products/Release/polycule.app polycule-$VERSION.app
-    - cp /nix/store/*-olm-*/lib/libolm.3.dylib polycule-$VERSION.app/Contents/Frameworks
-  only:
-    - main
-    - tags
+    - flutter build macos $FLUTTER_ARGS
+    - rm -rf polycule-$POLYCULE_VERSION.app
+    - mv build/macos/Build/Products/Release/polycule.app polycule-$POLYCULE_VERSION.app
+    - cp /nix/store/*-olm-*/lib/libolm.3.dylib polycule-$POLYCULE_VERSION.app/Contents/Frameworks
+  <<: *signed
   tags:
     - macos
     - nix-shell
@@ -109,127 +171,66 @@ build:macos_release:
     paths:
       - polycule-*.app
 
-build:apk_debug:
-  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-android
-  extends: .build
+build:bundle:debug:
+  extends: .android
   script:
-    - flutter pub get
-    - flutter gen-l10n
-    - flutter build apk --debug --build-number $CI_PIPELINE_ID
-    - mv build/app/outputs/flutter-apk/app-debug.apk polycule-$VERSION-debug.apk
-  except:
-    - schedules
-    - tags
-    - main
-  tags:
-    - x86_64
-    - docker
-  artifacts:
-    paths:
-      - polycule-*.apk
-
-build:apk:
-  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-android
-  extends: .build
-  before_script:
-    - export VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
-    - cat "$KEY_BASE64" | base64 -d > android/app/keystore.jks
-    - cp "$KEY_PROPERTIES" android/key.properties
-  script:
-    # make build reproducible with F-Droid
-    - export BUILD_DIR="$(pwd)"
-    - cd ..
-    - mv "$BUILD_DIR" /tmp/build
-    - pushd /tmp/build
-    - flutter pub get
-    - flutter gen-l10n
-    # only increment build number on branches
-    - if [ -z "$CI_COMMIT_TAG" ]; then
-      flutter build apk --build-number $CI_PIPELINE_ID --dart-define=POLYCULE_VERSION="$(git describe --always)";
-      else
-      flutter build apk --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
-      fi
-    # reproducible stuff again
-    - popd
-    - mv /tmp/build "$BUILD_DIR"
-    - cd "$BUILD_DIR"
-    - mv build/app/outputs/apk/release/app-release.apk polycule-$VERSION.apk
-  only:
-    - tags
-    - main
-  tags:
-    - x86_64
-    - docker
-  artifacts:
-    paths:
-      - polycule-*.apk
-
-build:bundle:
-  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-android
-  extends: .build
-  before_script:
-    - export VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
-    - cat "$KEY_BASE64" | base64 -d > android/app/keystore.jks
-    - cp "$KEY_PROPERTIES" android/key.properties
-  script:
-    - flutter pub get
-    - flutter gen-l10n
-    # only increment build number on branches
-    - if [ -z "$CI_COMMIT_TAG" ]; then
-      flutter build appbundle --build-number $CI_PIPELINE_ID --dart-define=POLYCULE_VERSION="$(git describe --always)";
-      else
-      flutter build appbundle --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
-      fi
-    - mv build/app/outputs/bundle/release/app-release.aab polycule-$VERSION.aab
-  only:
-    - tags
-    - main
-  tags:
-    - x86_64
-    - docker
+    - *reproducible-before
+    - flutter build appbundle --debug $FLUTTER_ARGS
+    - *reproducible-after
+    - mv build/app/outputs/bundle/debug/app-debug.aab polycule-$POLYCULE_VERSION-debug.aab
+  <<: *unsigned
   artifacts:
     paths:
       - polycule-*.aab
 
+build:bundle:
+  extends: .android
+  script:
+    - *reproducible-before
+    - flutter build appbundle $FLUTTER_ARGS
+    - *reproducible-after
+    - mv build/app/outputs/bundle/release/app-release.aab polycule-$POLYCULE_VERSION.aab
+  <<: *signed
+  artifacts:
+    paths:
+      - polycule-*.aab
+
+build:apk:debug:
+  extends: .bundletool
+  needs:
+    - build:bundle:debug
+  script:
+    - $BUNDLETOOL build-apks --aapt2="$(which aapt2)" $BUNDLETOOL_ARGS --mode=universal --bundle=polycule-$POLYCULE_VERSION-debug.aab --output=polycule-$POLYCULE_VERSION-debug.apks
+  <<: *unsigned
+
+build:apk:
+  extends: .bundletool
+  needs:
+    - build:bundle
+  script:
+    - $BUNDLETOOL build-apks --aapt2="$(which aapt2)" $BUNDLETOOL_ARGS --mode=universal --bundle=polycule-$POLYCULE_VERSION.aab --output=polycule-$POLYCULE_VERSION.apks
+  <<: *signed
+
 build:web:
   image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-web
   extends: .build
-  before_script:
+  script:
     - apt update && apt install -y yq
     - ./scripts/download-olm.sh
-    - export VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
-  script:
-    - flutter pub get
-    - flutter gen-l10n
     - dart compile js web/web_worker.dart -m -o web/web_worker.dart.js
-    - if [ -z "$CI_COMMIT_TAG" ]; then
-      flutter build web --build-number $CI_PIPELINE_ID --native-null-assertions --no-web-resources-cdn --base-href "/web/" --source-maps --dart-define=POLYCULE_VERSION="$(git describe --always)";
-      else
-      flutter build web --build-number $CI_PIPELINE_ID --native-null-assertions --no-web-resources-cdn --base-href "/web/" --source-maps --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
-      fi
-    - rm -rf polycule-web-$VERSION
-    - mv build/web polycule-web-$VERSION
+    - flutter build web --native-null-assertions --no-web-resources-cdn --base-href "/web/" --source-maps $FLUTTER_ARGS
+    - rm -rf polycule-web-$POLYCULE_VERSION
+    - mv build/web polycule-web-$POLYCULE_VERSION
   artifacts:
     paths:
       - polycule-web-*
 
-build:linux_x86_64:
-  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-linux
-  extends: .build
+build:linux:x86_64:
+  extends: .linux
   script:
-    - apt update && apt install -y --no-install-recommends libssl-dev libmpv-dev libmimalloc-dev
-    - export CMAKE_MAKE_PROGRAM=$(which cmake)
-    - export CMAKE_C_COMPILER=$(which clang)
-    - export CMAKE_CXX_COMPILER=$(which clang++)
-    - flutter pub get
-    - flutter gen-l10n
-    - if [ -z "$CI_COMMIT_TAG" ]; then
-      flutter build linux --dart-define=POLYCULE_VERSION="$(git describe --always)";
-      else
-      flutter build linux --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
-      fi
-    - rm -rf polycule-$VERSION-amd64
-    - mv ./build/linux/x64/release/bundle polycule-$VERSION-amd64
+    - flutter build linux $FLUTTER_ARGS
+    - rm -rf polycule-$POLYCULE_VERSION-amd64
+    - mv ./build/linux/x64/release/bundle polycule-$POLYCULE_VERSION-amd64
   tags:
     - x86_64
     - docker
@@ -237,23 +238,12 @@ build:linux_x86_64:
     paths:
       - polycule-*-amd64
 
-build:linux_aarch64:
-  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-linux
-  extends: .build
+build:linux:aarch64:
+  extends: .linux
   script:
-    - apt update && apt install -y --no-install-recommends libssl-dev libmpv-dev libmimalloc-dev
-    - export CMAKE_MAKE_PROGRAM=$(which cmake)
-    - export CMAKE_C_COMPILER=$(which clang)
-    - export CMAKE_CXX_COMPILER=$(which clang++)
-    - dart pub get
-    - flutter gen-l10n
-    - if [ -z "$CI_COMMIT_TAG" ]; then
-      flutter build linux --dart-define=POLYCULE_VERSION="$(git describe --always)";
-      else
-      flutter build linux --dart-define=POLYCULE_IS_STABLE=true --dart-define=POLYCULE_VERSION="$CI_COMMIT_TAG";
-      fi
-    - rm -rf polycule-$VERSION-aarch64
-    - mv ./build/linux/arm64/release/bundle polycule-$VERSION-aarch64
+    - flutter build linux $FLUTTER_ARGS
+    - rm -rf polycule-$POLYCULE_VERSION-aarch64
+    - mv ./build/linux/arm64/release/bundle polycule-$POLYCULE_VERSION-aarch64
   tags:
     - aarch64
     - docker
@@ -261,15 +251,13 @@ build:linux_aarch64:
     paths:
       - polycule-*-aarch64
 
-build:debian_x86_64:
+build:debian:x86_64:
   image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-debian
-  extends: .build
-  before_script:
-    - apt update && apt install -y --no-install-recommends libssl-dev libmpv-dev libmimalloc-dev
-    - export VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
-    - sed -i "s/DATE/$(date -R)/g" debian/changelog
-    - sed -i "s/VERSION/$VERSION/g" debian/changelog
+  extends: .linux
   script:
+    - sed -i "s/DATE/$(date -R)/g" debian/changelog
+    - sed -i "s/VERSION/$PUBSPEC_VERSION/g" debian/changelog
+
     - dpkg-buildpackage
     - mv ../polycule_*.deb .
   tags:
@@ -279,16 +267,14 @@ build:debian_x86_64:
     paths:
       - polycule_*.deb
 
-build:debian_aarch64:
+build:debian:aarch64:
   image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-debian
-  extends: .build
-  before_script:
-    - apt update && apt install -y --no-install-recommends libssl-dev libmpv-dev libmimalloc-dev
-    - export VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
-    - sed -i "s/DATE/$(date -R)/g" debian/changelog
-    - sed -i "s/VERSION/$VERSION/g" debian/changelog
-    - sed -i "s/x64/arm64/g" debian/polycule.install
+  extends: .linux
   script:
+    - sed -i "s/DATE/$(date -R)/g" debian/changelog
+    - sed -i "s/VERSION/$PUBSPEC_VERSION/g" debian/changelog
+    - sed -i "s/x64/arm64/g" debian/polycule.install
+
     - dpkg-buildpackage
     - mv ../polycule_*.deb .
   tags:
@@ -306,7 +292,7 @@ pages:
   script:
     - mkdir -p public/web
     - if [[ -n "$ASSETLINKS_JSON" && -f "$ASSETLINKS_JSON" ]]; then mkdir public/.well-known && cp "$ASSETLINKS_JSON" public/.well-known/assetlinks.json ; fi
-    - cp -r polycule-web-$VERSION/* public/web/
+    - cp -r polycule-web-$POLYCULE_VERSION/* public/web/
   artifacts:
     paths:
       - public
