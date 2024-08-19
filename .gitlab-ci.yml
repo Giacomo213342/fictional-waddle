@@ -20,8 +20,9 @@ stages:
   - deploy
 
 cache:
-  key: ${CI_COMMIT_REF_SLUG}
+  key: ${CI_COMMIT_SHA}
   paths:
+    - build
     - polycule-*
 
 .versioning-setup: &versioning-setup
@@ -114,12 +115,13 @@ before_script:
   before_script:
     - *versioning-setup
     - *keystore-setup
-    - export BUNDLETOOL_ARGS=$([ -n "$KEY_BASE64" ] && echo "--ks=\"android/app/keystore.jks\" --ks-pass=\"file:$KEYSTORE_PASS_FILE\" --ks-key-alias=\"$KEYSTORE_ALIAS\" --key-pass=\"file:$KEYSTORE_KEY_FILE\"" || echo "")
+    - export BUNDLETOOL_ARGS=$([ -n "$KEY_BASE64" ] && echo "--ks=\"android/app/keystore.jks\" --ks-pass=file:\"$KEYSTORE_PASS_FILE\" --ks-key-alias=\"$KEYSTORE_ALIAS\" --key-pass=file:\"$KEYSTORE_KEY_FILE\"" || echo "")
     - curl -L -O https://github.com/google/bundletool/releases/download/$BUNDLETOOL_VERSION/bundletool-all-$BUNDLETOOL_VERSION.jar
     - export BUNDLETOOL="java -jar $(pwd)/bundletool-all-$BUNDLETOOL_VERSION.jar"
   after_script:
+    - *versioning-setup
     - unzip polycule-*.apks universal.apk
-    - universal.apk polycule-$POLYCULE_VERSION.apk
+    - mv universal.apk polycule-$POLYCULE_VERSION.apk
   artifacts:
     paths:
       - polycule-*.apk
