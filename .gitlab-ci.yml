@@ -94,6 +94,9 @@ before_script:
 
 .deploy:
   stage: deploy
+  before_script:
+    - *versioning-setup
+    - apk add git
   tags:
     - docker
   except:

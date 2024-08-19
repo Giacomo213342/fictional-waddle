@@ -40,7 +40,9 @@ class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
     super.initState();
   }
 
-  void _startBootstrap() {
+  Future<void> _startBootstrap() async {
+    // ensure we know all our sessions
+    await client.oneShotSync();
     _nextStage(
       () => client.encryption?.bootstrap(onUpdate: _handleBootstrapStage),
     );
