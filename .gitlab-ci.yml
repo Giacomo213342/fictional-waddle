@@ -3,7 +3,7 @@ variables:
   BUNDLETOOL_VERSION: 1.17.1
 
 include:
-  - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.20.1
+  - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.24.0
     inputs:
       gitlab_access_token: $dependabot_gitlab_access_token
       stage_name: scan
