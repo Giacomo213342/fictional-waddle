@@ -6,6 +6,7 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_de.dart' deferred as app_localizations_de;
 import 'app_localizations_en.dart' deferred as app_localizations_en;
+import 'app_localizations_et.dart' deferred as app_localizations_et;
 import 'app_localizations_nb.dart' deferred as app_localizations_nb;
 import 'app_localizations_nl.dart' deferred as app_localizations_nl;
 
@@ -97,6 +98,7 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('de'),
     Locale('en'),
+    Locale('et'),
     Locale('nb'),
     Locale('nl')
   ];
@@ -1188,7 +1190,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['de', 'en', 'nb', 'nl'].contains(locale.languageCode);
+      <String>['de', 'en', 'et', 'nb', 'nl'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1205,6 +1207,10 @@ Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
       return app_localizations_en
           .loadLibrary()
           .then((dynamic _) => app_localizations_en.AppLocalizationsEn());
+    case 'et':
+      return app_localizations_et
+          .loadLibrary()
+          .then((dynamic _) => app_localizations_et.AppLocalizationsEt());
     case 'nb':
       return app_localizations_nb
           .loadLibrary()
