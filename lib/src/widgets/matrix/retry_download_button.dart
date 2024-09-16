@@ -9,14 +9,16 @@ class RetryDownloadButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Wrap(
+      alignment: WrapAlignment.spaceEvenly,
+      runAlignment: WrapAlignment.spaceEvenly,
+      spacing: 16,
+      runSpacing: 16,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            AppLocalizations.of(context).errorDownloadingAttachment,
-          ),
+        Text(
+          AppLocalizations.of(context).errorDownloadingAttachment,
+          textAlign: TextAlign.center,
         ),
         FloatingActionButton.small(
           tooltip: AppLocalizations.of(context).retry,
