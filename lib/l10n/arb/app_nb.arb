@@ -293,14 +293,6 @@
   "@msgTypeBadEncrypted": {},
   "msgTypeNone": "Ikke send noen melding.",
   "@msgTypeNone": {},
-  "filesSelected": "{files, plural, =0{Ingen filer} =1{Én fil} other{{files} files}} valgt. Filsending støttes ikke enda.}",
-  "@filesSelected": {
-    "placeholders": {
-      "files": {
-        "type": "int"
-      }
-    }
-  },
   "yesterday": "I går",
   "@yesterday": {},
   "thisMonth": "Denne måneden",
