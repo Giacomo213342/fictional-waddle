@@ -8,6 +8,7 @@ import 'components/message_suffix.dart';
 import 'components/reaction_row.dart';
 import 'm_reply_container.dart';
 import 'm_room_message_content.dart';
+import 'message_bubble_timestamp.dart';
 
 class RoomMessage extends StatelessWidget {
   const RoomMessage({
@@ -33,9 +34,9 @@ class RoomMessage extends StatelessWidget {
     final isOwnMessage = event.senderId == client.userID;
 
     final previousMessageSameSender =
-        previousEvent?.isSameMessageBubble(event.senderId) ?? false;
+        previousEvent?.isSameMessageBubble(event) ?? false;
     final nextMessageSameSender =
-        nextEvent?.isSameMessageBubble(event.senderId) ?? false;
+        nextEvent?.isSameMessageBubble(event) ?? false;
 
     final border = BorderSide(
       color: Theme.of(context).colorScheme.primary,
@@ -64,79 +65,93 @@ class RoomMessage extends StatelessWidget {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          return Row(
+          return Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              MessagePrefix(
+              MessageBubbleTimestamp(
                 event: event,
-                editEvent: editEvent,
-                isOwnMessage: isOwnMessage,
-                nextMessageSameSender: nextMessageSameSender,
+                previousEvent: previousEvent,
               ),
-              ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 32),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        top: !previousMessageSameSender
-                            ? border
-                            : BorderSide.none,
-                        bottom:
-                            !nextMessageSameSender ? border : BorderSide.none,
-                        left: border,
-                        right: border,
-                      ),
-                    ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  MessagePrefix(
+                    event: event,
+                    editEvent: editEvent,
+                    isOwnMessage: isOwnMessage,
+                    nextMessageSameSender: nextMessageSameSender,
+                  ),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 32),
                     child: Padding(
-                      padding: const EdgeInsets.all(1),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          FutureBuilder(
-                            initialData: replyEventFallback,
-                            future: event.getReplyEvent(timeline),
-                            builder: (context, snapshot) {
-                              final replyEvent =
-                                  snapshot.data ?? replyEventFallback;
-                              return AnimatedSize(
-                                duration: const Duration(milliseconds: 150),
-                                alignment: Alignment.centerLeft,
-                                child: replyEvent == null
-                                    ? SizedBox(width: constraints.maxWidth - 74)
-                                    : ReplyContainer(
-                                        replyEvent: replyEvent
-                                            .getDisplayEvent(timeline),
-                                        replyToEventId: event.eventId,
-                                        constraints: constraints,
-                                      ),
-                              );
-                            },
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            top: !previousMessageSameSender
+                                ? border
+                                : BorderSide.none,
+                            bottom: !nextMessageSameSender
+                                ? border
+                                : BorderSide.none,
+                            left: border,
+                            right: border,
                           ),
-                          SizedBox(
-                            width: constraints.maxWidth - 74,
-                            child: RoomMessageContent(
-                              event: event.getDisplayEvent(timeline),
-                            ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(1),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              FutureBuilder(
+                                initialData: replyEventFallback,
+                                future: event.getReplyEvent(timeline),
+                                builder: (context, snapshot) {
+                                  final replyEvent =
+                                      snapshot.data ?? replyEventFallback;
+                                  return AnimatedSize(
+                                    duration: const Duration(milliseconds: 150),
+                                    alignment: Alignment.centerLeft,
+                                    child: replyEvent == null
+                                        ? SizedBox(
+                                            width: constraints.maxWidth - 74,
+                                          )
+                                        : ReplyContainer(
+                                            replyEvent: replyEvent
+                                                .getDisplayEvent(timeline),
+                                            replyToEventId: event.eventId,
+                                            constraints: constraints,
+                                          ),
+                                  );
+                                },
+                              ),
+                              SizedBox(
+                                width: constraints.maxWidth - 74,
+                                child: RoomMessageContent(
+                                  event: event.getDisplayEvent(timeline),
+                                ),
+                              ),
+                              ReactionRow(
+                                event: event,
+                                timeline: timeline,
+                              ),
+                            ],
                           ),
-                          ReactionRow(
-                            event: event,
-                            timeline: timeline,
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-              MessageSuffix(
-                event: event,
-                editEvent: editEvent,
-                isOwnMessage: isOwnMessage,
-                nextMessageSameSender: nextMessageSameSender,
+                  MessageSuffix(
+                    event: event,
+                    editEvent: editEvent,
+                    isOwnMessage: isOwnMessage,
+                    nextMessageSameSender: nextMessageSameSender,
+                  ),
+                ],
               ),
             ],
           );

@@ -78,9 +78,7 @@ class _TextMessageState extends State<TextMessage> {
     if (widget.event.isRichMessage) {
       html = widget.event.formattedText;
     } else {
-      html = widget.event.calcLocalizedBodyFallback(
-        const MatrixDefaultLocalizations(),
-      );
+      html = widget.event.body;
     }
 
     // in case the message was redacted or similar

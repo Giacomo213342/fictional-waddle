@@ -1,18 +1,19 @@
 import 'package:matrix/matrix.dart';
 
 extension SameMessageBubbleExtension on Event {
-  bool isSameMessageBubble(String relatedSenderId) {
-    if (senderId != relatedSenderId) {
+  bool isSameMessageBubble(Event other) {
+    if (senderId != other.senderId) {
       return false;
     }
     if (redacted) {
       return true;
     }
     return [
-      EventTypes.Message,
-      EventTypes.Sticker,
-    ].contains(
-      type,
-    );
+          EventTypes.Message,
+          EventTypes.Sticker,
+        ].contains(
+          type,
+        ) &&
+        other.originServerTs.difference(originServerTs).abs().inMinutes < 5;
   }
 }
