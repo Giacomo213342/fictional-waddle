@@ -77,6 +77,7 @@ class RoomMessageContent extends StatelessWidget {
         );
       case MessageTypes.Text:
       case MessageTypes.Emote:
+      case MessageTypes.Notice:
         return TextMessage(
           key: _textMessageKeyRegistry[globalKeyRegistryKey] ??=
               GlobalKey<State<TextMessage>>(),
@@ -84,7 +85,9 @@ class RoomMessageContent extends StatelessWidget {
           globalKeyRegistryKey: globalKeyRegistryKey,
         );
       default:
-        return Text(event.messageType);
+        return Text(
+          event.calcLocalizedBodyFallback(const MatrixDefaultLocalizations()),
+        );
     }
   }
 }

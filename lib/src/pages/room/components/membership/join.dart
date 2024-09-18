@@ -5,7 +5,7 @@ import 'package:matrix/matrix.dart';
 import '../../../../utils/matrix/neighboaring_event_extension.dart';
 import '../../../../widgets/ascii_progress_indicator.dart';
 import '../../room.dart';
-import '../event/compose/message_input.dart';
+import '../compose/message_input.dart';
 import '../load_history_indicator.dart';
 import '../timeline_event_tile.dart';
 

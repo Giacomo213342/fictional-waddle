@@ -39,6 +39,18 @@ class MessagePrefix extends StatelessWidget {
       prefix = MessageUserAvatar(
         event: event,
       );
+      if (event.messageType == MessageTypes.Notice) {
+        prefix = Stack(
+          alignment: Alignment.bottomRight,
+          children: [
+            prefix,
+            const Padding(
+              padding: EdgeInsets.all(2.0),
+              child: Icon(Icons.smart_toy),
+            ),
+          ],
+        );
+      }
     } else if (event.status.isError) {
       prefix = IconButton(
         tooltip: AppLocalizations.of(context).retrySending,
