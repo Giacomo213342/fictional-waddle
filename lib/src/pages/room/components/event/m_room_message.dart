@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../utils/matrix/same_message_bubble_extension.dart';
+import 'components/message_context_menu.dart';
 import 'components/message_prefix.dart';
 import 'components/message_suffix.dart';
 import 'components/reaction_row.dart';
@@ -88,58 +89,62 @@ class RoomMessage extends StatelessWidget {
                     constraints: const BoxConstraints(minHeight: 32),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            top: !previousMessageSameSender
-                                ? border
-                                : BorderSide.none,
-                            bottom: !nextMessageSameSender
-                                ? border
-                                : BorderSide.none,
-                            left: border,
-                            right: border,
+                      child: MessageContextMenu(
+                        event: event,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              top: !previousMessageSameSender
+                                  ? border
+                                  : BorderSide.none,
+                              bottom: !nextMessageSameSender
+                                  ? border
+                                  : BorderSide.none,
+                              left: border,
+                              right: border,
+                            ),
                           ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(1),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              FutureBuilder(
-                                initialData: replyEventFallback,
-                                future: event.getReplyEvent(timeline),
-                                builder: (context, snapshot) {
-                                  final replyEvent =
-                                      snapshot.data ?? replyEventFallback;
-                                  return AnimatedSize(
-                                    duration: const Duration(milliseconds: 150),
-                                    alignment: Alignment.centerLeft,
-                                    child: replyEvent == null
-                                        ? SizedBox(
-                                            width: constraints.maxWidth - 74,
-                                          )
-                                        : ReplyContainer(
-                                            replyEvent: replyEvent
-                                                .getDisplayEvent(timeline),
-                                            replyToEventId: event.eventId,
-                                            constraints: constraints,
-                                          ),
-                                  );
-                                },
-                              ),
-                              SizedBox(
-                                width: constraints.maxWidth - 74,
-                                child: RoomMessageContent(
-                                  event: event.getDisplayEvent(timeline),
+                          child: Padding(
+                            padding: const EdgeInsets.all(1),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                FutureBuilder(
+                                  initialData: replyEventFallback,
+                                  future: event.getReplyEvent(timeline),
+                                  builder: (context, snapshot) {
+                                    final replyEvent =
+                                        snapshot.data ?? replyEventFallback;
+                                    return AnimatedSize(
+                                      duration:
+                                          const Duration(milliseconds: 150),
+                                      alignment: Alignment.centerLeft,
+                                      child: replyEvent == null
+                                          ? SizedBox(
+                                              width: constraints.maxWidth - 74,
+                                            )
+                                          : ReplyContainer(
+                                              replyEvent: replyEvent
+                                                  .getDisplayEvent(timeline),
+                                              globalKeySuffix: event.eventId,
+                                              constraints: constraints,
+                                            ),
+                                    );
+                                  },
                                 ),
-                              ),
-                              ReactionRow(
-                                event: event,
-                                timeline: timeline,
-                              ),
-                            ],
+                                SizedBox(
+                                  width: constraints.maxWidth - 74,
+                                  child: RoomMessageContent(
+                                    event: event.getDisplayEvent(timeline),
+                                  ),
+                                ),
+                                ReactionRow(
+                                  event: event,
+                                  timeline: timeline,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

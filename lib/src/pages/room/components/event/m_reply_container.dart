@@ -9,13 +9,13 @@ class ReplyContainer extends StatelessWidget {
   const ReplyContainer({
     super.key,
     required this.replyEvent,
-    required this.replyToEventId,
+    required this.globalKeySuffix,
     required this.constraints,
   });
 
   final Event replyEvent;
   final BoxConstraints constraints;
-  final String replyToEventId;
+  final String globalKeySuffix;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +67,7 @@ class ReplyContainer extends StatelessWidget {
                               child: TextMessage(
                                 event: replyEvent,
                                 globalKeyRegistryKey:
-                                    replyEvent.eventId + replyToEventId,
+                                    replyEvent.eventId + globalKeySuffix,
                               ),
                             ),
                           ),

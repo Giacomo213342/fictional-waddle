@@ -377,5 +377,9 @@
   "pushChannelName": "Incoming messages",
   "directChats": "Direct message rooms",
   "groups": "Group rooms",
-  "unifiedPush": "UnifiedPush"
+  "unifiedPush": "UnifiedPush",
+  "reply": "Reply",
+  "edit": "Edit",
+  "redact": "Redact",
+  "copyMessage": "Copy message"
 }
