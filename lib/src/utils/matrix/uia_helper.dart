@@ -30,7 +30,7 @@ class UiaHelper {
         if (request.nextStages.isEmpty) {
           return;
         }
-        if (!request.nextStages.contains(LoginType.mLoginPassword.name)) {
+        if (!request.nextStages.contains(LoginType.mLoginPassword)) {
           log(
             'No compatible UIA stage found in ${request.nextStages}.',
             name: _logName,
