@@ -28,7 +28,25 @@ class RoomPage extends StatefulWidget {
   State<RoomPage> createState() => RoomController();
 }
 
+class _RoomScope extends InheritedWidget {
+  const _RoomScope({
+    required super.child,
+    required RoomController roomState,
+  }) : _roomState = roomState;
+
+  final RoomController _roomState;
+
+  @override
+  bool updateShouldNotify(_RoomScope old) => _roomState != old._roomState;
+}
+
 class RoomController extends State<RoomPage> {
+  static RoomController of(BuildContext context) {
+    final _RoomScope scope =
+        context.dependOnInheritedWidgetOfExactType<_RoomScope>()!;
+    return scope._roomState;
+  }
+
   final focusNode = FocusNode();
 
   bool loading = false;
@@ -42,6 +60,9 @@ class RoomController extends State<RoomPage> {
   final Map<String, CancelableOperation<String?>> txids = {};
 
   Room get room => widget.room;
+
+  Event? editEvent;
+  Event? replyEvent;
 
   @override
   void initState() {
@@ -59,7 +80,10 @@ class RoomController extends State<RoomPage> {
   }
 
   @override
-  Widget build(BuildContext context) => RoomView(this);
+  Widget build(BuildContext context) => _RoomScope(
+        roomState: this,
+        child: RoomView(this),
+      );
 
   void focusBack() => RoomListController.getFocusNode(room.id).requestFocus();
 
@@ -98,9 +122,13 @@ class RoomController extends State<RoomPage> {
       return;
     }
     final msgType = sendMsgType;
+    final editEvent = this.editEvent;
+    final replyEvent = this.replyEvent;
     messageController.text = '';
     setState(() {
       sendMsgType = MessageTypes.Text;
+      this.replyEvent = null;
+      this.editEvent = null;
     });
     try {
       String? eventId;
@@ -110,9 +138,17 @@ class RoomController extends State<RoomPage> {
           'msgtype': msgType,
           'body': message,
         };
-        eventId = await room.sendEvent(event);
+        eventId = await room.sendEvent(
+          event,
+          inReplyTo: replyEvent,
+          editEventId: editEvent?.eventId,
+        );
       } else {
-        eventId = await room.sendTextEvent(message);
+        eventId = await room.sendTextEvent(
+          message,
+          inReplyTo: replyEvent,
+          editEventId: editEvent?.eventId,
+        );
       }
       if (IntentManager.sharedTextListener.value != null) {
         IntentManager.claimShareIntent();
@@ -121,6 +157,8 @@ class RoomController extends State<RoomPage> {
     } catch (_) {
       setState(() {
         sendMsgType = msgType;
+        this.editEvent = editEvent;
+        this.replyEvent = replyEvent;
       });
       messageController.text = message;
     }
@@ -254,10 +292,13 @@ class RoomController extends State<RoomPage> {
 
   Future<void> _sendFileTransaction(MatrixFileTuple tuple) async {
     final txid = room.client.generateUniqueTransactionId();
+
     final operation = txids[txid] = CancelableOperation.fromFuture(
       room.sendFileEvent(
         tuple.file,
         thumbnail: tuple.thumbnail,
+        inReplyTo: replyEvent,
+        editEventId: editEvent?.eventId,
         txid: txid,
       ),
     );
@@ -265,5 +306,28 @@ class RoomController extends State<RoomPage> {
     await operation.value;
 
     txids.remove(txid);
+  }
+
+  void clearRelatedEvent() {
+    setState(() {
+      replyEvent = null;
+      editEvent = null;
+    });
+  }
+
+  void setReplyEvent(Event event) {
+    setState(() {
+      replyEvent = event;
+      editEvent = null;
+    });
+  }
+
+  void setEditEvent(Event event) {
+    messageController.text =
+        event.isRichMessage ? event.formattedText : event.body;
+    setState(() {
+      replyEvent = null;
+      editEvent = event;
+    });
   }
 }

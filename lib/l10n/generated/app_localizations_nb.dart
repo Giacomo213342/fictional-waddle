@@ -657,4 +657,16 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get unifiedPush => 'UnifiedPush';
+
+  @override
+  String get reply => 'Reply';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get redact => 'Redact';
+
+  @override
+  String get copyMessage => 'Copy message';
 }

@@ -1177,6 +1177,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'UnifiedPush'**
   String get unifiedPush;
+
+  /// No description provided for @reply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get reply;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @redact.
+  ///
+  /// In en, this message translates to:
+  /// **'Redact'**
+  String get redact;
+
+  /// No description provided for @copyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy message'**
+  String get copyMessage;
 }
 
 class _AppLocalizationsDelegate
