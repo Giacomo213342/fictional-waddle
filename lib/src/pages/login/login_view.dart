@@ -57,7 +57,7 @@ class LoginView extends StatelessWidget {
                     ),
                     if (!controller.loginLoading) ...[
                       if (data.$3.any(
-                        (flow) => flow.type == LoginType.mLoginPassword.name,
+                        (flow) => flow.type == LoginType.mLoginPassword,
                       ))
                         PasswordLoginProvider(controller),
                       if (data.$3.any(
@@ -80,8 +80,8 @@ class LoginView extends StatelessWidget {
                           .where(
                             (element) =>
                                 element.type != AuthenticationTypes.sso &&
-                                element.type != LoginType.mLoginPassword.name &&
-                                element.type != LoginType.mLoginToken.name,
+                                element.type != LoginType.mLoginPassword &&
+                                element.type != LoginType.mLoginToken,
                           )
                           .map(
                             (e) => Text(e.type.toString()),
