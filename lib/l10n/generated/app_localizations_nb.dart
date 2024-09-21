@@ -669,4 +669,12 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get copyMessage => 'Copy message';
+
+  @override
+  String get confirmRedact => 'Redact event';
+
+  @override
+  String redactEventLong(String eventId) {
+    return 'Do you permanently want to redact the event $eventId ?';
+  }
 }

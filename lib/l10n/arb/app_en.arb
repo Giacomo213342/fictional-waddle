@@ -381,5 +381,14 @@
   "reply": "Reply",
   "edit": "Edit",
   "redact": "Redact",
-  "copyMessage": "Copy message"
+  "copyMessage": "Copy message",
+  "confirmRedact": "Redact event",
+  "redactEventLong": "Do you permanently want to redact the event {eventId} ?",
+  "@redactEventLong": {
+    "placeholders": {
+        "eventId": {
+            "type": "String"
+        }
+    }
+  }
 }

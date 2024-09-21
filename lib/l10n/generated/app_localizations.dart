@@ -1201,6 +1201,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copy message'**
   String get copyMessage;
+
+  /// No description provided for @confirmRedact.
+  ///
+  /// In en, this message translates to:
+  /// **'Redact event'**
+  String get confirmRedact;
+
+  /// No description provided for @redactEventLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you permanently want to redact the event {eventId} ?'**
+  String redactEventLong(String eventId);
 }
 
 class _AppLocalizationsDelegate

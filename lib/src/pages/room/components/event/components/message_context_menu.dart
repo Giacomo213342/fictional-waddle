@@ -6,6 +6,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../room.dart';
+import '../m_reply_container.dart';
 
 class MessageContextMenu extends StatefulWidget {
   const MessageContextMenu({
@@ -76,19 +77,59 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
       context: context,
       builder: (context) => ListView.builder(
         shrinkWrap: true,
-        itemCount: items.length,
-        itemBuilder: (context, index) => ListTile(
-          title: Text(items[index].label!),
-          onTap: () {
-            Navigator.of(context).pop();
-            items[index].onPressed?.call();
-          },
-        ),
+        itemCount: items.length + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 32.0),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return ReplyContainer(
+                    replyEvent: widget.event,
+                    globalKeySuffix: 'context',
+                    constraints: constraints,
+                  );
+                },
+              ),
+            );
+          }
+          index--;
+          final button = items[index];
+          return ListTile(
+            title: Text(button.label!),
+            onTap: () {
+              Navigator.of(context).pop();
+              button.onPressed?.call();
+            },
+          );
+        },
       ),
     );
   }
 
   Future<void> _redactMessage() async {
+    final response = await showAdaptiveDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context).confirmRedact),
+        content: Text(
+          AppLocalizations.of(context).redactEventLong(widget.event.eventId),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(AppLocalizations.of(context).cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(AppLocalizations.of(context).redact),
+          ),
+        ],
+      ),
+    );
+    if (response != true) {
+      return;
+    }
     await widget.event.redactEvent();
   }
 
