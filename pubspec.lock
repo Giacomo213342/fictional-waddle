@@ -792,10 +792,11 @@ packages:
   matrix:
     dependency: "direct main"
     description:
-      name: matrix
-      sha256: bf2127e89041441ccd873a6435ff289a8f45e5e83337db95493bb239b56ed4aa
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: "braid/only-emotes-regex"
+      resolved-ref: "5dbe64bcdd0d56b8e9ab191bf7d61e4774e6a053"
+      url: "https://github.com/TheOneWithTheBraid/matrix-dart-sdk.git"
+    source: git
     version: "0.33.0"
   matrix_homeserver_recommendations:
     dependency: "direct main"
