@@ -2,14 +2,17 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:async/async.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../utils/file_selector.dart';
 import '../../widgets/intent_manager.dart';
 import '../room_list/room_list.dart';
+import 'components/compose/type_ahead_helper.dart';
 import 'components/timeline_event_tile.dart';
 import 'room_view.dart';
 
@@ -64,8 +67,16 @@ class RoomController extends State<RoomPage> {
   Event? editEvent;
   Event? replyEvent;
 
+  FocusNode? messageFocusNode;
+
+  final suggestionsController = SuggestionsController<TypeAheadOption>();
+
   @override
   void initState() {
+    messageFocusNode = FocusNode(
+      onKeyEvent: _handleMessageKeyEvent,
+    );
+
     messageController.addListener(_adjustMessageType);
 
     WidgetsBinding.instance.addPostFrameCallback((_) => _sendSharedData());
@@ -329,5 +340,23 @@ class RoomController extends State<RoomPage> {
       replyEvent = null;
       editEvent = event;
     });
+  }
+
+  KeyEventResult _handleMessageKeyEvent(FocusNode node, KeyEvent event) {
+    if (event.logicalKey == LogicalKeyboardKey.enter &&
+        !HardwareKeyboard.instance.isShiftPressed &&
+        !HardwareKeyboard.instance.isControlPressed &&
+        !HardwareKeyboard.instance.isAltPressed) {
+      final firstSuggestion = suggestionsController.suggestions?.first;
+      if (firstSuggestion != null) {
+        suggestionsController.select(firstSuggestion);
+      } else {
+        sendMessage();
+      }
+
+      return KeyEventResult.handled;
+    } else {
+      return KeyEventResult.ignored;
+    }
   }
 }
