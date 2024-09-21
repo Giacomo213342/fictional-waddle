@@ -92,12 +92,6 @@ dependency_overrides:
       url: https://github.com/TheOneWithTheBraid/flutter-connector.git
       ref: braid/flutter-cleanup
       path: unifiedpush
-  # https://github.com/UnifiedPush/flutter-connector/pull/154
-  unifiedpush_android:
-    git:
-      url: https://github.com/UnifiedPush/flutter-connector.git
-      ref: 2db319ab21
-      path: unifiedpush_android
 
 flutter:
   generate: true
