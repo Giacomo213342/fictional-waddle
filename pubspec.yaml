@@ -104,31 +104,31 @@ flutter:
   fonts:
     - family: Sono
       fonts:
-        - asset: assets/fonts/sono.ttf
+        - asset: assets/fonts/sono/Sono-VariableFont.ttf
     - family: Noto Color Emoji
       fonts:
-        - asset: assets/fonts/NotoColorEmoji-Regular.ttf
+        - asset: assets/fonts/notocoloremoji/NotoColorEmoji-Regular.ttf
     - family: Noto Sans Mono
       fonts:
-       - asset: assets/fonts/NotoSansMono-VariableFont.ttf
+       - asset: assets/fonts/notosansmono/NotoSansMono-VariableFont.ttf
     - family: GL Suetterlin
       fonts:
-        - asset: assets/fonts/GlSuetterlin-j710.otf
+        - asset: assets/fonts/glsuetterlin/GlSuetterlin-j710.otf
           weight: 200
     - family: Vollkorn
       fonts:
-        - asset: assets/fonts/Vollkorn-VariableFont.ttf
-        - asset: assets/fonts/Vollkorn-Italic-VariableFont.ttf
+        - asset: assets/fonts/vollkorn/Vollkorn-VariableFont.ttf
+        - asset: assets/fonts/vollkorn/Vollkorn-Italic-VariableFont.ttf
           style: italic
     - family: Inclusive Sans
       fonts:
-        - asset: assets/fonts/InclusiveSans-Regular.ttf
-        - asset: assets/fonts/InclusiveSans-Italic.ttf
+        - asset: assets/fonts/inclusivesans/InclusiveSans-Regular.ttf
+        - asset: assets/fonts/inclusivesans/InclusiveSans-Italic.ttf
           style: italic
     - family: OpenDyslexic
       fonts:
-        - asset: assets/fonts/OpenDyslexic3-Regular.ttf
-        - asset: assets/fonts/OpenDyslexic3-Bold.ttf
+        - asset: assets/fonts/opendyslexic3/OpenDyslexic3-Regular.ttf
+        - asset: assets/fonts/opendyslexic3/OpenDyslexic3-Bold.ttf
           weight: 700
     # we do not want to contact Google Fonts
     #
@@ -149,7 +149,7 @@ flutter:
     # Source : https://github.com/flutter/engine/blob/3.22.3/lib/web_ui/lib/src/engine/canvaskit/fonts.dart#L16
     - family: Roboto
       fonts:
-        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/roboto/Roboto-Regular.ttf
 
 import_sorter:
   comments: false

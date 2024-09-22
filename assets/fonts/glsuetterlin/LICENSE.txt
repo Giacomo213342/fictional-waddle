@@ -1,0 +1,12 @@
+GL-Suetterlin: Adobe Western 2 character sets
+
+(C)2008-2010 Gutenberg Labo, All rights reserved. http://gutenberg.sourceforge.jp/
+
+- GL-Suetterlin license
+  These fonts are free softwares.
+  Unlimited permission is granted to use, copy, and distribute it, with or without modification, either commercially and noncommercially.
+  THESE FONTS ARE PROVIDED "AS IS" WITHOUT WARRANTY.
+
+- About GL-Suetterlin font
+  GL-Suetterlin is designed as "Suetterlin script (old German blackletter handwriting)".
+  This font has characters of Adobe Western 2 and more some quatations and ligatures.
