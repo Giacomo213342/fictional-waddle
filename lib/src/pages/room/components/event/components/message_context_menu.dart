@@ -43,13 +43,50 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
 
   @override
   Widget build(BuildContext context) {
+    final child = Dismissible(
+      key: Key(widget.event.eventId),
+      confirmDismiss: (_) async {
+        _replyMessage();
+        return false;
+      },
+      /* background: IconTheme(
+        data: IconTheme.of(context).copyWith(size: 16),
+        child: const Padding(
+          padding: EdgeInsets.all(4.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(Icons.reply),
+              Icon(Icons.reply),
+            ],
+          ),
+        ),
+      ), */
+      child: widget.child,
+    );
+    /* if (!kIsWeb && Platform.isIOS) {
+      return CupertinoContextMenu(
+        actions: _getContextMenuButtons()
+            .map(
+              (item) => CupertinoContextMenuAction(
+                trailingIcon: item.icon,
+                isDestructiveAction: item.isDestructiveAction,
+                child: Text(item.label),
+              ),
+            )
+            .toList(),
+        enableHapticFeedback: true,
+        child: InheritedTheme.captureAll(context, child),
+      );
+    } */
     return GestureDetector(
       behavior: HitTestBehavior.deferToChild,
       onSecondaryTapUp: _secondaryTap,
       onSecondaryTap: () {},
       onLongPress: _longPress,
       onTap: _onTap,
-      child: widget.child,
+      child: child,
     );
   }
 
@@ -65,7 +102,16 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
           anchors: TextSelectionToolbarAnchors(
             primaryAnchor: details.globalPosition,
           ),
-          buttonItems: _getContextMenuButtons(),
+          buttonItems: _getContextMenuButtons()
+              .map(
+                (item) => ContextMenuButtonItem(
+                  onPressed: () {
+                    ContextMenuController.removeAny();
+                    item.onPressed.call();
+                  },
+                ),
+              )
+              .toList(),
         );
       },
     );
@@ -95,11 +141,13 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
           }
           index--;
           final button = items[index];
+          final icon = button.icon;
           return ListTile(
-            title: Text(button.label!),
+            leading: icon != null ? Icon(icon) : null,
+            title: Text(button.label),
             onTap: () {
               Navigator.of(context).pop();
-              button.onPressed?.call();
+              button.onPressed.call();
             },
           );
         },
@@ -149,45 +197,50 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
     await Clipboard.setData(ClipboardData(text: body));
   }
 
-  List<ContextMenuButtonItem> _getContextMenuButtons() {
+  List<ContextMenuItem> _getContextMenuButtons() {
     final room = widget.event.room;
 
     return [
-      ContextMenuButtonItem(
-        onPressed: () {
-          ContextMenuController.removeAny();
-          _copyMessage();
-        },
+      ContextMenuItem(
+        onPressed: _copyMessage,
         label: AppLocalizations.of(context).copyMessage,
         type: ContextMenuButtonType.copy,
       ),
       if (room.canSendDefaultMessages)
-        ContextMenuButtonItem(
-          onPressed: () {
-            ContextMenuController.removeAny();
-            _replyMessage();
-          },
+        ContextMenuItem(
+          onPressed: _replyMessage,
           label: AppLocalizations.of(context).reply,
           type: ContextMenuButtonType.custom,
         ),
       if (widget.event.senderId == room.client.userID)
-        ContextMenuButtonItem(
-          onPressed: () {
-            ContextMenuController.removeAny();
-            _editMessage();
-          },
+        ContextMenuItem(
+          onPressed: _editMessage,
           label: AppLocalizations.of(context).edit,
           type: ContextMenuButtonType.custom,
         ),
       if (widget.event.canRedact)
-        ContextMenuButtonItem(
-          onPressed: () {
-            ContextMenuController.removeAny();
-            _redactMessage();
-          },
+        ContextMenuItem(
+          onPressed: _redactMessage,
           label: AppLocalizations.of(context).redact,
           type: ContextMenuButtonType.delete,
+          isDestructiveAction: true,
         ),
     ];
   }
+}
+
+class ContextMenuItem {
+  const ContextMenuItem({
+    required this.label,
+    this.icon,
+    this.type = ContextMenuButtonType.custom,
+    this.isDestructiveAction = false,
+    required this.onPressed,
+  });
+
+  final String label;
+  final IconData? icon;
+  final ContextMenuButtonType type;
+  final bool isDestructiveAction;
+  final VoidCallback onPressed;
 }
