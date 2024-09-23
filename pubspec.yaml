@@ -15,7 +15,7 @@ dependencies:
   cross_file: ^0.3.4+1
   # required for native iOS icons
   cupertino_icons: ^1.0.8
-  diacritic: ^0.1.5
+  diacritic: ^0.1.6
   diffutil_dart: ^4.0.1
   dynamic_color: ^1.6.9
   emoji_extension: ^1.1.1
