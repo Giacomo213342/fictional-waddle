@@ -105,6 +105,8 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
           buttonItems: _getContextMenuButtons()
               .map(
                 (item) => ContextMenuButtonItem(
+                  label: item.label,
+                  type: item.type,
                   onPressed: () {
                     ContextMenuController.removeAny();
                     item.onPressed.call();
