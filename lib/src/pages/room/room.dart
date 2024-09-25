@@ -320,6 +320,9 @@ class RoomController extends State<RoomPage> {
   }
 
   void clearRelatedEvent() {
+    if (editEvent != null) {
+      messageController.clear();
+    }
     setState(() {
       replyEvent = null;
       editEvent = null;
@@ -331,15 +334,17 @@ class RoomController extends State<RoomPage> {
       replyEvent = event;
       editEvent = null;
     });
+    messageFocusNode?.requestFocus();
   }
 
   void setEditEvent(Event event) {
-    messageController.text =
-        event.isRichMessage ? event.formattedText : event.body;
+    messageController.text = event.body;
     setState(() {
       replyEvent = null;
       editEvent = event;
     });
+    setSendMsgType(event.messageType);
+    messageFocusNode?.requestFocus();
   }
 
   KeyEventResult _handleMessageKeyEvent(FocusNode node, KeyEvent event) {

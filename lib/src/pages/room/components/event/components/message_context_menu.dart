@@ -49,20 +49,7 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
         _replyMessage();
         return false;
       },
-      /* background: IconTheme(
-        data: IconTheme.of(context).copyWith(size: 16),
-        child: const Padding(
-          padding: EdgeInsets.all(4.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(Icons.reply),
-              Icon(Icons.reply),
-            ],
-          ),
-        ),
-      ), */
+      direction: DismissDirection.startToEnd,
       child: widget.child,
     );
     /* if (!kIsWeb && Platform.isIOS) {

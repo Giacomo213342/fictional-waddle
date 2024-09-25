@@ -32,28 +32,33 @@ class MessageInput extends StatelessWidget {
           AnimatedSize(
             duration: const Duration(milliseconds: 150),
             child: ClipRect(
-              child: SizedBox(
-                height: quotedEvent == null ? 0 : null,
-                child: Row(
-                  children: [
-                    if (quotedEvent != null)
-                      Expanded(
-                        child: LayoutBuilder(
-                          builder: (context, constraints) => ReplyContainer(
-                            replyEvent: quotedEvent,
-                            constraints: constraints,
-                            globalKeySuffix: 'compose',
+              child: Dismissible(
+                key: Key(quotedEvent?.eventId ?? 'empty'),
+                direction: DismissDirection.down,
+                onDismissed: (_) => controller.clearRelatedEvent(),
+                child: SizedBox(
+                  height: quotedEvent == null ? 0 : null,
+                  child: Row(
+                    children: [
+                      if (quotedEvent != null)
+                        Expanded(
+                          child: LayoutBuilder(
+                            builder: (context, constraints) => ReplyContainer(
+                              replyEvent: quotedEvent,
+                              constraints: constraints,
+                              globalKeySuffix: 'compose',
+                            ),
                           ),
                         ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: IconButton(
+                          onPressed: controller.clearRelatedEvent,
+                          icon: const Icon(Icons.cancel),
+                        ),
                       ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: IconButton(
-                        onPressed: controller.clearRelatedEvent,
-                        icon: const Icon(Icons.cancel),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

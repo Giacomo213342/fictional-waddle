@@ -19,10 +19,12 @@ class ReplyUserPrefix extends StatelessWidget {
         final user = snapshot.data ?? replyEvent.senderFromMemoryOrFallback;
         final name = user.displayName ?? user.id;
         return Text.rich(
-          textAlign: TextAlign.center,
+          textAlign: TextAlign.left,
+          overflow: TextOverflow.ellipsis,
           TextSpan(
             children: [
               WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
                 child: MxcAvatar(
                   uri: user.avatarUrl,
                   client: replyEvent.room.client,
