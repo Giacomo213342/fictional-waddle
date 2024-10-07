@@ -45,7 +45,10 @@
     </description>
 
     <url type="homepage">https://gitlab.com/polycule_client/polycule</url>
+    <url type="vcs-browser">https://gitlab.com/polycule_client/polycule.git</url>
     <url type="bugtracker">https://gitlab.com/polycule_client/polycule/-/issues</url>
+    <url type="translate">https://hosted.weblate.org/projects/polycule</url>
+    <url type="contribute">https://gitlab.com/polycule_client/polycule/-/blob/main/CONTRIBUTING.md?ref_type=heads</url>
 
     <developer id="business.braid" name="The one with the braid"/>
 
@@ -53,17 +56,95 @@
 
     <launchable type="desktop-id">business.braid.polycule.desktop</launchable>
 
+    <provides>
+        <mediatype>
+            x-scheme-handler/matrix
+        </mediatype>
+        <mediatype>
+            x-scheme-handler/web+polycule
+        </mediatype>
+        <mediatype>
+            x-scheme-handler/io.element.call
+        </mediatype>
+    </provides>
+
     <branding>
         <color type="primary">#3F51B5</color>
     </branding>
 
+    <screenshots>
+        <screenshot environment="gnome:dark">
+            <image type="source" width="1080" height="2097" scale="3">
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/01.png?ref_type=heads
+            </image>
+        </screenshot>
+        <screenshot environment="gnome:dark">
+            <image type="source" width="1080" height="2097" scale="3">
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/02.png?ref_type=heads
+            </image>
+        </screenshot>
+        <screenshot environment="gnome:dark">
+            <image type="source" width="1080" height="2097" scale="3">
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/03.png?ref_type=heads
+            </image>
+        </screenshot>
+        <screenshot environment="gnome:dark">
+            <image type="source" width="1080" height="2097" scale="3">
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/04.png?ref_type=heads
+            </image>
+        </screenshot>
+        <screenshot environment="gnome:dark">
+            <image type="source" width="1080" height="2097" scale="3">
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/05.png?ref_type=heads
+            </image>
+        </screenshot>
+        <screenshot environment="gnome:dark">
+            <image type="source" width="1080" height="2097" scale="3">
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/06.png?ref_type=heads
+            </image>
+        </screenshot>
+        <screenshot type="default"  environment="gnome:dark">
+            <image type="source" width="1080" height="2097" scale="3">
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/07.png?ref_type=heads
+            </image>
+        </screenshot>
+        <screenshot environment="gnome:dark">
+            <image type="source" width="1080" height="2097" scale="3">
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/08.png?ref_type=heads
+            </image>
+        </screenshot>
+        <screenshot environment="gnome:dark">
+            <image type="source" width="1080" height="2097" scale="3">
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/09.png?ref_type=heads
+            </image>
+        </screenshot>
+        <screenshot environment="gnome:dark">
+            <image type="source" width="1080" height="2097" scale="3">
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/10.png?ref_type=heads
+            </image>
+        </screenshot>
+    </screenshots>
+
+    <keywords>
+        <keyword translate="no">matrix</keyword>
+        <keyword>chat</keyword>
+        <keyword translate="no">element</keyword>
+    </keywords>
+
     <categories>
         <category>Office</category>
+        <category>Network</category>
+        <category>InstantMessaging</category>
+        <category>Chat</category>
+        <category>IRCClient</category>
+        <category>Telephony</category>
+        <category>VideoConference</category>
     </categories>
 
     <recommends>
         <display_length compare="ge">320</display_length>
     </recommends>
+
     <supports>
         <control>pointing</control>
         <control>keyboard</control>

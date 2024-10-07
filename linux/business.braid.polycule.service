@@ -1,4 +1,3 @@
 [D-BUS Service]
 Name=business.braid.polycule
 Exec=polycule --gapplication-service
-

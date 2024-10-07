@@ -1,0 +1,18 @@
+[Desktop Entry]
+Type=Application
+
+Name=< polycule >
+Name[nl]=< polycuul >
+Comment=A geeky and efficient [matrix] client for power users. (daemon mode)
+Comment[en]=A geeky and efficient [matrix] client for power users. (daemon mode)
+Keywords=matrix;chat;element
+
+Exec=polycule --gapplication-service
+NoDisplay=true
+Terminal=false
+StartupNotify=false
+Icon=business.braid.polycule
+Categories=Office
+X-GNOME-AutoRestart=true
+X-GNOME-UsesNotifications=true
+X-GNOME-HiddenUnderSystemd=true

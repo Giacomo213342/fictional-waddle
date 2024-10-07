@@ -11,9 +11,12 @@ Exec=polycule %U
 SingleMainWindow=true
 StartupWMClass=polycule
 Terminal=false
-StartupNotify=false
+StartupNotify=true
 Icon=business.braid.polycule
-Categories=Office
-X-Purism-FormFactor=Workstation;Mobile;
+Categories=Office;Network;InstantMessaging;Chat;IRCClient;Telephony;VideoConference
 MimeType=x-scheme-handler/matrix;x-scheme-handler/web+polycule;x-scheme-handler/io.element.call;
-
+# temporary fix to workaround GApplication Service ending on window close
+# Cause: https://github.com/flutter/engine/blob/main/shell/platform/linux/fl_platform_handler.cc#L256
+# DBusActivatable=true
+X-Purism-FormFactor=Workstation;Mobile;
+X-GNOME-UsesNotifications=true
