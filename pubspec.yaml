@@ -39,7 +39,7 @@ dependencies:
   image: ^4.1.7
   import_sorter: ^4.6.0
   intl: ">=0.18.0 <2.0.0"
-  just_audio: ^0.9.40
+  just_audio: ^0.9.41
   just_audio_media_kit: ^2.0.5
   just_waveform: ^0.0.5
   linkify: ^5.0.0
