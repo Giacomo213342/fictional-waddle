@@ -19,7 +19,7 @@ import package_info_plus
 import path_provider_foundation
 import screen_brightness_macos
 import share_plus
-import sqflite
+import sqflite_darwin
 import sqlcipher_flutter_libs
 import url_launcher_macos
 import wakelock_plus
