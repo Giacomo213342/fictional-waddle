@@ -1,3 +1,13 @@
+## v0.0.2
+
+- chore(deps): bump com.android.application from 8.6.1 to 8.7.0 in /android (The one with the braid)
+- chore(deps): bump flutter_lints from 4.0.0 to 5.0.0 (The one with the braid)
+- chore(deps): bump go_router from 14.2.8 to 14.3.0 (The one with the braid)
+- chore(deps): bump just_audio from 0.9.40 to 0.9.41 (The one with the braid)
+- chore: upgrade pub dependencies (The one with the braid)
+- feat: add further Linux metadata (The one with the braid)
+- fix: remove D-Bus activate from desktop file (The one with the braid)
+
 ## v0.0.1
 
 - Added translation using Weblate (Estonian) (Priit Jõerüüt)
