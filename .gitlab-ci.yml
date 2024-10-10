@@ -175,6 +175,38 @@ build:macos:
     paths:
       - polycule-*.app
 
+build:ios:debug:
+  extends: .build
+  script:
+    - flutter build ipa --no-codesign --debug $FLUTTER_ARGS
+    - rm -rf polycule-$POLYCULE_VERSION-debug.xcarchive
+    - mv build/ios/archive/Runner.xcarchive polycule-$POLYCULE_VERSION-debug.xcarchive
+  <<: *unsigned
+  tags:
+    - macos
+    - nix-shell
+  allow_failure: true
+  artifacts:
+    paths:
+      - polycule-*.xcarchive
+      - polycule-*.ipa
+
+build:ipa:
+  extends: .build
+  script:
+    - flutter build ipa --no-codesign $FLUTTER_ARGS
+    - rm -rf polycule-$POLYCULE_VERSION.xcarchive
+    - mv mv build/ios/archive/Runner.xcarchive polycule-$POLYCULE_VERSION.xcarchive
+  <<: *signed
+  tags:
+    - macos
+    - nix-shell
+  allow_failure: true
+  artifacts:
+    paths:
+      - polycule-*.xcarchive
+      - polycule-*.ipa
+
 build:bundle:debug:
   extends: .android
   script:
