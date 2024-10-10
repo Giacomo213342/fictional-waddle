@@ -85,7 +85,10 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
     }
 
     final httpClient = widget.client.httpClient;
-    final response = await httpClient.get(mxcUri);
+    final response = await httpClient.get(
+      mxcUri,
+      headers: {'authorization': 'Bearer ${widget.client.accessToken}'},
+    );
     if (response.statusCode != 200) {
       throw response;
     }
