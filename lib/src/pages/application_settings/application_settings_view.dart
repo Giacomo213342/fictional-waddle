@@ -22,7 +22,9 @@ class ApplicationSettingsView extends StatelessWidget {
       body: ListView(
         children: [
           Link(
-            uri: controller.makeSettingsUri(AppearanceSettingsPage.routeName),
+            uri: ApplicationSettingsPage.makeSettingsUri(
+              AppearanceSettingsPage.routeName,
+            ),
             builder: (context, followLink) => ListTile(
               leading: const Icon(Icons.color_lens),
               title: Text(
@@ -32,7 +34,9 @@ class ApplicationSettingsView extends StatelessWidget {
             ),
           ),
           Link(
-            uri: controller.makeSettingsUri(PushSettingsPage.routeName),
+            uri: ApplicationSettingsPage.makeSettingsUri(
+              PushSettingsPage.routeName,
+            ),
             builder: (context, followLink) => ListTile(
               leading: const Icon(Icons.notifications),
               title: Text(

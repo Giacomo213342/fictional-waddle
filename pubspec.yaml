@@ -107,10 +107,9 @@ flutter:
     - family: Noto Sans Mono
       fonts:
        - asset: assets/fonts/notosansmono/NotoSansMono-VariableFont.ttf
-    - family: GL Suetterlin
+    - family: Marck Script
       fonts:
-        - asset: assets/fonts/glsuetterlin/GlSuetterlin-j710.otf
-          weight: 200
+        - asset: assets/fonts/marckscript/MarckScript-Regular.ttf
     - family: Vollkorn
       fonts:
         - asset: assets/fonts/vollkorn/Vollkorn-VariableFont.ttf

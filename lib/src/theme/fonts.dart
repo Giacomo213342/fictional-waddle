@@ -14,8 +14,8 @@ enum PolyculeFonts {
   /// Noto Sans Mono - noto monospace font
   notoSansMono('Noto Sans Mono'),
 
-  /// GL Suetterlin - German hand writing
-  glSuetterlin('GL Suetterlin'),
+  /// Marck Script - serif hand writing
+  marckScript('Marck Script'),
 
   /// OpenDyslexic - dyslexia friendly accessibility font
   openDyslexic('OpenDyslexic'),
