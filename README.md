@@ -7,7 +7,7 @@ A geeky and efficient \[matrix\] client for power users.
 
 ## About
 
-**Is it usable yet ? - No. Absolutely not.**
+**Is it usable yet ? - Maybe, I dailydrive it.**
 
 See [Roadmap](#Roadmap) for feature details.
 
@@ -21,6 +21,7 @@ Flutter Linux-native integrations.
 ## Features
 
 - keyboard optimized
+- accessibility focussed development
 - no matrix.org !
 - fast and efficient
 - terminal style design
@@ -29,7 +30,13 @@ Flutter Linux-native integrations.
 ## Preview
 
 You can try to web-builds hosted on [GitLab pages](https://polycule.im/web/) or download some
-Linux builds from the CI jobs.
+Linux and Android builds from the CI jobs.
+
+|                                                              |                                                              |                                                              |                                                              |
+|--------------------------------------------------------------|--------------------------------------------------------------|--------------------------------------------------------------|--------------------------------------------------------------|
+| ![Screenshot 1](assets/screenshots/mobile/linux/dark/01.png) | ![Screenshot 2](assets/screenshots/mobile/linux/dark/02.png) | ![Screenshot 3](assets/screenshots/mobile/linux/dark/03.png) | ![Screenshot 4](assets/screenshots/mobile/linux/dark/04.png) |
+| ![Screenshot 5](assets/screenshots/mobile/linux/dark/05.png) | ![Screenshot 6](assets/screenshots/mobile/linux/dark/06.png) | ![Screenshot 7](assets/screenshots/mobile/linux/dark/07.png) | ![Screenshot 8](assets/screenshots/mobile/linux/dark/08.png) |
+| ![Screenshot 9](assets/screenshots/mobile/linux/dark/09.png) | ![Screenshot 6](assets/screenshots/mobile/linux/dark/10.png) |                                                              |                                                              |
 
 ## Thanks
 
@@ -42,32 +49,34 @@ might be quite similar in both clients - they both have a similar code base we k
 
 ## Roadmap
 
-| Feature                   |           Supported           |
-|---------------------------|:-----------------------------:|
-| Homeserver selection      |      :white_check_mark:       |
-| Homeserver proposals      |      :white_check_mark:       |
-| Login                     |                               |
-| ... password              |      :white_check_mark:       |
-| ... SSO                   | :negative_squared_cross_mark: |
-| ... native OIDC ready     | :negative_squared_cross_mark: |
-| Multi account             |                               |
-| ... routing               |      :white_check_mark:       |
-| ... login                 |      :white_check_mark:       |
-| ... incoming URI handling | :negative_squared_cross_mark: |
-| Room list                 |      :white_check_mark:       |
-| Room timeline             |      :white_check_mark:       |
-| Sliding sync              | :negative_squared_cross_mark: |
-| Sending files             | :negative_squared_cross_mark: |
-| HTML renderer             |      :white_check_mark:       |
-| User profile              | :negative_squared_cross_mark: |
-| Room details              | :negative_squared_cross_mark: |
-| Account settings          | :negative_squared_cross_mark: |
-| \[matrix\] widgets        | :negative_squared_cross_mark: |
-| VoIP signaling            | :negative_squared_cross_mark: |
-| Emoji picker              | :negative_squared_cross_mark: |
+| Feature                   |     Supported      |
+|---------------------------|:------------------:|
+| Homeserver selection      | :white_check_mark: |
+| Homeserver proposals      | :white_check_mark: |
+| Login                     |                    |
+| ... password              | :white_check_mark: |
+| ... SSO                   |        :x:         |
+| ... native OIDC ready     |        :x:         |
+| Multi account             |                    |
+| ... routing               | :white_check_mark: |
+| ... login                 | :white_check_mark: |
+| ... incoming URI handling | :white_check_mark: |
+| Room list                 | :white_check_mark: |
+| Room timeline             | :white_check_mark: |
+| Sliding sync              |        :x:         |
+| Sending files             | :white_check_mark: |
+| HTML renderer             | :white_check_mark: |
+| User profile              |        :x:         |
+| Room details              |        :x:         |
+| Account settings          |        :x:         |
+| \[matrix\] widgets        |        :x:         |
+| VoIP signaling            |        :x:         |
+| Emoji picker              |        :x:         |
 
 *Can you daily drive it ?* - Yes, I do.
 
 ## License
+
+Like this project ? [Buy me a Coffee](https://www.buymeacoffee.com/braid).
 
 This piece of software is published under the terms and conditions of the [EUPL-1.2](LICENSE).
