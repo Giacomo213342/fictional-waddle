@@ -146,7 +146,7 @@ class PolyculeThemeBuilder extends StatelessWidget {
           case Brightness.dark:
             return PolyculeFonts.sono;
           case Brightness.light:
-            return PolyculeFonts.glSuetterlin;
+            return PolyculeFonts.marckScript;
         }
     }
   }

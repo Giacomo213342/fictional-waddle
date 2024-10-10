@@ -10,6 +10,10 @@ class ApplicationSettingsPage extends StatefulWidget {
 
   static const routeName = '/settings';
 
+  static Uri makeSettingsUri(String routeName) {
+    return Uri.parse('${ApplicationSettingsPage.routeName}/$routeName');
+  }
+
   @override
   State<ApplicationSettingsPage> createState() =>
       ApplicationSettingsController();
@@ -19,10 +23,6 @@ class ApplicationSettingsController extends State<ApplicationSettingsPage> {
   @override
   Widget build(BuildContext context) =>
       ApplicationSettingsView(controller: this);
-
-  Uri makeSettingsUri(String routeName) {
-    return Uri.parse('${ApplicationSettingsPage.routeName}/$routeName');
-  }
 
   Future<void> showLanguageDialog() async {
     final result = await showAdaptiveDialog<LocaleResponse>(
