@@ -662,7 +662,7 @@
 					"-framework",
 					"\"SQLCipher\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = business.braid.polycule.macos;
+				PRODUCT_BUNDLE_IDENTIFIER = business.braid.polycule;
 				PRODUCT_COPYRIGHT = "Copyright © 2024 < polycule> authors. EUPL-1.2 licensed.";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -879,7 +879,7 @@
 					"-framework",
 					"\"SQLCipher\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = business.braid.polycule.macos;
+				PRODUCT_BUNDLE_IDENTIFIER = business.braid.polycule;
 				PRODUCT_COPYRIGHT = "Copyright © 2024 < polycule> authors. EUPL-1.2 licensed.";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -990,7 +990,7 @@
 					"-framework",
 					"\"SQLCipher\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = business.braid.polycule.macos;
+				PRODUCT_BUNDLE_IDENTIFIER = business.braid.polycule;
 				PRODUCT_COPYRIGHT = "Copyright © 2024 < polycule> authors. EUPL-1.2 licensed.";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;

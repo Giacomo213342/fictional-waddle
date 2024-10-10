@@ -31,7 +31,7 @@ PODS:
     - FlutterMacOS
   - share_plus (0.0.1):
     - FlutterMacOS
-  - sqflite (0.0.3):
+  - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
   - SQLCipher (4.5.7):
@@ -64,7 +64,7 @@ DEPENDENCIES:
   - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
   - screen_brightness_macos (from `Flutter/ephemeral/.symlinks/plugins/screen_brightness_macos/macos`)
   - share_plus (from `Flutter/ephemeral/.symlinks/plugins/share_plus/macos`)
-  - sqflite (from `Flutter/ephemeral/.symlinks/plugins/sqflite/darwin`)
+  - sqflite_darwin (from `Flutter/ephemeral/.symlinks/plugins/sqflite_darwin/darwin`)
   - sqlcipher_flutter_libs (from `Flutter/ephemeral/.symlinks/plugins/sqlcipher_flutter_libs/macos`)
   - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
   - wakelock_plus (from `Flutter/ephemeral/.symlinks/plugins/wakelock_plus/macos`)
@@ -106,8 +106,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/screen_brightness_macos/macos
   share_plus:
     :path: Flutter/ephemeral/.symlinks/plugins/share_plus/macos
-  sqflite:
-    :path: Flutter/ephemeral/.symlinks/plugins/sqflite/darwin
+  sqflite_darwin:
+    :path: Flutter/ephemeral/.symlinks/plugins/sqflite_darwin/darwin
   sqlcipher_flutter_libs:
     :path: Flutter/ephemeral/.symlinks/plugins/sqlcipher_flutter_libs/macos
   url_launcher_macos:
@@ -119,7 +119,7 @@ SPEC CHECKSUMS:
   app_links: 10e0a0ab602ffaf34d142cd4862f29d34b303b2a
   audio_session: dea1f41890dbf1718f04a56f1d6150fd50039b72
   dynamic_color: 2eaa27267de1ca20d879fbd6e01259773fb1670f
-  file_selector_macos: 54fdab7caa3ac3fc43c9fac4d7d8d231277f8cf2
+  file_selector_macos: cc3858c981fe6889f364731200d6232dac1d812d
   flutter_local_notifications: 3805ca215b2fb7f397d78b66db91f6a747af52e4
   flutter_secure_storage_macos: 59459653abe1adb92abbc8ea747d79f8d19866c9
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
@@ -128,14 +128,14 @@ SPEC CHECKSUMS:
   media_kit_libs_macos_video: b3e2bbec2eef97c285f2b1baa7963c67c753fb82
   media_kit_native_event_loop: 81fd5b45192b72f8b5b69eaf5b540f45777eb8d5
   media_kit_video: c75b07f14d59706c775778e4dd47dd027de8d1e5
-  package_info_plus: fa739dd842b393193c5ca93c26798dff6e3d0e0c
+  package_info_plus: d2f71247aab4b6521434f887276093acc70d214c
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   screen_brightness_macos: 2d6d3af2165592d9a55ffcd95b7550970e41ebda
-  share_plus: 36537c04ce0c3e3f5bd297ce4318b6d5ee5fd6cf
-  sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
+  share_plus: a182a58e04e51647c0481aadabbc4de44b3a2bce
+  sqflite_darwin: a553b1fd6fe66f53bbb0fe5b4f5bab93f08d7a13
   SQLCipher: 5e6bfb47323635c8b657b1b27d25c5f1baf63bf5
   sqlcipher_flutter_libs: db7047866b877c027b050bb808b5480c68955c5e
-  url_launcher_macos: 5f437abeda8c85500ceb03f5c1938a8c5a705399
+  url_launcher_macos: c82c93949963e55b228a30115bd219499a6fe404
   wakelock_plus: 4783562c9a43d209c458cb9b30692134af456269
 
 PODFILE CHECKSUM: 1f48745afecf9f937e0f2495531abbb8fe83232c
