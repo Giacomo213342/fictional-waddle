@@ -677,4 +677,98 @@ class AppLocalizationsNb extends AppLocalizations {
   String redactEventLong(String eventId) {
     return 'Do you permanently want to redact the event $eventId ?';
   }
+
+  @override
+  String get logoutCommandSyntax => 'Logout from this account.';
+
+  @override
+  String get roomnameCommandSyntax => 'Set the room name to [name].';
+
+  @override
+  String get roomdescriptionCommandSyntax =>
+      'Set the room description to [description].';
+
+  @override
+  String get sendCommandSyntax => 'Send a text message. [m.text]';
+
+  @override
+  String get meCommandSyntax => 'Describe your mood. [m.emote]';
+
+  @override
+  String get dmCommandSyntax => 'Create a DM room. [mxid] [--no-encryption?].';
+
+  @override
+  String get createCommandSyntax => 'Create a room. [--no-encryption?].';
+
+  @override
+  String get plainCommandSyntax =>
+      'Send a text message without markdown parsing. [m.text]';
+
+  @override
+  String get htmlCommandSyntax => 'Send a text message in raw HTML. [m.text]';
+
+  @override
+  String get reactCommandSyntax => 'Reply with a reaction. [reaction]';
+
+  @override
+  String get joinCommandSyntax => 'Join a room. [mxid]';
+
+  @override
+  String get leaveCommandSyntax => 'Leave the present room.';
+
+  @override
+  String get opCommandSyntax => 'Set a member power level. [mxid] [50?]';
+
+  @override
+  String get kickCommandSyntax => 'Kick member. [mxid]';
+
+  @override
+  String get banCommandSyntax => 'Ban member. [mxid]';
+
+  @override
+  String get unbanCommandSyntax => 'Unban member. [mxid]';
+
+  @override
+  String get inviteCommandSyntax => 'Invite member. [mxid]';
+
+  @override
+  String get myroomnickCommandSyntax =>
+      'Set a custom nick in this room. [displayname]';
+
+  @override
+  String get myroomavatarCommandSyntax =>
+      'Set a custom mxc avatar in this room. [mxc]';
+
+  @override
+  String get discardsessionCommandSyntax =>
+      'Discard your outbound room session.';
+
+  @override
+  String get clearcacheCommandSyntax => 'Clear the account\'s local cache.';
+
+  @override
+  String get markasdmCommandSyntax =>
+      'Mark the current room as a DM with a member. [mxid]';
+
+  @override
+  String get markasgroupCommandSyntax =>
+      'Remove the current room from DM list.';
+
+  @override
+  String get hugCommandSyntax => 'Send virtual hugs.';
+
+  @override
+  String get googlyCommandSyntax => 'Send virtual googly eyes.';
+
+  @override
+  String get cuddleCommandSyntax => 'Send virtual cuddles.';
+
+  @override
+  String get sendrawCommandSyntax => 'Send a raw event. [content]';
+
+  @override
+  String get ignoreCommandSyntax => 'Ignore a user. [mxid]';
+
+  @override
+  String get unignoreCommandSyntax => 'Unignore a user. [mxid]';
 }

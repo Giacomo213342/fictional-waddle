@@ -386,9 +386,38 @@
   "redactEventLong": "Do you permanently want to redact the event {eventId} ?",
   "@redactEventLong": {
     "placeholders": {
-        "eventId": {
-            "type": "String"
-        }
+      "eventId": {
+        "type": "String"
+      }
     }
-  }
+  },
+  "logoutCommandSyntax": "Logout from this account.",
+  "roomnameCommandSyntax": "Set the room name to [name].",
+  "roomdescriptionCommandSyntax": "Set the room description to [description].",
+  "sendCommandSyntax": "Send a text message. [m.text]",
+  "meCommandSyntax": "Describe your mood. [m.emote]",
+  "dmCommandSyntax": "Create a DM room. [mxid] [--no-encryption?].",
+  "createCommandSyntax": "Create a room. [--no-encryption?].",
+  "plainCommandSyntax": "Send a text message without markdown parsing. [m.text]",
+  "htmlCommandSyntax": "Send a text message in raw HTML. [m.text]",
+  "reactCommandSyntax": "Reply with a reaction. [reaction]",
+  "joinCommandSyntax": "Join a room. [mxid]",
+  "leaveCommandSyntax": "Leave the present room.",
+  "opCommandSyntax": "Set a member power level. [mxid] [50?]",
+  "kickCommandSyntax": "Kick member. [mxid]",
+  "banCommandSyntax": "Ban member. [mxid]",
+  "unbanCommandSyntax": "Unban member. [mxid]",
+  "inviteCommandSyntax": "Invite member. [mxid]",
+  "myroomnickCommandSyntax": "Set a custom nick in this room. [displayname]",
+  "myroomavatarCommandSyntax": "Set a custom mxc avatar in this room. [mxc]",
+  "discardsessionCommandSyntax": "Discard your outbound room session.",
+  "clearcacheCommandSyntax": "Clear the account's local cache.",
+  "markasdmCommandSyntax": "Mark the current room as a DM with a member. [mxid]",
+  "markasgroupCommandSyntax": "Remove the current room from DM list.",
+  "hugCommandSyntax": "Send virtual hugs.",
+  "googlyCommandSyntax": "Send virtual googly eyes.",
+  "cuddleCommandSyntax": "Send virtual cuddles.",
+  "sendrawCommandSyntax": "Send a raw event. [content]",
+  "ignoreCommandSyntax": "Ignore a user. [mxid]",
+  "unignoreCommandSyntax": "Unignore a user. [mxid]"
 }

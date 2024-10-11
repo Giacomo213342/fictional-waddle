@@ -21,6 +21,7 @@ import '../../../pages/room_list/room_list.dart';
 import '../../../pages/splash_screen/splash_screen.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../utils/matrix/database/polycule_database_builder.dart';
+import '../../../utils/matrix/polycule_command_extension.dart';
 import '../../../utils/matrix/push_manager.dart';
 import '../../../utils/matrix/uia_helper.dart';
 import '../../../utils/runtime_suffix.dart';
@@ -177,7 +178,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
           ? NativeImplementationsWebWorker(Uri.parse('web_worker.dart.js'))
           : NativeImplementationsIsolate(compute),
     );
-
+    client.registerPolyculeCommands();
     _loginStateListener[identifier]?.cancel();
     _loginStateListener[identifier] = client.onLoginStateChanged.stream.listen(
       (loginState) => _handleLoginStateChange(client, loginState),

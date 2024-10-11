@@ -353,9 +353,7 @@ class RoomController extends State<RoomPage> {
         !HardwareKeyboard.instance.isControlPressed &&
         !HardwareKeyboard.instance.isAltPressed) {
       final firstSuggestion = suggestionsController.suggestions?.first;
-      if (firstSuggestion != null) {
-        suggestionsController.select(firstSuggestion);
-      } else {
+      if (firstSuggestion == null) {
         sendMessage();
       }
 
