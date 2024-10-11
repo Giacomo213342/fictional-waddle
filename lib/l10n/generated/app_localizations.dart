@@ -1213,6 +1213,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Do you permanently want to redact the event {eventId} ?'**
   String redactEventLong(String eventId);
+
+  /// No description provided for @logoutCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout from this account.'**
+  String get logoutCommandSyntax;
+
+  /// No description provided for @roomnameCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the room name to [name].'**
+  String get roomnameCommandSyntax;
+
+  /// No description provided for @roomdescriptionCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the room description to [description].'**
+  String get roomdescriptionCommandSyntax;
+
+  /// No description provided for @sendCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a text message. [m.text]'**
+  String get sendCommandSyntax;
+
+  /// No description provided for @meCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your mood. [m.emote]'**
+  String get meCommandSyntax;
+
+  /// No description provided for @dmCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a DM room. [mxid] [--no-encryption?].'**
+  String get dmCommandSyntax;
+
+  /// No description provided for @createCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a room. [--no-encryption?].'**
+  String get createCommandSyntax;
+
+  /// No description provided for @plainCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a text message without markdown parsing. [m.text]'**
+  String get plainCommandSyntax;
+
+  /// No description provided for @htmlCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a text message in raw HTML. [m.text]'**
+  String get htmlCommandSyntax;
+
+  /// No description provided for @reactCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply with a reaction. [reaction]'**
+  String get reactCommandSyntax;
+
+  /// No description provided for @joinCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Join a room. [mxid]'**
+  String get joinCommandSyntax;
+
+  /// No description provided for @leaveCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave the present room.'**
+  String get leaveCommandSyntax;
+
+  /// No description provided for @opCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a member power level. [mxid] [50?]'**
+  String get opCommandSyntax;
+
+  /// No description provided for @kickCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Kick member. [mxid]'**
+  String get kickCommandSyntax;
+
+  /// No description provided for @banCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Ban member. [mxid]'**
+  String get banCommandSyntax;
+
+  /// No description provided for @unbanCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Unban member. [mxid]'**
+  String get unbanCommandSyntax;
+
+  /// No description provided for @inviteCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite member. [mxid]'**
+  String get inviteCommandSyntax;
+
+  /// No description provided for @myroomnickCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a custom nick in this room. [displayname]'**
+  String get myroomnickCommandSyntax;
+
+  /// No description provided for @myroomavatarCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a custom mxc avatar in this room. [mxc]'**
+  String get myroomavatarCommandSyntax;
+
+  /// No description provided for @discardsessionCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard your outbound room session.'**
+  String get discardsessionCommandSyntax;
+
+  /// No description provided for @clearcacheCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear the account\'s local cache.'**
+  String get clearcacheCommandSyntax;
+
+  /// No description provided for @markasdmCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark the current room as a DM with a member. [mxid]'**
+  String get markasdmCommandSyntax;
+
+  /// No description provided for @markasgroupCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the current room from DM list.'**
+  String get markasgroupCommandSyntax;
+
+  /// No description provided for @hugCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Send virtual hugs.'**
+  String get hugCommandSyntax;
+
+  /// No description provided for @googlyCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Send virtual googly eyes.'**
+  String get googlyCommandSyntax;
+
+  /// No description provided for @cuddleCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Send virtual cuddles.'**
+  String get cuddleCommandSyntax;
+
+  /// No description provided for @sendrawCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a raw event. [content]'**
+  String get sendrawCommandSyntax;
+
+  /// No description provided for @ignoreCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore a user. [mxid]'**
+  String get ignoreCommandSyntax;
+
+  /// No description provided for @unignoreCommandSyntax.
+  ///
+  /// In en, this message translates to:
+  /// **'Unignore a user. [mxid]'**
+  String get unignoreCommandSyntax;
 }
 
 class _AppLocalizationsDelegate

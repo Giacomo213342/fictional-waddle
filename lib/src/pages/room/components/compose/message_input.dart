@@ -20,7 +20,8 @@ class MessageInput extends StatelessWidget {
   Widget build(BuildContext context) {
     final typeAheadHelper = TypeAheadHelper(
       controller: controller.messageController,
-      client: controller.room.client,
+      room: controller.room,
+      l10n: AppLocalizations.of(context),
     );
 
     final quotedEvent = controller.replyEvent ?? controller.editEvent;
