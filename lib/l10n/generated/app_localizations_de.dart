@@ -694,10 +694,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get meCommandSyntax => 'Describe your mood. [m.emote]';
 
   @override
-  String get dmCommandSyntax => 'Create a DM room. [mxid] [--no-encryption?].';
+  String get dmCommandSyntax => 'Create a DM room. [mxid] [--no-encryption?]';
 
   @override
-  String get createCommandSyntax => 'Create a room. [--no-encryption?].';
+  String get createCommandSyntax => 'Create a room. [--no-encryption?]';
 
   @override
   String get plainCommandSyntax =>
@@ -770,4 +770,19 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get unignoreCommandSyntax => 'Unignore a user. [mxid]';
+
+  @override
+  String get noErrorReported => 'No error reported.';
+
+  @override
+  String get commandInvalid => 'This is no valid < polycule > command.';
+
+  @override
+  String get commandHelp => 'Show help';
+
+  @override
+  String get availableCommands => 'Available commands';
+
+  @override
+  String get commandError => 'Exit code 1';
 }

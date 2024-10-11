@@ -396,8 +396,8 @@
   "roomdescriptionCommandSyntax": "Set the room description to [description].",
   "sendCommandSyntax": "Send a text message. [m.text]",
   "meCommandSyntax": "Describe your mood. [m.emote]",
-  "dmCommandSyntax": "Create a DM room. [mxid] [--no-encryption?].",
-  "createCommandSyntax": "Create a room. [--no-encryption?].",
+  "dmCommandSyntax": "Create a DM room. [mxid] [--no-encryption?]",
+  "createCommandSyntax": "Create a room. [--no-encryption?]",
   "plainCommandSyntax": "Send a text message without markdown parsing. [m.text]",
   "htmlCommandSyntax": "Send a text message in raw HTML. [m.text]",
   "reactCommandSyntax": "Reply with a reaction. [reaction]",
@@ -419,5 +419,10 @@
   "cuddleCommandSyntax": "Send virtual cuddles.",
   "sendrawCommandSyntax": "Send a raw event. [content]",
   "ignoreCommandSyntax": "Ignore a user. [mxid]",
-  "unignoreCommandSyntax": "Unignore a user. [mxid]"
+  "unignoreCommandSyntax": "Unignore a user. [mxid]",
+  "noErrorReported": "No error reported.",
+  "commandInvalid": "This is no valid < polycule > command.",
+  "commandHelp": "Show help",
+  "availableCommands": "Available commands",
+  "commandError": "Exit code 1"
 }
