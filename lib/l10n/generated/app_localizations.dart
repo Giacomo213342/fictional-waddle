@@ -1247,13 +1247,13 @@ abstract class AppLocalizations {
   /// No description provided for @dmCommandSyntax.
   ///
   /// In en, this message translates to:
-  /// **'Create a DM room. [mxid] [--no-encryption?].'**
+  /// **'Create a DM room. [mxid] [--no-encryption?]'**
   String get dmCommandSyntax;
 
   /// No description provided for @createCommandSyntax.
   ///
   /// In en, this message translates to:
-  /// **'Create a room. [--no-encryption?].'**
+  /// **'Create a room. [--no-encryption?]'**
   String get createCommandSyntax;
 
   /// No description provided for @plainCommandSyntax.
@@ -1387,6 +1387,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unignore a user. [mxid]'**
   String get unignoreCommandSyntax;
+
+  /// No description provided for @noErrorReported.
+  ///
+  /// In en, this message translates to:
+  /// **'No error reported.'**
+  String get noErrorReported;
+
+  /// No description provided for @commandInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This is no valid < polycule > command.'**
+  String get commandInvalid;
+
+  /// No description provided for @commandHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Show help'**
+  String get commandHelp;
+
+  /// No description provided for @availableCommands.
+  ///
+  /// In en, this message translates to:
+  /// **'Available commands'**
+  String get availableCommands;
+
+  /// No description provided for @commandError.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit code 1'**
+  String get commandError;
 }
 
 class _AppLocalizationsDelegate

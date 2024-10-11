@@ -11,6 +11,8 @@ import 'package:matrix/matrix.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../utils/file_selector.dart';
 import '../../widgets/intent_manager.dart';
+import '../../widgets/matrix/command_error_dialog.dart';
+import '../../widgets/matrix/command_helper_dialog.dart';
 import '../room_list/room_list.dart';
 import 'components/compose/type_ahead_helper.dart';
 import 'components/timeline_event_tile.dart';
@@ -155,16 +157,50 @@ class RoomController extends State<RoomPage> {
           editEventId: editEvent?.eventId,
         );
       } else {
-        eventId = await room.sendTextEvent(
-          message,
-          inReplyTo: replyEvent,
-          editEventId: editEvent?.eventId,
-        );
+        final isCommand = message.startsWith('/');
+        try {
+          final result = await room.sendTextEvent(
+            message,
+            inReplyTo: replyEvent,
+            editEventId: editEvent?.eventId,
+          );
+          if (isCommand) {
+            if (!mounted) {
+              return;
+            }
+            String? message =
+                result ?? AppLocalizations.of(context).commandInvalid;
+            if (message.isEmpty) {
+              message == AppLocalizations.of(context).noErrorReported;
+            }
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(message),
+                action: result == null
+                    ? SnackBarAction(
+                        label: AppLocalizations.of(context).commandHelp,
+                        onPressed: showCommandHelp,
+                      )
+                    : null,
+              ),
+            );
+          } else {
+            eventId = result;
+          }
+        } catch (e) {
+          if (isCommand && mounted) {
+            await CommandErrorDialog(error: e).show(context);
+          }
+          rethrow;
+        }
       }
-      if (IntentManager.sharedTextListener.value != null) {
-        IntentManager.claimShareIntent();
+      if (eventId != null) {
+        if (IntentManager.sharedTextListener.value != null) {
+          IntentManager.claimShareIntent();
+        }
+        onMessageSent(eventId);
       }
-      onMessageSent(eventId);
     } catch (_) {
       setState(() {
         sendMsgType = msgType;
@@ -361,5 +397,9 @@ class RoomController extends State<RoomPage> {
     } else {
       return KeyEventResult.ignored;
     }
+  }
+
+  Future<void> showCommandHelp() async {
+    await CommandHelperDialog(client: room.client).show(context);
   }
 }
