@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:matrix/matrix.dart';
+
 import '../../../l10n/generated/app_localizations.dart';
 import '../../theme/fonts.dart';
 
 class CommandErrorDialog extends StatelessWidget {
   const CommandErrorDialog({super.key, required this.error});
 
-  final Object error;
+  final CommandException error;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(AppLocalizations.of(context).commandError),
       content: Text(
-        error.toString(),
+        error.message,
         style: TextStyle(fontFamily: PolyculeFonts.notoSansMono.name),
       ),
       actions: [

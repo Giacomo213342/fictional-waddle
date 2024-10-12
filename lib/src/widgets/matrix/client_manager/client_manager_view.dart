@@ -15,16 +15,14 @@ class ClientManagerView extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final tabBarOnTop = constraints.maxWidth > 764;
-        return Scaffold(
-          appBar: tabBarOnTop
-              ? ClientTabBar(
+        return Material(
+          child: Column(
+            children: [
+              if (tabBarOnTop)
+                ClientTabBar(
                   manager,
                   position: VerticalDirection.up,
-                )
-              : null,
-          primary: true,
-          body: Column(
-            children: [
+                ),
               Expanded(
                 child: InheritedProvider<GetClientCallback>(
                   create: (context) => manager.getActiveClient,

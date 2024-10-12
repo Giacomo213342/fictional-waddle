@@ -397,7 +397,7 @@
   "sendCommandSyntax": "Send a text message. [m.text]",
   "meCommandSyntax": "Describe your mood. [m.emote]",
   "dmCommandSyntax": "Create a DM room. [mxid] [--no-encryption?]",
-  "createCommandSyntax": "Create a room. [--no-encryption?]",
+  "createCommandSyntax": "Create a room. [name?] [--no-encryption?]",
   "plainCommandSyntax": "Send a text message without markdown parsing. [m.text]",
   "htmlCommandSyntax": "Send a text message in raw HTML. [m.text]",
   "reactCommandSyntax": "Reply with a reaction. [reaction]",

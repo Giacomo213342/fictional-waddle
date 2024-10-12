@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'package:matrix/matrix.dart';
+
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
+import '../../../utils/matrix/command_localization_helper.dart';
 import '../../../widgets/matrix/avatar_builder/profile_avatar_builder.dart';
 import '../room_list.dart';
+import 'command_preview_tile.dart';
 import 'room_list_tile.dart';
 
 class RoomSearchBar extends StatelessWidget {
@@ -13,6 +17,8 @@ class RoomSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cmdL10nHelper =
+        CommandLocalizationHelper(AppLocalizations.of(context));
     return SafeArea(
       child: SearchAnchor(
         searchController: controller.searchController,
@@ -55,22 +61,45 @@ class RoomSearchBar extends StatelessWidget {
             ),
           );
         },
-
         headerHeight: 56 - 1,
-        suggestionsBuilder: (_, searchController) =>
-            controller.filterRooms(searchController.text).map(
-                  (room) => RoomListTile(
-                    controller,
-                    room: room,
-                    clientifyLocationCallback: context.clientifyLocation,
-                    onActivate: () => searchController.closeView(
-                      room.getLocalizedDisplayname(),
-                    ),
+        suggestionsBuilder: (_, searchController) {
+          final query = searchController.text;
+          final rooms = controller.filterRooms(query).map(
+                (room) => RoomListTile(
+                  controller,
+                  room: room,
+                  clientifyLocationCallback: context.clientifyLocation,
+                  onActivate: () => searchController.closeView(
+                    room.getLocalizedDisplayname(),
                   ),
                 ),
-        viewOnSubmitted: controller.searchSubmitted,
+              );
+          List<Widget> commands = [];
+          if (query.startsWith('/')) {
+            final command = query.split(' ').first.substring(1);
+            final msg = query.replaceFirst('/$command', '').trim();
+            final args = CommandArgs(
+              msg: msg,
+              client: controller.client,
+            );
 
-        // viewBackgroundColor: Colors.transparent,
+            commands = controller.client.commands.keys
+                .where((cmd) => cmd.startsWith(command))
+                .map(
+                  (cmd) => CommandPreviewTile(
+                    controller: controller,
+                    command: cmd,
+                    description: cmdL10nHelper.lookupCommandDescription(cmd),
+                    args: args,
+                  ),
+                )
+                .toList();
+          }
+
+          return [...commands, ...rooms];
+        },
+        viewOnSubmitted: controller.searchSubmitted,
+        viewBackgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
         viewConstraints: const BoxConstraints(minHeight: double.maxFinite),
         viewHintText: AppLocalizations.of(context).searchPromptLabel,
       ),

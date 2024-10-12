@@ -6,6 +6,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../router/extensions/go_router_path_extension.dart';
 import '../../utils/matrix/matrix_state.dart';
+import '../../widgets/matrix/command_error_dialog.dart';
 import '../room/room.dart';
 import '../ssss_bootstrap/ssss_bootstrap.dart';
 import 'room_list_view.dart';
@@ -111,11 +112,52 @@ class RoomListController extends MatrixState<RoomListPage> {
   }
 
   void searchSubmitted(String query) {
+    if (query.startsWith('/')) {
+      final command = client.commands.keys
+          .where(
+            (command) => command.startsWith(
+              query.split(' ').first.substring(1),
+            ),
+          )
+          .firstOrNull;
+
+      if (command != null) {
+        final args = CommandArgs(
+          msg: query.replaceFirst('/$command', '').trim(),
+          client: client,
+        );
+        runCommand(command, args);
+        return;
+      }
+    }
     final room = filterRooms(query).first;
 
     searchController.closeView('');
     searchFocus.unfocus();
 
     context.goMultiClient(RoomPage.makeRouteName(room.id));
+  }
+
+  Future<void> runCommand(String command, CommandArgs args) async {
+    final stdout = StringBuffer();
+    final callback = client.commands[command];
+    try {
+      await callback?.call(args, stdout);
+      final result = stdout.toString();
+      searchController.closeView(null);
+      if (result.isEmpty || !mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result),
+        ),
+      );
+    } on CommandException catch (e) {
+      if (!mounted) {
+        return;
+      }
+      await CommandErrorDialog(error: e).show(context);
+    }
   }
 }

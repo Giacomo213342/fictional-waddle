@@ -697,7 +697,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get dmCommandSyntax => 'Create a DM room. [mxid] [--no-encryption?]';
 
   @override
-  String get createCommandSyntax => 'Create a room. [--no-encryption?]';
+  String get createCommandSyntax => 'Create a room. [name?] [--no-encryption?]';
 
   @override
   String get plainCommandSyntax =>
