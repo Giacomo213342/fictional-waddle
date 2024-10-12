@@ -1253,7 +1253,7 @@ abstract class AppLocalizations {
   /// No description provided for @createCommandSyntax.
   ///
   /// In en, this message translates to:
-  /// **'Create a room. [--no-encryption?]'**
+  /// **'Create a room. [name?] [--no-encryption?]'**
   String get createCommandSyntax;
 
   /// No description provided for @plainCommandSyntax.

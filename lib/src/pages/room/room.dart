@@ -130,7 +130,7 @@ class RoomController extends State<RoomPage> {
   }
 
   Future<void> sendMessage() async {
-    final message = messageController.text.trim();
+    String message = messageController.text.trim();
     if (message.isEmpty) {
       return;
     }
@@ -158,41 +158,36 @@ class RoomController extends State<RoomPage> {
         );
       } else {
         final isCommand = message.startsWith('/');
-        try {
-          final result = await room.sendTextEvent(
-            message,
-            inReplyTo: replyEvent,
-            editEventId: editEvent?.eventId,
-          );
-          if (isCommand) {
-            if (!mounted) {
+        final stdout = StringBuffer();
+
+        eventId = await room.sendTextEvent(
+          message,
+          inReplyTo: replyEvent,
+          editEventId: editEvent?.eventId,
+          commandStdout: stdout,
+        );
+
+        if (isCommand) {
+          if (!mounted) {
+            return;
+          }
+          final command = message.split(' ').first;
+          if (command == '/help') {
+            final selectedCommand = await showCommandHelp();
+            if (selectedCommand == null) {
               return;
             }
-            String? message =
-                result ?? AppLocalizations.of(context).commandInvalid;
-            if (message.isEmpty) {
-              message == AppLocalizations.of(context).noErrorReported;
-            }
-
+            message = message.replaceFirst('/help', selectedCommand);
+            throw Exception('Help command selected');
+          }
+          String result = stdout.toString();
+          if (result.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(message),
-                action: result == null
-                    ? SnackBarAction(
-                        label: AppLocalizations.of(context).commandHelp,
-                        onPressed: showCommandHelp,
-                      )
-                    : null,
+                content: Text(result),
               ),
             );
-          } else {
-            eventId = result;
           }
-        } catch (e) {
-          if (isCommand && mounted) {
-            await CommandErrorDialog(error: e).show(context);
-          }
-          rethrow;
         }
       }
       if (eventId != null) {
@@ -201,6 +196,17 @@ class RoomController extends State<RoomPage> {
         }
         onMessageSent(eventId);
       }
+    } on CommandException catch (e) {
+      setState(() {
+        sendMsgType = msgType;
+        this.editEvent = editEvent;
+        this.replyEvent = replyEvent;
+      });
+      messageController.text = message;
+      if (mounted) {
+        await CommandErrorDialog(error: e).show(context);
+      }
+      rethrow;
     } catch (_) {
       setState(() {
         sendMsgType = msgType;
@@ -208,6 +214,7 @@ class RoomController extends State<RoomPage> {
         this.replyEvent = replyEvent;
       });
       messageController.text = message;
+      rethrow;
     }
   }
 
@@ -399,7 +406,7 @@ class RoomController extends State<RoomPage> {
     }
   }
 
-  Future<void> showCommandHelp() async {
-    await CommandHelperDialog(client: room.client).show(context);
+  Future<String?> showCommandHelp() async {
+    return await CommandHelperDialog(client: room.client).show(context);
   }
 }

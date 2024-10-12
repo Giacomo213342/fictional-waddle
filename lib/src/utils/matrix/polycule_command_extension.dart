@@ -2,19 +2,27 @@ import 'package:matrix/matrix.dart';
 
 extension PolyculeCommandExtension on Client {
   void registerPolyculeCommands() {
-    addCommand('logout', (CommandArgs args) async {
+    addCommand('logout', (args, stdout) async {
       await logout();
-      return '';
+      return null;
     });
-    addCommand('roomname', (CommandArgs args) async {
+    addCommand('roomname', (args, stdout) async {
+      final room = args.room;
+      if (room == null) {
+        throw const RoomCommandException();
+      }
       final name = args.msg.trim();
-      await args.room.setName(name);
-      return name;
+      await room.setName(name);
+      return null;
     });
-    addCommand('roomdescription', (CommandArgs args) async {
+    addCommand('roomdescription', (CommandArgs args, stdout) async {
+      final room = args.room;
+      if (room == null) {
+        throw const RoomCommandException();
+      }
       final name = args.msg.trim();
-      await args.room.setDescription(name);
-      return name;
+      await room.setDescription(name);
+      return null;
     });
   }
 }
