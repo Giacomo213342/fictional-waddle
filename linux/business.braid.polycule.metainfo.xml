@@ -15,20 +15,35 @@
         https://gitlab.com/polycule_client/polycule/-/raw/main/assets/logo/logo-circle.png
     </icon>
 
+    <!-- fallback localization for a particular cursed D implementation -->
+    <summary>
+        A geeky and efficient [matrix] client for power users
+    </summary>
     <summary xml:lang="en">
-        A geeky and efficient [matrix] client for power users.
+        A geeky and efficient [matrix] client for power users
     </summary>
 
     <description>
-        <p xml:lang="en">
-            <em>Is it usable yet ? - No. Absolutely not.</em>
+        <p>
+            Beep boop and I had too much time during boring work meetings. Using this client as
+            a small piece to practice some matrix related stuff.
         </p>
         <p xml:lang="en">
             Beep boop and I had too much time during boring work meetings. Using this client as
             a small piece to practice some matrix related stuff.
         </p>
+
+        <p>
+            I'm especially considering to experiment with Sliding Sync and Flutter Linux-native integrations.
+        </p>
         <p xml:lang="en">
             I'm especially considering to experiment with Sliding Sync and Flutter Linux-native integrations.
+        </p>
+
+        <p>
+            <em>
+                Features
+            </em>
         </p>
         <p xml:lang="en">
             <em>
@@ -36,10 +51,15 @@
             </em>
         </p>
         <ul>
+            <li>keyboard optimized</li>
             <li xml:lang="en">keyboard optimized</li>
+            <li>no matrix.org !</li>
             <li xml:lang="en">no matrix.org !</li>
+            <li>fast and efficient</li>
             <li xml:lang="en">fast and efficient</li>
+            <li>terminal style design</li>
             <li xml:lang="en">terminal style design</li>
+            <li>cross-platform</li>
             <li xml:lang="en">cross-platform</li>
         </ul>
     </description>
@@ -50,7 +70,10 @@
     <url type="translate">https://hosted.weblate.org/projects/polycule</url>
     <url type="contribute">https://gitlab.com/polycule_client/polycule/-/blob/main/CONTRIBUTING.md?ref_type=heads</url>
 
-    <developer id="business.braid" name="The one with the braid"/>
+    <developer id="business.braid">
+        <name>The one with the braid</name>
+        <name xml:lang="en">The one with the braid</name>
+    </developer>
 
     <content_rating type="oars-1.1"/>
 
@@ -103,7 +126,7 @@
                 https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/06.png?ref_type=heads
             </image>
         </screenshot>
-        <screenshot type="default"  environment="gnome:dark">
+        <screenshot type="default" environment="gnome:dark">
             <image type="source" width="1080" height="2097" scale="3">
                 https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/07.png?ref_type=heads
             </image>
@@ -128,6 +151,7 @@
     <keywords>
         <keyword translate="no">matrix</keyword>
         <keyword>chat</keyword>
+        <keyword xml:lang="en">chat</keyword>
         <keyword translate="no">element</keyword>
     </keywords>
 
@@ -141,10 +165,6 @@
         <category>VideoConference</category>
     </categories>
 
-    <recommends>
-        <display_length compare="ge">320</display_length>
-    </recommends>
-
     <supports>
         <control>pointing</control>
         <control>keyboard</control>
@@ -153,6 +173,7 @@
 
     <recommends>
         <internet>always</internet>
+        <display_length compare="ge">320</display_length>
     </recommends>
     <requires>
         <internet>first-run</internet>

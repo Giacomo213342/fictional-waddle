@@ -3,8 +3,8 @@ Type=Application
 
 Name=< polycule >
 Name[nl]=< polycuul >
-Comment=A geeky and efficient [matrix] client for power users. (daemon mode)
-Comment[en]=A geeky and efficient [matrix] client for power users. (daemon mode)
+Comment=A geeky and efficient [matrix] client for power users (daemon mode)
+Comment[en]=A geeky and efficient [matrix] client for power users (daemon mode)
 Keywords=matrix;chat;element
 
 Exec=polycule --gapplication-service
