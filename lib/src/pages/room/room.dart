@@ -14,6 +14,7 @@ import '../../widgets/intent_manager.dart';
 import '../../widgets/matrix/command_error_dialog.dart';
 import '../../widgets/matrix/command_helper_dialog.dart';
 import '../room_list/room_list.dart';
+import 'components/compose/sticker_pack_bottom_sheet.dart';
 import 'components/compose/type_ahead_helper.dart';
 import 'components/timeline_event_tile.dart';
 import 'room_view.dart';
@@ -408,5 +409,25 @@ class RoomController extends State<RoomPage> {
 
   Future<String?> showCommandHelp() async {
     return await CommandHelperDialog(client: room.client).show(context);
+  }
+
+  Future<void> showStickerSelector(String? msgType) async {
+    final emote = await StickerPackBottomSheet(
+      room: room,
+    ).showBottomSheet(context);
+    setSendMsgType();
+    if (emote == null) {
+      return;
+    }
+    await room.sendEvent(
+      {
+        'body': MessageTypes.Sticker,
+        'url': emote.url.toString(),
+        'info': emote.info,
+      },
+      type: MessageTypes.Sticker,
+      inReplyTo: replyEvent,
+      editEventId: editEvent?.eventId,
+    );
   }
 }

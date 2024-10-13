@@ -1417,6 +1417,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Exit code 1'**
   String get commandError;
+
+  /// No description provided for @noStickerPacks.
+  ///
+  /// In en, this message translates to:
+  /// **'Neither your account nor this room has any sticker pack available.'**
+  String get noStickerPacks;
 }
 
 class _AppLocalizationsDelegate

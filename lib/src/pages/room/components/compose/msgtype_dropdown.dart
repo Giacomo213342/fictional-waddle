@@ -18,6 +18,7 @@ class MsgtypeDropdown extends StatefulWidget {
     MessageTypes.Video,
     MessageTypes.Audio,
     MessageTypes.File,
+    MessageTypes.Sticker,
   ];
 
   static const msgTypesIcons = {
@@ -114,6 +115,8 @@ class _MsgtypeDropdownState extends State<MsgtypeDropdown> {
       case MessageTypes.Audio:
       case MessageTypes.File:
         widget.controller.sendFile(msgType);
+      case MessageTypes.Sticker:
+        widget.controller.showStickerSelector(msgType);
       default:
         widget.controller.setSendMsgType(MessageTypes.Text);
 

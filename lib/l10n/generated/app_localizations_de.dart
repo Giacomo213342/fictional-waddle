@@ -785,4 +785,8 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get commandError => 'Exit code 1';
+
+  @override
+  String get noStickerPacks =>
+      'Neither your account nor this room has any sticker pack available.';
 }
