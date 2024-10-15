@@ -78,7 +78,7 @@ class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
         break;
       case BootstrapState.askUseExistingSsss:
         // in case of passphrase migration, don't use the present SSSS
-        final bool useExistingSsss = widget.passphrase == null;
+        final bool useExistingSsss = widget.passphrase == null || !_wipeSsss;
         _nextStage(() => bootstrap.useExistingSsss(useExistingSsss));
         break;
       case BootstrapState.askUnlockSsss:
