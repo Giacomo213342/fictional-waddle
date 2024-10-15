@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
@@ -24,6 +24,7 @@ import '../../../utils/matrix/polycule_command_extension.dart';
 import '../../../utils/matrix/push_manager.dart';
 import '../../../utils/matrix/uia_helper.dart';
 import '../../../utils/runtime_suffix.dart';
+import '../../../utils/secure_storage.dart';
 import '../../intent_manager.dart';
 import '../key_verification/key_verification_request_widget.dart';
 import '../uia_dialog.dart';
@@ -124,8 +125,13 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     );
     storageLock = Completer<void>();
 
-    const storage = FlutterSecureStorage();
-    final json = await storage.read(key: _clientNamesKey + suffix);
+    String? json;
+    try {
+      json = await kPolyculeSecureStorage.read(key: _clientNamesKey + suffix);
+    } on PlatformException catch (e, s) {
+      await kPolyculeSecureStorage.delete(key: _clientNamesKey + suffix);
+      Logs().wtf('Error reading client storage', e, s);
+    }
     if (json != null) {
       final identifiers = (jsonDecode(json) as Iterable).whereType<int>();
       for (final identifier in identifiers) {
@@ -350,8 +356,6 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     );
     storageLock = Completer<void>();
 
-    const storage = FlutterSecureStorage();
-
     final identifier = client.clientName.clientIdentifier;
 
     await client.dispose();
@@ -364,7 +368,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
     final clientIdentifiers =
         activeClients.map((e) => e.clientName.clientIdentifier);
-    await storage.write(
+    await kPolyculeSecureStorage.write(
       key: _clientNamesKey + suffix,
       value: jsonEncode(clientIdentifiers.toList()),
     );
@@ -410,11 +414,14 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     );
     storageLock = Completer<void>();
 
-    const storage = FlutterSecureStorage();
-
-    final storedJson = await storage.read(
-      key: _clientNamesKey + suffix,
-    );
+    String? storedJson;
+    try {
+      storedJson =
+          await kPolyculeSecureStorage.read(key: _clientNamesKey + suffix);
+    } on PlatformException catch (e, s) {
+      await kPolyculeSecureStorage.delete(key: _clientNamesKey + suffix);
+      Logs().wtf('Error reading client storage', e, s);
+    }
 
     Set<int> identifiers = {};
 
@@ -424,7 +431,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     if (!identifiers.contains(identifier)) {
       identifiers.add(identifier);
     }
-    await storage.write(
+    await kPolyculeSecureStorage.write(
       key: _clientNamesKey + suffix,
       value: jsonEncode(identifiers.toList()),
     );
