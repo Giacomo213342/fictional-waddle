@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
@@ -115,15 +113,13 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
     final future = storageLock?.future;
     if (future != null) {
-      log(
+      Logs().d(
         'Storage locked. Waiting with client initialization.',
-        name: _storageLockKey,
       );
       await future;
     }
-    log(
+    Logs().d(
       'Acquiring storage lock for client initialization.',
-      name: _storageLockKey,
     );
     storageLock = Completer<void>();
 
@@ -145,10 +141,9 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     }
     storageLock?.complete();
     storageLock = null;
-    log(
+    Logs().d(
       'Released storage lock after initialization. '
       '${activeClients.length} clients running.',
-      name: _storageLockKey,
     );
 
     setState(() {
@@ -344,15 +339,13 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
     final future = storageLock?.future;
     if (future != null) {
-      log(
+      Logs().d(
         'Storage locked. Waiting with client deletion.',
-        name: _storageLockKey,
       );
       await future;
     }
-    log(
+    Logs().d(
       'Acquiring storage lock for client deletion.',
-      name: _storageLockKey,
     );
     storageLock = Completer<void>();
 
@@ -377,9 +370,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     storageLock?.complete();
     storageLock = null;
 
-    log(
+    Logs().d(
       'Released storage lock for client deletion.',
-      name: _storageLockKey,
     );
 
     if (widget.activeClientIdentifier == identifier) {
@@ -407,15 +399,13 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
     final future = storageLock?.future;
     if (future != null) {
-      log(
+      Logs().d(
         'Storage locked. Waiting to store the new client.',
-        name: _storageLockKey,
       );
       await future;
     }
-    log(
+    Logs().d(
       'Acquiring storage lock in order to store the new client.',
-      name: _storageLockKey,
     );
     storageLock = Completer<void>();
 
@@ -432,18 +422,16 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     }
     if (!identifiers.contains(identifier)) {
       identifiers.add(identifier);
-
-      await storage.write(
-        key: _clientNamesKey + suffix,
-        value: jsonEncode(identifiers.toList()),
-      );
     }
+    await storage.write(
+      key: _clientNamesKey + suffix,
+      value: jsonEncode(identifiers.toList()),
+    );
     storageLock?.complete();
     storageLock = null;
 
-    log(
+    Logs().d(
       'Released storage lock after storing the new client.',
-      name: _storageLockKey,
     );
   }
 
