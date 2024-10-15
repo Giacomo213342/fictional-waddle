@@ -426,5 +426,7 @@
   "availableCommands": "Available commands",
   "commandError": "Exit code 1",
   "noStickerPacks": "Neither your account nor this room has any sticker pack available.",
-  "react": "Send reaction"
+  "react": "Send reaction",
+  "logs": "Application logs",
+  "reload": "Reload"
 }

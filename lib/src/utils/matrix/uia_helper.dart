@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:matrix/matrix.dart';
 
 import '../password_cache_manager.dart';
@@ -13,14 +11,12 @@ class UiaHelper {
     required this.authenticationPasswordCallback,
   });
 
-  static const _logName = 'UIA Helper';
-
   final Client client;
   final UiaRequest request;
   final UiaTokenCallback authenticationPasswordCallback;
 
   Future<void> respond() async {
-    log('UIA stage: ${request.state}.', name: _logName);
+    Logs().v('UIA stage: ${request.state}.');
     switch (request.state) {
       case UiaRequestState.done:
       case UiaRequestState.fail:
@@ -31,10 +27,7 @@ class UiaHelper {
           return;
         }
         if (!request.nextStages.contains(LoginType.mLoginPassword)) {
-          log(
-            'No compatible UIA stage found in ${request.nextStages}.',
-            name: _logName,
-          );
+          Logs().v('No compatible UIA stage found in ${request.nextStages}.');
           return;
         }
 

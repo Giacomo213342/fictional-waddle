@@ -1,9 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:matrix/encryption.dart';
+import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
@@ -52,7 +51,7 @@ class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) => next.call());
 
   void _handleBootstrapStage(Bootstrap bootstrap) {
-    log('Bootstrap state: ${bootstrap.state}', name: 'SSSS');
+    Logs().v('Bootstrap state: ${bootstrap.state}');
     // print the key for debugging as long as we don't support guided key backup
     // print(bootstrap.newSsssKey?.recoveryKey);
     switch (bootstrap.state) {

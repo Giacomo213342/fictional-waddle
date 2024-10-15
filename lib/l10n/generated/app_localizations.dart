@@ -1429,6 +1429,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Send reaction'**
   String get react;
+
+  /// No description provided for @logs.
+  ///
+  /// In en, this message translates to:
+  /// **'Application logs'**
+  String get logs;
+
+  /// No description provided for @reload.
+  ///
+  /// In en, this message translates to:
+  /// **'Reload'**
+  String get reload;
 }
 
 class _AppLocalizationsDelegate
