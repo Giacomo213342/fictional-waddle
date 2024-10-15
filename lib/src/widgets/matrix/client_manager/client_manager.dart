@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
@@ -58,7 +59,7 @@ class ClientManagerWidget extends StatefulWidget {
 class ClientManager extends State<ClientManagerWidget> with RouteAware {
   static const _clientNamesKey = 'client_names';
 
-  static const _storageLockKey = 'storage_lock';
+  // static const _storageLockKey = 'storage_lock';
 
   static String _makeClientName(int identifier) =>
       'polycule_client_$identifier';
