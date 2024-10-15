@@ -5,6 +5,7 @@ import 'package:url_launcher/link.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import 'application_settings.dart';
 import 'pages/appearance.dart';
+import 'pages/logs.dart';
 import 'pages/push.dart';
 
 class ApplicationSettingsView extends StatelessWidget {
@@ -41,6 +42,18 @@ class ApplicationSettingsView extends StatelessWidget {
               leading: const Icon(Icons.notifications),
               title: Text(
                 AppLocalizations.of(context).pushSettings,
+              ),
+              onTap: followLink,
+            ),
+          ),
+          Link(
+            uri: ApplicationSettingsPage.makeSettingsUri(
+              LogsPage.routeName,
+            ),
+            builder: (context, followLink) => ListTile(
+              leading: const Icon(Icons.developer_mode),
+              title: Text(
+                AppLocalizations.of(context).logs,
               ),
               onTap: followLink,
             ),

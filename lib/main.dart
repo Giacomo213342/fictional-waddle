@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -21,11 +20,10 @@ void main(List<String>? args) {
     },
     (error, stack) {
       // TODO: de-obfuscate web stack traces using source maps
-      log(
+      Logs().e(
         'Error launching main applications',
-        error: error,
-        stackTrace: stack,
-        name: 'zone_guard',
+        error,
+        stack,
       );
     },
   );

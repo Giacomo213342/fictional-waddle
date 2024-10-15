@@ -793,4 +793,10 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get react => 'Send reaction';
+
+  @override
+  String get logs => 'Application logs';
+
+  @override
+  String get reload => 'Reload';
 }
