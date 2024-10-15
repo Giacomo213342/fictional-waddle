@@ -1,5 +1,5 @@
 variables:
-  FLUTTER_VERSION: 3.24.2
+  FLUTTER_VERSION: 3.24.3
   BUNDLETOOL_VERSION: 1.17.1
 
 include:
@@ -22,7 +22,6 @@ stages:
 cache:
   key: ${CI_COMMIT_SHA}
   paths:
-    - build
     - polycule-*
 
 .versioning-setup: &versioning-setup
@@ -179,7 +178,7 @@ build:ios:debug:
   extends: .build
   script:
     - flutter build ipa --no-codesign --debug $FLUTTER_ARGS
-    - rm -rf polycule-$POLYCULE_VERSION-debug.xcarchive
+    - rm -rf polycule-$POLYCULE_VERSION-debug.xcarchive || true
     - mv build/ios/archive/Runner.xcarchive polycule-$POLYCULE_VERSION-debug.xcarchive
   <<: *unsigned
   tags:
@@ -195,7 +194,7 @@ build:ipa:
   extends: .build
   script:
     - flutter build ipa --no-codesign $FLUTTER_ARGS
-    - rm -rf polycule-$POLYCULE_VERSION.xcarchive
+    - rm -rf polycule-$POLYCULE_VERSION.xcarchive || true
     - mv mv build/ios/archive/Runner.xcarchive polycule-$POLYCULE_VERSION.xcarchive
   <<: *signed
   tags:
