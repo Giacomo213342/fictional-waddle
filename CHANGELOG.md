@@ -1,3 +1,20 @@
+## v0.0.3
+
+- chore: bump Flutter (The one with the braid)
+- chore(deps): bump com.android.application in /android (The one with the braid)
+- chore(deps): bump org.jetbrains.kotlin.android in /android (The one with the braid)
+- chore: improve iOS context menu (The one with the braid)
+- chore: remove suetterlin font in favor of modern handwriting (The one with the braid)
+- chore: update readme (The one with the braid)
+- feat: add iOS CI (The one with the braid)
+- feat: add sticker picker (The one with the braid)
+- feat: improve command execution (The one with the braid)
+- feat: improve typeahead (The one with the braid)
+- feat: improve typeahead (The one with the braid)
+- fix: hide client manager on open keyboard (The one with the braid)
+- fix: missing bearer header in mxc images (The one with the braid)
+- fix: rework AppStream metadata (The one with the braid)
+
 ## v0.0.2
 
 - chore(deps): bump com.android.application from 8.6.1 to 8.7.0 in /android (The one with the braid)
