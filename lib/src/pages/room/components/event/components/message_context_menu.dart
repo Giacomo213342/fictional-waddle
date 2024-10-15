@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -52,23 +55,58 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
       direction: DismissDirection.startToEnd,
       child: widget.child,
     );
-    /* if (!kIsWeb && Platform.isIOS) {
-      return CupertinoContextMenu(
-        actions: _getContextMenuButtons()
-            .map(
-              (item) => CupertinoContextMenuAction(
-                trailingIcon: item.icon,
-                isDestructiveAction: item.isDestructiveAction,
-                child: Text(item.label),
-              ),
-            )
-            .toList(),
-        enableHapticFeedback: true,
-        child: InheritedTheme.captureAll(context, child),
+    if (!kIsWeb && Platform.isIOS) {
+      return LayoutBuilder(
+        builder: (context, constraints) => CupertinoContextMenu.builder(
+          actions: _getContextMenuButtons()
+              .map(
+                (item) => Builder(
+                  builder: (context) {
+                    return CupertinoContextMenuAction(
+                      trailingIcon: item.icon,
+                      isDestructiveAction: item.isDestructiveAction,
+                      onPressed: () {
+                        item.onPressed();
+                        Navigator.pop(context);
+                      },
+                      child: Text(item.label),
+                    );
+                  },
+                ),
+              )
+              .toList(),
+          enableHapticFeedback: true,
+          builder: (innerContext, animation) => AnimatedBuilder(
+            animation: animation,
+            builder: (BuildContext context, Widget? child) => Padding(
+              padding: EdgeInsets.all(animation.value * 16),
+              child: animation.value > CupertinoContextMenu.animationOpensAt
+                  ? Material(
+                      color: Theme.of(context).colorScheme.surface,
+                      clipBehavior: Clip.hardEdge,
+                      child: ReplyContainer(
+                        replyEvent: widget.event,
+                        globalKeySuffix: 'context',
+                        constraints: constraints,
+                      ),
+                    )
+                  : Material(
+                      color: Colors.transparent,
+                      clipBehavior: Clip.hardEdge,
+                      child: child,
+                    ),
+            ),
+            child: InheritedTheme.captureAll(
+              context,
+              child,
+              // to: innerContext,
+            ),
+          ),
+        ),
       );
-    } */
-    return GestureDetector(
-      behavior: HitTestBehavior.deferToChild,
+    }
+    return InkWell(
+      canRequestFocus: true,
       onSecondaryTapUp: _secondaryTap,
       onSecondaryTap: () {},
       onLongPress: _longPress,
@@ -110,13 +148,14 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
     final items = _getContextMenuButtons();
     await showModalBottomSheet(
       context: context,
+      clipBehavior: Clip.hardEdge,
       builder: (context) => ListView.builder(
         shrinkWrap: true,
         itemCount: items.length + 1,
         itemBuilder: (context, index) {
           if (index == 0) {
             return Padding(
-              padding: const EdgeInsets.only(top: 32.0),
+              padding: const EdgeInsets.only(top: 8.0),
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return ReplyContainer(
@@ -148,18 +187,26 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
     final response = await showAdaptiveDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context).confirmRedact),
+        title: Text(
+          AppLocalizations.of(context).confirmRedact,
+        ),
         content: Text(
-          AppLocalizations.of(context).redactEventLong(widget.event.eventId),
+          AppLocalizations.of(context).redactEventLong(
+            widget.event.eventId,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(AppLocalizations.of(context).cancel),
+            child: Text(
+              AppLocalizations.of(context).cancel,
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(AppLocalizations.of(context).redact),
+            child: Text(
+              AppLocalizations.of(context).redact,
+            ),
           ),
         ],
       ),
@@ -178,6 +225,15 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
     RoomController.of(context).setReplyEvent(widget.event);
   }
 
+  void _reactMessage() {
+    RoomController.of(context).setReplyEvent(widget.event);
+    const reactionPrefix = '/react :';
+    RoomController.of(context).messageController.value = const TextEditingValue(
+      text: reactionPrefix,
+      composing: TextRange.collapsed(reactionPrefix.length),
+    );
+  }
+
   Future<void> _copyMessage() async {
     final body = await widget.event.calcLocalizedBody(
       const MatrixDefaultLocalizations(),
@@ -194,18 +250,28 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
         onPressed: _copyMessage,
         label: AppLocalizations.of(context).copyMessage,
         type: ContextMenuButtonType.copy,
+        icon: Icons.copy,
       ),
       if (room.canSendDefaultMessages)
         ContextMenuItem(
           onPressed: _replyMessage,
           label: AppLocalizations.of(context).reply,
           type: ContextMenuButtonType.custom,
+          icon: Icons.reply,
+        ),
+      if (room.canSendEvent(EventTypes.Reaction))
+        ContextMenuItem(
+          onPressed: _reactMessage,
+          label: AppLocalizations.of(context).react,
+          type: ContextMenuButtonType.custom,
+          icon: Icons.emoji_emotions,
         ),
       if (widget.event.senderId == room.client.userID)
         ContextMenuItem(
           onPressed: _editMessage,
           label: AppLocalizations.of(context).edit,
           type: ContextMenuButtonType.custom,
+          icon: Icons.edit,
         ),
       if (widget.event.canRedact)
         ContextMenuItem(
@@ -213,6 +279,7 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
           label: AppLocalizations.of(context).redact,
           type: ContextMenuButtonType.delete,
           isDestructiveAction: true,
+          icon: Icons.delete_forever,
         ),
     ];
   }
