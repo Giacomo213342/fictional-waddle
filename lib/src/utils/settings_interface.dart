@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:matrix/matrix.dart';
 
@@ -10,48 +11,59 @@ class SettingsInterface {
   const SettingsInterface();
 
   Future<ThemeState> getTheme() async {
-    final storage = await kPolyculeSecureStorage.readAll();
-    return ThemeState(
-      themeMode: switch (storage['themeMode']) {
-        'terminal' => PolyculeTheme.terminal,
-        'mySpace' => PolyculeTheme.mySpace,
-        'system' || _ => PolyculeTheme.system,
-      },
-      colorMode: switch (storage['colorMode']) {
-        'system' || null => PolyculeColorMode.system,
-        'theme' => PolyculeColorMode.theme,
-        _ => PolyculeColorMode.custom,
-      },
-      fontMode: switch (storage['fontMode']) {
-        'visionLimited' => PolyculeFontMode.visionLimited,
-        'dyslexic' => PolyculeFontMode.dyslexic,
-        'serif' => PolyculeFontMode.serif,
-        'theme' || null || _ => PolyculeFontMode.theme,
-      },
-    );
+    try {
+      final themeMode = await kPolyculeSecureStorage.read(key: 'themeMode');
+      final colorMode = await kPolyculeSecureStorage.read(key: 'colorMode');
+      final fontMode = await kPolyculeSecureStorage.read(key: 'fontMode');
+      return ThemeState(
+        themeMode: switch (themeMode) {
+          'terminal' => PolyculeTheme.terminal,
+          'mySpace' => PolyculeTheme.mySpace,
+          'system' || _ => PolyculeTheme.system,
+        },
+        colorMode: switch (colorMode) {
+          'system' || null => PolyculeColorMode.system,
+          'theme' => PolyculeColorMode.theme,
+          _ => PolyculeColorMode.custom,
+        },
+        fontMode: switch (fontMode) {
+          'visionLimited' => PolyculeFontMode.visionLimited,
+          'dyslexic' => PolyculeFontMode.dyslexic,
+          'serif' => PolyculeFontMode.serif,
+          'theme' || null || _ => PolyculeFontMode.theme,
+        },
+      );
+    } on PlatformException catch (e, s) {
+      Logs().e('Error reading application settings.', e, s);
+      await kPolyculeSecureStorage.delete(key: 'themeMode');
+      await kPolyculeSecureStorage.delete(key: 'colorMode');
+      await kPolyculeSecureStorage.delete(key: 'fontMode');
+      return ThemeState();
+    }
   }
 
-  Future<void> storeTheme(ThemeState theme) {
-    return Future.wait(
-      [
-        kPolyculeSecureStorage.write(
-          key: 'themeMode',
-          value: theme.themeMode.name,
-        ),
-        kPolyculeSecureStorage.write(
-          key: 'colorMode',
-          value: theme.colorMode.name,
-        ),
-        kPolyculeSecureStorage.write(
-          key: 'fontMode',
-          value: theme.fontMode.name,
-        ),
-      ],
+  Future<void> storeTheme(ThemeState theme) async {
+    await kPolyculeSecureStorage.write(
+      key: 'themeMode',
+      value: theme.themeMode.name,
+    );
+    await kPolyculeSecureStorage.write(
+      key: 'colorMode',
+      value: theme.colorMode.name,
+    );
+    await kPolyculeSecureStorage.write(
+      key: 'fontMode',
+      value: theme.fontMode.name,
     );
   }
 
   Future<Locale?> getLocale() async {
-    final storedLocale = await kPolyculeSecureStorage.read(key: 'locale');
+    String? storedLocale;
+    try {
+      storedLocale = await kPolyculeSecureStorage.read(key: 'locale');
+    } on PlatformException catch (e, s) {
+      Logs().e('Error reading application settings.', e, s);
+    }
     if (storedLocale == null) {
       return null;
     }
@@ -76,6 +88,10 @@ class SettingsInterface {
             languageCode: split[0],
           );
       }
+    } on PlatformException catch (e, s) {
+      Logs().e('Error reading application settings.', e, s);
+      await kPolyculeSecureStorage.delete(key: 'locale');
+      return null;
     } catch (e, s) {
       Logs().e('Error loading locale', e, s);
       return null;
@@ -90,7 +106,13 @@ class SettingsInterface {
   }
 
   Future<String?> getPushDistributor() async {
-    return kPolyculeSecureStorage.read(key: 'push_distributor');
+    try {
+      return kPolyculeSecureStorage.read(key: 'push_distributor');
+    } on PlatformException catch (e, s) {
+      Logs().e('Error reading application settings.', e, s);
+      await kPolyculeSecureStorage.delete(key: 'push_distributor');
+      return null;
+    }
   }
 
   Future<void> storePushDistributor(String? distributor) async {
@@ -101,7 +123,13 @@ class SettingsInterface {
   }
 
   Future<String?> getPushKey(String clientName) async {
-    return kPolyculeSecureStorage.read(key: 'push_key_$clientName');
+    try {
+      return kPolyculeSecureStorage.read(key: 'push_key_$clientName');
+    } on PlatformException catch (e, s) {
+      Logs().e('Error reading application settings.', e, s);
+      await kPolyculeSecureStorage.delete(key: 'push_key_$clientName');
+      return null;
+    }
   }
 
   Future<void> storePushKey(String clientName, String endpoint) async {
