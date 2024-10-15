@@ -1423,6 +1423,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Neither your account nor this room has any sticker pack available.'**
   String get noStickerPacks;
+
+  /// No description provided for @react.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reaction'**
+  String get react;
 }
 
 class _AppLocalizationsDelegate

@@ -425,5 +425,6 @@
   "commandHelp": "Show help",
   "availableCommands": "Available commands",
   "commandError": "Exit code 1",
-  "noStickerPacks": "Neither your account nor this room has any sticker pack available."
+  "noStickerPacks": "Neither your account nor this room has any sticker pack available.",
+  "react": "Send reaction"
 }
