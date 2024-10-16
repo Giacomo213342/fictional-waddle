@@ -51,6 +51,8 @@ class ClientTab extends StatelessWidget {
                         child: Text(
                           client.userID ??
                               AppLocalizations.of(context).loggingInToClient,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
                       ),
                       if (!isLoggedIn)
