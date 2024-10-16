@@ -142,6 +142,54 @@ check:codestyle:
     - dart format lib test web --set-exit-if-changed
     - dart run import_sorter:main --exit-if-changed
 
+check:podfile:
+  extends: .check
+  tags:
+    - macos
+    - nix-shell
+  parallel:
+    matrix:
+      - PLATFORM: [ ios, macos ]
+  script:
+    - pushd $PLATFORM
+    - cp Podfile.lock Podfile.lock.orig
+    - pod install --deployment
+    - pod update
+    - diff -u Podfile.lock.orig Podfile.lock > Podfile.lock.diff
+    - popd
+  artifacts:
+    paths:
+      - Podfile.lock
+      - Podfile.lock.orig
+      - Podfile.lock.diff
+    when: on_failure
+
+check:podfile:commit:
+  extends: .check
+  dependencies:
+    - check:podfile
+  tags:
+    - macos
+    - nix-shell
+  parallel:
+    matrix:
+      - PLATFORM: [ ios, macos ]
+  when: manual
+  script:
+    - pushd $PLATFORM
+    - pod update
+    - git diff . > podfile.diff
+    - git config --local user.name "< polycule > CI Pipeline"
+    - git config --local user.email "gitlab@polycule.im"
+    - git add Podfile Podfile.lock
+    - git commit -sm chore\(deps\)\:\ update\ podfile\ \(manual\)
+    - git push https://git:$CI_PUSH_TOKEN@gitlab.com/$CI_PROJECT_PATH.git HEAD:$CI_COMMIT_REF_NAME
+    - popd
+  artifacts:
+    paths:
+      - podfile.diff
+    when: always
+
 build:macos:debug:
   extends: .build
   script:
