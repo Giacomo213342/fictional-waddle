@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
+import '../../avatar_builder/mxc_avatar.dart';
 
 class IncomingVerificationRequestContentWidget extends StatelessWidget {
   const IncomingVerificationRequestContentWidget({
@@ -16,6 +17,8 @@ class IncomingVerificationRequestContentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profile = this.profile;
+    final client = this.client;
     final displayName =
         profile?.displayName ?? profile?.userId.localpart ?? profile?.userId;
     bool isSenderMe = profile?.userId == client?.userID;
@@ -28,7 +31,14 @@ class IncomingVerificationRequestContentWidget extends StatelessWidget {
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          // TODO : show profile pic here
+          const SizedBox(height: 8),
+          if (client != null)
+            MxcAvatar(
+              uri: profile.avatarUrl,
+              client: client,
+              monogram: profile.displayName ?? profile.userId,
+              dimension: 64,
+            ),
           const SizedBox(
             width: 8,
           ),
