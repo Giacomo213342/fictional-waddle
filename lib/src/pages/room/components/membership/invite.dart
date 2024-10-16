@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
+import '../../../../widgets/ascii_progress_indicator.dart';
 import '../../../../widgets/matrix/avatar_builder/room_avatar.dart';
 import '../../../../widgets/matrix/avatar_builder/room_builder.dart';
 import '../../../../widgets/polycule_overflow_bar.dart';
@@ -81,7 +82,7 @@ class MembershipInviteTile extends StatelessWidget {
                         alignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           if (controller.loading)
-                            const CircularProgressIndicator()
+                            const AsciiProgressIndicator()
                           else
                             switch (room.joinRules) {
                               JoinRules.public ||

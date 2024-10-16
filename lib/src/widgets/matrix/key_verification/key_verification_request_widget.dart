@@ -103,6 +103,7 @@ class _KeyVerificationRequestWidgetState
           peer,
           buttonBarBuilder: widget.buttonBarBuilder,
           onCancel: _cancelVerificationRequest,
+          client: widget.client,
         );
       case KeyVerificationState.askChoice:
         continue loading;
@@ -120,6 +121,7 @@ class _KeyVerificationRequestWidgetState
           widget.request,
           onSubmit: _submitRecoveryKey,
           buttonBarBuilder: widget.buttonBarBuilder,
+          client: widget.client,
         );
       case KeyVerificationState.askSas:
         return CompareSasWidget(

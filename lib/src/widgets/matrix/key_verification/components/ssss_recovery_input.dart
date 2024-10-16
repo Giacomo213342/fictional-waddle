@@ -4,6 +4,8 @@ import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
+import '../../../ascii_progress_indicator.dart';
+import '../../avatar_builder/mxc_avatar.dart';
 import '../key_verification_request_widget.dart';
 
 class SsssRecoveryInput extends StatefulWidget {
@@ -13,10 +15,12 @@ class SsssRecoveryInput extends StatefulWidget {
     required this.onSubmit,
     required this.buttonBarBuilder,
     this.profile,
+    this.client,
   });
 
   final KeyVerification request;
   final Profile? profile;
+  final Client? client;
   final ButtonBarBuilder buttonBarBuilder;
   final ValueChanged<String> onSubmit;
 
@@ -29,6 +33,8 @@ class _SsssRecoveryInputState extends State<SsssRecoveryInput> {
 
   @override
   Widget build(BuildContext context) {
+    final profile = widget.profile;
+    final client = widget.client;
     return SafeArea(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -37,10 +43,16 @@ class _SsssRecoveryInputState extends State<SsssRecoveryInput> {
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             child: Column(
               children: [
-                // if (profile != null)
-                // TODO : show user picture here
                 const SizedBox(height: 16),
-                const CircularProgressIndicator(),
+                if (profile != null && client != null)
+                  MxcAvatar(
+                    uri: profile.avatarUrl,
+                    client: client,
+                    monogram: profile.displayName ?? profile.userId,
+                    dimension: 64,
+                  ),
+                const SizedBox(height: 16),
+                const AsciiProgressIndicator(),
                 const SizedBox(height: 16),
                 ListTile(
                   leading: const Icon(Icons.info),

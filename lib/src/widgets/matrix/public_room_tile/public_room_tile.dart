@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../utils/matrix/matrix_state.dart';
 import '../../../utils/matrix_to_extension.dart';
+import '../../ascii_progress_indicator.dart';
 import '../../polycule_overflow_bar.dart';
 import '../../share_origin_builder.dart';
 import '../avatar_builder/mxc_avatar.dart';
@@ -62,7 +63,7 @@ class _PublicRoomTileState extends MatrixState<PublicRoomTile> {
           alignment: MainAxisAlignment.spaceEvenly,
           children: [
             if (widget.loading)
-              const CircularProgressIndicator()
+              const AsciiProgressIndicator()
             else ...[
               if (widget.room.canonicalAlias is String)
                 ShareOriginBuilder(

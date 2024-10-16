@@ -42,9 +42,11 @@ class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
   Future<void> _startBootstrap() async {
     // ensure we know all our sessions
     await client.oneShotSync();
-    _nextStage(
-      () => client.encryption?.bootstrap(onUpdate: _handleBootstrapStage),
-    );
+    setState(() {
+      _nextStage(
+        () => client.encryption?.bootstrap(onUpdate: _handleBootstrapStage),
+      );
+    });
   }
 
   void _nextStage(void Function() next) =>
@@ -126,12 +128,13 @@ class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
   Future<void> askWipeSsss() async {
     final response = await AskWipeSsssWidget.show(context);
 
-    if (response == false || response == null) {
+    if (response != true) {
       return;
     }
 
     setState(() {
-      _wipeSsss = response;
+      bootstrap = null;
+      _wipeSsss = true;
     });
 
     _startBootstrap();
