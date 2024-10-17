@@ -19,13 +19,16 @@ import '../../../pages/homeserver/homeserver.dart';
 import '../../../pages/room_list/room_list.dart';
 import '../../../pages/splash_screen/splash_screen.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
+import '../../../utils/error_logger.dart';
 import '../../../utils/matrix/database/polycule_database_builder.dart';
 import '../../../utils/matrix/polycule_command_extension.dart';
 import '../../../utils/matrix/push_manager.dart';
 import '../../../utils/matrix/uia_helper.dart';
 import '../../../utils/runtime_suffix.dart';
 import '../../../utils/secure_storage.dart';
+import '../../error_handler_dialog.dart';
 import '../../intent_manager.dart';
+import '../../settings_manager.dart';
 import '../key_verification/key_verification_request_widget.dart';
 import '../uia_dialog.dart';
 import 'client_manager_view.dart';
@@ -98,6 +101,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   @override
   void initState() {
     _loadClients();
+    _listenErrorLogging();
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => _initializePushPlugin(),
     );
@@ -130,7 +134,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       json = await kPolyculeSecureStorage.read(key: _clientNamesKey + suffix);
     } on PlatformException catch (e, s) {
       await kPolyculeSecureStorage.delete(key: _clientNamesKey + suffix);
-      Logs().wtf('Error reading client storage', e, s);
+      ErrorLogger().captureStackTrace(e, s);
     }
     if (json != null) {
       final identifiers = (jsonDecode(json) as Iterable).whereType<int>();
@@ -167,6 +171,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       _sasVerificationListener = {};
 
   static final Map<int, PushManager> pushManagers = {};
+
+  StreamSubscription<(Object?, StackTrace?)>? _errorListener;
 
   Client _buildClient(int identifier) {
     final client = Client(
@@ -260,6 +266,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     for (final subscription in _sasVerificationListener.values) {
       subscription?.cancel();
     }
+    _errorListener?.cancel();
     super.dispose();
   }
 
@@ -420,7 +427,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
           await kPolyculeSecureStorage.read(key: _clientNamesKey + suffix);
     } on PlatformException catch (e, s) {
       await kPolyculeSecureStorage.delete(key: _clientNamesKey + suffix);
-      Logs().wtf('Error reading client storage', e, s);
+      ErrorLogger().captureStackTrace(e, s);
     }
 
     Set<int> identifiers = {};
@@ -473,6 +480,24 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         ),
       ),
     );
+  }
+
+  void _listenErrorLogging() {
+    _errorListener = ErrorLogger().errorStream.listen(_showErrorDialog);
+  }
+
+  Future<void> _showErrorDialog((Object?, StackTrace?) event) async {
+    await SettingsManager.of(context).initialized;
+    if (!mounted) {
+      return;
+    }
+    if (SettingsManager.of(context).sentryEnabled.value == true) {
+      return;
+    }
+    await ErrorHandlerDialog(
+      error: event.$1,
+      stackTrace: event.$2,
+    ).showDialog(context);
   }
 }
 

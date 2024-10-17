@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../theme/theme_modes.dart';
+import '../utils/error_logger.dart';
 import '../utils/settings_interface.dart';
 
 class SettingsBuilder extends StatelessWidget {
@@ -21,6 +22,9 @@ class SettingsManager extends InheritedWidget {
   }
 
   final _settingsInterface = const SettingsInterface();
+  final _initCompleter = Completer<void>();
+
+  Future<void> get initialized => _initCompleter.future;
 
   Future<void> initSettings() async {
     final storedTheme = await _settingsInterface.getTheme();
@@ -34,11 +38,21 @@ class SettingsManager extends InheritedWidget {
     final storedPushDistributor = await _settingsInterface.getPushDistributor();
     pushDistributor.value = storedPushDistributor;
     pushDistributor.addListener(_storePushDistributor);
+
+    final storedSentryEnabled = await _settingsInterface.getSentryEnabled();
+    sentryEnabled.value = storedSentryEnabled;
+
+    ErrorLogger().sentryEnabled = storedSentryEnabled;
+    ErrorLogger().initializer.complete();
+    sentryEnabled.addListener(_storeSentryEnabled);
+
+    _initCompleter.complete();
   }
 
   final theme = ValueNotifier(ThemeState());
   final locale = ValueNotifier<Locale?>(null);
   final pushDistributor = ValueNotifier<String?>(null);
+  final sentryEnabled = ValueNotifier<bool>(false);
 
   static SettingsManager? maybeOf(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<SettingsManager>();
@@ -64,6 +78,11 @@ class SettingsManager extends InheritedWidget {
 
   Future<void> _storePushDistributor() async {
     await _settingsInterface.storePushDistributor(pushDistributor.value);
+  }
+
+  Future<void> _storeSentryEnabled() async {
+    ErrorLogger().sentryEnabled = sentryEnabled.value;
+    await _settingsInterface.storeSentryEnabled(sentryEnabled.value);
   }
 }
 

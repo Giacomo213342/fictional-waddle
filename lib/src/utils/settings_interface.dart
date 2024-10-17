@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:matrix/matrix.dart';
-
 import '../theme/theme_modes.dart';
 import '../widgets/settings_manager.dart';
+import 'error_logger.dart';
 import 'secure_storage.dart';
 
 class SettingsInterface {
@@ -34,7 +33,7 @@ class SettingsInterface {
         },
       );
     } on PlatformException catch (e, s) {
-      Logs().e('Error reading application settings.', e, s);
+      ErrorLogger().captureStackTrace(e, s);
       await kPolyculeSecureStorage.delete(key: 'themeMode');
       await kPolyculeSecureStorage.delete(key: 'colorMode');
       await kPolyculeSecureStorage.delete(key: 'fontMode');
@@ -62,7 +61,7 @@ class SettingsInterface {
     try {
       storedLocale = await kPolyculeSecureStorage.read(key: 'locale');
     } on PlatformException catch (e, s) {
-      Logs().e('Error reading application settings.', e, s);
+      ErrorLogger().captureStackTrace(e, s);
     }
     if (storedLocale == null) {
       return null;
@@ -89,11 +88,11 @@ class SettingsInterface {
           );
       }
     } on PlatformException catch (e, s) {
-      Logs().e('Error reading application settings.', e, s);
+      ErrorLogger().captureStackTrace(e, s);
       await kPolyculeSecureStorage.delete(key: 'locale');
       return null;
     } catch (e, s) {
-      Logs().e('Error loading locale', e, s);
+      ErrorLogger().captureStackTrace(e, s);
       return null;
     }
   }
@@ -109,7 +108,7 @@ class SettingsInterface {
     try {
       return kPolyculeSecureStorage.read(key: 'push_distributor');
     } on PlatformException catch (e, s) {
-      Logs().e('Error reading application settings.', e, s);
+      ErrorLogger().captureStackTrace(e, s);
       await kPolyculeSecureStorage.delete(key: 'push_distributor');
       return null;
     }
@@ -122,11 +121,33 @@ class SettingsInterface {
     );
   }
 
+  Future<bool> getSentryEnabled() async {
+    try {
+      final storedSentry =
+          await kPolyculeSecureStorage.read(key: 'sentry_enabled');
+      if (storedSentry == null) {
+        return false;
+      }
+      return bool.tryParse(storedSentry) ?? false;
+    } on PlatformException catch (e, s) {
+      ErrorLogger().captureStackTrace(e, s);
+      await kPolyculeSecureStorage.delete(key: 'sentry_enabled');
+      return false;
+    }
+  }
+
+  Future<void> storeSentryEnabled(bool enabled) async {
+    return kPolyculeSecureStorage.write(
+      key: 'sentry_enabled',
+      value: enabled.toString(),
+    );
+  }
+
   Future<String?> getPushKey(String clientName) async {
     try {
       return kPolyculeSecureStorage.read(key: 'push_key_$clientName');
     } on PlatformException catch (e, s) {
-      Logs().e('Error reading application settings.', e, s);
+      ErrorLogger().captureStackTrace(e, s);
       await kPolyculeSecureStorage.delete(key: 'push_key_$clientName');
       return null;
     }

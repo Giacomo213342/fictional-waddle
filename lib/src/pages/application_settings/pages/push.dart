@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:matrix/matrix.dart';
 import 'package:unifiedpush/unifiedpush.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../utils/error_logger.dart';
 import '../../../widgets/ascii_progress_indicator.dart';
 import '../../../widgets/matrix/client_manager/client_manager.dart';
 import '../../../widgets/settings_manager.dart';
@@ -79,7 +79,7 @@ class _PushSettingsPageState extends State<PushSettingsPage> {
         await pushManager.register();
       }
     } catch (e, s) {
-      Logs().w('Error saving Push Distributor', e, s);
+      ErrorLogger().captureStackTrace(e, s);
       if (!mounted) {
         return;
       }

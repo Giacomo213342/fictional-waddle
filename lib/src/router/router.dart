@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../pages/account_selector/account_selector.dart';
 import '../pages/application_settings/application_settings.dart';
 import '../pages/application_settings/pages/appearance.dart';
+import '../pages/application_settings/pages/error_reporting.dart';
 import '../pages/application_settings/pages/logs.dart';
 import '../pages/application_settings/pages/push.dart';
 import '../pages/fatal_error/fatal_error_page.dart';
@@ -83,6 +84,11 @@ class PolyculeRouter extends GoRouter {
                             GoRoute(
                               path: LogsPage.routeName,
                               builder: (context, state) => const LogsPage(),
+                            ),
+                            GoRoute(
+                              path: ErrorReportingSettingsPage.routeName,
+                              builder: (context, state) =>
+                                  const ErrorReportingSettingsPage(),
                             ),
                           ],
                         ),

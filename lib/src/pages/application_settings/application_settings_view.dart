@@ -5,6 +5,7 @@ import 'package:url_launcher/link.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import 'application_settings.dart';
 import 'pages/appearance.dart';
+import 'pages/error_reporting.dart';
 import 'pages/logs.dart';
 import 'pages/push.dart';
 
@@ -46,6 +47,24 @@ class ApplicationSettingsView extends StatelessWidget {
               onTap: followLink,
             ),
           ),
+          ListTile(
+            leading: const Icon(Icons.translate),
+            title: Text(AppLocalizations.of(context).language),
+            onTap: controller.showLanguageDialog,
+          ),
+          Link(
+            uri: ApplicationSettingsPage.makeSettingsUri(
+              ErrorReportingSettingsPage.routeName,
+            ),
+            builder: (context, followLink) => ListTile(
+              leading: const Icon(Icons.error),
+              title: Text(
+                AppLocalizations.of(context).errorReporting,
+              ),
+              onTap: followLink,
+            ),
+          ),
+          const Divider(),
           Link(
             uri: ApplicationSettingsPage.makeSettingsUri(
               LogsPage.routeName,
@@ -58,12 +77,6 @@ class ApplicationSettingsView extends StatelessWidget {
               onTap: followLink,
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.translate),
-            title: Text(AppLocalizations.of(context).language),
-            onTap: controller.showLanguageDialog,
-          ),
-          const Divider(),
           ListTile(
             leading: const Icon(Icons.info),
             title: Text(AppLocalizations.of(context).aboutPolycule),

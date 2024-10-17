@@ -2,6 +2,7 @@ import 'package:html/dom.dart';
 import 'package:linkify/linkify.dart';
 import 'package:matrix/matrix.dart';
 
+import 'error_logger.dart';
 import 'matrix_to_extension.dart';
 
 extension LinkifyTree on Node {
@@ -56,8 +57,9 @@ extension LinkifyText on Text {
         anchor.nodes.add(Text(element.originText));
         newNode.nodes.add(anchor);
       } else {
-        Logs().e(
+        ErrorLogger().captureStackTrace(
           'Unable to match linkify element of type ${element.runtimeType}',
+          null,
         );
       }
     }
