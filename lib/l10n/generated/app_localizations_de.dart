@@ -798,4 +798,31 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get reload => 'Reload';
+
+  @override
+  String get runtimeError => 'Your < polycule > was buggy';
+
+  @override
+  String get logSingleError => 'Anonymously share';
+
+  @override
+  String get enableSentry => 'Always share';
+
+  @override
+  String get errorReporting => 'Error reporting';
+
+  @override
+  String get errorReportingLong =>
+      'You can enable error reporting to help finding bugs in < polycule >.';
+
+  @override
+  String get errorReportingPrivacy =>
+      'This will connect to GitLab.com, the source code host of < polycyle > and anonymously share occurring errors and their causes. This will not share any personal data to the developer.';
+
+  @override
+  String get learnMore => 'Learn more';
+
+  @override
+  String get gitLabPrivacy =>
+      'https://gitlab.com/help/operations/error_tracking.md';
 }

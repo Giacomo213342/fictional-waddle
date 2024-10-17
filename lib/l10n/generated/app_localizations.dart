@@ -1441,6 +1441,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reload'**
   String get reload;
+
+  /// No description provided for @runtimeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your < polycule > was buggy'**
+  String get runtimeError;
+
+  /// No description provided for @logSingleError.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymously share'**
+  String get logSingleError;
+
+  /// No description provided for @enableSentry.
+  ///
+  /// In en, this message translates to:
+  /// **'Always share'**
+  String get enableSentry;
+
+  /// No description provided for @errorReporting.
+  ///
+  /// In en, this message translates to:
+  /// **'Error reporting'**
+  String get errorReporting;
+
+  /// No description provided for @errorReportingLong.
+  ///
+  /// In en, this message translates to:
+  /// **'You can enable error reporting to help finding bugs in < polycule >.'**
+  String get errorReportingLong;
+
+  /// No description provided for @errorReportingPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'This will connect to GitLab.com, the source code host of < polycyle > and anonymously share occurring errors and their causes. This will not share any personal data to the developer.'**
+  String get errorReportingPrivacy;
+
+  /// No description provided for @learnMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn more'**
+  String get learnMore;
+
+  /// No description provided for @gitLabPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'https://gitlab.com/help/operations/error_tracking.md'**
+  String get gitLabPrivacy;
 }
 
 class _AppLocalizationsDelegate

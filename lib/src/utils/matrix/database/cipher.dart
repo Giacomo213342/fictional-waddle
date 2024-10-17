@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import 'package:matrix/matrix.dart';
 
+import '../../error_logger.dart';
 import '../../runtime_suffix.dart';
 import '../../secure_storage.dart';
 
@@ -37,11 +38,11 @@ Future<String> getDatabaseCipher() async {
     if (cipher == null) {
       throw MissingPluginException();
     }
-  } on MissingPluginException catch (_) {
+  } on MissingPluginException catch (e, s) {
     kPolyculeSecureStorage
         .delete(key: _cipherStorageKey + suffix)
         .catchError((_) {});
-    Logs().i('Database encryption is not supported on this platform');
+    ErrorLogger().captureStackTrace(e, s);
   } catch (e, s) {
     kPolyculeSecureStorage
         .delete(key: _cipherStorageKey + suffix)
