@@ -5,6 +5,7 @@ import 'package:flutter_highlighting/flutter_highlighting.dart';
 import 'package:flutter_highlighting/themes/dracula.dart';
 import 'package:flutter_highlighting/themes/intellij-light.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:highlighting/languages/all.dart' as highlight;
 
 import '../../../../../../theme/fonts.dart';
 
@@ -22,7 +23,7 @@ class CodeBlockExtension extends HtmlExtension {
       return false;
     }
 
-    // only match `pre` tags containing code blocks - ny other one is handled
+    // only match `pre` tags containing code blocks - any other one is handled
     // by the HTML renderer itself
     return (context.styledElement?.children.singleOrNull?.name == 'code');
   }
@@ -38,6 +39,8 @@ class CodeBlockExtension extends HtmlExtension {
         ?.map((c) => _languageRegex.firstMatch(c))
         .map((match) => match?.group(1))
         .whereType<String>()
+        // ensure we only render languages supported by package:highlight
+        .where((language) => highlight.allLanguages.containsKey(language))
         .singleOrNull;
 
     final textStyle = TextStyle(
