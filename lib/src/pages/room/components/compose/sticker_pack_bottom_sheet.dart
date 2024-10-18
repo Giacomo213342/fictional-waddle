@@ -4,7 +4,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../widgets/matrix/avatar_builder/mxc_avatar.dart';
-import '../../../../widgets/matrix/mxc_uri_image.dart';
+import 'sticker_content_preview.dart';
 
 class StickerPackBottomSheet extends StatelessWidget {
   const StickerPackBottomSheet({super.key, required this.room});
@@ -46,6 +46,11 @@ class StickerPackBottomSheet extends StatelessWidget {
             TabBar(
               tabs: packs.keys.map(
                 (name) {
+                  // print(name);
+                  // special case if we handle the user pack
+                  if (name == 'user') {
+                    return _OwnProfileTab(client: room.client);
+                  }
                   final pack = packs[name];
                   final url = pack?.pack.avatarUrl;
                   final displayName = pack?.pack.displayName ?? name;
@@ -82,6 +87,35 @@ class StickerPackBottomSheet extends StatelessWidget {
   }
 }
 
+class _OwnProfileTab extends StatelessWidget {
+  const _OwnProfileTab({required this.client});
+
+  final Client client;
+
+  @override
+  Widget build(BuildContext context) {
+    final userId = client.userID!;
+    return StreamBuilder<String>(
+      stream: client.onUserProfileUpdate.stream.where((user) => user == userId),
+      builder: (context, snapshot) => FutureBuilder(
+        future: client.getProfileFromUserId(userId),
+        builder: (context, snapshot) {
+          final profile = snapshot.data;
+          return Tab(
+            text: profile?.displayName ?? userId,
+            icon: MxcAvatar(
+              uri: profile?.avatarUrl,
+              client: client,
+              monogram: profile?.displayName ?? userId,
+              dimension: 24,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
 class StickerPackPreview extends StatelessWidget {
   const StickerPackPreview({
     super.key,
@@ -112,32 +146,6 @@ class StickerPackPreview extends StatelessWidget {
           client: client,
         );
       },
-    );
-  }
-}
-
-class StickerPreview extends StatelessWidget {
-  const StickerPreview({
-    super.key,
-    required this.name,
-    required this.content,
-    required this.client,
-  });
-
-  final String name;
-  final ImagePackImageContent content;
-  final Client client;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => Navigator.of(context).pop(content),
-      child: MxcUriImageBuilder(
-        uri: content.url,
-        client: client,
-        width: 256,
-        height: 256,
-      ),
     );
   }
 }
