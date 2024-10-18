@@ -29,8 +29,8 @@ class BlurHashWidget extends StatelessWidget {
           ),
         ),
       ),
-      width: 256,
-      height: 256,
+      width: width.toDouble(),
+      height: height.toDouble(),
       fit: BoxFit.contain,
     );
   }
