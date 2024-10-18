@@ -131,7 +131,7 @@ SPEC CHECKSUMS:
   package_info_plus: d2f71247aab4b6521434f887276093acc70d214c
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   screen_brightness_macos: 2d6d3af2165592d9a55ffcd95b7550970e41ebda
-  share_plus: a182a58e04e51647c0481aadabbc4de44b3a2bce
+  share_plus: fd717ef89a2801d3491e737630112b80c310640e
   sqflite_darwin: a553b1fd6fe66f53bbb0fe5b4f5bab93f08d7a13
   SQLCipher: 5e6bfb47323635c8b657b1b27d25c5f1baf63bf5
   sqlcipher_flutter_libs: db7047866b877c027b050bb808b5480c68955c5e
