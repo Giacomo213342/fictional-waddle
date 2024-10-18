@@ -14,6 +14,7 @@ class SettingsInterface {
       final themeMode = await kPolyculeSecureStorage.read(key: 'themeMode');
       final colorMode = await kPolyculeSecureStorage.read(key: 'colorMode');
       final fontMode = await kPolyculeSecureStorage.read(key: 'fontMode');
+      final fontScale = await kPolyculeSecureStorage.read(key: 'fontMode');
       return ThemeState(
         themeMode: switch (themeMode) {
           'terminal' => PolyculeTheme.terminal,
@@ -31,12 +32,14 @@ class SettingsInterface {
           'serif' => PolyculeFontMode.serif,
           'theme' || null || _ => PolyculeFontMode.theme,
         },
+        fontScale: fontScale == null ? 1 : double.tryParse(fontScale) ?? 1,
       );
     } on PlatformException catch (e, s) {
       ErrorLogger().captureStackTrace(e, s);
       await kPolyculeSecureStorage.delete(key: 'themeMode');
       await kPolyculeSecureStorage.delete(key: 'colorMode');
       await kPolyculeSecureStorage.delete(key: 'fontMode');
+      await kPolyculeSecureStorage.delete(key: 'fontScale');
       return ThemeState();
     }
   }
@@ -53,6 +56,10 @@ class SettingsInterface {
     await kPolyculeSecureStorage.write(
       key: 'fontMode',
       value: theme.fontMode.name,
+    );
+    await kPolyculeSecureStorage.write(
+      key: 'fontScale',
+      value: theme.fontScale.toString(),
     );
   }
 

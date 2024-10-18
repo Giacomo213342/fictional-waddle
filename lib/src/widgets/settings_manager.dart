@@ -91,33 +91,41 @@ class ThemeState {
     this.themeMode = PolyculeTheme.system,
     this.colorMode = PolyculeColorMode.system,
     this.fontMode = PolyculeFontMode.theme,
+    this.fontScale = 1,
   });
 
   final PolyculeTheme themeMode;
   final PolyculeColorMode colorMode;
   final PolyculeFontMode fontMode;
+  final double fontScale;
 
   ThemeState copyWith({
     PolyculeTheme? themeMode,
     PolyculeColorMode? colorMode,
     PolyculeFontMode? fontMode,
+    double? fontScale,
   }) =>
       ThemeState(
         themeMode: themeMode ?? this.themeMode,
         colorMode: colorMode ?? this.colorMode,
         fontMode: fontMode ?? this.fontMode,
+        fontScale: fontScale ?? this.fontScale,
       );
 
   @override
   int get hashCode =>
-      themeMode.hashCode ^ colorMode.hashCode ^ fontMode.hashCode;
+      themeMode.hashCode ^
+      colorMode.hashCode ^
+      fontMode.hashCode ^
+      fontScale.hashCode;
 
   @override
   bool operator ==(Object other) {
     if (other is ThemeState) {
       return themeMode == other.themeMode &&
           colorMode == other.colorMode &&
-          fontMode == other.fontMode;
+          fontMode == other.fontMode &&
+          fontScale == other.fontScale;
     }
     return super == other;
   }

@@ -23,25 +23,33 @@ class PolyculeThemeBuilder extends StatelessWidget {
 
   static Widget injectInheritedThemes(BuildContext context, Widget? child) {
     final theme = Theme.of(context);
-    return MaterialDesktopVideoControlsTheme(
-      normal: MaterialDesktopVideoControlsThemeData(
-        seekBarPositionColor: theme.colorScheme.primary,
-        seekBarThumbColor: theme.colorScheme.primary,
-      ),
-      fullscreen: MaterialDesktopVideoControlsThemeData(
-        seekBarPositionColor: theme.colorScheme.primary,
-        seekBarThumbColor: theme.colorScheme.primary,
-      ),
-      child: MaterialVideoControlsTheme(
-        normal: MaterialVideoControlsThemeData(
-          seekBarPositionColor: theme.colorScheme.primary,
-          seekBarThumbColor: theme.colorScheme.primary,
-        ),
-        fullscreen: MaterialVideoControlsThemeData(
-          seekBarPositionColor: theme.colorScheme.primary,
-          seekBarThumbColor: theme.colorScheme.primary,
-        ),
+    return ValueListenableBuilder<ThemeState>(
+      valueListenable: SettingsManager.of(context).theme,
+      builder: (context, value, child) => MediaQuery(
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: TextScaler.linear(value.fontScale)),
         child: child ?? const PolyculePlaceholder(),
+      ),
+      child: MaterialDesktopVideoControlsTheme(
+        normal: MaterialDesktopVideoControlsThemeData(
+          seekBarPositionColor: theme.colorScheme.primary,
+          seekBarThumbColor: theme.colorScheme.primary,
+        ),
+        fullscreen: MaterialDesktopVideoControlsThemeData(
+          seekBarPositionColor: theme.colorScheme.primary,
+          seekBarThumbColor: theme.colorScheme.primary,
+        ),
+        child: MaterialVideoControlsTheme(
+          normal: MaterialVideoControlsThemeData(
+            seekBarPositionColor: theme.colorScheme.primary,
+            seekBarThumbColor: theme.colorScheme.primary,
+          ),
+          fullscreen: MaterialVideoControlsThemeData(
+            seekBarPositionColor: theme.colorScheme.primary,
+            seekBarThumbColor: theme.colorScheme.primary,
+          ),
+          child: child ?? const PolyculePlaceholder(),
+        ),
       ),
     );
   }

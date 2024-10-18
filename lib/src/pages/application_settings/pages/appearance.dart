@@ -73,6 +73,24 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
               ),
               const Divider(),
               ListTile(
+                leading: const Icon(Icons.format_size),
+                title: Text(AppLocalizations.of(context).fontSize),
+                trailing: IconButton(
+                  onPressed: () => _setFontScale(1),
+                  icon: const Icon(Icons.refresh),
+                  tooltip: AppLocalizations.of(context).reset,
+                ),
+              ),
+              Slider.adaptive(
+                value: themeState.fontScale,
+                onChanged: _setFontScale,
+                divisions: 8,
+                label: '${themeState.fontScale} x',
+                min: .75,
+                max: 1.75,
+              ),
+              const Divider(),
+              ListTile(
                 leading: const Icon(Icons.text_format),
                 title: Text(AppLocalizations.of(context).fontAccessibility),
               ),
@@ -132,5 +150,10 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
 
     SettingsManager.of(context).theme.value =
         SettingsManager.of(context).theme.value.copyWith(fontMode: fontMode);
+  }
+
+  void _setFontScale(double value) {
+    SettingsManager.of(context).theme.value =
+        SettingsManager.of(context).theme.value.copyWith(fontScale: value);
   }
 }
