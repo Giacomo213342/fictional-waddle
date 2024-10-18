@@ -22,42 +22,35 @@ class StickerPreview extends StatelessWidget {
     return InkWell(
       onTap: () => Navigator.of(context).pop(content),
       child: Stack(
+        fit: StackFit.expand,
         children: [
-          Expanded(
-            child: MxcUriImageBuilder(
-              uri: content.url,
-              client: client,
-              width: 256,
-              height: 256,
-              imageBuilder: (
-                BuildContext context,
-                AsyncSnapshot<Widget> image,
-                VoidCallback? retryCallback,
-              ) {
-                final data = image.data;
-                if (data != null) {
-                  return data;
-                }
+          MxcUriImageBuilder(
+            uri: content.url,
+            client: client,
+            width: 256,
+            height: 256,
+            imageBuilder: (
+              BuildContext context,
+              AsyncSnapshot<Widget> image,
+              VoidCallback? retryCallback,
+            ) {
+              final data = image.data;
+              if (data != null) {
+                return data;
+              }
 
-                final info = content.info;
+              final info = content.info;
 
-                final infoWidth = info?['w'] as num? ?? info?['w'] as num?;
-                final infoHeight = info?['h'] as num? ?? info?['h'] as num?;
-
-                final width = infoWidth ?? 256;
-                final height = infoHeight ?? 256;
-
-                final blurHash = info?['xyz.amorgan.blurhash'] as String?;
-                if (blurHash != null) {
-                  BlurHashWidget(
-                    blurHash: blurHash,
-                    width: width,
-                    height: height,
-                  );
-                }
-                return Container();
-              },
-            ),
+              final blurHash = info?['xyz.amorgan.blurhash'] as String?;
+              if (blurHash != null) {
+                return BlurHashWidget(
+                  blurHash: blurHash,
+                  width: 256,
+                  height: 256,
+                );
+              }
+              return Container();
+            },
           ),
           Align(
             alignment: Alignment.topRight,
