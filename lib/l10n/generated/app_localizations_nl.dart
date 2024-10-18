@@ -825,4 +825,10 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get gitLabPrivacy =>
       'https://gitlab.com/help/operations/error_tracking.md';
+
+  @override
+  String get fontSize => 'Font size';
+
+  @override
+  String get reset => 'Reset';
 }

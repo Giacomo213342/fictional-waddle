@@ -439,5 +439,7 @@
   "gitLabPrivacy": "https://gitlab.com/help/operations/error_tracking.md",
   "@gitLabPrivacy": {
     "translatable": false
-  }
+  },
+  "fontSize": "Font size",
+  "reset": "Reset"
 }

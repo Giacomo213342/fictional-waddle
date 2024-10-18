@@ -1489,6 +1489,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'https://gitlab.com/help/operations/error_tracking.md'**
   String get gitLabPrivacy;
+
+  /// No description provided for @fontSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Font size'**
+  String get fontSize;
+
+  /// No description provided for @reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
 }
 
 class _AppLocalizationsDelegate
