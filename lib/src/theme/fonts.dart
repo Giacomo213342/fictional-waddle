@@ -1,6 +1,6 @@
 enum PolyculeFonts {
-  /// Sono - monospace font
-  sono('Sono'),
+  /// Overpass Mono - monospace font
+  overpassMono('Overpass Mono'),
 
   /// Arial - Windows sans-serif font
   arial('Arial'),
