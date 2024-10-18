@@ -37,15 +37,18 @@ class MxcImageExtension extends ImageExtension {
 
             return Tooltip(
               message: extensionContext.attributes['alt'],
-              child: SizedBox(
-                height: height,
-                width: width,
-                child: MxcUriImageBuilder(
-                  key: ValueKey(src),
-                  uri: Uri.parse(src),
-                  client: client,
-                  width: width,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: (width ?? 12) / 12),
+                child: SizedBox(
                   height: height,
+                  width: width,
+                  child: MxcUriImageBuilder(
+                    key: ValueKey(src),
+                    uri: Uri.parse(src),
+                    client: client,
+                    width: width,
+                    height: height,
+                  ),
                 ),
               ),
             );
