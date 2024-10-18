@@ -105,9 +105,9 @@ flutter:
     - assets/icons/rosahaj/base/Rosahaj_Peek.png
 
   fonts:
-    - family: Sono
+    - family: Overpass Mono
       fonts:
-        - asset: assets/fonts/sono/Sono-VariableFont.ttf
+        - asset: assets/fonts/overpassmono/OverpassMono-VariableFont.ttf
     - family: Noto Color Emoji
       fonts:
         - asset: assets/fonts/notocoloremoji/NotoColorEmoji-Regular.ttf

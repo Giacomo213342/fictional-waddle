@@ -144,7 +144,7 @@ class PolyculeThemeBuilder extends StatelessWidget {
 
         switch (brightness) {
           case Brightness.dark:
-            return PolyculeFonts.sono;
+            return PolyculeFonts.overpassMono;
           case Brightness.light:
             return PolyculeFonts.marckScript;
         }
