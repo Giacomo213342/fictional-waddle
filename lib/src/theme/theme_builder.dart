@@ -16,6 +16,9 @@ typedef PolyculeThemeCallback = Widget Function(
   ThemeMode mode,
   ThemeData dark,
   ThemeData light,
+  ThemeData highContrastDark,
+  ThemeData highContrastLight,
+  bool preferHighContrast,
 );
 
 class PolyculeThemeBuilder extends StatelessWidget {
@@ -68,6 +71,10 @@ class PolyculeThemeBuilder extends StatelessWidget {
       valueListenable: SettingsManager.of(context).theme,
       builder: (context, themeState, _) => DynamicColorBuilder(
         builder: (lightDynamic, darkDynamic) {
+          final preferHighContrast =
+              themeState.colorMode == PolyculeColorMode.highContrast ||
+                  MediaQuery.of(context).highContrast;
+
           final darkFallback = ColorScheme.fromSeed(
             seedColor: PolyColors.cyan,
             brightness: Brightness.dark,
@@ -95,9 +102,27 @@ class PolyculeThemeBuilder extends StatelessWidget {
             brightness: Brightness.light,
             themeState: themeState,
           );
+          final highContrastDark = buildPolyculeTheme(
+            colorScheme: const ColorScheme.highContrastDark(),
+            brightness: Brightness.dark,
+            themeState: themeState,
+          );
+          final highContrastLight = buildPolyculeTheme(
+            colorScheme: const ColorScheme.highContrastLight(),
+            brightness: Brightness.light,
+            themeState: themeState,
+          );
+
           final mode = themeState.themeMode.toThemeMode();
 
-          return builder.call(mode, dark, light);
+          return builder.call(
+            mode,
+            dark,
+            light,
+            highContrastDark,
+            highContrastLight,
+            preferHighContrast,
+          );
         },
       ),
     );
