@@ -15,7 +15,14 @@ class PolyculeClient extends StatelessWidget {
     return SettingsBuilder(
       builder: (context) {
         return PolyculeThemeBuilder(
-          builder: (mode, dark, light) {
+          builder: (
+            mode,
+            dark,
+            light,
+            highContrastDark,
+            highContrastLight,
+            preferHighContrast,
+          ) {
             return ValueListenableBuilder<Locale?>(
               valueListenable: SettingsManager.of(context).locale,
               builder: (context, locale, _) {
@@ -26,8 +33,10 @@ class PolyculeClient extends StatelessWidget {
                   onGenerateTitle: (context) =>
                       AppLocalizations.of(context).appName,
                   locale: locale,
-                  theme: light,
-                  darkTheme: dark,
+                  theme: preferHighContrast ? highContrastLight : light,
+                  darkTheme: preferHighContrast ? highContrastDark : dark,
+                  highContrastDarkTheme: highContrastDark,
+                  highContrastTheme: highContrastLight,
                   themeMode: mode,
                   routerConfig: router,
                   builder: PolyculeThemeBuilder.injectInheritedThemes,
