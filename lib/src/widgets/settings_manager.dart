@@ -22,11 +22,12 @@ class SettingsManager extends InheritedWidget {
   }
 
   final _settingsInterface = const SettingsInterface();
-  final _initCompleter = Completer<void>();
-
-  Future<void> get initialized => _initCompleter.future;
+  final initCompleter = Completer<void>();
 
   Future<void> initSettings() async {
+    if (initCompleter.isCompleted) {
+      return;
+    }
     final storedTheme = await _settingsInterface.getTheme();
     theme.value = storedTheme;
     theme.addListener(_storeTheme);
@@ -43,10 +44,12 @@ class SettingsManager extends InheritedWidget {
     sentryEnabled.value = storedSentryEnabled;
 
     ErrorLogger().sentryEnabled = storedSentryEnabled;
-    ErrorLogger().initializer.complete();
+    if (!ErrorLogger().initializer.isCompleted) {
+      ErrorLogger().initializer.complete();
+    }
     sentryEnabled.addListener(_storeSentryEnabled);
 
-    _initCompleter.complete();
+    initCompleter.complete();
   }
 
   final theme = ValueNotifier(ThemeState());

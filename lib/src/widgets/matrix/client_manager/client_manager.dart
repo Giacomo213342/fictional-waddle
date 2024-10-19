@@ -487,7 +487,9 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   }
 
   Future<void> _showErrorDialog((Object?, StackTrace?) event) async {
-    await SettingsManager.of(context).initialized;
+    if (!SettingsManager.of(context).initCompleter.isCompleted) {
+      await SettingsManager.of(context).initCompleter.future;
+    }
     if (!mounted) {
       return;
     }

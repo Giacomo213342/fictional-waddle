@@ -441,5 +441,17 @@
     "translatable": false
   },
   "fontSize": "Font size",
-  "reset": "Reset"
+  "reset": "Reset",
+  "fontScaleLabel": "{scale}",
+  "@fontScaleLabel": {
+    "placeholders": {
+      "scale": {
+        "type": "double",
+        "format": "decimalPercentPattern",
+        "optionalParameters": {
+          "decimalDigits": 1
+        }
+      }
+    }
+  }
 }

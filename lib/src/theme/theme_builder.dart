@@ -23,11 +23,17 @@ class PolyculeThemeBuilder extends StatelessWidget {
 
   static Widget injectInheritedThemes(BuildContext context, Widget? child) {
     final theme = Theme.of(context);
+    final mediaQuery = MediaQuery.of(context);
+
     return ValueListenableBuilder<ThemeState>(
       valueListenable: SettingsManager.of(context).theme,
       builder: (context, value, child) => MediaQuery(
-        data: MediaQuery.of(context)
-            .copyWith(textScaler: TextScaler.linear(value.fontScale)),
+        data: mediaQuery.copyWith(
+          textScaler: TextScaler.linear(
+            // scale some reference and divide it once again by the reference
+            (mediaQuery.textScaler.scale(11) * value.fontScale) / 11,
+          ),
+        ),
         child: child ?? const PolyculePlaceholder(),
       ),
       child: MaterialDesktopVideoControlsTheme(

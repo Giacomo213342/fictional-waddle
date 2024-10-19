@@ -62,7 +62,7 @@ class _TextMessageState extends State<TextMessage> {
       ),
     );
 
-    double textScaleFactor = 1;
+    double textScaleFactor = 1.075;
     if (widget.event.onlyEmotes) {
       textScaleFactor = 4;
     }
