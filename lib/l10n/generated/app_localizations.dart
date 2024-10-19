@@ -1501,6 +1501,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reset'**
   String get reset;
+
+  /// No description provided for @fontScaleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{scale}'**
+  String fontScaleLabel(double scale);
 }
 
 class _AppLocalizationsDelegate

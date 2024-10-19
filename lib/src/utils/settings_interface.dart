@@ -14,7 +14,7 @@ class SettingsInterface {
       final themeMode = await kPolyculeSecureStorage.read(key: 'themeMode');
       final colorMode = await kPolyculeSecureStorage.read(key: 'colorMode');
       final fontMode = await kPolyculeSecureStorage.read(key: 'fontMode');
-      final fontScale = await kPolyculeSecureStorage.read(key: 'fontMode');
+      final fontScale = await kPolyculeSecureStorage.read(key: 'fontScale');
       return ThemeState(
         themeMode: switch (themeMode) {
           'terminal' => PolyculeTheme.terminal,

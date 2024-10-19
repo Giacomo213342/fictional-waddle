@@ -75,6 +75,10 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
               ListTile(
                 leading: const Icon(Icons.format_size),
                 title: Text(AppLocalizations.of(context).fontSize),
+                subtitle: Text(
+                  AppLocalizations.of(context)
+                      .fontScaleLabel(themeState.fontScale),
+                ),
                 trailing: IconButton(
                   onPressed: () => _setFontScale(1),
                   icon: const Icon(Icons.refresh),
@@ -85,7 +89,8 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                 value: themeState.fontScale,
                 onChanged: _setFontScale,
                 divisions: 8,
-                label: '${themeState.fontScale} x',
+                label: AppLocalizations.of(context)
+                    .fontScaleLabel(themeState.fontScale),
                 min: .75,
                 max: 1.75,
               ),
