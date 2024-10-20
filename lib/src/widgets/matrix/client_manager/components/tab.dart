@@ -5,6 +5,8 @@ import 'package:url_launcher/link.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../pages/splash_screen/splash_screen.dart';
+import '../../avatar_builder/mxc_avatar.dart';
+import '../../profile_builder.dart';
 import '../client_manager.dart';
 
 class ClientTab extends StatelessWidget {
@@ -42,18 +44,56 @@ class ClientTab extends StatelessWidget {
             builder: (context, followLink) => InkWell(
               onTap: () => manager.setActiveClient(client),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 4,
+                ),
                 child: Center(
                   child: Row(
                     children: [
                       SizedBox(
-                        width: isLoggedIn ? 192 : 192 - 32,
-                        child: Text(
-                          client.userID ??
-                              AppLocalizations.of(context).loggingInToClient,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
+                        width: isLoggedIn ? 224 : 224 - 32,
+                        child: !isLoggedIn
+                            ? Text(
+                                AppLocalizations.of(context).loggingInToClient,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              )
+                            : Tooltip(
+                                message: client.userID,
+                                child: ProfileBuilder(
+                                  userId: client.userID!,
+                                  client: client,
+                                  builder: (context, snapshot) {
+                                    final profile = snapshot.data;
+                                    return Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          WidgetSpan(
+                                            child: MxcAvatar(
+                                              uri: profile?.avatarUrl,
+                                              client: client,
+                                              monogram: profile?.displayName ??
+                                                  client.userID!,
+                                              dimension: 24,
+                                            ),
+                                            alignment:
+                                                PlaceholderAlignment.middle,
+                                          ),
+                                          const TextSpan(text: ' '),
+                                          TextSpan(
+                                            text: profile?.displayName ??
+                                                profile?.userId ??
+                                                client.userID!,
+                                          ),
+                                        ],
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    );
+                                  },
+                                ),
+                              ),
                       ),
                       if (!isLoggedIn)
                         SizedBox(

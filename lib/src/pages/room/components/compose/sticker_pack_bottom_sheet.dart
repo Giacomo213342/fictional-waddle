@@ -4,6 +4,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../widgets/matrix/avatar_builder/mxc_avatar.dart';
+import '../../../../widgets/matrix/profile_builder.dart';
 import 'sticker_content_preview.dart';
 
 class StickerPackBottomSheet extends StatelessWidget {
@@ -95,23 +96,21 @@ class _OwnProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userId = client.userID!;
-    return StreamBuilder<String>(
-      stream: client.onUserProfileUpdate.stream.where((user) => user == userId),
-      builder: (context, snapshot) => FutureBuilder(
-        future: client.getProfileFromUserId(userId),
-        builder: (context, snapshot) {
-          final profile = snapshot.data;
-          return Tab(
-            text: profile?.displayName ?? userId,
-            icon: MxcAvatar(
-              uri: profile?.avatarUrl,
-              client: client,
-              monogram: profile?.displayName ?? userId,
-              dimension: 24,
-            ),
-          );
-        },
-      ),
+    return ProfileBuilder(
+      client: client,
+      userId: userId,
+      builder: (context, snapshot) {
+        final profile = snapshot.data;
+        return Tab(
+          text: profile?.displayName ?? userId,
+          icon: MxcAvatar(
+            uri: profile?.avatarUrl,
+            client: client,
+            monogram: profile?.displayName ?? userId,
+            dimension: 24,
+          ),
+        );
+      },
     );
   }
 }
