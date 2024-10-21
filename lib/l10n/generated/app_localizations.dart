@@ -1034,6 +1034,12 @@ abstract class AppLocalizations {
   /// **'Join the room « {roomname} » on [matrix]'**
   String matrixRoomShareSubject(String roomname);
 
+  /// No description provided for @matrixUserShareSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact « {mxid} » on [matrix]'**
+  String matrixUserShareSubject(String mxid);
+
   /// No description provided for @fileDownloadedTo.
   ///
   /// In en, this message translates to:
@@ -1507,6 +1513,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{scale}'**
   String fontScaleLabel(double scale);
+
+  /// No description provided for @openDirectChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Open direct chat'**
+  String get openDirectChat;
+
+  /// No description provided for @startDirectChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Start direct chat'**
+  String get startDirectChat;
+
+  /// No description provided for @ignoreUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore'**
+  String get ignoreUser;
+
+  /// No description provided for @unignoreUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Unignore'**
+  String get unignoreUser;
+
+  /// No description provided for @ignoreToggleWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing ignore state. This will take a while.'**
+  String get ignoreToggleWaiting;
 }
 
 class _AppLocalizationsDelegate

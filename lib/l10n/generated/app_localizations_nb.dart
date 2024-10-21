@@ -580,6 +580,11 @@ class AppLocalizationsNb extends AppLocalizations {
   }
 
   @override
+  String matrixUserShareSubject(String mxid) {
+    return 'Contact « $mxid » on [matrix]';
+  }
+
+  @override
   String fileDownloadedTo(String name) {
     return 'File saved as « $name ».';
   }
@@ -842,4 +847,20 @@ class AppLocalizationsNb extends AppLocalizations {
 
     return '$scaleString';
   }
+
+  @override
+  String get openDirectChat => 'Open direct chat';
+
+  @override
+  String get startDirectChat => 'Start direct chat';
+
+  @override
+  String get ignoreUser => 'Ignore';
+
+  @override
+  String get unignoreUser => 'Unignore';
+
+  @override
+  String get ignoreToggleWaiting =>
+      'Processing ignore state. This will take a while.';
 }

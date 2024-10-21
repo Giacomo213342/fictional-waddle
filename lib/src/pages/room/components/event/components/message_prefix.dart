@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
+import '../../../../../router/extensions/go_router_path_extension.dart';
+import '../../../../user_page/user_page.dart';
 import '../../message_user_avatar.dart';
 import 'edit_tooltip.dart';
 
@@ -38,6 +40,9 @@ class MessagePrefix extends StatelessWidget {
     if (showOtherSenderAvatar) {
       prefix = MessageUserAvatar(
         event: event,
+        onTap: () => context.goMultiClient(
+          UserPage.makeRouteName(event.senderId),
+        ),
       );
       if (event.messageType == MessageTypes.Notice) {
         prefix = Stack(

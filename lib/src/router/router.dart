@@ -16,6 +16,7 @@ import '../pages/room/room.dart';
 import '../pages/room_list/room_list.dart';
 import '../pages/splash_screen/splash_screen.dart';
 import '../pages/ssss_bootstrap/ssss_bootstrap.dart';
+import '../pages/user_page/user_page.dart';
 import '../widgets/placeholder.dart';
 import 'extensions/go_router_path_extension.dart';
 import 'extensions/homeserver_uri_route.dart';
@@ -138,6 +139,14 @@ class PolyculeRouter extends GoRouter {
                               ),
                             ),
                           ],
+                        ),
+                        RequiresLoginRoute(
+                          path: UserPage.makeRouteName().asMultiClientRoute(),
+                          builder: (context, state) => UserPage(
+                            mxid: Uri.decodeComponent(
+                              state.pathParameters[UserPage.pathParameter]!,
+                            ),
+                          ),
                         ),
                       ],
                     ),

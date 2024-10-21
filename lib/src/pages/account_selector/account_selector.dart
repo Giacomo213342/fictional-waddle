@@ -8,6 +8,7 @@ import '../../widgets/intent_manager.dart';
 import '../../widgets/matrix/client_manager/client_manager.dart';
 import '../../widgets/sharing_intent_banner/sharing_intent_banner.dart';
 import '../room/room.dart';
+import '../user_page/user_page.dart';
 import 'account_selector_view.dart';
 
 class AccountSelectorPage extends StatefulWidget {
@@ -116,7 +117,9 @@ class AccountSelectorController extends State<AccountSelectorPage> {
 
       // if we don't know the direct chat, show the user page
       if (directChat == null) {
-        context.pushReplacement('/client/$identifier/user/$mxid');
+        context.pushReplacement(
+          '/client/$identifier${UserPage.makeRouteName(mxid)}',
+        );
         return;
       }
       // otherwise set the room and let the room handler do the rest
