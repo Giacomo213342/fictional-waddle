@@ -5,9 +5,10 @@ import 'package:matrix/matrix.dart';
 import '../../../widgets/matrix/avatar_builder/user_avatar.dart';
 
 class MessageUserAvatar extends StatelessWidget {
-  const MessageUserAvatar({super.key, required this.event});
+  const MessageUserAvatar({super.key, required this.event, this.onTap});
 
   final Event event;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +19,13 @@ class MessageUserAvatar extends StatelessWidget {
 
         return Tooltip(
           message: user.displayName ?? user.id,
-          child: UserAvatar(
-            user: user,
-            client: event.room.client,
-            dimension: 32,
+          child: InkWell(
+            onTap: onTap,
+            child: UserAvatar(
+              user: user,
+              client: event.room.client,
+              dimension: 32,
+            ),
           ),
         );
       },

@@ -340,6 +340,14 @@
       }
     }
   },
+  "matrixUserShareSubject": "Contact « {mxid} » on [matrix]",
+  "@matrixUserShareSubject": {
+    "placeholders": {
+      "mxid": {
+        "type": "String"
+      }
+    }
+  },
   "fileDownloadedTo": "File saved as « {name} ».",
   "@fileDownloadedTo": {
     "placeholders": {
@@ -453,5 +461,10 @@
         }
       }
     }
-  }
+  },
+  "openDirectChat": "Open direct chat",
+  "startDirectChat": "Start direct chat",
+  "ignoreUser": "Ignore",
+  "unignoreUser": "Unignore",
+  "ignoreToggleWaiting": "Processing ignore state. This will take a while."
 }
