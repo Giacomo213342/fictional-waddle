@@ -5,6 +5,7 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../widgets/matrix/avatar_builder/room_avatar.dart';
 import '../../widgets/matrix/avatar_builder/room_builder.dart';
 import 'components/room_body.dart';
+import 'components/room_encryption_inficator.dart';
 import 'room.dart';
 
 class RoomView extends StatelessWidget {
@@ -46,6 +47,9 @@ class RoomView extends StatelessWidget {
                 return Text(room.getLocalizedDisplayname());
               },
             ),
+            actions: [
+              RoomEncryptionIndicator(room: controller.room),
+            ],
           ),
           body: Semantics(
             hint: AppLocalizations.of(context).regionChatContents,

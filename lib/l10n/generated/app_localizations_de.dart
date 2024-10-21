@@ -862,4 +862,35 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get ignoreToggleWaiting =>
       'Processing ignore state. This will take a while.';
+
+  @override
+  String get roomStateWtf => 'This room\'s security is a mess. Better avoid.';
+
+  @override
+  String get roomStatePublic => 'This room is publicly visible for everyone';
+
+  @override
+  String get roomStatePublicKnock =>
+      'This room is publicly visible for everyone but they must knock before joining.';
+
+  @override
+  String get roomStateOpen =>
+      'This room is open for everyone who knows its link.';
+
+  @override
+  String get roomStateKnock => 'Users must knock before joining this room.';
+
+  @override
+  String get roomStateSpace => 'This room is open for space members only.';
+
+  @override
+  String get roomStateUnpublic => 'This room is private but not encrypted.';
+
+  @override
+  String get roomStateEncrypted =>
+      'This room is encrypted but some members are not verified.';
+
+  @override
+  String get roomStateVerifiedEncrypted =>
+      'This room is encrypted and every session is cross-signed.';
 }

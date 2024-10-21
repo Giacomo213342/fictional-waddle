@@ -466,5 +466,14 @@
   "startDirectChat": "Start direct chat",
   "ignoreUser": "Ignore",
   "unignoreUser": "Unignore",
-  "ignoreToggleWaiting": "Processing ignore state. This will take a while."
+  "ignoreToggleWaiting": "Processing ignore state. This will take a while.",
+  "roomStateWtf": "This room's security is a mess. Better avoid.",
+  "roomStatePublic": "This room is publicly visible for everyone",
+  "roomStatePublicKnock": "This room is publicly visible for everyone but they must knock before joining.",
+  "roomStateOpen": "This room is open for everyone who knows its link.",
+  "roomStateKnock": "Users must knock before joining this room.",
+  "roomStateSpace": "This room is open for space members only.",
+  "roomStateUnpublic": "This room is private but not encrypted.",
+  "roomStateEncrypted": "This room is encrypted but some members are not verified.",
+  "roomStateVerifiedEncrypted": "This room is encrypted and every session is cross-signed."
 }
