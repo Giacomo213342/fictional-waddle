@@ -1543,6 +1543,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Processing ignore state. This will take a while.'**
   String get ignoreToggleWaiting;
+
+  /// No description provided for @roomStateWtf.
+  ///
+  /// In en, this message translates to:
+  /// **'This room\'s security is a mess. Better avoid.'**
+  String get roomStateWtf;
+
+  /// No description provided for @roomStatePublic.
+  ///
+  /// In en, this message translates to:
+  /// **'This room is publicly visible for everyone'**
+  String get roomStatePublic;
+
+  /// No description provided for @roomStatePublicKnock.
+  ///
+  /// In en, this message translates to:
+  /// **'This room is publicly visible for everyone but they must knock before joining.'**
+  String get roomStatePublicKnock;
+
+  /// No description provided for @roomStateOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'This room is open for everyone who knows its link.'**
+  String get roomStateOpen;
+
+  /// No description provided for @roomStateKnock.
+  ///
+  /// In en, this message translates to:
+  /// **'Users must knock before joining this room.'**
+  String get roomStateKnock;
+
+  /// No description provided for @roomStateSpace.
+  ///
+  /// In en, this message translates to:
+  /// **'This room is open for space members only.'**
+  String get roomStateSpace;
+
+  /// No description provided for @roomStateUnpublic.
+  ///
+  /// In en, this message translates to:
+  /// **'This room is private but not encrypted.'**
+  String get roomStateUnpublic;
+
+  /// No description provided for @roomStateEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'This room is encrypted but some members are not verified.'**
+  String get roomStateEncrypted;
+
+  /// No description provided for @roomStateVerifiedEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'This room is encrypted and every session is cross-signed.'**
+  String get roomStateVerifiedEncrypted;
 }
 
 class _AppLocalizationsDelegate
