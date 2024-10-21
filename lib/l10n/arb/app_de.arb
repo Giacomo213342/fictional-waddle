@@ -1,7 +1,38 @@
 {
   "appName": "< polykül >",
+  "@appName": {},
   "about": "Info",
   "@about": {},
   "aMatrixClient": "- noch irgendein [matrix] client",
-  "@aMatrixClient": {}
+  "@aMatrixClient": {},
+  "repoLabel": "Quellcode (GitLab)",
+  "@repoLabel": {},
+  "discoverHomeservers": "Neue Homeserver entdecken",
+  "@discoverHomeservers": {},
+  "connectingToHomeserver": "Verbindung zu {homeserver} wird hergestellt …",
+  "@connectingToHomeserver": {
+    "placeholders": {
+      "homeserver": {
+        "type": "String"
+      }
+    }
+  },
+  "syncInProgress": "Synchronisation im Gange",
+  "@syncInProgress": {},
+  "clientDisplayName": "< polycule > auf {platform}",
+  "@clientDisplayName": {
+    "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
+    "placeholders": {
+      "platform": {
+        "type": "String",
+        "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
+      }
+    }
+  },
+  "connect": "Verbinden",
+  "@connect": {},
+  "username": "Nutzer*innenname",
+  "@username": {},
+  "password": "Passwort",
+  "@password": {}
 }
