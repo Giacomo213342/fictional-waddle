@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
+import 'package:oidc/oidc.dart';
 import 'package:olm/olm.dart' as olm;
 
 import '../../../../l10n/generated/app_localizations.dart';
@@ -21,6 +23,7 @@ import '../../../pages/splash_screen/splash_screen.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../utils/error_logger.dart';
 import '../../../utils/matrix/database/polycule_database_builder.dart';
+import '../../../utils/matrix/oidc_delegation_extension.dart';
 import '../../../utils/matrix/polycule_command_extension.dart';
 import '../../../utils/matrix/push_manager.dart';
 import '../../../utils/matrix/uia_helper.dart';
@@ -30,7 +33,8 @@ import '../../error_handler_dialog.dart';
 import '../../intent_manager.dart';
 import '../../settings_manager.dart';
 import '../key_verification/key_verification_request_widget.dart';
-import '../uia_dialog.dart';
+import '../uia/uia_oidc_dialog.dart';
+import '../uia/uia_password_dialog.dart';
 import 'client_manager_view.dart';
 
 typedef GetClientCallback = Client Function();
@@ -163,6 +167,10 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     return true;
   }
 
+  static final Map<int, OidcUserManager> _oidc = {};
+
+  static final Map<int, StreamSubscription<OidcEvent>?> _oidcSubscription = {};
+
   final Map<int, StreamSubscription<LoginState>?> _loginStateListener = {};
 
   final Map<int, StreamSubscription<UiaRequest>?> _uiaListener = {};
@@ -185,6 +193,10 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       nativeImplementations: kIsWeb
           ? NativeImplementationsWebWorker(Uri.parse('web_worker.dart.js'))
           : NativeImplementationsIsolate(compute),
+      supportedLoginTypes: {
+        AuthenticationTypes.password,
+        AuthenticationTypes.sso,
+      },
     );
     client.registerPolyculeCommands();
     _loginStateListener[identifier]?.cancel();
@@ -207,6 +219,74 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       waitForFirstSync: false,
     );
     return client;
+  }
+
+  static void storeOidcManager(Client client, OidcUserManager oidc) {
+    if (_oidc.containsKey(client.clientName.clientIdentifier)) {
+      return;
+    }
+    _oidcSubscription[client.clientName.clientIdentifier] =
+        oidc.events().listen(
+              (event) => _handleOidcEvent(client, event),
+            );
+    _oidc[client.clientName.clientIdentifier] = oidc;
+  }
+
+  static Future<OidcUserManager?> buildOidcManager(
+    Client client,
+    List<String> locales,
+  ) async {
+    try {
+      final store = client.oidcStore;
+
+      final deviceId = client.deviceID ?? await client.oidcEnsureDeviceId();
+
+      final settings = OidcUserManagerSettings(
+        redirectUri: _makePlatformRedirectUrl('oauth2redirect'),
+        postLogoutRedirectUri: _makePlatformRedirectUrl('endsessionredirect'),
+        frontChannelLogoutUri:
+            kIsWeb ? Uri.parse('https://polycule.im/web/redirect.html') : null,
+        uiLocales: locales,
+        supportOfflineAuth: false,
+        scope: [
+          ...OidcUserManagerSettings.defaultScopes,
+          // 'urn:matrix:client:api:*',
+          'urn:matrix:org.matrix.msc2967.client:api:*',
+          // 'urn:matrix:client:device:*',
+          'urn:matrix:org.matrix.msc2967.client:device:$deviceId',
+        ],
+        prompt: ['consent'],
+        extraAuthenticationParameters: {
+          if (kIsWeb) 'response_mode': 'fragment',
+        },
+      );
+
+      final clientCredentials = OidcClientAuthentication.none(
+        clientId: await client.oidcEnsureDynamicClientId(
+          await OidcDynamicRegistrationData.fromAppLocalizations(),
+        ),
+      );
+
+      final discoveryDocument = await client.oidcProviderMetadata();
+      final manager = OidcUserManager(
+        discoveryDocument: discoveryDocument,
+        clientCredentials: clientCredentials,
+        store: store,
+        settings: settings,
+      );
+
+      await manager.init();
+      storeOidcManager(client, manager);
+      return manager;
+    } catch (e, s) {
+      if (e is OidcException) {
+        Logs().e('OIDC exception for client ${client.clientName}.', e, s);
+        rethrow;
+      } else {
+        Logs().d('Client ${client.clientName} does not support OIDC.');
+        rethrow;
+      }
+    }
   }
 
   Client _buildNewClient() {
@@ -278,7 +358,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     super.didUpdateWidget(oldWidget);
   }
 
-  void _handleLoginStateChange(Client client, LoginState state) {
+  Future<void> _handleLoginStateChange(Client client, LoginState state) async {
     switch (state) {
       case LoginState.loggedIn:
         // under no case start the app if encryption not supported
@@ -303,9 +383,39 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
         _ensureClientInDb(client);
 
+        final oidc = await buildOidcManager(
+          client,
+          [AppLocalizations.of(context).localeName],
+        );
+        if (oidc != null) {
+          storeOidcManager(client, oidc);
+        }
+
         break;
 
       case LoginState.softLoggedOut:
+        final oidc = _oidc[client.clientName.clientIdentifier];
+        if (oidc == null) {
+          continue loggedOut;
+        }
+        try {
+          final user = await oidc.loginAuthorizationCodeFlow(
+            originalUri: Uri.parse('about:blank'),
+          );
+          if (user == null) {
+            continue loggedOut;
+          }
+          await client.login(
+            LoginType.mLoginToken,
+            deviceId: client.deviceID,
+            token: user.token.accessToken,
+          );
+        } catch (e, s) {
+          Logs().e('Error refreshing session', e, s);
+          continue loggedOut;
+        }
+
+      loggedOut:
       case LoginState.loggedOut:
         if (client.clientName.clientIdentifier ==
                 getActiveClient().clientName.clientIdentifier &&
@@ -325,10 +435,17 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   }
 
   Future<void> _handleUiaRequest(Client client, UiaRequest request) async {
+    final oidc = _oidc[client.clientName.clientIdentifier];
     final handler = UiaHelper(
-      client: getActiveClient(),
+      client: client,
+      oidc: oidc,
       request: request,
-      authenticationPasswordCallback: (request) => UiaDialog(
+      authenticationOidcCallback: (request, oidc) => UiaOidcDialog(
+        request: request,
+        client: client,
+        oidc: oidc,
+      ).show(context),
+      authenticationPasswordCallback: (request) => UiaPasswordDialog(
         request: request,
         client: client,
       ).show(context),
@@ -364,6 +481,11 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     storageLock = Completer<void>();
 
     final identifier = client.clientName.clientIdentifier;
+
+    await client.database?.delete();
+
+    await _oidc[client.clientName.clientIdentifier]?.dispose();
+    await _oidcSubscription[client.clientName.clientIdentifier]?.cancel();
 
     await client.dispose();
 
@@ -501,6 +623,24 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       stackTrace: event.$2,
     ).showDialog(context);
   }
+
+  static void _handleOidcEvent(Client client, OidcEvent event) {
+    Logs().d('OIDC event $event');
+  }
+
+  static Uri _makePlatformRedirectUrl(String method) => Uri.parse(
+        kIsWeb
+            ? 'https://polycule.im/web/redirect.html'
+            : Platform.isAndroid || Platform.isIOS || Platform.isMacOS
+                ? 'im.polycule:/$method'
+                : Platform.isWindows || Platform.isLinux
+                    // using port 0 means that we don't care which port is used,
+                    // and a random unused port will be assigned.
+                    //
+                    // this is safer than passing a port yourself.
+                    ? 'http://localhost:0/$method'
+                    : 'http://localhost:0/$method',
+      );
 }
 
 extension ClientIdentifier on String {

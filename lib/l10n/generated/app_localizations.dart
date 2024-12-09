@@ -1597,6 +1597,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This room is encrypted and every session is cross-signed.'**
   String get roomStateVerifiedEncrypted;
+
+  /// No description provided for @oidcAppName.
+  ///
+  /// In en, this message translates to:
+  /// **'< polycule >'**
+  String get oidcAppName;
+
+  /// No description provided for @oidcContact.
+  ///
+  /// In en, this message translates to:
+  /// **'info@braid.business'**
+  String get oidcContact;
+
+  /// No description provided for @oidcAppUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'https://polycule.im/web'**
+  String get oidcAppUrl;
+
+  /// No description provided for @oidcLogoUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'https://polycule.im/web/assets/assets/logo/logo-circle.png'**
+  String get oidcLogoUrl;
+
+  /// No description provided for @oidcTosUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'https://polycule.im/web/tos.html'**
+  String get oidcTosUrl;
+
+  /// No description provided for @oicPolicyUri.
+  ///
+  /// In en, this message translates to:
+  /// **'https://polycule.im/web/policy.html'**
+  String get oicPolicyUri;
+
+  /// No description provided for @loginOidc.
+  ///
+  /// In en, this message translates to:
+  /// **'Login using OpenID Connect'**
+  String get loginOidc;
 }
 
 class _AppLocalizationsDelegate

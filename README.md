@@ -5,6 +5,8 @@
 
 A geeky and efficient \[matrix\] client for power users.
 
+**Supports Open ID Connect :white_check_mark: !**
+
 ## About
 
 **Is it usable yet ? - Maybe, I dailydrive it.**
@@ -54,9 +56,9 @@ might be quite similar in both clients - they both have a similar code base we k
 | Homeserver selection      | :white_check_mark: |
 | Homeserver proposals      | :white_check_mark: |
 | Login                     |                    |
+| ... native OIDC ready     | :white_check_mark: |
 | ... password              | :white_check_mark: |
 | ... SSO                   |        :x:         |
-| ... native OIDC ready     |        :x:         |
 | Multi account             |                    |
 | ... routing               | :white_check_mark: |
 | ... login                 | :white_check_mark: |
@@ -66,12 +68,12 @@ might be quite similar in both clients - they both have a similar code base we k
 | Sliding sync              |        :x:         |
 | Sending files             | :white_check_mark: |
 | HTML renderer             | :white_check_mark: |
-| User profile              |        :x:         |
+| User profiles             | :white_check_mark: |
 | Room details              |        :x:         |
 | Account settings          |        :x:         |
 | \[matrix\] widgets        |        :x:         |
 | VoIP signaling            |        :x:         |
-| Emoji picker              |        :x:         |
+| Emoji picker              | :white_check_mark: |
 
 *Can you daily drive it ?* - Yes, I do.
 

@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../../../l10n/generated/app_localizations.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 
-class UiaDialog extends StatefulWidget {
-  const UiaDialog({super.key, required this.request, required this.client});
+class UiaPasswordDialog extends StatefulWidget {
+  const UiaPasswordDialog({
+    super.key,
+    required this.request,
+    required this.client,
+  });
 
   final UiaRequest request;
   final Client client;
@@ -17,10 +21,10 @@ class UiaDialog extends StatefulWidget {
       );
 
   @override
-  State<UiaDialog> createState() => _UiaDialogState();
+  State<UiaPasswordDialog> createState() => _UiaPasswordDialogState();
 }
 
-class _UiaDialogState extends State<UiaDialog> {
+class _UiaPasswordDialogState extends State<UiaPasswordDialog> {
   TextEditingController controller = TextEditingController();
   bool _hideInput = true;
 

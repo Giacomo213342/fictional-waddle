@@ -475,5 +475,30 @@
   "roomStateSpace": "This room is open for space members only.",
   "roomStateUnpublic": "This room is private but not encrypted.",
   "roomStateEncrypted": "This room is encrypted but some members are not verified.",
-  "roomStateVerifiedEncrypted": "This room is encrypted and every session is cross-signed."
+  "roomStateVerifiedEncrypted": "This room is encrypted and every session is cross-signed.",
+  "oidcAppName": "< polycule >",
+  "@oidcAppName": {
+    "translatable": false
+  },
+  "oidcContact": "info@braid.business",
+  "@oidcContact": {
+    "translatable": false
+  },
+  "oidcAppUrl": "https://polycule.im/web",
+  "@oidcAppUrl": {
+    "translatable": false
+  },
+  "oidcLogoUrl": "https://polycule.im/web/assets/assets/logo/logo-circle.png",
+  "@oidcLogoUrl": {
+    "translatable": false
+  },
+  "oidcTosUrl": "https://polycule.im/web/tos.html",
+  "@oidcTosUrl": {
+    "translatable": false
+  },
+  "oicPolicyUri": "https://polycule.im/web/policy.html",
+  "@oidcPolicyUri": {
+    "translatable": false
+  },
+  "loginOidc": "Login using OpenID Connect"
 }
