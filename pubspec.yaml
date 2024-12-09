@@ -38,6 +38,7 @@ dependencies:
   go_router: ^14.3.0
   highlighting: ^0.9.0+11.8.0
   html: ^0.15.4
+  http: ^1.2.2
   image: ^4.3.0
   import_sorter: ^4.6.0
   intl: ">=0.18.0 <2.0.0"
@@ -46,12 +47,13 @@ dependencies:
   just_waveform: ^0.0.5
   linkify: ^5.0.0
   locale_names: ^1.1.1
-  matrix: ^0.33.0
+  matrix: ^0.35.0
   matrix_homeserver_recommendations: ^0.4.0
   media_kit: ^1.1.10+1
   media_kit_libs_video: ^1.0.4
   media_kit_video: ^1.2.4
   mime: ^1.0.6
+  oidc: ^0.9.0
   olm: ^2.0.3
   path_provider: ^2.1.4
   provider: ^6.1.1

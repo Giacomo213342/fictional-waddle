@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
+import '../../utils/matrix/oidc_delegation_extension.dart';
 import '../../widgets/ascii_progress_indicator.dart';
+import 'components/matrix_oidc_login_provider.dart';
 import 'components/password_login_provider.dart';
 import 'login.dart';
 
@@ -17,7 +19,8 @@ class LoginView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
-        child: FutureBuilder(
+        child: FutureBuilder<
+            (DiscoveryInformation?, GetVersionsResponse, List<LoginFlow>)?>(
           future: controller.homeserverCheck,
           builder: (context, snapshot) {
             final data = snapshot.data;
@@ -51,41 +54,31 @@ class LoginView extends StatelessWidget {
                           .welcomeToHomeserver(controller.homeserver.host),
                       style: Theme.of(context).textTheme.headlineLarge,
                     ),
-                    Text(
-                      AppLocalizations.of(context).howWouldYouLikeToConnect,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
                     if (!controller.loginLoading) ...[
                       if (data.$3.any(
+                        (flow) =>
+                            flow.type == AuthenticationTypes.sso &&
+                            flow.delegatedOidcCompatibility,
+                      ))
+                        MatrixOidcLoginProvider(
+                          controller,
+                          discoveryInformation: data.$1,
+                        )
+                      else if (data.$3.any(
                         (flow) => flow.type == LoginType.mLoginPassword,
                       ))
                         PasswordLoginProvider(controller),
                       if (data.$3.any(
-                        (flow) => flow.type == AuthenticationTypes.sso,
+                        (flow) =>
+                            flow.type == AuthenticationTypes.sso &&
+                            !flow.delegatedOidcCompatibility,
                       ))
                         const ListTile(
                           leading: Icon(Icons.info_outline),
                           title: Text(
-                            'SSO login is not implemented yet. Coming soon.',
+                            'Legacy SSO login is not implemented yet.',
                           ),
                         ),
-                      const SizedBox(
-                        height: 32,
-                        child: Divider(),
-                      ),
-                      const Text(
-                        'Login flows we don\'t support :',
-                      ),
-                      ...data.$3
-                          .where(
-                            (element) =>
-                                element.type != AuthenticationTypes.sso &&
-                                element.type != LoginType.mLoginPassword &&
-                                element.type != LoginType.mLoginToken,
-                          )
-                          .map(
-                            (e) => Text(e.type.toString()),
-                          ),
                     ] else
                       const Center(
                         child: AsciiProgressIndicator(),

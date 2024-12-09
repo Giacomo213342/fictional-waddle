@@ -893,4 +893,26 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get roomStateVerifiedEncrypted =>
       'This room is encrypted and every session is cross-signed.';
+
+  @override
+  String get oidcAppName => '< polycule >';
+
+  @override
+  String get oidcContact => 'info@braid.business';
+
+  @override
+  String get oidcAppUrl => 'https://polycule.im/web';
+
+  @override
+  String get oidcLogoUrl =>
+      'https://polycule.im/web/assets/assets/logo/logo-circle.png';
+
+  @override
+  String get oidcTosUrl => 'https://polycule.im/web/tos.html';
+
+  @override
+  String get oicPolicyUri => 'https://polycule.im/web/policy.html';
+
+  @override
+  String get loginOidc => 'Login using OpenID Connect';
 }
