@@ -2,7 +2,10 @@
 
 < polycule > orients with its code of conduct to the \[matrix\] foundation's code of conduct.
 
+As the \[matrix\] community, we strive to :
+
 - Be friendly and patient.
+- Be welcoming.
 - Be considerate.
 - Be respectful.
 - Be careful in the words that we choose.
