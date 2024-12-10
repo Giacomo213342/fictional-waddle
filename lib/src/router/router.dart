@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 
 import '../pages/account_selector/account_selector.dart';
+import '../pages/account_settings/account_settings.dart';
 import '../pages/application_settings/application_settings.dart';
 import '../pages/application_settings/pages/appearance.dart';
 import '../pages/application_settings/pages/error_reporting.dart';
@@ -147,6 +148,19 @@ class PolyculeRouter extends GoRouter {
                               state.pathParameters[UserPage.pathParameter]!,
                             ),
                           ),
+                        ),
+                      ],
+                    ),
+                    ResponsiveShellRoute(
+                      builder: (context, state) => const AccountSettings(),
+                      routes: [
+                        RequiresLoginRoute(
+                          path: AccountSettings.routeName.asMultiClientRoute(),
+                          builder: (context, state) =>
+                              const PolyculePlaceholder(),
+                          routes: [
+                            // TODO
+                          ],
                         ),
                       ],
                     ),

@@ -918,4 +918,10 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get oidcConfirm => 'Confirm';
+
+  @override
+  String get manageSessions => 'Manage sessions';
+
+  @override
+  String get deactivateAccount => 'Deactivate account';
 }

@@ -1645,6 +1645,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Confirm'**
   String get oidcConfirm;
+
+  /// No description provided for @manageSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage sessions'**
+  String get manageSessions;
+
+  /// No description provided for @deactivateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate account'**
+  String get deactivateAccount;
 }
 
 class _AppLocalizationsDelegate

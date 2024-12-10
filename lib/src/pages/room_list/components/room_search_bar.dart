@@ -49,7 +49,7 @@ class RoomSearchBar extends StatelessWidget {
               ),
               trailing: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: controller.accountSettings,
                   tooltip: AppLocalizations.of(context).accountSettings,
                   icon: ProfileAvatarBuilder(
                     userId: controller.client.userID!,

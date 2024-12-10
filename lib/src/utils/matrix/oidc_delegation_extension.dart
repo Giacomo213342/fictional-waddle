@@ -68,7 +68,7 @@ extension OidcAuthIssuerExtension on Client {
     final uri = Uri.tryParse(rawUri)?.resolveUri(
       Uri(
         queryParameters: {
-          if (action is OidcAccountManagementActions) 'action': action.name,
+          if (action is OidcAccountManagementActions) 'action': action.action,
           if (deviceId is String) 'device_id': deviceId,
           if (idTokenHint is String) 'id_token_hint': idTokenHint,
         },
