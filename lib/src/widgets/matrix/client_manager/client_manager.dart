@@ -287,7 +287,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         Logs().e('OIDC exception for client ${client.clientName}.', e, s);
         rethrow;
       } else {
-        Logs().d('Client ${client.clientName} does not support OIDC.');
+        Logs().v('Client ${client.clientName} does not support OIDC.');
         return null;
       }
     }
@@ -487,6 +487,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
     await client.database?.delete();
 
+    await _oidc[client.clientName.clientIdentifier]?.forgetUser();
     await _oidc[client.clientName.clientIdentifier]?.dispose();
     await _oidcSubscription[client.clientName.clientIdentifier]?.cancel();
 
@@ -646,51 +647,68 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       );
 
   Future<void> _initClient(Client client) async {
-    final oidc = await buildOidcManager(
-      client,
-      [AppLocalizations.of(context).localeName],
-    );
-    if (oidc != null) {
-      DatabaseApi? database;
-      final databaseBuilder = client.databaseBuilder;
-      if (databaseBuilder != null) {
-        database ??= await databaseBuilder(client);
-      }
+    final locale = AppLocalizations.of(context).localeName;
 
-      final account = await database?.getClient(client.clientName);
-      await database?.close();
+    DatabaseApi? database;
+    final databaseBuilder = client.databaseBuilder;
+    if (databaseBuilder != null) {
+      database ??= await databaseBuilder(client);
+    }
 
-      final user = await oidc.refreshToken();
+    final account = await database?.getClient(client.clientName);
 
-      final token = user?.token;
-      if (account != null && user != null && token != null) {
-        storeOidcManager(client, oidc);
+    if (account != null) {
+      final homeserver = Uri.parse(account['homeserver_url']);
 
-        DateTime? expiresAt;
+      client.baseUri = homeserver;
 
-        final expiresIn = token.expiresIn;
-        if (expiresIn != null) {
-          expiresAt = DateTime.now().add(expiresIn);
+      final oidc = await buildOidcManager(
+        client,
+        [locale],
+      );
+      if (oidc != null) {
+        OidcUser? user;
+        try {
+          user = await oidc.refreshToken();
+        } on OidcException catch (e) {
+          // our refresh token expired or got lost - give the user a chance to
+          // still reuse the session without wiping all data
+          if (e.errorResponse?.error == 'invalid_grant') {
+            user = await oidc.loginAuthorizationCodeFlow();
+          } else {
+            rethrow;
+          }
         }
 
-        final homeserver = Uri.parse(account['homeserver_url']);
+        final token = user?.token;
+        if (user != null && token != null) {
+          storeOidcManager(client, oidc);
 
-        // workaround missing user ID in token
-        client.bearerToken = token.accessToken;
-        final tokenInfo = await client.getTokenOwner();
-        client.bearerToken = null;
+          DateTime? expiresAt;
 
-        await client.init(
-          newToken: token.accessToken,
-          newTokenExpiresAt: expiresAt,
-          newRefreshToken: token.refreshToken,
-          newUserID: tokenInfo.userId,
-          newHomeserver: homeserver,
-          newDeviceName: account['device_name'],
-          newDeviceID: tokenInfo.deviceId,
-          waitForFirstSync: false,
-        );
-        return;
+          final expiresIn = token.expiresIn;
+          if (expiresIn != null) {
+            expiresAt = DateTime.now().add(expiresIn);
+          }
+
+          // workaround missing user ID in token
+          client.bearerToken = token.accessToken;
+          final tokenInfo = await client.getTokenOwner();
+          client.bearerToken = null;
+
+          database?.updateClient(
+            homeserver.toString(),
+            token.accessToken!,
+            expiresAt,
+            token.refreshToken,
+            tokenInfo.userId,
+            tokenInfo.deviceId ?? account['device_id'],
+            account['device_name'],
+            account['prev_batch'],
+            account['olm_account'],
+          );
+          await database?.close();
+        }
       }
     }
     await client.init(

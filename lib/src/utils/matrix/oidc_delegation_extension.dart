@@ -88,6 +88,7 @@ extension OidcAuthIssuerExtension on Client {
         key: 'device_id',
       );
       if (storedDeviceId is String) {
+        Logs().d('Restoring device ID $storedDeviceId.');
         return storedDeviceId;
       }
     }
@@ -107,6 +108,7 @@ extension OidcAuthIssuerExtension on Client {
       key: 'device_id',
       value: deviceId,
     );
+    Logs().d('Generated device ID $deviceId.');
     return deviceId;
   }
 
@@ -140,8 +142,8 @@ extension OidcAuthIssuerExtension on Client {
       key: 'client_id',
     );
 
-    // in debug mode, always register a new client
-    if (storedClientId is String && !kDebugMode) {
+    if (storedClientId is String) {
+      Logs().d('Reusing Dynamic Client ID $storedClientId.');
       return storedClientId;
     }
 
@@ -156,6 +158,7 @@ extension OidcAuthIssuerExtension on Client {
       key: 'client_id',
       value: clientId,
     );
+    Logs().d('Registered Dynamic Client ID $clientId.');
     return clientId;
   }
 
