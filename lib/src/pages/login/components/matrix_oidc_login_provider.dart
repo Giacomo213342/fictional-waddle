@@ -107,16 +107,16 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
         newDeviceName: appName,
         newDeviceID: tokenInfo.deviceId,
       );
-    } catch (e) {
-      setState(() {
-        _loading = false;
-      });
-
-      rethrow;
-    } finally {
-      setState(() {
-        _loading = false;
-      });
+    } catch (e, s) {
+      Logs().e('Error during OIDC login.', e, s);
     }
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _loading = false;
+    });
   }
 }
