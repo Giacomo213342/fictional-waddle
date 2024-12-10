@@ -500,5 +500,6 @@
   "@oidcPolicyUri": {
     "translatable": false
   },
-  "loginOidc": "Login using OpenID Connect"
+  "loginOidc": "Login using OpenID Connect",
+  "oidcConfirm": "Confirm"
 }

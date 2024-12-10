@@ -4,31 +4,36 @@ import 'package:matrix/matrix.dart';
 import 'package:oidc/oidc.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../utils/matrix/oidc_delegation_extension.dart';
 import '../../ascii_progress_indicator.dart';
 
-class UiaOidcDialog extends StatefulWidget {
-  const UiaOidcDialog({
+class UiaOidcAccountManagementDialog extends StatefulWidget {
+  const UiaOidcAccountManagementDialog({
     super.key,
     required this.request,
     required this.client,
     required this.oidc,
+    required this.action,
   });
 
   final UiaRequest request;
   final Client client;
   final OidcUserManager oidc;
+  final OidcAccountManagementActions action;
 
-  Future<OidcUser?> show(BuildContext context) => showDialog<OidcUser?>(
+  Future<bool?> show(BuildContext context) => showDialog<bool>(
         context: context,
         barrierDismissible: false,
         builder: (context) => this,
       );
 
   @override
-  State<UiaOidcDialog> createState() => _UiaOidcDialogState();
+  State<UiaOidcAccountManagementDialog> createState() =>
+      _UiaOidcAccountManagementDialogState();
 }
 
-class _UiaOidcDialogState extends State<UiaOidcDialog> {
+class _UiaOidcAccountManagementDialogState
+    extends State<UiaOidcAccountManagementDialog> {
   bool _loading = false;
 
   @override
@@ -49,7 +54,7 @@ class _UiaOidcDialogState extends State<UiaOidcDialog> {
               padding: const EdgeInsets.all(16.0),
               child: FloatingActionButton.extended(
                 enableFeedback: _loading,
-                onPressed: _loading ? null : _oidcAuthenticate,
+                onPressed: _loading ? null : _accountManagementDeeplink,
                 icon: _loading
                     ? const AsciiProgressIndicator()
                     : const Icon(Icons.security),
@@ -61,32 +66,35 @@ class _UiaOidcDialogState extends State<UiaOidcDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: Navigator.of(context).pop,
+          onPressed: () => Navigator.of(context).pop(false),
           child: Text(AppLocalizations.of(context).cancel),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(AppLocalizations.of(context).submit),
         ),
       ],
     );
   }
 
-  Future<void> _oidcAuthenticate() async {
+  Future<void> _accountManagementDeeplink() async {
     setState(() {
       _loading = true;
     });
 
     try {
-      final user = await widget.oidc.loginAuthorizationCodeFlow(
-        originalUri: Uri.parse('about:blank'),
+      await widget.client.oidcAccountManagement(
+        action: widget.action,
+        deviceId: widget.client.deviceID,
       );
 
       setState(() {
         _loading = false;
       });
 
-      if (user == null || !mounted) {
+      if (!mounted) {
         return;
       }
-
-      Navigator.of(context).pop(user);
     } catch (_) {
       setState(() {
         _loading = false;

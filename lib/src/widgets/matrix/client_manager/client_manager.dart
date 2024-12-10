@@ -33,6 +33,7 @@ import '../../error_handler_dialog.dart';
 import '../../intent_manager.dart';
 import '../../settings_manager.dart';
 import '../key_verification/key_verification_request_widget.dart';
+import '../uia/uia_oidc_account_management_dialog.dart';
 import '../uia/uia_oidc_dialog.dart';
 import '../uia/uia_password_dialog.dart';
 import 'client_manager_view.dart';
@@ -234,12 +235,16 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
   static Future<OidcUserManager?> buildOidcManager(
     Client client,
-    List<String> locales,
-  ) async {
+    List<String> locales, {
+    bool enforceNewDevice = false,
+  }) async {
     try {
       final store = client.oidcStore;
 
-      final deviceId = client.deviceID ?? await client.oidcEnsureDeviceId();
+      final deviceId = client.deviceID ??
+          await client.oidcEnsureDeviceId(
+            enforceNewDevice,
+          );
 
       final settings = OidcUserManagerSettings(
         redirectUri: _makePlatformRedirectUrl('oauth2redirect'),
@@ -444,6 +449,13 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         request: request,
         client: client,
         oidc: oidc,
+      ).show(context),
+      authenticationOidcAccountManagementCallback: (request, oidc, action) =>
+          UiaOidcAccountManagementDialog(
+        request: request,
+        client: client,
+        oidc: oidc,
+        action: action,
       ).show(context),
       authenticationPasswordCallback: (request) => UiaPasswordDialog(
         request: request,
