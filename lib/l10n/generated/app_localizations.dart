@@ -1639,6 +1639,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login using OpenID Connect'**
   String get loginOidc;
+
+  /// No description provided for @oidcConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get oidcConfirm;
 }
 
 class _AppLocalizationsDelegate

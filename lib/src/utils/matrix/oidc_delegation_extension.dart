@@ -52,9 +52,10 @@ class DiscoveryInformationAuthenticationData {
 }
 
 extension OidcAuthIssuerExtension on Client {
-  /// MSC 3824
+  /// MSC 4191
   Future<void> oidcAccountManagement({
-    required OidcAccountManagementActions action,
+    OidcAccountManagementActions? action,
+    String? idTokenHint,
     String? deviceId,
   }) async {
     final providerMetadata = await oidcProviderMetadata();
@@ -67,9 +68,9 @@ extension OidcAuthIssuerExtension on Client {
     final uri = Uri.tryParse(rawUri)?.resolveUri(
       Uri(
         queryParameters: {
-          // action
-          'org.matrix.msc3824.action': action.name,
+          if (action is OidcAccountManagementActions) 'action': action.name,
           if (deviceId is String) 'device_id': deviceId,
+          if (idTokenHint is String) 'id_token_hint': idTokenHint,
         },
       ),
     );
@@ -80,13 +81,15 @@ extension OidcAuthIssuerExtension on Client {
   }
 
   /// MSC 2964 & MSC 2967
-  Future<String> oidcEnsureDeviceId() async {
-    final storedDeviceId = await oidcStore.get(
-      OidcStoreNamespace.state,
-      key: 'device_id',
-    );
-    if (storedDeviceId is String) {
-      return storedDeviceId;
+  Future<String> oidcEnsureDeviceId([bool enforceNewDevice = false]) async {
+    if (!enforceNewDevice) {
+      final storedDeviceId = await oidcStore.get(
+        OidcStoreNamespace.state,
+        key: 'device_id',
+      );
+      if (storedDeviceId is String) {
+        return storedDeviceId;
+      }
     }
 
     // MSC 1597
@@ -368,14 +371,20 @@ class OidcDynamicRegistrationData {
       };
 }
 
+/// MSC 4191
 enum OidcAccountManagementActions {
   profile('profile'),
   sessionsList('sessions_list'),
   sessionView('session_view'),
   sessionEnd('session_end'),
+  accountDeactivate('account_deactivate'),
   crossSigningReset('cross_signing_reset');
 
   const OidcAccountManagementActions(this.name);
 
+  /// name as it appears in the metadata
   final String name;
+
+  /// action as it is used for deep linking
+  String get action => 'org.matrix.$name';
 }

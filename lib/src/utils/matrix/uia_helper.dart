@@ -2,11 +2,17 @@ import 'package:matrix/matrix.dart';
 import 'package:oidc/oidc.dart';
 
 import '../password_cache_manager.dart';
+import 'oidc_delegation_extension.dart';
 
 typedef UiaTokenCallback = Future<String?> Function(UiaRequest request);
 typedef UiaOidcTokenCallback = Future<OidcUser?> Function(
   UiaRequest request,
   OidcUserManager oidc,
+);
+typedef UiaOidcAccountManagementCallback = Future<bool?> Function(
+  UiaRequest request,
+  OidcUserManager oidc,
+  OidcAccountManagementActions action,
 );
 
 class UiaHelper {
@@ -15,6 +21,7 @@ class UiaHelper {
     this.oidc,
     required this.request,
     required this.authenticationOidcCallback,
+    required this.authenticationOidcAccountManagementCallback,
     required this.authenticationPasswordCallback,
   });
 
@@ -22,6 +29,8 @@ class UiaHelper {
   final OidcUserManager? oidc;
   final UiaRequest request;
   final UiaOidcTokenCallback authenticationOidcCallback;
+  final UiaOidcAccountManagementCallback
+      authenticationOidcAccountManagementCallback;
   final UiaTokenCallback authenticationPasswordCallback;
 
   Future<void> respond() async {
@@ -33,7 +42,30 @@ class UiaHelper {
         return;
       case UiaRequestState.waitForUser:
         final oidc = this.oidc;
-        if (request.nextStages.contains(LoginType.mLoginToken) &&
+
+        final accountAction = OidcAccountManagementActions.values
+            .where((action) => request.nextStages.contains(action.action))
+            .singleOrNull;
+
+        /// OIDC pseudo stages
+        if (accountAction != null && oidc != null) {
+          final response =
+              await authenticationOidcAccountManagementCallback.call(
+            request,
+            oidc,
+            accountAction,
+          );
+          if (response != true) {
+            return;
+          }
+
+          final auth = AuthenticationData(
+            session: request.session,
+          );
+          await request.completeStage(auth);
+
+          return;
+        } else if (request.nextStages.contains(LoginType.mLoginToken) &&
             oidc != null) {
           final user = await authenticationOidcCallback.call(request, oidc);
           if (user == null) {

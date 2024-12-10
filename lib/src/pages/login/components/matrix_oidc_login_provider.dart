@@ -64,6 +64,8 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
       final manager = await ClientManager.buildOidcManager(
         client,
         [AppLocalizations.of(context).localeName],
+        // TODO: dehydrated devices ?
+        enforceNewDevice: true,
       );
       if (manager == null) {
         setState(() {

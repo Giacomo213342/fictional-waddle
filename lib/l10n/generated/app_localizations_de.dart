@@ -915,4 +915,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get loginOidc => 'Login using OpenID Connect';
+
+  @override
+  String get oidcConfirm => 'Confirm';
 }
