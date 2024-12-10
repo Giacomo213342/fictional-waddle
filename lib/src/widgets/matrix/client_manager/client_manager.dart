@@ -216,9 +216,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       client,
       AppLocalizations.of(context),
     );
-    client.init(
-      waitForFirstSync: false,
-    );
+
+    _initClient(client);
     return client;
   }
 
@@ -252,7 +251,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         frontChannelLogoutUri:
             kIsWeb ? Uri.parse('https://polycule.im/web/redirect.html') : null,
         uiLocales: locales,
-        supportOfflineAuth: false,
+        supportOfflineAuth: true,
         scope: [
           ...OidcUserManagerSettings.defaultScopes,
           // 'urn:matrix:client:api:*',
@@ -289,7 +288,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         rethrow;
       } else {
         Logs().d('Client ${client.clientName} does not support OIDC.');
-        rethrow;
+        return null;
       }
     }
   }
@@ -387,14 +386,6 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         }
 
         _ensureClientInDb(client);
-
-        final oidc = await buildOidcManager(
-          client,
-          [AppLocalizations.of(context).localeName],
-        );
-        if (oidc != null) {
-          storeOidcManager(client, oidc);
-        }
 
         break;
 
@@ -653,6 +644,59 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
                     ? 'http://localhost:0/$method'
                     : 'http://localhost:0/$method',
       );
+
+  Future<void> _initClient(Client client) async {
+    final oidc = await buildOidcManager(
+      client,
+      [AppLocalizations.of(context).localeName],
+    );
+    if (oidc != null) {
+      DatabaseApi? database;
+      final databaseBuilder = client.databaseBuilder;
+      if (databaseBuilder != null) {
+        database ??= await databaseBuilder(client);
+      }
+
+      final account = await database?.getClient(client.clientName);
+      await database?.close();
+
+      final user = await oidc.refreshToken();
+
+      final token = user?.token;
+      if (account != null && user != null && token != null) {
+        storeOidcManager(client, oidc);
+
+        DateTime? expiresAt;
+
+        final expiresIn = token.expiresIn;
+        if (expiresIn != null) {
+          expiresAt = DateTime.now().add(expiresIn);
+        }
+
+        final homeserver = Uri.parse(account['homeserver_url']);
+
+        // workaround missing user ID in token
+        client.bearerToken = token.accessToken;
+        final tokenInfo = await client.getTokenOwner();
+        client.bearerToken = null;
+
+        await client.init(
+          newToken: token.accessToken,
+          newTokenExpiresAt: expiresAt,
+          newRefreshToken: token.refreshToken,
+          newUserID: tokenInfo.userId,
+          newHomeserver: homeserver,
+          newDeviceName: account['device_name'],
+          newDeviceID: tokenInfo.deviceId,
+          waitForFirstSync: false,
+        );
+        return;
+      }
+    }
+    await client.init(
+      waitForFirstSync: false,
+    );
+  }
 }
 
 extension ClientIdentifier on String {

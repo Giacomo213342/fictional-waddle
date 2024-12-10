@@ -501,5 +501,7 @@
     "translatable": false
   },
   "loginOidc": "Login using OpenID Connect",
-  "oidcConfirm": "Confirm"
+  "oidcConfirm": "Confirm",
+  "manageSessions": "Manage sessions",
+  "deactivateAccount": "Deactivate account"
 }

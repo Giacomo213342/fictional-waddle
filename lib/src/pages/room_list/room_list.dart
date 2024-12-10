@@ -7,6 +7,7 @@ import 'package:matrix/matrix.dart';
 import '../../router/extensions/go_router_path_extension.dart';
 import '../../utils/matrix/matrix_state.dart';
 import '../../widgets/matrix/command_error_dialog.dart';
+import '../account_settings/account_settings.dart';
 import '../room/room.dart';
 import '../ssss_bootstrap/ssss_bootstrap.dart';
 import 'room_list_view.dart';
@@ -159,5 +160,9 @@ class RoomListController extends MatrixState<RoomListPage> {
       }
       await CommandErrorDialog(error: e).show(context);
     }
+  }
+
+  void accountSettings() {
+    context.goMultiClient(AccountSettings.routeName);
   }
 }
