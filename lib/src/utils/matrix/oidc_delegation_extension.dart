@@ -139,7 +139,7 @@ extension OidcAuthIssuerExtension on Client {
   ) async {
     final storedClientId = await oidcStore.get(
       OidcStoreNamespace.state,
-      key: 'client_id',
+      key: 'client_id_${registrationData.url.authority}',
     );
 
     if (storedClientId is String) {
@@ -155,7 +155,7 @@ extension OidcAuthIssuerExtension on Client {
     );
     await oidcStore.set(
       OidcStoreNamespace.state,
-      key: 'client_id',
+      key: 'client_id_${registrationData.url.authority}',
       value: clientId,
     );
     Logs().d('Registered Dynamic Client ID $clientId.');

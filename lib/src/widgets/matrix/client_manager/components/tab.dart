@@ -20,7 +20,7 @@ class ClientTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final client =
         Provider.of<GetClientCallback>(context, listen: false).call();
-    final isLoggedIn = client.isLogged();
+    final userId = client.userID;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: ClipRRect(
@@ -52,17 +52,17 @@ class ClientTab extends StatelessWidget {
                   child: Row(
                     children: [
                       SizedBox(
-                        width: isLoggedIn ? 224 : 224 - 32,
-                        child: !isLoggedIn
+                        width: userId != null ? 224 : 224 - 32,
+                        child: userId == null
                             ? Text(
                                 AppLocalizations.of(context).loggingInToClient,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                               )
                             : Tooltip(
-                                message: client.userID,
+                                message: userId,
                                 child: ProfileBuilder(
-                                  userId: client.userID!,
+                                  userId: userId,
                                   client: client,
                                   builder: (context, snapshot) {
                                     final profile = snapshot.data;
@@ -74,7 +74,7 @@ class ClientTab extends StatelessWidget {
                                               uri: profile?.avatarUrl,
                                               client: client,
                                               monogram: profile?.displayName ??
-                                                  client.userID!,
+                                                  userId,
                                               dimension: 24,
                                             ),
                                             alignment:
@@ -95,7 +95,7 @@ class ClientTab extends StatelessWidget {
                                 ),
                               ),
                       ),
-                      if (!isLoggedIn)
+                      if (!client.isLogged())
                         SizedBox(
                           width: 32,
                           child: IconButton(

@@ -27,6 +27,7 @@ import '../../../utils/matrix/oidc_delegation_extension.dart';
 import '../../../utils/matrix/polycule_command_extension.dart';
 import '../../../utils/matrix/push_manager.dart';
 import '../../../utils/matrix/uia_helper.dart';
+import '../../../utils/oidc_successful_page_response.dart';
 import '../../../utils/runtime_suffix.dart';
 import '../../../utils/secure_storage.dart';
 import '../../error_handler_dialog.dart';
@@ -171,6 +172,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   static final Map<int, OidcUserManager> _oidc = {};
 
   static final Map<int, StreamSubscription<OidcEvent>?> _oidcSubscription = {};
+  static final Map<int, StreamSubscription<OidcUser?>?> _oidcUserSubscription =
+      {};
 
   final Map<int, StreamSubscription<LoginState>?> _loginStateListener = {};
 
@@ -229,6 +232,11 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         oidc.events().listen(
               (event) => _handleOidcEvent(client, event),
             );
+
+    _oidcUserSubscription[client.clientName.clientIdentifier] =
+        oidc.userChanges().listen(
+              (user) => _handleOidcUserEvent(client, user),
+            );
     _oidc[client.clientName.clientIdentifier] = oidc;
   }
 
@@ -263,6 +271,11 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         extraAuthenticationParameters: {
           if (kIsWeb) 'response_mode': 'fragment',
         },
+        options: const OidcPlatformSpecificOptions(
+          linux: OidcPlatformSpecificOptions_Native(
+            successfulPageResponse: oidcSuccessfulPageResponse,
+          ),
+        ),
       );
 
       final clientCredentials = OidcClientAuthentication.none(
@@ -490,6 +503,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     await _oidc[client.clientName.clientIdentifier]?.forgetUser();
     await _oidc[client.clientName.clientIdentifier]?.dispose();
     await _oidcSubscription[client.clientName.clientIdentifier]?.cancel();
+    await _oidcUserSubscription[client.clientName.clientIdentifier]?.cancel();
 
     await client.dispose();
 
@@ -630,6 +644,12 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
   static void _handleOidcEvent(Client client, OidcEvent event) {
     Logs().d('OIDC event $event');
+  }
+
+  static void _handleOidcUserEvent(Client client, OidcUser? user) {
+    client.accessToken = user?.token.accessToken;
+
+    Logs().d('OIDC user update for ${user?.userInfo}');
   }
 
   static Uri _makePlatformRedirectUrl(String method) => Uri.parse(
