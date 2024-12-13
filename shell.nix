@@ -31,7 +31,7 @@ in mkShell {
   shellHook =
   ''
     # configure the dependency cache persistent
-    export FLUTTER_VERSION="3.24.5"
+    export FLUTTER_VERSION="3.27.0"
     export FLUTTER_HOME="$HOME/build/flutter-$FLUTTER_VERSION"
     export GEM_HOME="$HOME/build/gem"
 

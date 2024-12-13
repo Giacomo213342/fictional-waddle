@@ -29,7 +29,7 @@ class ClientTab extends StatelessWidget {
           decoration: BoxDecoration(
             color: client.clientName.clientIdentifier ==
                     manager.widget.activeClientIdentifier
-                ? Theme.of(context).colorScheme.primary.withOpacity(.25)
+                ? Theme.of(context).colorScheme.primary.withValues(alpha: .25)
                 : null,
             border: Border.all(
               color: Theme.of(context).colorScheme.primary,

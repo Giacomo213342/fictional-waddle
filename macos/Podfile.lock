@@ -145,7 +145,7 @@ SPEC CHECKSUMS:
   dynamic_color: 2eaa27267de1ca20d879fbd6e01259773fb1670f
   file_selector_macos: cc3858c981fe6889f364731200d6232dac1d812d
   flutter_appauth: 712a012ba667acb296423285ae6425465bafe34a
-  flutter_local_notifications: 3805ca215b2fb7f397d78b66db91f6a747af52e4
+  flutter_local_notifications: 7062189aabf7f50938a7b8b6614ffa97656eb0bf
   flutter_secure_storage_macos: 59459653abe1adb92abbc8ea747d79f8d19866c9
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
   just_audio: 9b67ca7b97c61cfc9784ea23cd8cc55eb226d489
@@ -154,11 +154,11 @@ SPEC CHECKSUMS:
   media_kit_native_event_loop: 81fd5b45192b72f8b5b69eaf5b540f45777eb8d5
   media_kit_video: c75b07f14d59706c775778e4dd47dd027de8d1e5
   oidc_macos: 972700560d342ffc6ac9306495c1d8fe53c7a9cb
-  package_info_plus: d2f71247aab4b6521434f887276093acc70d214c
+  package_info_plus: 12f1c5c2cfe8727ca46cbd0b26677728972d9a5b
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   screen_brightness_macos: 2d6d3af2165592d9a55ffcd95b7550970e41ebda
-  share_plus: fd717ef89a2801d3491e737630112b80c310640e
-  sqflite_darwin: a553b1fd6fe66f53bbb0fe5b4f5bab93f08d7a13
+  share_plus: 1fa619de8392a4398bfaf176d441853922614e89
+  sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
   SQLCipher: 5e6bfb47323635c8b657b1b27d25c5f1baf63bf5
   sqlcipher_flutter_libs: db7047866b877c027b050bb808b5480c68955c5e
   url_launcher_macos: c82c93949963e55b228a30115bd219499a6fe404
