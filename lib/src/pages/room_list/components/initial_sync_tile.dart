@@ -47,7 +47,6 @@ extension on SyncStatusUpdate {
       case SyncStatus.processing:
       case SyncStatus.cleaningUp:
       case SyncStatus.finished:
-      default:
         return AppLocalizations.of(context).syncInProgress;
     }
   }

@@ -26,8 +26,10 @@ class ReplyContainer extends StatelessWidget {
       ),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color:
-              Theme.of(context).colorScheme.secondaryContainer.withOpacity(.25),
+          color: Theme.of(context)
+              .colorScheme
+              .secondaryContainer
+              .withValues(alpha: .25),
           border: Border(
             left: BorderSide(
               color: Theme.of(context).colorScheme.tertiary,

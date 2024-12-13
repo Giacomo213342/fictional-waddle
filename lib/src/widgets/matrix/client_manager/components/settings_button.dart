@@ -23,7 +23,10 @@ class SettingsButton extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: isActive
-                    ? Theme.of(context).colorScheme.primary.withOpacity(.25)
+                    ? Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: .25)
                     : Colors.transparent,
                 border: isActive
                     ? Border.all(

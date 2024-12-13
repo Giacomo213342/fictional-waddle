@@ -42,7 +42,7 @@ class SpoilerExtension extends HtmlExtension {
       backgroundColor: Theme.of(context.buildContext!)
           .colorScheme
           .tertiaryContainer
-          .withOpacity(.5),
+          .withValues(alpha: .5),
     );
 
     final recognizer = TapGestureRecognizer()
