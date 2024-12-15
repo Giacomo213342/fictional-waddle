@@ -244,6 +244,7 @@ build:ipa:
   extends: .build
   script:
     - export HOME="/Users/$USER"
+    - gem install --update xcodeproj
     - keychain initialize
     - app-store-connect fetch-signing-files $(xcode-project detect-bundle-id --project ios/*.xcodeproj) --platform IOS --type IOS_APP_STORE --create
     - keychain add-certificates
