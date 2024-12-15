@@ -22,6 +22,7 @@ let
     olm
     # darwin.xcode_15_1
     ruby
+    cocoapods
     python3
     python3Packages.virtualenv
     xcpretty
@@ -33,7 +34,7 @@ in mkShell {
     # configure the dependency cache persistent
     export FLUTTER_VERSION="3.27.0"
     export FLUTTER_HOME="$HOME/build/flutter-$FLUTTER_VERSION"
-    export GEM_HOME="$HOME/build/gem"
+    # export GEM_HOME="$HOME/build/gem"
 
     # ugly workaround to prevent use of nix-provided clang
     mkdir -p "$HOME/.bin"
@@ -48,6 +49,7 @@ in mkShell {
     export LANG=en_US.UTF-8
 
     # create a clean build environment for our Python toolchain
+    rm -rf .buildenv
     python -m virtualenv .buildenv
 
     # export XCODE_HASH="hvqfks6vchhg3pzszqs064hy27cxws3q"
@@ -81,7 +83,7 @@ in mkShell {
     source .buildenv/bin/activate
     pip install codemagic-cli-tools
 
-    gem install --update cocoapods
+    gem install --update xcodeproj
     pod repo update
 
     # ugly workaround for olm: copy it so that flutter finds it
@@ -93,8 +95,8 @@ in mkShell {
     find $(echo $NIX_LDFLAGS | sed 's/-L//g' | uniq) -name "libcrypto.3.dylib" -print -quit | xargs -I{} cp -f {} $(pwd)
 
     # https://github.com/abiosoft/colima/issues/1036
-    export LIMA_HOME=~/.colima_lima
-    colima start
+    # export LIMA_HOME=~/.colima_lima
+    # colima start
 
   '';
 }

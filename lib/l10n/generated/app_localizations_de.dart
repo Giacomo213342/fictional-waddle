@@ -24,7 +24,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'A geeky and efficient [matrix] client for power users.';
 
   @override
-  String get repoLabel => 'Source code (GitLab)';
+  String get repoLabel => 'Quellcode (GitLab)';
 
   @override
   String get releaseNotes => 'Release notes';
@@ -42,14 +42,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get connectToHomeserver => 'Connect to your homeserver';
 
   @override
-  String get discoverHomeservers => 'Discover new homeservers';
+  String get discoverHomeservers => 'Neue Homeserver entdecken';
 
   @override
   String get newToMatrixLong =>
       'Find eligible homeservers from the [matrix] universe. This will connect to joinmatrix.org.';
 
   @override
-  String get connect => 'Connect';
+  String get connect => 'Verbinden';
 
   @override
   String get homeserverNotValid => 'This is no valid homeserver input.';
@@ -64,7 +64,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String connectingToHomeserver(String homeserver) {
-    return 'Connecting to $homeserver …';
+    return 'Verbindung zu $homeserver wird hergestellt …';
   }
 
   @override
@@ -79,13 +79,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get loginPassword => 'Login using password';
 
   @override
-  String get username => 'username';
+  String get username => 'Nutzer*innenname';
 
   @override
   String get email => 'email';
 
   @override
-  String get password => 'password';
+  String get password => 'Passwort';
 
   @override
   String get pleaseProvideEmail => 'Please provide your email.';
@@ -106,7 +106,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String clientDisplayName(String platform) {
-    return '< polycule > on $platform';
+    return '< polycule > auf $platform';
   }
 
   @override
@@ -126,7 +126,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get syncInProgress => 'Sync in progress';
+  String get syncInProgress => 'Synchronisation im Gange';
 
   @override
   String get initialSync => 'Initial sync in progress';
