@@ -209,6 +209,7 @@ build:macos:debug:
 build:macos:
   extends: .build
   script:
+    - export HOME="/Users/$USER"
     - flutter build macos $FLUTTER_ARGS
     - rm -rf polycule-$POLYCULE_VERSION.app
     - mv build/macos/Build/Products/Release/polycule.app polycule-$POLYCULE_VERSION.app
@@ -217,6 +218,7 @@ build:macos:
   tags:
     - macos
     - nix-shell
+    - privileged
   allow_failure: true
   artifacts:
     paths:
@@ -241,6 +243,7 @@ build:ios:debug:
 build:ipa:
   extends: .build
   script:
+    - export HOME="/Users/$USER"
     - keychain initialize
     - app-store-connect fetch-signing-files $(xcode-project detect-bundle-id --project ios/*.xcodeproj) --platform IOS --type IOS_APP_STORE --create
     - keychain add-certificates
@@ -254,6 +257,7 @@ build:ipa:
   tags:
     - macos
     - nix-shell
+    - privileged
   allow_failure: true
   artifacts:
     paths:
