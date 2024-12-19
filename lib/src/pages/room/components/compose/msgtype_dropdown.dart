@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
@@ -44,20 +46,20 @@ class MsgtypeDropdown extends StatefulWidget {
 class _MsgtypeDropdownState extends State<MsgtypeDropdown> {
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: DropdownMenu<String>(
-        enableSearch: true,
-        width: 128 + 32,
-        searchCallback: _searchEntries,
-        dropdownMenuEntries: _buildDropdownEntries(),
-        onSelected: _onMsgTypeSelected,
-        trailingIcon: MsgtypeDropdown._colon,
-        selectedTrailingIcon: MsgtypeDropdown._colon,
-        controller: widget.controller.msgtypeController,
-        inputDecorationTheme: const InputDecorationTheme(
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.all(12),
-        ),
+    return DropdownMenu<String>(
+      enableSearch: true,
+      width: 128 + 32,
+      searchCallback: _searchEntries,
+      dropdownMenuEntries: _buildDropdownEntries(),
+      onSelected: _onMsgTypeSelected,
+      trailingIcon: MsgtypeDropdown._colon,
+      selectedTrailingIcon: MsgtypeDropdown._colon,
+      initialSelection: widget.controller.msgtypeController.text,
+      controller: widget.controller.msgtypeController,
+      alignmentOffset: _computeScaffoldPositionFix(context),
+      inputDecorationTheme: const InputDecorationTheme(
+        border: InputBorder.none,
+        contentPadding: EdgeInsets.all(12),
       ),
     );
   }
@@ -77,19 +79,19 @@ class _MsgtypeDropdownState extends State<MsgtypeDropdown> {
       MessageTypes.BadEncrypted: l.msgTypeBadEncrypted,
       MessageTypes.None: l.msgTypeNone,
     };
-    return MsgtypeDropdown.msgTypesIcons.keys
-        .map(
-          (msgType) => DropdownMenuEntry(
-            value: msgType,
-            enabled: MsgtypeDropdown.supportedMsgTypes.contains(msgType),
-            label: msgType,
-            leadingIcon: Tooltip(
-              message: msgTypesTooltips[msgType],
-              child: Icon(MsgtypeDropdown.msgTypesIcons[msgType]),
-            ),
+    return UnmodifiableListView(
+      MsgtypeDropdown.msgTypesIcons.keys.map(
+        (msgType) => DropdownMenuEntry(
+          value: msgType,
+          enabled: MsgtypeDropdown.supportedMsgTypes.contains(msgType),
+          label: msgType,
+          leadingIcon: Tooltip(
+            message: msgTypesTooltips[msgType],
+            child: Icon(MsgtypeDropdown.msgTypesIcons[msgType]),
           ),
-        )
-        .toList();
+        ),
+      ),
+    );
   }
 
   int? _searchEntries(List<DropdownMenuEntry<String>> entries, String query) {
@@ -122,5 +124,23 @@ class _MsgtypeDropdownState extends State<MsgtypeDropdown> {
 
         break;
     }
+  }
+
+  // Flutter detects the Overlay position relative to the top scaffold. Since we
+  // have several scaffold, we need to compute the offset between the primary
+  // and secondary scaffold on landscape layout
+  Offset? _computeScaffoldPositionFix(BuildContext context) {
+    if (MediaQuery.of(context).size.width < 786) {
+      return null;
+    }
+    Rect? rect;
+    final box = Scaffold.of(context).context.findRenderObject();
+    if (box is RenderBox) {
+      rect = box.localToGlobal(Offset.zero) & box.size;
+    }
+    if (rect == null) {
+      return null;
+    }
+    return Offset(rect.left, -rect.top);
   }
 }
