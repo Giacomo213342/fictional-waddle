@@ -4,8 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:file_selector/file_selector.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:matrix/matrix.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:media_store_plus/media_store_plus.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../widgets/file_preview_dialog/file_preview_dialog.dart';
@@ -13,10 +15,25 @@ import '../widgets/file_preview_dialog/file_preview_dialog.dart';
 class FileSelector {
   FileSelector(this.msgType);
 
+  static bool _mediaStoreInitialized = false;
+
   bool compress = false;
   List<XFile>? files;
 
   final String? msgType;
+
+  bool get useImagePicker =>
+      !kIsWeb &&
+      (Platform.isAndroid || Platform.isIOS) &&
+      const [MessageTypes.Image, MessageTypes.Video].contains(msgType);
+
+  static Future<void> ensureAndroidInitialized() async {
+    if (!_mediaStoreInitialized) {
+      await MediaStore.ensureInitialized();
+      MediaStore.appFolder = 'polycule';
+      _mediaStoreInitialized = true;
+    }
+  }
 
   List<XTypeGroup> _createTypeTypeGroups(AppLocalizations l10n) {
     final useUTI = kIsWeb ? false : Platform.isIOS || Platform.isMacOS;
@@ -67,9 +84,24 @@ class FileSelector {
 
   Future<bool> selectFiles(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
-    final files = this.files = await openFiles(
-      acceptedTypeGroups: _createTypeTypeGroups(l10n),
-    );
+    List<XFile> files;
+
+    if (useImagePicker) {
+      final picker = ImagePicker();
+      if (msgType == MessageTypes.Image) {
+        files = this.files = await picker.pickMultiImage();
+      } else {
+        final file = await picker.pickVideo(source: ImageSource.gallery);
+        if (file == null) {
+          return false;
+        }
+        files = this.files = [file];
+      }
+    } else {
+      files = this.files = await openFiles(
+        acceptedTypeGroups: _createTypeTypeGroups(l10n),
+      );
+    }
     return files.isNotEmpty;
   }
 

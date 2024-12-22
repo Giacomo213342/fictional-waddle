@@ -46,21 +46,25 @@ class MsgtypeDropdown extends StatefulWidget {
 class _MsgtypeDropdownState extends State<MsgtypeDropdown> {
   @override
   Widget build(BuildContext context) {
-    return DropdownMenu<String>(
-      enableSearch: true,
-      width: 128 + 32,
-      searchCallback: _searchEntries,
-      dropdownMenuEntries: _buildDropdownEntries(),
-      onSelected: _onMsgTypeSelected,
-      trailingIcon: MsgtypeDropdown._colon,
-      selectedTrailingIcon: MsgtypeDropdown._colon,
-      initialSelection: widget.controller.msgtypeController.text,
-      controller: widget.controller.msgtypeController,
-      alignmentOffset: _computeScaffoldPositionFix(context),
-      inputDecorationTheme: const InputDecorationTheme(
-        border: InputBorder.none,
-        contentPadding: EdgeInsets.all(12),
-      ),
+    return LayoutBuilder(
+      builder: (context, _) {
+        return DropdownMenu<String>(
+          enableSearch: true,
+          width: 128 + 32,
+          searchCallback: _searchEntries,
+          dropdownMenuEntries: _buildDropdownEntries(),
+          onSelected: _onMsgTypeSelected,
+          trailingIcon: MsgtypeDropdown._colon,
+          selectedTrailingIcon: MsgtypeDropdown._colon,
+          initialSelection: widget.controller.msgtypeController.text,
+          controller: widget.controller.msgtypeController,
+          alignmentOffset: _computeScaffoldPositionFix(context),
+          inputDecorationTheme: const InputDecorationTheme(
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.all(12),
+          ),
+        );
+      },
     );
   }
 

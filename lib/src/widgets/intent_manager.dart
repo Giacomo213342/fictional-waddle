@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:app_links/app_links.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:matrix/matrix.dart';
 import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
 
@@ -40,6 +40,7 @@ class IntentManager extends State<IntentManagerWidget> {
   void initState() {
     _subscribeDeepLinks();
     _subscribeShareIntents();
+    _handleLostData();
     super.initState();
   }
 
@@ -176,6 +177,30 @@ class IntentManager extends State<IntentManagerWidget> {
     sharedFilesListener.value = null;
 
     sharedTextListener.value = text;
+
+    if (!mounted) {
+      return;
+    }
+    context.go(AccountSelectorPage.makeRedirectRoute('/'));
+  }
+
+  Future<void> _handleLostData() async {
+    final picker = ImagePicker();
+    final response = await picker.retrieveLostData();
+    if (response.isEmpty) {
+      return;
+    }
+    final List<XFile>? files = response.files;
+
+    if (files == null || files.isEmpty) {
+      return;
+    }
+
+    // first empty both share listeners
+    sharedTextListener.value = null;
+    sharedFilesListener.value = null;
+
+    sharedFilesListener.value = files;
 
     if (!mounted) {
       return;
