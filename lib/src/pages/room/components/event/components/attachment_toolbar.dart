@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:matrix/matrix.dart';
+import 'package:media_store_plus/media_store_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
+import '../../../../../utils/file_selector.dart';
 import '../../../../../utils/matrix/matrix_state.dart';
 import '../../../../../widgets/polycule_overflow_bar.dart';
 import '../../../../../widgets/share_origin_builder.dart';
@@ -148,6 +150,9 @@ class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
     if (kIsWeb) {
       return _share(rect);
     }
+    if (Platform.isAndroid) {
+      return _downloadAndroid(rect);
+    }
     setState(() {
       loading = true;
     });
@@ -155,23 +160,8 @@ class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
       final mxFile = await widget.event.downloadAndDecryptAttachment();
       final xfile = _buildXFile(mxFile);
 
-      Directory? directory;
-      if (Platform.isAndroid) {
-        try {
-          await Directory('/storage/emulated/0/Download/polycule').create(
-            recursive: true,
-          );
-        } catch (_) {}
-        final path = await getDirectoryPath(
-          initialDirectory: '/storage/emulated/0/Download/polycule',
-        );
-        if (path == null) {
-          return;
-        }
-        directory = Directory(path);
-      } else {
-        directory = await getDownloadsDirectory();
-      }
+      final directory = await getDownloadsDirectory();
+
       // no, I would not expect a downloads directory present on my Arch Linux
       await directory!.create();
 
@@ -195,6 +185,46 @@ class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
       final path = file.path;
 
       await xfile.saveTo(path);
+
+      _showFileStoredSnackBar(path);
+    } catch (e, s) {
+      _handleAttachmentError(e, s);
+    } finally {
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  Future<void> _downloadAndroid([Rect? rect]) async {
+    setState(() {
+      loading = true;
+    });
+    try {
+      await FileSelector.ensureAndroidInitialized();
+
+      final mxFile = await widget.event.downloadAndDecryptAttachment();
+      final xfile = _buildXFile(mxFile);
+
+      final directory = await getTemporaryDirectory();
+      final tmpPath = directory.path + separator + mxFile.name;
+
+      await xfile.saveTo(tmpPath);
+
+      final store = MediaStore();
+      final info = await store.saveFile(
+        tempFilePath: tmpPath,
+        dirType: DirType.download,
+        dirName: DirName.download,
+      );
+      final uri = info?.uri;
+      if (info == null || !info.isSuccessful || uri == null) {
+        return;
+      }
+      final path = await store.getFilePathFromUri(uriString: uri.toString());
+      if (path == null) {
+        return;
+      }
 
       _showFileStoredSnackBar(path);
     } catch (e, s) {
