@@ -19,7 +19,7 @@ let
     colima
     docker
     ideviceinstaller
-    olm
+    # olm
     # darwin.xcode_15_1
     ruby
     cocoapods
@@ -91,7 +91,9 @@ in mkShell {
     # we search in the path of nix ldflags to find the two libraries we need
     # as the path in the $NIX_LDFLAGS starts with '-L' we need to remove this otherwise the path
     # can't be parsed
-    find $(echo $NIX_LDFLAGS | sed 's/-L//g' | uniq) -name "libolm.3.dylib" -print -quit | xargs -I{} cp -f {} $(pwd)
+
+    # find $(echo $NIX_LDFLAGS | sed 's/-L//g' | uniq) -name "libolm.3.dylib" -print -quit | xargs -I{} cp -f {} $(pwd)
+    cp -f /usr/local/Cellar/libolm/*/lib/libolm.3.dylib $(pwd)
     find $(echo $NIX_LDFLAGS | sed 's/-L//g' | uniq) -name "libcrypto.3.dylib" -print -quit | xargs -I{} cp -f {} $(pwd)
 
     # https://github.com/abiosoft/colima/issues/1036
