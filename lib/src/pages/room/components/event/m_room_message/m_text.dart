@@ -78,7 +78,7 @@ class _TextMessageState extends State<TextMessage> {
     if (widget.event.isRichMessage) {
       html = widget.event.formattedText;
     } else {
-      html = widget.event.body;
+      html = widget.event.body.replaceAll('\n', r'<br />');
     }
 
     // in case the message was redacted or similar
