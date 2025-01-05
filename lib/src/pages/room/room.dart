@@ -382,7 +382,10 @@ class RoomController extends State<RoomPage> {
   }
 
   void setEditEvent(Event event) {
-    messageController.text = event.body;
+    messageController.text = event.body.replaceFirst(
+      RegExp(r'^>( \*)? <[^>]+>[^\n\r]+\r?\n(> [^\n]*\r?\n)*\r?\n'),
+      '',
+    );
     setState(() {
       replyEvent = null;
       editEvent = event;
@@ -393,6 +396,9 @@ class RoomController extends State<RoomPage> {
 
   KeyEventResult _handleMessageKeyEvent(FocusNode node, KeyEvent event) {
     if (event.logicalKey == LogicalKeyboardKey.enter &&
+        // ensure we don't react to on-screen keyboards here
+        HardwareKeyboard.instance
+            .isLogicalKeyPressed(LogicalKeyboardKey.enter) &&
         !HardwareKeyboard.instance.isShiftPressed &&
         !HardwareKeyboard.instance.isControlPressed &&
         !HardwareKeyboard.instance.isAltPressed) {
