@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:url_launcher/link.dart';
@@ -7,6 +8,7 @@ import 'application_settings.dart';
 import 'pages/appearance.dart';
 import 'pages/error_reporting.dart';
 import 'pages/logs.dart';
+import 'pages/network.dart';
 import 'pages/push.dart';
 
 class ApplicationSettingsView extends StatelessWidget {
@@ -47,6 +49,19 @@ class ApplicationSettingsView extends StatelessWidget {
               onTap: followLink,
             ),
           ),
+          if (!kIsWeb)
+            Link(
+              uri: ApplicationSettingsPage.makeSettingsUri(
+                NetworkSettingsPage.routeName,
+              ),
+              builder: (context, followLink) => ListTile(
+                leading: const Icon(Icons.settings_ethernet),
+                title: Text(
+                  AppLocalizations.of(context).networkSettings,
+                ),
+                onTap: followLink,
+              ),
+            ),
           ListTile(
             leading: const Icon(Icons.translate),
             title: Text(AppLocalizations.of(context).language),

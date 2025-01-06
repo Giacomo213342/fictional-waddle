@@ -8,6 +8,7 @@ import '../pages/application_settings/application_settings.dart';
 import '../pages/application_settings/pages/appearance.dart';
 import '../pages/application_settings/pages/error_reporting.dart';
 import '../pages/application_settings/pages/logs.dart';
+import '../pages/application_settings/pages/network.dart';
 import '../pages/application_settings/pages/push.dart';
 import '../pages/fatal_error/fatal_error_page.dart';
 import '../pages/homeserver/homeserver.dart';
@@ -82,6 +83,11 @@ class PolyculeRouter extends GoRouter {
                               path: PushSettingsPage.routeName,
                               builder: (context, state) =>
                                   const PushSettingsPage(),
+                            ),
+                            GoRoute(
+                              path: NetworkSettingsPage.routeName,
+                              builder: (context, state) =>
+                                  const NetworkSettingsPage(),
                             ),
                             GoRoute(
                               path: LogsPage.routeName,

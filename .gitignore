@@ -54,3 +54,4 @@ l10n_errors.txt
 *.apks
 *.dylib
 export_options.plist
+android/.kotlin/

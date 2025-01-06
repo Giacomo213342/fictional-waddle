@@ -1,5 +1,5 @@
 # Project-level configuration.
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.13)
 project(runner LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
@@ -15,6 +15,9 @@ cmake_policy(SET CMP0063 NEW)
 
 # use dynamically linked SQLCipher
 set(OPENSSL_USE_STATIC_LIBS OFF)
+
+# use dynamically linked mimalloc
+set(MIMALLOC_USE_STATIC_LIBS OFF)
 
 # Load bundled libraries from the lib/ directory relative to the binary.
 set(CMAKE_INSTALL_RPATH "$ORIGIN/lib")

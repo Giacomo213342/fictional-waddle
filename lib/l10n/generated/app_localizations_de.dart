@@ -924,4 +924,29 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get deactivateAccount => 'Deactivate account';
+
+  @override
+  String get networkSettings => 'Network settings';
+
+  @override
+  String get useSystemProxy => 'Permit device proxy settings';
+
+  @override
+  String get verifyCertificates => 'Verify TLS certificates';
+
+  @override
+  String get verifyTlsCertificatesAndroid =>
+      'For older Android versions, the rotated Let\'s Encrypt ISRG ROOT X1 certificate is already included.';
+
+  @override
+  String get sendTlsSNI => 'Send plain text Server Name Indication';
+
+  @override
+  String get minTlsVersion => 'Minimum required TLS version by the homeserver';
+
+  @override
+  String get tls12 => 'TLS 1.2';
+
+  @override
+  String get tls13 => 'TLS 1.3';
 }

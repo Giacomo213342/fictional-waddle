@@ -1,6 +1,10 @@
+// ignore_for_file:implementation_imports
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
+import 'package:rhttp/src/rust/api/client.dart' show TlsVersion;
 
 import '../theme/theme_modes.dart';
 import '../utils/error_logger.dart';
@@ -32,6 +36,10 @@ class SettingsManager extends InheritedWidget {
     theme.value = storedTheme;
     theme.addListener(_storeTheme);
 
+    final storedNetwork = await _settingsInterface.getNetwork();
+    network.value = storedNetwork;
+    network.addListener(_storeNetwork);
+
     final storedLocale = await _settingsInterface.getLocale();
     locale.value = storedLocale;
     locale.addListener(_storeLocale);
@@ -53,6 +61,7 @@ class SettingsManager extends InheritedWidget {
   }
 
   final theme = ValueNotifier(ThemeState());
+  final network = ValueNotifier(NetworkState());
   final locale = ValueNotifier<Locale?>(null);
   final pushDistributor = ValueNotifier<String?>(null);
   final sentryEnabled = ValueNotifier<bool>(false);
@@ -73,6 +82,10 @@ class SettingsManager extends InheritedWidget {
 
   Future<void> _storeTheme() async {
     await _settingsInterface.storeTheme(theme.value);
+  }
+
+  Future<void> _storeNetwork() async {
+    await _settingsInterface.storeNetwork(network.value);
   }
 
   Future<void> _storeLocale() async {
@@ -129,6 +142,51 @@ class ThemeState {
           colorMode == other.colorMode &&
           fontMode == other.fontMode &&
           fontScale == other.fontScale;
+    }
+    return super == other;
+  }
+}
+
+class NetworkState {
+  NetworkState({
+    this.useSni = true,
+    this.tlsMinVersion,
+    this.verifyCertificates = true,
+    this.permitProxy = true,
+  });
+
+  final bool useSni;
+  final TlsVersion? tlsMinVersion;
+  final bool verifyCertificates;
+  final bool permitProxy;
+
+  NetworkState copyWith({
+    bool? useSni,
+    TlsVersion? tlsMinVersion,
+    bool? verifyCertificates,
+    bool? permitProxy,
+  }) =>
+      NetworkState(
+        useSni: useSni ?? this.useSni,
+        tlsMinVersion: tlsMinVersion ?? this.tlsMinVersion,
+        verifyCertificates: verifyCertificates ?? this.verifyCertificates,
+        permitProxy: permitProxy ?? this.permitProxy,
+      );
+
+  @override
+  int get hashCode =>
+      useSni.hashCode ^
+      tlsMinVersion.hashCode ^
+      verifyCertificates.hashCode ^
+      permitProxy.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is NetworkState) {
+      return useSni == other.useSni &&
+          tlsMinVersion == other.tlsMinVersion &&
+          verifyCertificates == other.verifyCertificates &&
+          permitProxy == other.permitProxy;
     }
     return super == other;
   }
