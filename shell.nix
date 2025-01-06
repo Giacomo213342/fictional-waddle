@@ -26,15 +26,18 @@ let
     python3
     python3Packages.virtualenv
     xcpretty
+    rustup
     ];
 in mkShell {
   buildInputs = inputs;
   shellHook =
   ''
     # configure the dependency cache persistent
-    export FLUTTER_VERSION="3.27.0"
+    export FLUTTER_VERSION="3.27.1"
     export FLUTTER_HOME="$HOME/build/flutter-$FLUTTER_VERSION"
     # export GEM_HOME="$HOME/build/gem"
+
+    export FLUTTER_GIT_URL="unknown source"
 
     # ugly workaround to prevent use of nix-provided clang
     mkdir -p "$HOME/.bin"

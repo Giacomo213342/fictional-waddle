@@ -9,7 +9,7 @@ A geeky and efficient \[matrix\] client for power users.
 
 ## About
 
-**Is it usable yet ? - Maybe, I dailydrive it.**
+**Is it usable yet ? - Maybe, I daily drive it.**
 
 See [Roadmap](#Roadmap) for feature details.
 
@@ -55,6 +55,8 @@ might be quite similar in both clients - they both have a similar code base we k
 |---------------------------|:------------------:|
 | Homeserver selection      | :white_check_mark: |
 | Homeserver proposals      | :white_check_mark: |
+| HTTP/3 with QUIC          | :white_check_mark: |
+| TLS hardening             | :white_check_mark: |
 | Login                     |                    |
 | ... native OIDC ready     | :white_check_mark: |
 | ... password              | :white_check_mark: |
@@ -74,8 +76,6 @@ might be quite similar in both clients - they both have a similar code base we k
 | \[matrix\] widgets        |        :x:         |
 | VoIP signaling            |        :x:         |
 | Emoji picker              | :white_check_mark: |
-
-*Can you daily drive it ?* - Yes, I do.
 
 ## License
 

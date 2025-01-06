@@ -1657,6 +1657,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deactivate account'**
   String get deactivateAccount;
+
+  /// No description provided for @networkSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Network settings'**
+  String get networkSettings;
+
+  /// No description provided for @useSystemProxy.
+  ///
+  /// In en, this message translates to:
+  /// **'Permit device proxy settings'**
+  String get useSystemProxy;
+
+  /// No description provided for @verifyCertificates.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify TLS certificates'**
+  String get verifyCertificates;
+
+  /// No description provided for @verifyTlsCertificatesAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'For older Android versions, the rotated Let\'s Encrypt ISRG ROOT X1 certificate is already included.'**
+  String get verifyTlsCertificatesAndroid;
+
+  /// No description provided for @sendTlsSNI.
+  ///
+  /// In en, this message translates to:
+  /// **'Send plain text Server Name Indication'**
+  String get sendTlsSNI;
+
+  /// No description provided for @minTlsVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum required TLS version by the homeserver'**
+  String get minTlsVersion;
+
+  /// No description provided for @tls12.
+  ///
+  /// In en, this message translates to:
+  /// **'TLS 1.2'**
+  String get tls12;
+
+  /// No description provided for @tls13.
+  ///
+  /// In en, this message translates to:
+  /// **'TLS 1.3'**
+  String get tls13;
 }
 
 class _AppLocalizationsDelegate

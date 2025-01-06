@@ -6,12 +6,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import 'package:fetch_client/fetch_client.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' hide Client;
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 import 'package:oidc/oidc.dart';
 import 'package:olm/olm.dart' as olm;
+import 'package:rhttp/rhttp.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../pages/account_selector/account_selector.dart';
@@ -22,6 +25,7 @@ import '../../../pages/room_list/room_list.dart';
 import '../../../pages/splash_screen/splash_screen.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../utils/error_logger.dart';
+import '../../../utils/isrg_x1.dart';
 import '../../../utils/matrix/database/polycule_database_builder.dart';
 import '../../../utils/matrix/oidc_delegation_extension.dart';
 import '../../../utils/matrix/polycule_command_extension.dart';
@@ -30,6 +34,8 @@ import '../../../utils/matrix/uia_helper.dart';
 import '../../../utils/oidc_successful_page_response.dart';
 import '../../../utils/runtime_suffix.dart';
 import '../../../utils/secure_storage.dart';
+import '../../../utils/settings_interface.dart';
+import '../../../utils/version.dart';
 import '../../error_handler_dialog.dart';
 import '../../intent_manager.dart';
 import '../../settings_manager.dart';
@@ -96,6 +102,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
   static final _loginClients = <int>{};
 
+  static BaseClient? _httpClient;
+
   static Completer<void>? storageLock;
 
   bool _initializationStarted = false;
@@ -115,6 +123,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   }
 
   Future<bool> _loadClients() async {
+    await _buildHttpClient();
     if (activeClients.isNotEmpty) {
       return true;
     }
@@ -201,6 +210,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         AuthenticationTypes.password,
         AuthenticationTypes.sso,
       },
+      httpClient: _httpClient,
     );
     client.registerPolyculeCommands();
     _loginStateListener[identifier]?.cancel();
@@ -734,6 +744,50 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     await client.init(
       waitForFirstSync: false,
     );
+  }
+
+  Future<void> _buildHttpClient() async {
+    final userAgent =
+        'polycule/${Version.version} (+${Version.gitlabRepoBase})';
+    if (kIsWeb) {
+      _httpClient = FetchClient(
+        streamRequests: true,
+      );
+    } else {
+      await Rhttp.init();
+      final settings = await const SettingsInterface().getNetwork();
+      _httpClient = await RhttpCompatibleClient.create(
+        settings: ClientSettings(
+          tlsSettings: TlsSettings(
+            sni: settings.useSni,
+            minTlsVersion: settings.tlsMinVersion,
+            trustedRootCertificates: [
+              ISRG_X1,
+            ],
+            verifyCertificates: settings.verifyCertificates,
+          ),
+          proxySettings:
+              settings.permitProxy ? null : const ProxySettings.noProxy(),
+          timeoutSettings: const TimeoutSettings(
+            keepAliveTimeout: Duration(seconds: 60),
+            keepAlivePing: Duration(seconds: 30),
+          ),
+        ),
+        interceptors: [
+          SimpleInterceptor(
+            beforeRequest: (
+              HttpRequest request,
+            ) async =>
+                Interceptor.next(
+              request.addHeader(
+                name: HttpHeaderName.userAgent,
+                value: userAgent,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
   }
 }
 

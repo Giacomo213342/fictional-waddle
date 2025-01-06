@@ -50,6 +50,8 @@ PODS:
     - Flutter
   - receive_sharing_intent_plus (1.0.1):
     - Flutter
+  - rhttp (0.0.1):
+    - Flutter
   - screen_brightness_ios (0.1.0):
     - Flutter
   - share_plus (0.0.1):
@@ -94,6 +96,7 @@ DEPENDENCIES:
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - pointer_interceptor_ios (from `.symlinks/plugins/pointer_interceptor_ios/ios`)
   - receive_sharing_intent_plus (from `.symlinks/plugins/receive_sharing_intent_plus/ios`)
+  - rhttp (from `.symlinks/plugins/rhttp/ios`)
   - screen_brightness_ios (from `.symlinks/plugins/screen_brightness_ios/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
@@ -151,6 +154,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/pointer_interceptor_ios/ios"
   receive_sharing_intent_plus:
     :path: ".symlinks/plugins/receive_sharing_intent_plus/ios"
+  rhttp:
+    :path: ".symlinks/plugins/rhttp/ios"
   screen_brightness_ios:
     :path: ".symlinks/plugins/screen_brightness_ios/ios"
   share_plus:
@@ -190,7 +195,8 @@ SPEC CHECKSUMS:
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   pointer_interceptor_ios: 508241697ff0947f853c061945a8b822463947c1
   receive_sharing_intent_plus: f02db0a23c17f7aeef8de465cb2d8705a46143a6
-  screen_brightness_ios: 715ca807df953bf676d339f11464e438143ee625
+  rhttp: 367a8162e63311c6dde543169b591cc04454dcd6
+  screen_brightness_ios: 7437207a2a9bc56553aa10f782afecf830b4c4e2
   share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
   sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
   SQLCipher: 5e6bfb47323635c8b657b1b27d25c5f1baf63bf5

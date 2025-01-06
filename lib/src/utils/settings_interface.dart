@@ -1,5 +1,9 @@
+// ignore_for_file:implementation_imports
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'package:rhttp/src/rust/api/client.dart' show TlsVersion;
 
 import '../theme/theme_modes.dart';
 import '../widgets/settings_manager.dart';
@@ -60,6 +64,61 @@ class SettingsInterface {
     await kPolyculeSecureStorage.write(
       key: 'fontScale',
       value: theme.fontScale.toString(),
+    );
+  }
+
+  Future<NetworkState> getNetwork() async {
+    try {
+      final useSni = await kPolyculeSecureStorage.read(key: 'useSni');
+      final tlsMinVersion =
+          await kPolyculeSecureStorage.read(key: 'tlsMinVersion');
+      final verifyCertificates =
+          await kPolyculeSecureStorage.read(key: 'verifyCertificates');
+      final permitProxy = await kPolyculeSecureStorage.read(key: 'permitProxy');
+      return NetworkState(
+        useSni: useSni == null ? true : bool.tryParse(useSni) ?? true,
+        tlsMinVersion: tlsMinVersion == null
+            ? TlsVersion.tls12
+            : switch (int.tryParse(tlsMinVersion)) {
+                0x0304 => TlsVersion.tls13,
+                _ => TlsVersion.tls12,
+              },
+        verifyCertificates: verifyCertificates == null
+            ? true
+            : bool.tryParse(verifyCertificates) ?? true,
+        permitProxy:
+            permitProxy == null ? true : bool.tryParse(permitProxy) ?? true,
+      );
+    } on PlatformException catch (e, s) {
+      ErrorLogger().captureStackTrace(e, s);
+      await kPolyculeSecureStorage.delete(key: 'useSni');
+      await kPolyculeSecureStorage.delete(key: 'tlsMinVersion');
+      await kPolyculeSecureStorage.delete(key: 'verifyCertificates');
+      await kPolyculeSecureStorage.delete(key: 'permitProxy');
+      return NetworkState();
+    }
+  }
+
+  Future<void> storeNetwork(NetworkState network) async {
+    await kPolyculeSecureStorage.write(
+      key: 'useSni',
+      value: network.useSni.toString(),
+    );
+    await kPolyculeSecureStorage.write(
+      key: 'tlsMinVersion',
+      value: switch (network.tlsMinVersion) {
+        TlsVersion.tls12 => 0x0303.toString(),
+        TlsVersion.tls13 => 0x0304.toString(),
+        _ => null,
+      },
+    );
+    await kPolyculeSecureStorage.write(
+      key: 'verifyCertificates',
+      value: network.verifyCertificates.toString(),
+    );
+    await kPolyculeSecureStorage.write(
+      key: 'permitProxy',
+      value: network.permitProxy.toString(),
     );
   }
 
