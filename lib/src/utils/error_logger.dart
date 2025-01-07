@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:matrix/matrix.dart';
 import 'package:sentry/sentry.dart';
 
+import 'polycule_http_client/polycule_http_client.dart';
+
 class ErrorLogger {
   factory ErrorLogger() {
     return _instance;
@@ -66,6 +68,11 @@ class ErrorLogger {
       (options) {
         // only DSN, no profiling, no tracking, only informed, consented logging
         options.dsn = _defaultDSN;
+        options.httpClient = PolyculeHttpClient.httpClient.value.call();
+        // TODO: dirty code
+        PolyculeHttpClient.httpClient.addListener(
+          () => options.httpClient = PolyculeHttpClient.httpClient.value.call(),
+        );
       },
     );
   }

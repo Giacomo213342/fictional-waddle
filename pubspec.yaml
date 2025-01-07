@@ -14,6 +14,7 @@ dependencies:
   blurhash_dart: ^1.2.1
   cross_file: ^0.3.4+1
   # required for native iOS icons
+  cupertino_http: ^2.0.1
   cupertino_icons: ^1.0.8
   diacritic: ^0.1.6
   diffutil_dart: ^4.0.1
@@ -61,7 +62,6 @@ dependencies:
   path_provider: ^2.1.4
   provider: ^6.1.1
   receive_sharing_intent_plus: ^1.0.1
-  rhttp: ^0.9.8
   sentry: ^8.12.0
   share_plus: ^10.1.0
   sqflite: ^2.4.0
@@ -94,8 +94,8 @@ dependency_overrides:
   # https://github.com/media-kit/media-kit/issues/357
   media_kit_libs_linux:
     git:
-      url: https://github.com/TheOneWithTheBraid/media-kit.git
-      ref: braid/system-libmimalloc
+      url: https://github.com/media-kit/media-kit.git
+      ref: 4d8c634c28d439384aab40b9d2edff83077f37c9
       path: libs/linux/media_kit_libs_linux
   screen_brightness: ^2.0.0
   # https://github.com/UnifiedPush/flutter-connector/pull/155

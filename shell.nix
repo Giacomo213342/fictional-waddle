@@ -26,7 +26,6 @@ let
     python3
     python3Packages.virtualenv
     xcpretty
-    rustup
     ];
 in mkShell {
   buildInputs = inputs;

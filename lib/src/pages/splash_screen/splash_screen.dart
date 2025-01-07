@@ -6,6 +6,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../router/extensions/go_router_path_extension.dart';
 import '../../utils/matrix/matrix_state.dart';
+import '../../widgets/matrix/client_manager/client_manager.dart';
 import '../fatal_error/fatal_error_page.dart';
 import '../homeserver/homeserver.dart';
 import '../room_list/room_list.dart';
@@ -23,11 +24,12 @@ class SplashPage extends StatefulWidget {
 class SplashController extends MatrixState<SplashPage> {
   @override
   void initState() {
-    _checkLoginState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkLoginState());
     super.initState();
   }
 
   Future<void> _checkLoginState() async {
+    await ClientManager.waiForInitialization;
     if (client.isLogged()) {
       _roomList();
     }

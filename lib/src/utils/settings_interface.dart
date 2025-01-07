@@ -1,9 +1,5 @@
-// ignore_for_file:implementation_imports
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'package:rhttp/src/rust/api/client.dart' show TlsVersion;
 
 import '../theme/theme_modes.dart';
 import '../widgets/settings_manager.dart';
@@ -77,12 +73,8 @@ class SettingsInterface {
       final permitProxy = await kPolyculeSecureStorage.read(key: 'permitProxy');
       return NetworkState(
         useSni: useSni == null ? true : bool.tryParse(useSni) ?? true,
-        tlsMinVersion: tlsMinVersion == null
-            ? TlsVersion.tls12
-            : switch (int.tryParse(tlsMinVersion)) {
-                0x0304 => TlsVersion.tls13,
-                _ => TlsVersion.tls12,
-              },
+        tlsMinVersion:
+            tlsMinVersion == null ? 0x0303 : int.tryParse(tlsMinVersion),
         verifyCertificates: verifyCertificates == null
             ? true
             : bool.tryParse(verifyCertificates) ?? true,
@@ -106,11 +98,7 @@ class SettingsInterface {
     );
     await kPolyculeSecureStorage.write(
       key: 'tlsMinVersion',
-      value: switch (network.tlsMinVersion) {
-        TlsVersion.tls12 => 0x0303.toString(),
-        TlsVersion.tls13 => 0x0304.toString(),
-        _ => null,
-      },
+      value: network.tlsMinVersion.toString(),
     );
     await kPolyculeSecureStorage.write(
       key: 'verifyCertificates',

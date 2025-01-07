@@ -4,10 +4,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:rhttp/src/rust/api/client.dart' show TlsVersion;
-
 import '../theme/theme_modes.dart';
 import '../utils/error_logger.dart';
+import '../utils/polycule_http_client/polycule_http_client.dart';
 import '../utils/settings_interface.dart';
 
 class SettingsBuilder extends StatelessWidget {
@@ -39,6 +38,8 @@ class SettingsManager extends InheritedWidget {
     final storedNetwork = await _settingsInterface.getNetwork();
     network.value = storedNetwork;
     network.addListener(_storeNetwork);
+
+    PolyculeHttpClient.init(network);
 
     final storedLocale = await _settingsInterface.getLocale();
     locale.value = storedLocale;
@@ -156,13 +157,13 @@ class NetworkState {
   });
 
   final bool useSni;
-  final TlsVersion? tlsMinVersion;
+  final int? tlsMinVersion;
   final bool verifyCertificates;
   final bool permitProxy;
 
   NetworkState copyWith({
     bool? useSni,
-    TlsVersion? tlsMinVersion,
+    int? tlsMinVersion,
     bool? verifyCertificates,
     bool? permitProxy,
   }) =>

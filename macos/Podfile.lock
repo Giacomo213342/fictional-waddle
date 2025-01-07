@@ -9,6 +9,9 @@ PODS:
     - AppAuth/Core
   - audio_session (0.0.1):
     - FlutterMacOS
+  - cupertino_http (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - dynamic_color (0.0.2):
     - FlutterMacOS
   - file_selector_macos (0.0.1):
@@ -31,14 +34,14 @@ PODS:
     - FlutterMacOS
   - media_kit_video (0.0.1):
     - FlutterMacOS
+  - objective_c (0.0.1):
+    - FlutterMacOS
   - oidc_macos (0.0.1):
     - FlutterMacOS
   - package_info_plus (0.0.1):
     - FlutterMacOS
   - path_provider_foundation (0.0.1):
     - Flutter
-    - FlutterMacOS
-  - rhttp (0.0.1):
     - FlutterMacOS
   - screen_brightness_macos (0.1.0):
     - FlutterMacOS
@@ -65,6 +68,7 @@ PODS:
 DEPENDENCIES:
   - app_links (from `Flutter/ephemeral/.symlinks/plugins/app_links/macos`)
   - audio_session (from `Flutter/ephemeral/.symlinks/plugins/audio_session/macos`)
+  - cupertino_http (from `Flutter/ephemeral/.symlinks/plugins/cupertino_http/darwin`)
   - dynamic_color (from `Flutter/ephemeral/.symlinks/plugins/dynamic_color/macos`)
   - file_selector_macos (from `Flutter/ephemeral/.symlinks/plugins/file_selector_macos/macos`)
   - flutter_appauth (from `Flutter/ephemeral/.symlinks/plugins/flutter_appauth/macos`)
@@ -76,10 +80,10 @@ DEPENDENCIES:
   - media_kit_libs_macos_video (from `Flutter/ephemeral/.symlinks/plugins/media_kit_libs_macos_video/macos`)
   - media_kit_native_event_loop (from `Flutter/ephemeral/.symlinks/plugins/media_kit_native_event_loop/macos`)
   - media_kit_video (from `Flutter/ephemeral/.symlinks/plugins/media_kit_video/macos`)
+  - objective_c (from `Flutter/ephemeral/.symlinks/plugins/objective_c/macos`)
   - oidc_macos (from `Flutter/ephemeral/.symlinks/plugins/oidc_macos/macos`)
   - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
   - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
-  - rhttp (from `Flutter/ephemeral/.symlinks/plugins/rhttp/macos`)
   - screen_brightness_macos (from `Flutter/ephemeral/.symlinks/plugins/screen_brightness_macos/macos`)
   - share_plus (from `Flutter/ephemeral/.symlinks/plugins/share_plus/macos`)
   - sqflite_darwin (from `Flutter/ephemeral/.symlinks/plugins/sqflite_darwin/darwin`)
@@ -98,6 +102,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/app_links/macos
   audio_session:
     :path: Flutter/ephemeral/.symlinks/plugins/audio_session/macos
+  cupertino_http:
+    :path: Flutter/ephemeral/.symlinks/plugins/cupertino_http/darwin
   dynamic_color:
     :path: Flutter/ephemeral/.symlinks/plugins/dynamic_color/macos
   file_selector_macos:
@@ -120,14 +126,14 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/media_kit_native_event_loop/macos
   media_kit_video:
     :path: Flutter/ephemeral/.symlinks/plugins/media_kit_video/macos
+  objective_c:
+    :path: Flutter/ephemeral/.symlinks/plugins/objective_c/macos
   oidc_macos:
     :path: Flutter/ephemeral/.symlinks/plugins/oidc_macos/macos
   package_info_plus:
     :path: Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos
   path_provider_foundation:
     :path: Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin
-  rhttp:
-    :path: Flutter/ephemeral/.symlinks/plugins/rhttp/macos
   screen_brightness_macos:
     :path: Flutter/ephemeral/.symlinks/plugins/screen_brightness_macos/macos
   share_plus:
@@ -147,6 +153,7 @@ SPEC CHECKSUMS:
   app_links: 10e0a0ab602ffaf34d142cd4862f29d34b303b2a
   AppAuth: 182c5b88630569df5acb672720534756c29b3358
   audio_session: dea1f41890dbf1718f04a56f1d6150fd50039b72
+  cupertino_http: 947a233f40cfea55167a49f2facc18434ea117ba
   dynamic_color: 2eaa27267de1ca20d879fbd6e01259773fb1670f
   file_selector_macos: cc3858c981fe6889f364731200d6232dac1d812d
   flutter_appauth: 712a012ba667acb296423285ae6425465bafe34a
@@ -158,10 +165,10 @@ SPEC CHECKSUMS:
   media_kit_libs_macos_video: b3e2bbec2eef97c285f2b1baa7963c67c753fb82
   media_kit_native_event_loop: 81fd5b45192b72f8b5b69eaf5b540f45777eb8d5
   media_kit_video: c75b07f14d59706c775778e4dd47dd027de8d1e5
+  objective_c: e5f8194456e8fc943e034d1af00510a1bc29c067
   oidc_macos: 972700560d342ffc6ac9306495c1d8fe53c7a9cb
   package_info_plus: 12f1c5c2cfe8727ca46cbd0b26677728972d9a5b
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
-  rhttp: 337afda4c3e4df31087160719ffca6452c225cc2
   screen_brightness_macos: 2d6d3af2165592d9a55ffcd95b7550970e41ebda
   share_plus: 1fa619de8392a4398bfaf176d441853922614e89
   sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
@@ -171,6 +178,6 @@ SPEC CHECKSUMS:
   wakelock_plus: 4783562c9a43d209c458cb9b30692134af456269
   window_to_front: 4cdc24ddd8461ad1a55fa06286d6a79d8b29e8d8
 
-PODFILE CHECKSUM: 1f48745afecf9f937e0f2495531abbb8fe83232c
+PODFILE CHECKSUM: f6b4f96757762331cc01e932daa7170fce314e16
 
 COCOAPODS: 1.16.2
