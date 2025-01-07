@@ -8,7 +8,6 @@ What you need :
 - OpenSSL
 - OLM
 - libsecret
-- rustup
 
 ### Flutter
 

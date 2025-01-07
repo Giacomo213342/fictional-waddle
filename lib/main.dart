@@ -20,7 +20,7 @@ void main(List<String>? args) {
   };
   // used to capture errors in main thread
   runZonedGuarded(
-    () {
+    () async {
       Logs().level = Level.verbose;
       WidgetsFlutterBinding.ensureInitialized();
       MediaKit.ensureInitialized();

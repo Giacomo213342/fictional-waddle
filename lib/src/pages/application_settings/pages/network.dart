@@ -2,8 +2,6 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:rhttp/src/rust/api/client.dart' show TlsVersion;
-
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/settings_manager.dart';
 
@@ -54,13 +52,13 @@ class _NetworkSettingsPageState extends State<NetworkSettingsPage> {
                 title: Text(AppLocalizations.of(context).minTlsVersion),
               ),
               RadioListTile.adaptive(
-                value: TlsVersion.tls12,
+                value: 0x0303,
                 groupValue: networkState.tlsMinVersion,
                 title: Text(AppLocalizations.of(context).tls12),
                 onChanged: _setTlsMinVersion,
               ),
               RadioListTile.adaptive(
-                value: TlsVersion.tls13,
+                value: 0x0304,
                 groupValue: networkState.tlsMinVersion,
                 title: Text(AppLocalizations.of(context).tls13),
                 onChanged: _setTlsMinVersion,
@@ -103,7 +101,7 @@ class _NetworkSettingsPageState extends State<NetworkSettingsPage> {
         SettingsManager.of(context).network.value.copyWith(useSni: useSni);
   }
 
-  void _setTlsMinVersion(TlsVersion? tlsMinVersion) {
+  void _setTlsMinVersion(int? tlsMinVersion) {
     if (tlsMinVersion == null) {
       return;
     }

@@ -185,12 +185,17 @@ class IntentManager extends State<IntentManagerWidget> {
   }
 
   Future<void> _handleLostData() async {
-    final picker = ImagePicker();
-    final response = await picker.retrieveLostData();
-    if (response.isEmpty) {
-      return;
-    }
-    final List<XFile>? files = response.files;
+    List<XFile>? files;
+
+    try {
+      final picker = ImagePicker();
+
+      final response = await picker.retrieveLostData();
+      if (response.isEmpty) {
+        return;
+      }
+      files = response.files;
+    } on UnimplementedError catch (_) {}
 
     if (files == null || files.isEmpty) {
       return;
