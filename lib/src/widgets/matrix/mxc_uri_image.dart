@@ -77,11 +77,15 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
     super.initState();
   }
 
-  Future<Uri>? getDownloadUri() => widget.uri?.getThumbnailUri(
-        widget.client,
-        width: widget.width,
-        height: widget.height,
-      );
+  Future<Uri>? getDownloadUri() {
+    final width = widget.width;
+    final height = widget.height;
+    return widget.uri?.getThumbnailUri(
+      widget.client,
+      width: width == null ? null : width * widget.ratio,
+      height: height == null ? null : height * widget.ratio,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
