@@ -1705,6 +1705,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TLS 1.3'**
   String get tls13;
+
+  /// No description provided for @favoriteAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get favoriteAdd;
+
+  /// No description provided for @favoriteRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites'**
+  String get favoriteRemove;
+
+  /// No description provided for @markRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as read'**
+  String get markRead;
+
+  /// No description provided for @markUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as unread'**
+  String get markUnread;
+
+  /// No description provided for @leaveRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave room'**
+  String get leaveRoom;
+
+  /// No description provided for @leaveRoomLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm to permanently leave the room « {name} ».'**
+  String leaveRoomLong(String name);
+
+  /// No description provided for @userDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View user profile'**
+  String get userDetails;
+
+  /// No description provided for @markMute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute room'**
+  String get markMute;
+
+  /// No description provided for @markUnmute.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute room'**
+  String get markUnmute;
+
+  /// No description provided for @copyRoomAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy public room address'**
+  String get copyRoomAddress;
 }
 
 class _AppLocalizationsDelegate

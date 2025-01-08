@@ -511,5 +511,22 @@
   "sendTlsSNI": "Send plain text Server Name Indication",
   "minTlsVersion": "Minimum required TLS version by the homeserver",
   "tls12": "TLS 1.2",
-  "tls13": "TLS 1.3"
+  "tls13": "TLS 1.3",
+  "favoriteAdd": "Add to favorites",
+  "favoriteRemove": "Remove from favorites",
+  "markRead": "Mark as read",
+  "markUnread": "Mark as unread",
+  "leaveRoom": "Leave room",
+  "leaveRoomLong": "Please confirm to permanently leave the room « {name} ».",
+  "@leaveRoomLong": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "userDetails": "View user profile",
+  "markMute": "Mute room",
+  "markUnmute": "Unmute room",
+  "copyRoomAddress": "Copy public room address"
 }

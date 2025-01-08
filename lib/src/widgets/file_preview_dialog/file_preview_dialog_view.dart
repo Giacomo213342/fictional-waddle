@@ -12,7 +12,7 @@ class FilePreviewDialogView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final files = controller.files;
-    return AlertDialog(
+    return AlertDialog.adaptive(
       title: Text(
         AppLocalizations.of(context).sendFiles,
       ),

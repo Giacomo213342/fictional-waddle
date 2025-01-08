@@ -40,7 +40,7 @@ class MessagePrefix extends StatelessWidget {
     if (showOtherSenderAvatar) {
       prefix = MessageUserAvatar(
         event: event,
-        onTap: () => context.goMultiClient(
+        onTap: () => context.pushMultiClient(
           UserPage.makeRouteName(event.senderId),
         ),
       );
