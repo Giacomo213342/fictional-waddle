@@ -31,7 +31,7 @@ class _UiaPasswordDialogState extends State<UiaPasswordDialog> {
   @override
   Widget build(BuildContext context) {
     final userId = widget.client.userID;
-    return AlertDialog(
+    return AlertDialog.adaptive(
       title: Text(AppLocalizations.of(context).authenticationRequired),
       content: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 256 + 128),

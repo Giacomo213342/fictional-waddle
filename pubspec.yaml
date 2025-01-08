@@ -12,6 +12,7 @@ dependencies:
   app_links: ^6.3.2
   async: ^2.11.0
   blurhash_dart: ^1.2.1
+  collection: ^1.19.1
   cross_file: ^0.3.4+1
   # required for native iOS icons
   cupertino_http: ^2.0.1

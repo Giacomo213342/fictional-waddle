@@ -15,7 +15,8 @@ class RoomBuilder extends StatelessWidget {
       initialData: room,
       stream: room.client.onRoomState.stream
           .where((update) => update.roomId == room.id)
-          .map((update) => room.client.getRoomById(update.roomId) ?? room),
+          .map((update) => room.client.getRoomById(update.roomId) ?? room)
+          .asyncMap((room) => room.loadHeroUsers().then((_) => room)),
       builder: builder,
     );
   }

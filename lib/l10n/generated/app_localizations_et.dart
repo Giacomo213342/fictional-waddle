@@ -949,4 +949,36 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get tls13 => 'TLS 1.3';
+
+  @override
+  String get favoriteAdd => 'Add to favorites';
+
+  @override
+  String get favoriteRemove => 'Remove from favorites';
+
+  @override
+  String get markRead => 'Mark as read';
+
+  @override
+  String get markUnread => 'Mark as unread';
+
+  @override
+  String get leaveRoom => 'Leave room';
+
+  @override
+  String leaveRoomLong(String name) {
+    return 'Please confirm to permanently leave the room « $name ».';
+  }
+
+  @override
+  String get userDetails => 'View user profile';
+
+  @override
+  String get markMute => 'Mute room';
+
+  @override
+  String get markUnmute => 'Unmute room';
+
+  @override
+  String get copyRoomAddress => 'Copy public room address';
 }

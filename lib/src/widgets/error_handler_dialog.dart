@@ -27,7 +27,7 @@ class ErrorHandlerDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return AlertDialog.adaptive(
       title: Text(AppLocalizations.of(context).runtimeError),
       content: LogRow(
         LogEvent(
