@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import 'package:http/http.dart';
@@ -10,8 +12,8 @@ import 'polycule_http_client_web.dart'
 
 typedef ClientCallback = Client Function();
 
-abstract class PolyculeHttpClient {
-  const PolyculeHttpClient._();
+abstract class PolyculeHttpClientManager {
+  const PolyculeHttpClientManager._();
 
   static const userAgent =
       'polycule/${Version.version} (+${Version.gitlabRepoBase})';
@@ -22,15 +24,14 @@ abstract class PolyculeHttpClient {
     settings.addListener(() => _buildHttpClient(settings.value));
   }
 
-  static final ValueNotifier<ClientCallback> _clientNotifier =
-      ValueNotifier(_stubCallback);
+  static final StreamController<ClientCallback> _clientController =
+      StreamController<ClientCallback>.broadcast();
 
-  static ValueListenable<ClientCallback> get httpClient => _clientNotifier;
+  static Stream<ClientCallback> get httpClientCallbackStream =>
+      _clientController.stream;
 
   static void _buildHttpClient(NetworkState settings) {
-    _clientNotifier.value = buildHttpClient(settings);
-    return;
+    updateHttpClientSettings(settings);
+    _clientController.add(getHttpClientPlatformCallback());
   }
-
-  static Never _stubCallback() => throw UnimplementedError();
 }

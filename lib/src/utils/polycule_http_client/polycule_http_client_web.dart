@@ -4,7 +4,9 @@ import 'package:http/http.dart';
 import '../../widgets/settings_manager.dart';
 import 'polycule_http_client.dart';
 
-ClientCallback buildHttpClient(NetworkState settings) {
+void updateHttpClientSettings(NetworkState settings) {}
+
+ClientCallback getHttpClientPlatformCallback() {
   return _buildFetchClient;
 }
 

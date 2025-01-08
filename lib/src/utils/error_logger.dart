@@ -64,14 +64,16 @@ class ErrorLogger {
   }
 
   Future<void> _initializeSentry() async {
+    final client =
+        await PolyculeHttpClientManager.httpClientCallbackStream.first;
     await Sentry.init(
       (options) {
         // only DSN, no profiling, no tracking, only informed, consented logging
         options.dsn = _defaultDSN;
-        options.httpClient = PolyculeHttpClient.httpClient.value.call();
+        options.httpClient = client.call();
         // TODO: dirty code
-        PolyculeHttpClient.httpClient.addListener(
-          () => options.httpClient = PolyculeHttpClient.httpClient.value.call(),
+        PolyculeHttpClientManager.httpClientCallbackStream.listen(
+          (client) => options.httpClient = client.call(),
         );
       },
     );

@@ -116,8 +116,12 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   }
 
   Future<bool> _loadClients() async {
-    await SettingsManager.of(context).initCompleter.future;
-    PolyculeHttpClient.httpClient.addListener(_updateHttpClients);
+    // first ensure we have an HTTP client
+    _httpClient =
+        await PolyculeHttpClientManager.httpClientCallbackStream.first;
+    _httpClientListener = PolyculeHttpClientManager.httpClientCallbackStream
+        .listen(_updateHttpClients);
+
     if (activeClients.isNotEmpty) {
       return true;
     }
@@ -188,6 +192,9 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   static final Map<int, PushManager> pushManagers = {};
 
   StreamSubscription<(Object?, StackTrace?)>? _errorListener;
+  StreamSubscription<ClientCallback>? _httpClientListener;
+
+  ClientCallback? _httpClient;
 
   Client _buildClient(int identifier) {
     final client = Client(
@@ -204,7 +211,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         AuthenticationTypes.password,
         AuthenticationTypes.sso,
       },
-      httpClient: PolyculeHttpClient.httpClient.value.call(),
+      httpClient: _httpClient?.call(),
       importantStateEvents: {
         'im.ponies.room_emotes',
       },
@@ -297,6 +304,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         clientCredentials: clientCredentials,
         store: store,
         settings: settings,
+        httpClient: client.httpClient,
       );
 
       await manager.init();
@@ -371,7 +379,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       subscription?.cancel();
     }
     _errorListener?.cancel();
-    PolyculeHttpClient.httpClient.removeListener(_updateHttpClients);
+    _httpClientListener?.cancel();
     super.dispose();
   }
 
@@ -744,11 +752,19 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     );
   }
 
-  void _updateHttpClients() {
-    final httpClient = PolyculeHttpClient.httpClient.value;
+  Future<void> _updateHttpClients(ClientCallback httpClientCallback) async {
+    _httpClient = httpClientCallback;
+    final locales = [AppLocalizations.of(context).localeName];
     for (final client in activeClients) {
       client.httpClient.close();
-      client.httpClient = httpClient.call();
+      client.httpClient = httpClientCallback.call();
+      // ensure to also apply the new HTTP client to any OidcUserManager
+      // therefore just rebuild the OIDC client
+      final oidc = _oidc[client.clientName.clientIdentifier];
+      if (oidc != null) {
+        await oidc.dispose();
+        await buildOidcManager(client, locales);
+      }
     }
   }
 }

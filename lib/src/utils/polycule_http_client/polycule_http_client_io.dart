@@ -11,15 +11,18 @@ import 'polycule_http_client.dart';
 
 URLSessionConfiguration _cupertinoConfig =
     URLSessionConfiguration.defaultSessionConfiguration();
+
 SecurityContext _ioContext = SecurityContext.defaultContext;
 
-ClientCallback buildHttpClient(NetworkState settings) {
+void updateHttpClientSettings(NetworkState settings) {
   if (Platform.isIOS || Platform.isMacOS) {
     _cupertinoConfig = URLSessionConfiguration.ephemeralSessionConfiguration()
-      ..cache =
-          URLCache.withCapacity(memoryCapacity: PolyculeHttpClient.cacheSize)
-      ..httpAdditionalHeaders = {'User-Agent': PolyculeHttpClient.userAgent};
-    return _buildCupertinoClient;
+      ..cache = URLCache.withCapacity(
+        memoryCapacity: PolyculeHttpClientManager.cacheSize,
+      )
+      ..httpAdditionalHeaders = {
+        'User-Agent': PolyculeHttpClientManager.userAgent,
+      };
   } else {
     _ioContext = SecurityContext.defaultContext;
     try {
@@ -38,6 +41,13 @@ ClientCallback buildHttpClient(NetworkState settings) {
       _ => TlsProtocolVersion.tls1_2,
     };
     _ioContext.allowLegacyUnsafeRenegotiation = false;
+  }
+}
+
+ClientCallback getHttpClientPlatformCallback() {
+  if (Platform.isIOS || Platform.isMacOS) {
+    return _buildCupertinoClient;
+  } else {
     return _buildIoClient;
   }
 }
@@ -48,6 +58,7 @@ Client _buildCupertinoClient() {
 
 Client _buildIoClient() {
   return IOClient(
-    HttpClient(context: _ioContext)..userAgent = PolyculeHttpClient.userAgent,
+    HttpClient(context: _ioContext)
+      ..userAgent = PolyculeHttpClientManager.userAgent,
   );
 }

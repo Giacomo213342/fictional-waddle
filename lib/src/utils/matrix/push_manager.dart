@@ -37,12 +37,14 @@ class PushManager {
   String? endpoint;
 
   Future<void> _initialize() async {
-    await UnifiedPush.initialize(
-      onNewEndpoint: onNewEndpoint,
-      onRegistrationFailed: onRegistrationFailed,
-      onUnregistered: onUnregistered,
-      onMessage: onMessage,
-    );
+    try {
+      await UnifiedPush.initialize(
+        onNewEndpoint: onNewEndpoint,
+        onRegistrationFailed: onRegistrationFailed,
+        onUnregistered: onUnregistered,
+        onMessage: onMessage,
+      );
+    } on UnimplementedError catch (_) {}
   }
 
   Future<void> onNewEndpoint(String endpoint, String instance) async {
