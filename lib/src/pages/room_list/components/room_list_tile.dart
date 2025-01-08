@@ -53,7 +53,7 @@ class RoomListTileState extends State<RoomListTile> {
         // open the room on arrow press
         const SingleActivator(LogicalKeyboardKey.arrowRight): () {
           widget.onActivate?.call();
-          context.go(path);
+          context.push(path);
         },
       },
       child: Link(
