@@ -168,7 +168,7 @@ class TypeAheadHelper {
             customEmoteOptions.add(
               TypeAheadOption(
                 WidgetSpan(
-                  child: MxcUriImageBuilder(
+                  child: MxcUriImageBuilder.dpiRespective(
                     key: ValueKey(content.url),
                     uri: content.url,
                     client: client,

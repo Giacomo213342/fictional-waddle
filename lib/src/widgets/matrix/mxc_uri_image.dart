@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 import 'package:matrix/matrix.dart';
 
+import '../device_pixel_ratio_builder.dart';
 import '../mimed_image.dart';
 
 typedef MxcUriImageBuilderCallback = Widget Function(
@@ -15,14 +16,35 @@ typedef MxcUriImageBuilderCallback = Widget Function(
 );
 
 class MxcUriImageBuilder extends StatefulWidget {
-  const MxcUriImageBuilder({
+  const MxcUriImageBuilder._({
     super.key,
     required this.uri,
     required this.client,
     this.imageBuilder = defaultImageBuilder,
     this.width,
     this.height,
+    this.ratio = 1,
   });
+
+  static Widget dpiRespective({
+    Key? key,
+    required Uri? uri,
+    required Client client,
+    MxcUriImageBuilderCallback imageBuilder = defaultImageBuilder,
+    double? width,
+    double? height,
+  }) =>
+      DevicePixelRatioBuilder(
+        builder: (context, ratio) => MxcUriImageBuilder._(
+          key: key,
+          uri: uri,
+          client: client,
+          imageBuilder: imageBuilder,
+          width: width,
+          height: height,
+          ratio: ratio,
+        ),
+      );
 
   static final Map<String, Uint8List> _runtimeCache = {};
 
@@ -38,6 +60,7 @@ class MxcUriImageBuilder extends StatefulWidget {
   final MxcUriImageBuilderCallback imageBuilder;
   final double? width;
   final double? height;
+  final double ratio;
 
   @override
   State<MxcUriImageBuilder> createState() => _MxcUriImageBuilderState();
@@ -64,6 +87,17 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
   Widget build(BuildContext context) {
     final retryCallback = image.hasError ? retry : null;
     return widget.imageBuilder.call(context, image, retryCallback);
+  }
+
+  @override
+  void didUpdateWidget(covariant MxcUriImageBuilder oldWidget) {
+    if (oldWidget.uri != widget.uri ||
+        oldWidget.width != widget.width ||
+        oldWidget.height != widget.height ||
+        oldWidget.ratio != widget.ratio) {
+      unawaited(startImageOperation());
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override

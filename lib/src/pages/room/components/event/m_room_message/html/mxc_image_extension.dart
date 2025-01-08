@@ -42,7 +42,7 @@ class MxcImageExtension extends ImageExtension {
                 child: SizedBox(
                   height: height,
                   width: width,
-                  child: MxcUriImageBuilder(
+                  child: MxcUriImageBuilder.dpiRespective(
                     key: ValueKey(src),
                     uri: Uri.parse(src),
                     client: client,

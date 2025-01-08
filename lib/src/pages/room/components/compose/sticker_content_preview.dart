@@ -24,7 +24,7 @@ class StickerPreview extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          MxcUriImageBuilder(
+          MxcUriImageBuilder.dpiRespective(
             uri: content.url,
             client: client,
             width: 256,
