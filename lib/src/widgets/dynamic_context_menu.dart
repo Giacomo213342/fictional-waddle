@@ -33,6 +33,14 @@ class _DynamicContextMenuState extends State<DynamicContextMenu> {
   final controller = ContextMenuController();
 
   @override
+  void didUpdateWidget(covariant DynamicContextMenu oldWidget) {
+    if (oldWidget.child != widget.child) {
+      setState(() {});
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void initState() {
     super.initState();
     if (kIsWeb) {

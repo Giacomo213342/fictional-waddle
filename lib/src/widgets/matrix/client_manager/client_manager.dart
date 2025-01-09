@@ -211,6 +211,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         AuthenticationTypes.password,
         AuthenticationTypes.sso,
       },
+      onSoftLogout: _handleSoftLogout,
       httpClient: _httpClient?.call(),
       importantStateEvents: {
         'im.ponies.room_emotes',
@@ -299,15 +300,35 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       );
 
       final discoveryDocument = await client.oidcProviderMetadata();
-      final manager = OidcUserManager(
+
+      OidcUserManager manager;
+
+      // the refresh request sometimes fails to afterwards verify with 401
+      // TODO: investigate this
+
+      manager = OidcUserManager(
         discoveryDocument: discoveryDocument,
         clientCredentials: clientCredentials,
         store: store,
         settings: settings,
         httpClient: client.httpClient,
       );
+      try {
+        await manager.init();
+      } on FormatException {
+        try {
+          await manager.dispose();
+        } catch (_) {}
+        manager = OidcUserManager(
+          discoveryDocument: discoveryDocument,
+          clientCredentials: clientCredentials,
+          store: store,
+          settings: settings,
+          httpClient: client.httpClient,
+        );
+        await manager.init();
+      }
 
-      await manager.init();
       storeOidcManager(client, manager);
       return manager;
     } catch (e, s) {
@@ -420,25 +441,10 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
       case LoginState.softLoggedOut:
         final oidc = _oidc[client.clientName.clientIdentifier];
-        if (oidc == null) {
-          continue loggedOut;
+        if (oidc != null) {
+          return;
         }
-        try {
-          final user = await oidc.loginAuthorizationCodeFlow(
-            originalUri: Uri.parse('about:blank'),
-          );
-          if (user == null) {
-            continue loggedOut;
-          }
-          await client.login(
-            LoginType.mLoginToken,
-            deviceId: client.deviceID,
-            token: user.token.accessToken,
-          );
-        } catch (e, s) {
-          Logs().e('Error refreshing session', e, s);
-          continue loggedOut;
-        }
+        continue loggedOut;
 
       loggedOut:
       case LoginState.loggedOut:
@@ -717,26 +723,33 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         }
 
         final token = user?.token;
-        if (user != null && token != null) {
+        final accessToken = token?.accessToken;
+        if (user != null && token != null && accessToken != null) {
           storeOidcManager(client, oidc);
 
-          DateTime? expiresAt;
+          /// as of now, we do not let the SDK handle our token refresh
+
+          /*DateTime? expiresAt;
 
           final expiresIn = token.expiresIn;
           if (expiresIn != null) {
             expiresAt = DateTime.now().add(expiresIn);
-          }
+          }*/
 
           // workaround missing user ID in token
-          client.bearerToken = token.accessToken;
+          client.bearerToken = accessToken;
           final tokenInfo = await client.getTokenOwner();
           client.bearerToken = null;
 
           database?.updateClient(
             homeserver.toString(),
-            token.accessToken!,
-            expiresAt,
-            token.refreshToken,
+            accessToken,
+
+            /// as of now, we do not let the SDK handle our token refresh
+            // expiresAt,
+            // token.refreshToken,
+            null,
+            null,
             tokenInfo.userId,
             tokenInfo.deviceId ?? account['device_id'],
             account['device_name'],
@@ -765,6 +778,43 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         await oidc.dispose();
         await buildOidcManager(client, locales);
       }
+    }
+  }
+
+  Future<void> _handleSoftLogout(Client client) async {
+    // TODO: support Client._accessTokenExpiresAt
+
+    final oidc = _oidc[client.clientName.clientIdentifier];
+    if (oidc == null) {
+      return client.refreshAccessToken();
+    }
+    try {
+      OidcUser? user;
+      try {
+        user = await oidc.refreshToken();
+      } on OidcException catch (e) {
+        // our refresh token expired or got lost - give the user a chance to
+        // still reuse the session without wiping all data
+        if (e.errorResponse?.error == 'invalid_grant') {
+          user = await oidc.loginAuthorizationCodeFlow();
+        } else {
+          rethrow;
+        }
+      }
+      if (user == null) {
+        // SDK will trigger hard logout
+        return;
+      }
+      client.accessToken = user.token.accessToken;
+      await client.login(
+        LoginType.mLoginToken,
+        deviceId: client.deviceID,
+        token: user.token.accessToken,
+      );
+    } catch (e, s) {
+      Logs().e('Error refreshing session', e, s);
+      // SDK will trigger hard logout
+      return;
     }
   }
 }
