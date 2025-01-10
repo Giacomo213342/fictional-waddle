@@ -1765,6 +1765,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copy public room address'**
   String get copyRoomAddress;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
 }
 
 class _AppLocalizationsDelegate

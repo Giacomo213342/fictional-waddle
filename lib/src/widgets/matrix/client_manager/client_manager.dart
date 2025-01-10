@@ -216,6 +216,10 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       importantStateEvents: {
         'im.ponies.room_emotes',
       },
+      enableDehydratedDevices: true,
+      receiptsPublicByDefault: false,
+      requestHistoryOnLimitedTimeline: true,
+      shareKeysWithUnverifiedDevices: false,
     );
     client.registerPolyculeCommands();
     _loginStateListener[identifier]?.cancel();

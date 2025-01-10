@@ -528,5 +528,6 @@
   "userDetails": "View user profile",
   "markMute": "Mute room",
   "markUnmute": "Unmute room",
-  "copyRoomAddress": "Copy public room address"
+  "copyRoomAddress": "Copy public room address",
+  "search": "Search"
 }

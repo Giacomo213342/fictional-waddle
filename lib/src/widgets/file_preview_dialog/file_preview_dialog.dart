@@ -5,9 +5,14 @@ import 'package:cross_file/cross_file.dart';
 import 'file_preview_dialog_view.dart';
 
 class FilePreviewDialog extends StatefulWidget {
-  const FilePreviewDialog({super.key, required this.files});
+  const FilePreviewDialog({
+    super.key,
+    required this.files,
+    this.allowCompress = true,
+  });
 
   final List<XFile> files;
+  final bool allowCompress;
 
   @override
   State<FilePreviewDialog> createState() => FilePreviewDialogController();

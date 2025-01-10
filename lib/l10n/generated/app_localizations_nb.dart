@@ -982,4 +982,7 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get copyRoomAddress => 'Copy public room address';
+
+  @override
+  String get search => 'Search';
 }
