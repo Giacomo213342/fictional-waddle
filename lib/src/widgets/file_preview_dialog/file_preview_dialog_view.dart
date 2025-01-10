@@ -52,13 +52,14 @@ class FilePreviewDialogView extends StatelessWidget {
                 );
               },
             ),
-            SwitchListTile.adaptive(
-              title: Text(AppLocalizations.of(context).compressFiles),
-              subtitle:
-                  Text(AppLocalizations.of(context).compressFilesSubtitle),
-              value: controller.compress,
-              onChanged: controller.setCompress,
-            ),
+            if (controller.widget.allowCompress)
+              SwitchListTile.adaptive(
+                title: Text(AppLocalizations.of(context).compressFiles),
+                subtitle:
+                    Text(AppLocalizations.of(context).compressFilesSubtitle),
+                value: controller.compress,
+                onChanged: controller.setCompress,
+              ),
           ],
         ),
       ),

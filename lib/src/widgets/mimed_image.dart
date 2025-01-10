@@ -13,14 +13,14 @@ class MimedImage extends StatelessWidget {
     required this.path,
     this.width,
     this.height,
-    this.fit = BoxFit.cover,
+    this.fit,
   });
 
   final Uint8List bytes;
   final String path;
   final double? width;
   final double? height;
-  final BoxFit fit;
+  final BoxFit? fit;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class MimedImage extends StatelessWidget {
     return Image.memory(
       bytes,
       gaplessPlayback: true,
-      fit: fit,
+      fit: fit ?? BoxFit.cover,
       width: width,
       height: height,
     );
@@ -56,7 +56,7 @@ class MimedImage extends StatelessWidget {
   SvgPicture _svgImage(Uint8List bytes) {
     return SvgPicture.memory(
       bytes,
-      fit: fit,
+      fit: fit ?? BoxFit.cover,
       width: width,
       height: height,
     );

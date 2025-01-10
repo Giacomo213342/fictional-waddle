@@ -82,14 +82,25 @@ class FileSelector {
     return xTypeGroups;
   }
 
-  Future<bool> selectFiles(BuildContext context) async {
+  Future<bool> selectFiles(
+    BuildContext context, {
+    bool enforceSingle = false,
+  }) async {
     final l10n = AppLocalizations.of(context);
     List<XFile> files;
 
     if (useImagePicker) {
       final picker = ImagePicker();
       if (msgType == MessageTypes.Image) {
-        files = this.files = await picker.pickMultiImage();
+        if (enforceSingle) {
+          final file = await picker.pickImage(source: ImageSource.gallery);
+          if (file == null) {
+            return false;
+          }
+          files = this.files = [file];
+        } else {
+          files = this.files = await picker.pickMultiImage();
+        }
       } else {
         final file = await picker.pickVideo(source: ImageSource.gallery);
         if (file == null) {
@@ -98,14 +109,27 @@ class FileSelector {
         files = this.files = [file];
       }
     } else {
-      files = this.files = await openFiles(
-        acceptedTypeGroups: _createTypeTypeGroups(l10n),
-      );
+      if (enforceSingle) {
+        final file = await openFile(
+          acceptedTypeGroups: _createTypeTypeGroups(l10n),
+        );
+        if (file == null) {
+          return false;
+        }
+        files = this.files = [file];
+      } else {
+        files = this.files = await openFiles(
+          acceptedTypeGroups: _createTypeTypeGroups(l10n),
+        );
+      }
     }
     return files.isNotEmpty;
   }
 
-  Future<FileSendProperties?> previewSelection(BuildContext context) async {
+  Future<FileSendProperties?> previewSelection(
+    BuildContext context, {
+    bool allowCompress = true,
+  }) async {
     final files = this.files;
     if (files == null || files.isEmpty) {
       return null;
@@ -114,6 +138,7 @@ class FileSelector {
       context: context,
       builder: (context) => FilePreviewDialog(
         files: files,
+        allowCompress: allowCompress,
       ),
     );
     if (selection == null) {

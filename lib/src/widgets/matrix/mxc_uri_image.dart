@@ -16,7 +16,7 @@ typedef MxcUriImageBuilderCallback = Widget Function(
 );
 
 class MxcUriImageBuilder extends StatefulWidget {
-  const MxcUriImageBuilder._({
+  const MxcUriImageBuilder({
     super.key,
     required this.uri,
     required this.client,
@@ -24,6 +24,7 @@ class MxcUriImageBuilder extends StatefulWidget {
     this.width,
     this.height,
     this.ratio = 1,
+    this.fit,
   });
 
   static Widget dpiRespective({
@@ -33,9 +34,10 @@ class MxcUriImageBuilder extends StatefulWidget {
     MxcUriImageBuilderCallback imageBuilder = defaultImageBuilder,
     double? width,
     double? height,
+    BoxFit? fit,
   }) =>
       DevicePixelRatioBuilder(
-        builder: (context, ratio) => MxcUriImageBuilder._(
+        builder: (context, ratio) => MxcUriImageBuilder(
           key: key,
           uri: uri,
           client: client,
@@ -43,6 +45,7 @@ class MxcUriImageBuilder extends StatefulWidget {
           width: width,
           height: height,
           ratio: ratio,
+          fit: fit,
         ),
       );
 
@@ -61,6 +64,7 @@ class MxcUriImageBuilder extends StatefulWidget {
   final double? width;
   final double? height;
   final double ratio;
+  final BoxFit? fit;
 
   @override
   State<MxcUriImageBuilder> createState() => _MxcUriImageBuilderState();
@@ -80,6 +84,9 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
   Future<Uri>? getDownloadUri() {
     final width = widget.width;
     final height = widget.height;
+    if (width == null && height == null) {
+      return widget.uri?.getDownloadUri(widget.client);
+    }
     return widget.uri?.getThumbnailUri(
       widget.client,
       width: width == null ? null : width * widget.ratio,
@@ -152,6 +159,7 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
       key: ValueKey(widget.uri),
       bytes: bytes,
       path: uri.path,
+      fit: widget.fit,
       width: widget.width,
       height: widget.height,
     );

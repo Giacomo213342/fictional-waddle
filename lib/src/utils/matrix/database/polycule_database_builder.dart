@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -19,7 +20,7 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(
   AppLocalizations l10n,
 ) async {
   if (kIsWeb) {
-    await persistStorage(l10n);
+    unawaited(persistStorage(l10n));
     final factory = createIdbFactory();
     final db = MatrixSdkDatabase(
       client.clientName,

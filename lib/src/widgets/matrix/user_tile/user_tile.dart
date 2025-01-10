@@ -9,6 +9,7 @@ import '../../../utils/matrix_to_extension.dart';
 import '../../ascii_progress_indicator.dart';
 import '../../polycule_overflow_bar.dart';
 import '../../share_origin_builder.dart';
+import '../avatar_builder/fullscreen_dialog_avatar.dart';
 import '../avatar_builder/mxc_avatar.dart';
 
 class UserTile extends StatefulWidget {
@@ -44,11 +45,17 @@ class _UserTileState extends MatrixState<UserTile> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ListTile(
-          leading: MxcAvatar(
+          leading: FullScreenAvatar.makeImageButton(
+            context: context,
+            child: MxcAvatar(
+              uri: widget.profile.avatarUrl,
+              client: client,
+              monogram: name,
+              dimension: 48,
+            ),
             uri: widget.profile.avatarUrl,
             client: client,
-            monogram: name,
-            dimension: 48,
+            title: name,
           ),
           isThreeLine: subtitle != null,
           title: Text(name),

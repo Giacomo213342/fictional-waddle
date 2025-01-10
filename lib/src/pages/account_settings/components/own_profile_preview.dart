@@ -2,13 +2,21 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/matrix/avatar_builder/profile_avatar_builder.dart';
 import '../../../widgets/matrix/profile_builder.dart';
 
 class OwnProfilePreview extends StatelessWidget {
-  const OwnProfilePreview({super.key, required this.client});
+  const OwnProfilePreview({
+    super.key,
+    required this.client,
+    this.onEdit,
+    this.onRemove,
+  });
 
   final Client client;
+  final VoidCallback? onEdit;
+  final VoidCallback? onRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +25,34 @@ class OwnProfilePreview extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          ProfileAvatarBuilder(
-            userId: userId,
-            client: client,
-            dimension: 96,
+          Stack(
+            fit: StackFit.loose,
+            alignment: Alignment.centerRight,
+            children: [
+              ProfileAvatarBuilder(
+                userId: userId,
+                client: client,
+                dimension: 96,
+                canOpenFullscreen: true,
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: onRemove,
+                    icon: const Icon(Icons.delete_forever),
+                    tooltip: AppLocalizations.of(context).redact,
+                  ),
+                  IconButton(
+                    onPressed: onEdit,
+                    icon: const Icon(Icons.edit),
+                    tooltip: AppLocalizations.of(context).edit,
+                  ),
+                ],
+              ),
+            ],
           ),
           const SizedBox(width: 24),
           Flexible(
