@@ -15,6 +15,7 @@ import '../pages/homeserver/homeserver.dart';
 import '../pages/login/login.dart';
 import '../pages/public_room/public_room.dart';
 import '../pages/room/room.dart';
+import '../pages/room_details/room_details.dart';
 import '../pages/room_list/room_list.dart';
 import '../pages/splash_screen/splash_screen.dart';
 import '../pages/ssss_bootstrap/ssss_bootstrap.dart';
@@ -29,6 +30,7 @@ import 'extensions/polycule_deeplink_route.dart';
 import 'extensions/requires_login_route.dart';
 import 'extensions/responsive_shell_route.dart';
 import 'extensions/room_available_route.dart';
+import 'extensions/room_available_shell_route.dart';
 
 class PolyculeRouter extends GoRouter {
   PolyculeRouter()
@@ -125,8 +127,7 @@ class PolyculeRouter extends GoRouter {
                           builder: (context, state) =>
                               const PolyculePlaceholder(),
                           routes: [
-                            RoomAvailableRoute(
-                              path: RoomPage.pathParameter.asGoRouterPath(),
+                            RoomAvailableShellRoute(
                               builder: (context, state, room) => RoomPage(
                                 room: room,
                               ),
@@ -144,6 +145,18 @@ class PolyculeRouter extends GoRouter {
                                 action: action,
                                 eventId: eventId,
                               ),
+                              routes: [
+                                RoomAvailableRoute(
+                                  path: RoomPage.pathParameter.asGoRouterPath(),
+                                  builder: (context, state, room) =>
+                                      const PolyculePlaceholder(),
+                                ),
+                                RoomAvailableRoute(
+                                  path: RoomDetailsPage.path,
+                                  builder: (context, state, room) =>
+                                      RoomDetailsPage(room: room),
+                                ),
+                              ],
                             ),
                           ],
                         ),
