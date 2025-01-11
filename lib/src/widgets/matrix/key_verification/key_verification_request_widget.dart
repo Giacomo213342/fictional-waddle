@@ -98,6 +98,8 @@ class _KeyVerificationRequestWidgetState
     switch (widget.request.state) {
       loading:
       case KeyVerificationState.waitingSas:
+        widget.request.acceptSas();
+        continue loading;
       case KeyVerificationState.waitingAccept:
         return WaitingPeerWidget(
           peer,

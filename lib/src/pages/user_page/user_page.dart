@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'package:matrix/encryption.dart';
+
 import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
 import '../../utils/matrix/matrix_state.dart';
+import '../../widgets/matrix/key_verification/key_verification_request_widget.dart';
 import '../room/room.dart';
 import 'user_view.dart';
 
@@ -58,6 +61,53 @@ class UserController extends MatrixState<UserPage> {
     if (!mounted) {
       return;
     }
+    setState(() {
+      loading = false;
+    });
+  }
+
+  Future<void> startVerification() async {
+    final encryption = client.encryption;
+    final roomId = client.getDirectChatFromUserId(widget.mxid);
+    if (roomId == null || encryption == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text(AppLocalizations.of(context).keyVerificationErrorGeneric),
+        ),
+      );
+      return;
+    }
+    final room = client.getRoomById(roomId);
+    if (room == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text(AppLocalizations.of(context).keyVerificationErrorGeneric),
+        ),
+      );
+      return;
+    }
+
+    final request = KeyVerification(
+      encryption: encryption,
+      userId: widget.mxid,
+      room: room,
+    );
+
+    encryption.keyVerificationManager.addRequest(request);
+
+    setState(() {
+      loading = true;
+    });
+
+    KeyVerificationRequestWidget.showDialog(
+      request,
+      context: context,
+      client: client,
+    );
+    await request.start();
+
     setState(() {
       loading = false;
     });

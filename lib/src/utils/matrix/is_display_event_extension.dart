@@ -19,6 +19,18 @@ extension IsDisplayEventExtension on Event {
             .contains(roomMemberChangeType)) {
       return false;
     }
+    // do not display key verification spam
+    if ([
+      EventTypes.KeyVerificationCancel,
+      EventTypes.KeyVerificationReady,
+      EventTypes.KeyVerificationStart,
+      EventTypes.KeyVerificationAccept,
+      EventTypes.KeyVerificationDone,
+      'm.key.verification.key',
+      'm.key.verification.mac',
+    ].contains(type)) {
+      return false;
+    }
 
     return true;
   }
