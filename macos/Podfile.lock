@@ -34,6 +34,9 @@ PODS:
     - FlutterMacOS
   - media_kit_video (0.0.1):
     - FlutterMacOS
+  - mobile_scanner (7.0.0):
+    - Flutter
+    - FlutterMacOS
   - objective_c (0.0.1):
     - FlutterMacOS
   - oidc_macos (0.0.1):
@@ -80,6 +83,7 @@ DEPENDENCIES:
   - media_kit_libs_macos_video (from `Flutter/ephemeral/.symlinks/plugins/media_kit_libs_macos_video/macos`)
   - media_kit_native_event_loop (from `Flutter/ephemeral/.symlinks/plugins/media_kit_native_event_loop/macos`)
   - media_kit_video (from `Flutter/ephemeral/.symlinks/plugins/media_kit_video/macos`)
+  - mobile_scanner (from `Flutter/ephemeral/.symlinks/plugins/mobile_scanner/darwin`)
   - objective_c (from `Flutter/ephemeral/.symlinks/plugins/objective_c/macos`)
   - oidc_macos (from `Flutter/ephemeral/.symlinks/plugins/oidc_macos/macos`)
   - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
@@ -126,6 +130,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/media_kit_native_event_loop/macos
   media_kit_video:
     :path: Flutter/ephemeral/.symlinks/plugins/media_kit_video/macos
+  mobile_scanner:
+    :path: Flutter/ephemeral/.symlinks/plugins/mobile_scanner/darwin
   objective_c:
     :path: Flutter/ephemeral/.symlinks/plugins/objective_c/macos
   oidc_macos:
@@ -165,6 +171,7 @@ SPEC CHECKSUMS:
   media_kit_libs_macos_video: b3e2bbec2eef97c285f2b1baa7963c67c753fb82
   media_kit_native_event_loop: 81fd5b45192b72f8b5b69eaf5b540f45777eb8d5
   media_kit_video: c75b07f14d59706c775778e4dd47dd027de8d1e5
+  mobile_scanner: 77265f3dc8d580810e91849d4a0811a90467ed5e
   objective_c: e5f8194456e8fc943e034d1af00510a1bc29c067
   oidc_macos: 972700560d342ffc6ac9306495c1d8fe53c7a9cb
   package_info_plus: 12f1c5c2cfe8727ca46cbd0b26677728972d9a5b

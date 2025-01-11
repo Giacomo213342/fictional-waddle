@@ -16,6 +16,7 @@ import just_audio
 import just_waveform
 import media_kit_libs_macos_video
 import media_kit_video
+import mobile_scanner
 import oidc_macos
 import package_info_plus
 import path_provider_foundation
@@ -39,6 +40,7 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   JustWaveformPlugin.register(with: registry.registrar(forPlugin: "JustWaveformPlugin"))
   MediaKitLibsMacosVideoPlugin.register(with: registry.registrar(forPlugin: "MediaKitLibsMacosVideoPlugin"))
   MediaKitVideoPlugin.register(with: registry.registrar(forPlugin: "MediaKitVideoPlugin"))
+  MobileScannerPlugin.register(with: registry.registrar(forPlugin: "MobileScannerPlugin"))
   OidcPlugin.register(with: registry.registrar(forPlugin: "OidcPlugin"))
   FPPPackageInfoPlusPlugin.register(with: registry.registrar(forPlugin: "FPPPackageInfoPlusPlugin"))
   PathProviderPlugin.register(with: registry.registrar(forPlugin: "PathProviderPlugin"))
