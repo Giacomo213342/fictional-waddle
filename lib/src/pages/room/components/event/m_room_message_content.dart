@@ -9,7 +9,7 @@ import 'm_room_message/m_image.dart';
 import 'm_room_message/m_text.dart';
 import 'm_room_message/m_video.dart';
 
-final _textMessageKeyRegistry = <String, GlobalKey<State<TextMessage>>>{};
+final _textMessageKeyRegistry = <String, GlobalKey>{};
 final _videoMessageKeyRegistry = <String, GlobalKey<State<VideoMessage>>>{};
 final _imageMessageKeyRegistry = <String, GlobalKey>{};
 final _audioMessageKeyRegistry = <String, GlobalKey<State<AudioMessage>>>{};
@@ -79,8 +79,7 @@ class RoomMessageContent extends StatelessWidget {
       case MessageTypes.Emote:
       case MessageTypes.Notice:
         return TextMessage(
-          key: _textMessageKeyRegistry[globalKeyRegistryKey] ??=
-              GlobalKey<State<TextMessage>>(),
+          key: _textMessageKeyRegistry[globalKeyRegistryKey] ??= GlobalKey(),
           event: event,
           globalKeyRegistryKey: globalKeyRegistryKey,
         );

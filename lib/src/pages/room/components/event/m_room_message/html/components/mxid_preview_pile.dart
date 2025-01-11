@@ -8,14 +8,16 @@ import '../../../../../../../widgets/matrix/avatar_builder/mxc_avatar.dart';
 class MxidPreviewPile extends StatelessWidget {
   const MxidPreviewPile({
     super.key,
-    required this.room,
+    required this.client,
+    this.room,
     required this.mxid,
     this.secondary,
     this.via,
     required this.fallback,
   });
 
-  final Room room;
+  final Client client;
+  final Room? room;
   final String? mxid;
   final String? secondary;
   final Set<String>? via;
@@ -30,18 +32,18 @@ class MxidPreviewPile extends StatelessWidget {
       final prefix = mxid.sigil;
       switch (prefix) {
         case '@':
-          final fallbackUser = room.unsafeGetUserFromMemoryOrFallback(mxid);
+          final fallbackUser = room?.unsafeGetUserFromMemoryOrFallback(mxid);
           fallback = _LinkMetadata(
-            label: fallbackUser.calcDisplayname(),
-            avatar: fallbackUser.avatarUrl,
+            label: fallbackUser?.calcDisplayname() ?? mxid,
+            avatar: fallbackUser?.avatarUrl,
           );
           getMetadataFuture = _getUserProfile(mxid);
           break;
         case '#':
         case '!':
           final room = prefix == '#'
-              ? this.room.client.getRoomByAlias(mxid)
-              : this.room.client.getRoomById(mxid);
+              ? client.getRoomByAlias(mxid)
+              : client.getRoomById(mxid);
           if (room != null) {
             fallback = _LinkMetadata(
               label: room.getLocalizedDisplayname(),
@@ -71,7 +73,7 @@ class MxidPreviewPile extends StatelessWidget {
         return Chip(
           avatar: MxcAvatar(
             uri: uri,
-            client: room.client,
+            client: client,
             dimension: 24,
             monogram: label,
           ),
@@ -87,7 +89,7 @@ class MxidPreviewPile extends StatelessWidget {
   }
 
   Future<_LinkMetadata<String?>> _getUserProfile(String mxid) async {
-    final user = await room.requestUser(mxid);
+    final user = await room?.requestUser(mxid);
     if (user != null) {
       return _LinkMetadata(
         label: user.calcDisplayname(),
@@ -95,7 +97,7 @@ class MxidPreviewPile extends StatelessWidget {
       );
     }
 
-    final profile = await room.client.getProfileFromUserId(mxid);
+    final profile = await client.getProfileFromUserId(mxid);
     return _LinkMetadata(
       label: profile.displayName,
       avatar: profile.avatarUrl,
@@ -110,12 +112,12 @@ class MxidPreviewPile extends StatelessWidget {
     };
 
     for (final server in via) {
-      final response = await this.room.client.queryPublicRooms(
-            server: server,
-            filter: PublicRoomQueryFilter(
-              genericSearchTerm: mxid,
-            ),
-          );
+      final response = await client.queryPublicRooms(
+        server: server,
+        filter: PublicRoomQueryFilter(
+          genericSearchTerm: mxid,
+        ),
+      );
       final room = response.chunk.firstOrNull;
       if (room != null) {
         return _LinkMetadata(
