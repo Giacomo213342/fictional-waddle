@@ -7,6 +7,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../../utils/matrix/matrix_state.dart';
 import '../../../utils/matrix_to_extension.dart';
 import '../../ascii_progress_indicator.dart';
+import '../../polycule_html_view.dart';
 import '../../polycule_overflow_bar.dart';
 import '../../share_origin_builder.dart';
 import '../avatar_builder/mxc_avatar.dart';
@@ -57,7 +58,15 @@ class _PublicRoomTileState extends MatrixState<PublicRoomTile> {
           ),
           isThreeLine: topic != null,
           title: Text(name),
-          subtitle: topic == null ? null : SelectionArea(child: Text(topic)),
+          subtitle: topic == null
+              ? null
+              : SelectionArea(
+                  child: PolyculeHtmlView(
+                    html: topic.replaceAll('\n', r'<br />'),
+                    globalKeyTag: widget.room.roomId,
+                    client: client,
+                  ),
+                ),
         ),
         PolyculeOverflowBar(
           alignment: MainAxisAlignment.spaceEvenly,

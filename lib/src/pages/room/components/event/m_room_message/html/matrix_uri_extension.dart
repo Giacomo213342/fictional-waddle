@@ -7,9 +7,13 @@ import 'package:url_launcher/link.dart';
 import 'components/mxid_preview_pile.dart';
 
 class MatrixUriExtension extends HtmlExtension {
-  MatrixUriExtension({required this.event});
+  MatrixUriExtension({
+    required this.client,
+    this.room,
+  });
 
-  final Event event;
+  final Client client;
+  final Room? room;
 
   @override
   Set<String> get supportedTags => {'a'};
@@ -59,7 +63,8 @@ class MatrixUriExtension extends HtmlExtension {
         builder: (context, followLink) => GestureDetector(
           onTap: followLink,
           child: MxidPreviewPile(
-            room: event.room,
+            client: client,
+            room: room,
             mxid: identifiers?.primaryIdentifier,
             secondary: identifiers?.secondaryIdentifier,
             via: identifiers?.via,
