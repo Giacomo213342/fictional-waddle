@@ -1771,6 +1771,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search'**
   String get search;
+
+  /// No description provided for @startVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Start verification'**
+  String get startVerification;
+
+  /// No description provided for @keyVerificationRequestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Key verification request sent.'**
+  String get keyVerificationRequestSent;
 }
 
 class _AppLocalizationsDelegate

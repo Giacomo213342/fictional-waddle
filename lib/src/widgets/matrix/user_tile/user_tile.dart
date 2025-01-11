@@ -18,6 +18,7 @@ class UserTile extends StatefulWidget {
     required this.profile,
     this.onDirectChat,
     this.onIgnore,
+    this.onVerification,
     this.action,
     this.loading = false,
   });
@@ -25,6 +26,7 @@ class UserTile extends StatefulWidget {
   final Profile profile;
   final VoidCallback? onDirectChat;
   final VoidCallback? onIgnore;
+  final VoidCallback? onVerification;
   final bool loading;
   final String? action;
 
@@ -80,6 +82,15 @@ class _UserTileState extends MatrixState<UserTile> {
                         AppLocalizations.of(context).startDirectChat,
                       ),
                     ),
+              if (client.getDirectChatFromUserId(widget.profile.userId) !=
+                      null &&
+                  widget.onVerification != null)
+                ElevatedButton(
+                  onPressed: widget.onVerification,
+                  child: Text(
+                    AppLocalizations.of(context).startVerification,
+                  ),
+                ),
               ShareOriginBuilder(
                 builder: (context, rect) => ElevatedButton(
                   onPressed: () => share(rect),

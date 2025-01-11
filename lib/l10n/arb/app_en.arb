@@ -529,5 +529,7 @@
   "markMute": "Mute room",
   "markUnmute": "Unmute room",
   "copyRoomAddress": "Copy public room address",
-  "search": "Search"
+  "search": "Search",
+  "startVerification": "Start verification",
+  "keyVerificationRequestSent": "Key verification request sent."
 }

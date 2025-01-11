@@ -29,6 +29,7 @@ class UserView extends StatelessWidget {
                 profile: profile,
                 onDirectChat: controller.startDirectChat,
                 onIgnore: controller.toggleIgnore,
+                onVerification: controller.startVerification,
               ),
             );
           },

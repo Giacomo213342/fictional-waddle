@@ -984,4 +984,10 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get search => 'Search';
+
+  @override
+  String get startVerification => 'Start verification';
+
+  @override
+  String get keyVerificationRequestSent => 'Key verification request sent.';
 }
