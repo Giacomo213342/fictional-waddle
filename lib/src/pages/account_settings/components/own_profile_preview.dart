@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:matrix/matrix.dart';
 
@@ -63,10 +64,32 @@ class OwnProfilePreview extends StatelessWidget {
               builder: (context, snapshot) {
                 final displayName =
                     snapshot.data?.displayName ?? userId.localpart ?? userId;
-                return Text(
-                  displayName,
-                  maxLines: 3,
-                  style: Theme.of(context).textTheme.headlineSmall,
+                return ConstrainedBox(
+                  constraints:
+                      const BoxConstraints(maxHeight: 192, minHeight: 96),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        displayName,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      TextButton.icon(
+                        icon: const Icon(Icons.copy),
+                        label: Text(
+                          userId,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                        onPressed: () =>
+                            Clipboard.setData(ClipboardData(text: userId)),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
