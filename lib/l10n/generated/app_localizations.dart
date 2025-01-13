@@ -1783,6 +1783,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Key verification request sent.'**
   String get keyVerificationRequestSent;
+
+  /// No description provided for @noHomeserverConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection to homeserver.'**
+  String get noHomeserverConnection;
 }
 
 class _AppLocalizationsDelegate

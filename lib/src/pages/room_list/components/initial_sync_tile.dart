@@ -43,7 +43,13 @@ extension on SyncStatusUpdate {
       case SyncStatus.waitingForResponse:
         return AppLocalizations.of(context).initialSync;
       case SyncStatus.error:
-        return ((error?.exception ?? status) as Object).toString();
+        switch (error?.exception) {
+          case SyncConnectionException():
+            return AppLocalizations.of(context).noHomeserverConnection;
+          default:
+            return ((error?.exception ?? status) as Object).toString();
+        }
+
       case SyncStatus.processing:
       case SyncStatus.cleaningUp:
       case SyncStatus.finished:

@@ -990,4 +990,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get keyVerificationRequestSent => 'Key verification request sent.';
+
+  @override
+  String get noHomeserverConnection => 'No connection to homeserver.';
 }

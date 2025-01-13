@@ -531,5 +531,6 @@
   "copyRoomAddress": "Copy public room address",
   "search": "Search",
   "startVerification": "Start verification",
-  "keyVerificationRequestSent": "Key verification request sent."
+  "keyVerificationRequestSent": "Key verification request sent.",
+  "noHomeserverConnection": "No connection to homeserver."
 }
