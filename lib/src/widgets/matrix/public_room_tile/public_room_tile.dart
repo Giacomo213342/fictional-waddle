@@ -63,7 +63,6 @@ class _PublicRoomTileState extends MatrixState<PublicRoomTile> {
               : SelectionArea(
                   child: PolyculeHtmlView(
                     html: topic.replaceAll('\n', r'<br />'),
-                    globalKeyTag: widget.room.roomId,
                     client: client,
                   ),
                 ),

@@ -56,7 +56,6 @@ class RoomDetailsView extends StatelessWidget {
                   child: SelectionArea(
                     child: PolyculeHtmlView(
                       html: room.topic.replaceAll('\n', r'<br />'),
-                      globalKeyTag: room.id,
                       client: room.client,
                       room: room,
                     ),

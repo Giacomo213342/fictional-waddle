@@ -8,11 +8,9 @@ class TextMessage extends StatelessWidget {
   const TextMessage({
     super.key,
     required this.event,
-    this.globalKeyRegistryKey,
   });
 
   final Event event;
-  final String? globalKeyRegistryKey;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +36,6 @@ class TextMessage extends StatelessWidget {
     }
     return PolyculeHtmlView(
       html: html,
-      globalKeyTag: globalKeyRegistryKey ?? event.eventId,
       event: event,
     );
   }

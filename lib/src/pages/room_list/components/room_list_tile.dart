@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:collection/collection.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/link.dart';
@@ -63,7 +62,7 @@ class RoomListTileState extends State<RoomListTile> {
           return RoomBuilder(
             room: room,
             builder: (context, snapshot) {
-              final room = snapshot.data ?? this.room;
+              final room = updatedRoom = snapshot.data ?? this.room;
               return DynamicContextMenu(
                 itemBuilder: _buildContextMenu,
                 // make the tle keyboard focusable by request
@@ -158,16 +157,6 @@ class RoomListTileState extends State<RoomListTile> {
         onPressed: _leaveRoom,
       ),
     ];
-  }
-
-  void rebuildRoomData() {
-    final newRoom = widget.controller.client.rooms.singleWhereOrNull(
-      (room) => room.id == widget.room.id,
-    );
-
-    setState(() {
-      updatedRoom = newRoom;
-    });
   }
 
   Future<void> _toggleFavorite() => room.setFavourite(!room.isFavourite);

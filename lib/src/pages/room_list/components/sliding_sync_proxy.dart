@@ -21,7 +21,6 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
   final listKey = GlobalKey<AnimatedListState>();
 
   List<Room> roomsCache = [];
-  Map<String, GlobalKey<RoomListTileState>> roomTileKeys = {};
 
   StreamSubscription<SyncUpdate>? _slidingSyncListener;
 
@@ -40,11 +39,9 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
       key: listKey,
       itemBuilder: (context, index, animation) {
         final room = widget.controller.filteredRooms[index];
-        final key = roomTileKeys[room.id] ??= GlobalKey<RoomListTileState>();
         return SizeTransition(
           sizeFactor: animation,
           child: RoomListTile(
-            key: key,
             widget.controller,
             room: room,
           ),
@@ -95,10 +92,7 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
           }
         },
         // this is a stub and will never be called
-        change: (pos, payload) {
-          final roomId = rooms[pos].id;
-          roomTileKeys[roomId]?.currentState?.rebuildRoomData();
-        },
+        change: (pos, payload) {},
         move: (from, to) {
           listState.removeItem(
             from,
@@ -113,15 +107,6 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
           listState.insertItem(to);
         },
       );
-    }
-
-    final updatedRoomIds = {
-      ...?syncUpdate.rooms?.join?.keys,
-      ...?syncUpdate.rooms?.invite?.keys,
-      ...?syncUpdate.rooms?.leave?.keys,
-    };
-    for (final roomId in updatedRoomIds) {
-      roomTileKeys[roomId]?.currentState?.rebuildRoomData();
     }
     roomsCache = [...rooms];
   }
