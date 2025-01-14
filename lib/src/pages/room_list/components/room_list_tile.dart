@@ -155,6 +155,7 @@ class RoomListTileState extends State<RoomListTile> {
         icon: Icons.delete_forever,
         label: AppLocalizations.of(context).leaveRoom,
         onPressed: _leaveRoom,
+        isDestructiveAction: true,
       ),
     ];
   }
