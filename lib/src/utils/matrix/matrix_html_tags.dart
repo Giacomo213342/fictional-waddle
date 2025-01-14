@@ -42,5 +42,6 @@ class MatrixHtmlTags {
     'img',
     'details',
     'summary',
+    'matrix-logo',
   };
 }

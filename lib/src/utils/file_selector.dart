@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -53,7 +54,12 @@ class FileSelector {
             label: l10n.typeGroupImages,
             mimeTypes: const [
               'image/*',
-              // Lottie files : application/json
+              'application/json',
+            ],
+            extensions: [
+              // Lottie files
+              '.lottie',
+              '.tgs',
             ],
             uniformTypeIdentifiers: const ['public.image'],
           ),
@@ -89,7 +95,9 @@ class FileSelector {
     final l10n = AppLocalizations.of(context);
     List<XFile> files;
 
-    if (useImagePicker) {
+    if (useImagePicker &&
+        !kIsWeb &&
+        (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)) {
       final picker = ImagePicker();
       if (msgType == MessageTypes.Image) {
         if (enforceSingle) {
@@ -140,6 +148,7 @@ class FileSelector {
         files: files,
         allowCompress: allowCompress,
       ),
+      useRootNavigator: false,
     );
     if (selection == null) {
       return null;
@@ -163,16 +172,58 @@ class FileSelector {
     List<MatrixFileTuple> matrixFiles = [];
 
     for (var file in files) {
+      final bytes = await file.readAsBytes();
+      int? width, height;
+
       String? mimeType = file.mimeType;
       // the SDK keeps thinking webm files are audio
       if (mimeType == null && file.name.endsWith('.webm')) {
         mimeType = 'video/webm';
       }
-      MatrixFile matrixFile = MatrixFile.fromMimeType(
-        bytes: await file.readAsBytes(),
-        name: file.name,
-        mimeType: mimeType,
-      );
+
+      bool enforceImage = false;
+      // check for Telegram sticker
+      if (file.name.endsWith('.tgs')) {
+        enforceImage = true;
+        mimeType = 'application/gzip';
+      }
+      // check for dotLottie
+      if (file.name.endsWith('.lottie')) {
+        enforceImage = true;
+        mimeType = 'application/zip';
+      }
+      // check for Lottie file
+      if (mimeType == 'application/json' || file.name.endsWith('.json')) {
+        try {
+          final json = jsonDecode(utf8.decode(bytes));
+          if (json is Map &&
+              json.containsKey('layers') &&
+              json.containsKey('nm')) {
+            enforceImage = true;
+            mimeType = 'application/json';
+            width = json['w'] as int?;
+            height = json['h'] as int?;
+          }
+        } catch (_) {
+          // obviously not a Lottie files
+        }
+      }
+      MatrixFile matrixFile;
+      if (enforceImage) {
+        matrixFile = MatrixImageFile(
+          bytes: bytes,
+          name: file.name,
+          mimeType: mimeType,
+          width: width,
+          height: height,
+        );
+      } else {
+        matrixFile = MatrixFile.fromMimeType(
+          bytes: bytes,
+          name: file.name,
+          mimeType: mimeType,
+        );
+      }
       if (matrixFile is MatrixImageFile) {
         if (compress) {
           matrixFile = await MatrixImageFile.shrink(

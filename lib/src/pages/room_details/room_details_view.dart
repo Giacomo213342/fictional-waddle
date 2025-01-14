@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../widgets/matrix/avatar_builder/fullscreen_dialog_avatar.dart';
+import '../../widgets/matrix/html/polycule_html_view.dart';
 import '../../widgets/matrix/mxc_uri_image.dart';
-import '../../widgets/polycule_html_view.dart';
 import '../../widgets/share_origin_builder.dart';
 import 'room_details.dart';
 

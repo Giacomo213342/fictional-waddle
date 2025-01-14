@@ -5,7 +5,6 @@ import 'package:matrix/matrix.dart';
 import '../../utils/file_selector.dart';
 import '../../utils/matrix/matrix_state.dart';
 import '../../utils/matrix/oidc_delegation_extension.dart';
-import '../account_selector/account_selector.dart';
 import 'account_settings_view.dart';
 
 class AccountSettings extends StatefulWidget {
@@ -13,8 +12,8 @@ class AccountSettings extends StatefulWidget {
 
   static const routeName = '/settings';
 
-  static Uri makeSettingsUri(String routeName) {
-    return Uri.parse('${AccountSelectorPage.routeName}/$routeName');
+  static String makeSettingsUri(String routeName) {
+    return '${AccountSettings.routeName}/$routeName';
   }
 
   @override

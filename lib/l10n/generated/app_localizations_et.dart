@@ -993,4 +993,14 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get noHomeserverConnection => 'No connection to homeserver.';
+
+  @override
+  String get emojiSettings => 'Emoji settings';
+
+  @override
+  String get defaultEmojiTone => 'Default emoji tone';
+
+  @override
+  String get autoplayAnimations =>
+      'Automatically play animated images and stickers';
 }

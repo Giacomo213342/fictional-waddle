@@ -1789,6 +1789,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No connection to homeserver.'**
   String get noHomeserverConnection;
+
+  /// No description provided for @emojiSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Emoji settings'**
+  String get emojiSettings;
+
+  /// No description provided for @defaultEmojiTone.
+  ///
+  /// In en, this message translates to:
+  /// **'Default emoji tone'**
+  String get defaultEmojiTone;
+
+  /// No description provided for @autoplayAnimations.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically play animated images and stickers'**
+  String get autoplayAnimations;
 }
 
 class _AppLocalizationsDelegate

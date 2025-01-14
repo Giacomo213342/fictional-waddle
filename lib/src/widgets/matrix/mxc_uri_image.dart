@@ -158,7 +158,7 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
     return MimedImage(
       key: ValueKey(widget.uri),
       bytes: bytes,
-      path: uri.path,
+      name: uri.path,
       fit: widget.fit,
       width: widget.width,
       height: widget.height,

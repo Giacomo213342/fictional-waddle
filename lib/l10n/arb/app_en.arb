@@ -532,5 +532,8 @@
   "search": "Search",
   "startVerification": "Start verification",
   "keyVerificationRequestSent": "Key verification request sent.",
-  "noHomeserverConnection": "No connection to homeserver."
+  "noHomeserverConnection": "No connection to homeserver.",
+  "emojiSettings": "Emoji settings",
+  "defaultEmojiTone": "Default emoji tone",
+  "autoplayAnimations": "Automatically play animated images and stickers"
 }

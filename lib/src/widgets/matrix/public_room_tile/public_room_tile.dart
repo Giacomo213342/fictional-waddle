@@ -7,10 +7,10 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../../utils/matrix/matrix_state.dart';
 import '../../../utils/matrix_to_extension.dart';
 import '../../ascii_progress_indicator.dart';
-import '../../polycule_html_view.dart';
 import '../../polycule_overflow_bar.dart';
 import '../../share_origin_builder.dart';
 import '../avatar_builder/mxc_avatar.dart';
+import '../html/polycule_html_view.dart';
 
 class PublicRoomTile extends StatefulWidget {
   const PublicRoomTile({

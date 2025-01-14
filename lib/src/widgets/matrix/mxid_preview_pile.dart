@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../../../../../../../../l10n/generated/app_localizations.dart';
-import '../../../../../../../widgets/matrix/avatar_builder/mxc_avatar.dart';
+import '../../../../../../l10n/generated/app_localizations.dart';
+import 'avatar_builder/mxc_avatar.dart';
 
 class MxidPreviewPile extends StatelessWidget {
   const MxidPreviewPile({

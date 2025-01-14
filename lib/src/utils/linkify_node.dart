@@ -2,6 +2,7 @@ import 'package:html/dom.dart';
 import 'package:linkify/linkify.dart';
 import 'package:matrix/matrix.dart';
 
+import '../widgets/matrix/html/components/animated_emoji_extension.dart';
 import 'error_logger.dart';
 import 'matrix_to_extension.dart';
 
@@ -49,18 +50,29 @@ extension LinkifyText on Text {
     );
     final newNode = Element.tag('span');
     for (final element in linkified) {
-      if (element is TextElement) {
-        newNode.nodes.add(Text(element.text));
-      } else if (element is LinkableElement) {
-        final anchor = Element.tag('a');
-        anchor.attributes['href'] = element.url;
-        anchor.nodes.add(Text(element.originText));
-        newNode.nodes.add(anchor);
-      } else {
-        ErrorLogger().captureStackTrace(
-          'Unable to match linkify element of type ${element.runtimeType}',
-          null,
-        );
+      switch (element) {
+        case TextElement():
+          for (final word in element.text.split(' ')) {
+            if (word == '[matrix]') {
+              newNode.nodes.add(Element.tag('matrix-logo'));
+              newNode.nodes.add(Text(' '));
+            } else {
+              newNode.nodes
+                  .addAll(AnimatedEmojiExtension.emojifyTextNode(word));
+              newNode.nodes.add(Text(' '));
+            }
+          }
+          newNode.nodes.removeLast();
+        case LinkableElement():
+          final anchor = Element.tag('a');
+          anchor.attributes['href'] = element.url;
+          anchor.nodes.add(Text(element.originText));
+          newNode.nodes.add(anchor);
+        default:
+          ErrorLogger().captureStackTrace(
+            'Unable to match linkify element of type ${element.runtimeType}',
+            null,
+          );
       }
     }
     return newNode;
@@ -74,18 +86,22 @@ class MatrixLinkifier extends Linkifier {
   List<LinkifyElement> parse(elements, options) {
     final list = <LinkifyElement>[];
 
-    for (var element in elements) {
+    for (final element in elements) {
       if (element is TextElement) {
-        final result = element.text.parseIdentifierIntoParts();
+        for (final word in element.text.split(' ')) {
+          final result = word.parseIdentifierIntoParts();
 
-        if (result == null) {
-          list.add(element);
-        } else {
-          String uri = result.toMatrixToUrl();
-          String text = result.primaryIdentifier;
+          if (result == null) {
+            list.add(TextElement(word));
+          } else {
+            String uri = result.toMatrixToUrl();
+            String text = result.primaryIdentifier;
 
-          list.add(LinkableElement(text, uri));
+            list.add(LinkableElement(text, uri));
+          }
+          list.add(TextElement(' '));
         }
+        list.removeLast();
       } else {
         list.add(element);
       }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import 'account_settings.dart';
 import 'components/deactivate_account_tile.dart';
+import 'components/emoji_settings_tile.dart';
 import 'components/manage_sessions_tile.dart';
 import 'components/mxid_qr_code_tile.dart';
 import 'components/oidc_account_settings.dart';
@@ -27,6 +28,7 @@ class AccountSettingsView extends StatelessWidget {
             onRemove: controller.deleteAvatar,
           ),
           MxidQRCodeTile(controller),
+          EmojiSettingsTile(controller),
           OidcAccountSettingsTile(controller),
           ManageSessionsTile(controller),
           const Divider(),

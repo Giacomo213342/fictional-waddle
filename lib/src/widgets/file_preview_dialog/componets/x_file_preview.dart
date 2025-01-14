@@ -35,7 +35,12 @@ class XFilePreview extends StatelessWidget {
           'bmp' ||
           'wbmp' ||
           'svg' ||
-          'tiff' =>
+          'tiff' ||
+          'json' ||
+          'zip' ||
+          'lottie' ||
+          'gzip' ||
+          'tgs' =>
             ImagePreview(file: file),
           null || _ => FallbackPreview(file: file),
         },

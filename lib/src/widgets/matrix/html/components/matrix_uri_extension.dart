@@ -4,7 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/link.dart';
 
-import 'components/mxid_preview_pile.dart';
+import '../../mxid_preview_pile.dart';
 
 class MatrixUriExtension extends HtmlExtension {
   MatrixUriExtension({

@@ -7,7 +7,7 @@ import 'package:flutter_highlighting/themes/intellij-light.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:highlighting/languages/all.dart' as highlight;
 
-import '../../../../../../theme/fonts.dart';
+import '../../../../theme/fonts.dart';
 
 const _kInnerPadding = EdgeInsets.fromLTRB(8, 8, 48, 8);
 

@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:matrix/matrix.dart';
 
-import '../../../../../../utils/parent_font_size_extension.dart';
-import '../../../../../../widgets/matrix/mxc_uri_image.dart';
+import '../../../../utils/parent_font_size_extension.dart';
+import '../../mxc_uri_image.dart';
 
 class MxcImageExtension extends ImageExtension {
-  MxcImageExtension(Client client)
+  MxcImageExtension(Client client, {this.watermarkColor})
       : super(
           handleAssetImages: false,
           handleDataImages: false,
@@ -54,4 +54,6 @@ class MxcImageExtension extends ImageExtension {
             );
           },
         );
+
+  final Color? watermarkColor;
 }

@@ -23,7 +23,8 @@ class ImagePreview extends StatelessWidget {
 
           return MimedImage(
             bytes: data,
-            path: file.name,
+            name: file.name,
+            mimeType: file.mimeType,
             fit: BoxFit.contain,
           );
         },
