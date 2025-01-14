@@ -20,20 +20,16 @@ import 'components/matrix_uri_extension.dart';
 import 'components/mxc_image_extension.dart';
 import 'components/spoiler_extension.dart';
 
-final _eventKeyRegistry = <String, GlobalKey<State<HtmlParser>>>{};
-
 class PolyculeHtmlView extends StatefulWidget {
   const PolyculeHtmlView({
     super.key,
     required this.html,
-    required this.globalKeyTag,
     this.client,
     this.room,
     this.event,
   });
 
   final String html;
-  final String globalKeyTag;
   final Room? room;
   final Client? client;
   final Event? event;
@@ -89,8 +85,6 @@ class _PolyculeHtmlViewState extends State<PolyculeHtmlView> {
     final dom = parsed.linkify() as Document;
 
     return Html.fromDom(
-      anchorKey: _eventKeyRegistry[widget.html + widget.globalKeyTag] ??=
-          GlobalKey<State<HtmlParser>>(),
       document: dom,
       style: {
         'body': zeroPaddingStyle,

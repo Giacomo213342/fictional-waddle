@@ -647,6 +647,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
           defaultActionName: AppLocalizations.of(context).view,
           defaultIcon: ThemeLinuxIcon('business.braid.polycule'),
         ),
+        iOS: const DarwinInitializationSettings(),
+        macOS: const DarwinInitializationSettings(),
       ),
     );
   }

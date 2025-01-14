@@ -29,7 +29,6 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
       itemBuilder: _getContextMenuButtons,
       previewBuilder: (context, constraints) => ReplyContainer(
         replyEvent: widget.event,
-        globalKeySuffix: 'context',
         constraints: constraints,
       ),
       child: Dismissible(

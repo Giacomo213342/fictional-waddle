@@ -9,13 +9,11 @@ class ReplyContainer extends StatelessWidget {
   const ReplyContainer({
     super.key,
     required this.replyEvent,
-    required this.globalKeySuffix,
     required this.constraints,
   });
 
   final Event replyEvent;
   final BoxConstraints constraints;
-  final String globalKeySuffix;
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +66,6 @@ class ReplyContainer extends StatelessWidget {
                               padding: const EdgeInsets.all(.0),
                               child: TextMessage(
                                 event: replyEvent,
-                                globalKeyRegistryKey:
-                                    replyEvent.eventId + globalKeySuffix,
                               ),
                             ),
                           ),

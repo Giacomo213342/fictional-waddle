@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 typedef DynamicContextMenuItemBuilder = List<ContextMenuItem> Function();
@@ -80,27 +81,35 @@ class _DynamicContextMenuState extends State<DynamicContextMenu> {
               )
               .toList(),
           enableHapticFeedback: true,
-          builder: (innerContext, animation) => AnimatedBuilder(
+          builder: (_, animation) => AnimatedBuilder(
             animation: animation,
-            builder: (BuildContext context, Widget? child) => Padding(
+            builder: (_, child) => Padding(
               padding: EdgeInsets.all(animation.value * 16),
-              child: animation.value > CupertinoContextMenu.animationOpensAt
-                  ? Material(
-                      color: Theme.of(context).colorScheme.surface,
-                      clipBehavior: Clip.hardEdge,
-                      child:
-                          widget.previewBuilder?.call(context, constraints) ??
-                              widget.child,
-                    )
-                  : Material(
-                      color: Colors.transparent,
-                      clipBehavior: Clip.hardEdge,
-                      child: child,
-                    ),
+              child: OverflowBox(
+                fit: OverflowBoxFit.deferToChild,
+                child: animation.value > CupertinoContextMenu.animationOpensAt
+                    ? Material(
+                        color: Theme.of(context).colorScheme.surface,
+                        clipBehavior: Clip.hardEdge,
+                        child:
+                            widget.previewBuilder?.call(context, constraints) ??
+                                widget.child,
+                      )
+                    : Material(
+                        color: Colors.transparent,
+                        clipBehavior: Clip.hardEdge,
+                        child: child,
+                      ),
+              ),
             ),
             child: InheritedTheme.captureAll(
               context,
-              widget.child,
+              InkWell(
+                focusNode: widget.focusNode,
+                canRequestFocus: true,
+                onTap: _onTap,
+                child: widget.child,
+              ),
               // to: innerContext,
             ),
           ),

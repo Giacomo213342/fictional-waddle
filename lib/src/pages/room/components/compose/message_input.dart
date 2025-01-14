@@ -47,7 +47,6 @@ class MessageInput extends StatelessWidget {
                             builder: (context, constraints) => ReplyContainer(
                               replyEvent: quotedEvent,
                               constraints: constraints,
-                              globalKeySuffix: 'compose',
                             ),
                           ),
                         ),

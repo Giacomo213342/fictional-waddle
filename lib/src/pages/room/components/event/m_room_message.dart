@@ -127,7 +127,6 @@ class RoomMessage extends StatelessWidget {
                                           : ReplyContainer(
                                               replyEvent: replyEvent
                                                   .getDisplayEvent(timeline),
-                                              globalKeySuffix: event.eventId,
                                               constraints: constraints,
                                             ),
                                     );
