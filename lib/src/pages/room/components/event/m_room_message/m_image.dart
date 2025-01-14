@@ -52,7 +52,7 @@ class ImageMessage extends StatelessWidget {
                       ? null
                       : MimedImage(
                           bytes: data.bytes,
-                          path: data.name,
+                          name: data.name,
                           fit: BoxFit.contain,
                         ),
                 ),

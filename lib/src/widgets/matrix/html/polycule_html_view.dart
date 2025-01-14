@@ -8,15 +8,17 @@ import 'package:html/parser.dart' hide HtmlParser;
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../pages/room/components/event/m_room_message/html/code_block_extension.dart';
-import '../pages/room/components/event/m_room_message/html/matrix_calls_extension.dart';
-import '../pages/room/components/event/m_room_message/html/matrix_uri_extension.dart';
-import '../pages/room/components/event/m_room_message/html/mxc_image_extension.dart';
-import '../pages/room/components/event/m_room_message/html/spoiler_extension.dart';
-import '../theme/fonts.dart';
-import '../theme/poly_colors.dart';
-import '../utils/linkify_node.dart';
-import '../utils/matrix/matrix_html_tags.dart';
+import '../../../theme/fonts.dart';
+import '../../../theme/poly_colors.dart';
+import '../../../utils/linkify_node.dart';
+import '../../../utils/matrix/matrix_html_tags.dart';
+import 'components/animated_emoji_extension.dart';
+import 'components/code_block_extension.dart';
+import 'components/matrix_calls_extension.dart';
+import 'components/matrix_logo_extension.dart';
+import 'components/matrix_uri_extension.dart';
+import 'components/mxc_image_extension.dart';
+import 'components/spoiler_extension.dart';
 
 final _eventKeyRegistry = <String, GlobalKey<State<HtmlParser>>>{};
 
@@ -145,6 +147,16 @@ class _PolyculeHtmlViewState extends State<PolyculeHtmlView> {
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.normal,
         ),
+        'blockquote': Style(
+          border: Border(
+            left: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+              width: 2,
+            ),
+          ),
+          padding: HtmlPaddings.only(left: 4),
+          margin: Margins.only(left: 8),
+        ),
       },
       onlyRenderTheseTags: MatrixHtmlTags.allowed,
       extensions: [
@@ -163,6 +175,8 @@ class _PolyculeHtmlViewState extends State<PolyculeHtmlView> {
           ),
         const TableHtmlExtension(),
         const SvgHtmlExtension(),
+        const MatrixLogoExtension(),
+        const AnimatedEmojiExtension(),
       ],
       shrinkWrap: false,
       onLinkTap: (url, attributes, element) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart' hide Element, Text;
 
 import 'package:matrix/matrix.dart';
 
-import '../../../../../widgets/polycule_html_view.dart';
+import '../../../../../widgets/matrix/html/polycule_html_view.dart';
 
 class TextMessage extends StatelessWidget {
   const TextMessage({

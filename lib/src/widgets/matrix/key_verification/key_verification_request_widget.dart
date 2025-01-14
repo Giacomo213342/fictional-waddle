@@ -96,19 +96,6 @@ class _KeyVerificationRequestWidgetState
   @override
   Widget build(BuildContext context) {
     switch (widget.request.state) {
-      loading:
-      case KeyVerificationState.waitingSas:
-        widget.request.acceptSas();
-        continue loading;
-      case KeyVerificationState.waitingAccept:
-        return WaitingPeerWidget(
-          peer,
-          buttonBarBuilder: widget.buttonBarBuilder,
-          onCancel: _cancelVerificationRequest,
-          client: widget.client,
-        );
-      case KeyVerificationState.askChoice:
-        continue loading;
       case KeyVerificationState.askAccept:
         return IncomingVerificationRequestWidget(
           widget.request,
@@ -123,6 +110,15 @@ class _KeyVerificationRequestWidgetState
           widget.request,
           onSubmit: _submitRecoveryKey,
           buttonBarBuilder: widget.buttonBarBuilder,
+          client: widget.client,
+        );
+      loading:
+      case KeyVerificationState.askChoice:
+      case KeyVerificationState.waitingAccept:
+        return WaitingPeerWidget(
+          peer,
+          buttonBarBuilder: widget.buttonBarBuilder,
+          onCancel: _cancelVerificationRequest,
           client: widget.client,
         );
       case KeyVerificationState.askSas:
@@ -148,6 +144,7 @@ class _KeyVerificationRequestWidgetState
           onClose: _closeDialog,
           buttonBarBuilder: widget.buttonBarBuilder,
         );
+      case KeyVerificationState.waitingSas:
       case KeyVerificationState.done:
         return VerificationSuccessfulWidget(
           onClose: _closeDialog,

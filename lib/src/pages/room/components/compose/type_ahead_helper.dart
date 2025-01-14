@@ -5,6 +5,8 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../utils/matrix/command_localization_helper.dart';
+import '../../../../utils/matrix/default_emoji_tone.dart';
+import '../../../../widgets/matrix/html/components/animated_emoji_extension.dart';
 import '../../../../widgets/matrix/mxc_uri_image.dart';
 
 class TypeAheadOption {
@@ -129,7 +131,10 @@ class TypeAheadHelper {
     String search,
     TextSelection selection,
   ) {
-    final emojis = Emojis.all.where((emoji) => emoji.skinTone == null).toList();
+    final tone = client.defaultEmojiTone;
+    final emojis = Emojis.all
+        .where((emoji) => emoji.skinTone == tone || emoji.skinTone == null)
+        .toList();
 
     final emojiRegex = RegExp(r':([\w-]+)');
     final matches = emojiRegex.allMatches(search).toList();
@@ -146,7 +151,7 @@ class TypeAheadHelper {
             )
             .map(
               (emoji) => TypeAheadOption(
-                TextSpan(text: emoji.value),
+                AnimatedEmojiExtension.emojifyTextSpan(emoji.value),
                 emoji.value,
                 TextRange(
                   start: emojiMatch.start,

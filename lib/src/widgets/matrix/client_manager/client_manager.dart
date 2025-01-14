@@ -10,6 +10,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
+import 'package:mime/mime.dart';
 import 'package:oidc/oidc.dart';
 import 'package:olm/olm.dart' as olm;
 
@@ -196,6 +197,10 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
   ClientCallback? _httpClient;
 
+  final nativeImplementations = kIsWeb
+      ? NativeImplementationsWebWorker(Uri.parse('web_worker.dart.js'))
+      : NativeImplementationsIsolate(compute);
+
   Client _buildClient(int identifier) {
     final client = Client(
       _makeClientName(identifier),
@@ -204,9 +209,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         KeyVerificationMethod.numbers,
         KeyVerificationMethod.reciprocate,
       },
-      nativeImplementations: kIsWeb
-          ? NativeImplementationsWebWorker(Uri.parse('web_worker.dart.js'))
-          : NativeImplementationsIsolate(compute),
+      nativeImplementations: nativeImplementations,
       supportedLoginTypes: {
         AuthenticationTypes.password,
         AuthenticationTypes.sso,
@@ -219,6 +222,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       enableDehydratedDevices: true,
       receiptsPublicByDefault: false,
       requestHistoryOnLimitedTimeline: true,
+      customImageResizer: _customImageResizer,
     );
     client.registerPolyculeCommands();
     _loginStateListener[identifier]?.cancel();
@@ -820,6 +824,19 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       return;
     }
   }
+
+  Future<MatrixImageFileResizedResponse?> _customImageResizer(
+    MatrixImageFileResizeArguments args,
+  ) =>
+      Future.value(
+        switch (lookupMimeType(args.fileName, headerBytes: args.bytes)) {
+          null || 'image/svg+xml' => null,
+          _ => nativeImplementations.shrinkImage(args, retryInDummy: true),
+        },
+      ).catchError((e, s) {
+        Logs().w('Error shrinking image ${args.fileName}.', e, s);
+        return null;
+      });
 }
 
 extension ClientIdentifier on String {

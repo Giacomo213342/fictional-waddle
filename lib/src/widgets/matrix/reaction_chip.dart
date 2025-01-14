@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'html/components/animated_emoji_extension.dart';
+
 class ReactionChip extends StatelessWidget {
   const ReactionChip({super.key, required this.content});
 
@@ -17,7 +19,9 @@ class ReactionChip extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
             horizontal: 2,
           ),
-          label: Text(content),
+          label: Text.rich(
+            AnimatedEmojiExtension.emojifyTextSpan(content),
+          ),
         ),
       ),
     );

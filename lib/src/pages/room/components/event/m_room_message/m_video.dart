@@ -90,7 +90,7 @@ class _VideoMessageState extends State<VideoMessage>
                               MimedImage(
                                 bytes: thumb.bytes,
                                 fit: BoxFit.contain,
-                                path: thumb.name,
+                                name: thumb.name,
                               ),
                               PolyculeTextShadow(child: Center(child: label)),
                             ],

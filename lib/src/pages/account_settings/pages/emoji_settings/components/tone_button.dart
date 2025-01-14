@@ -1,0 +1,77 @@
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+
+import 'package:dart_animated_emoji/dart_animated_emoji.dart';
+import 'package:emoji_extension/emoji_extension.dart';
+import 'package:lottie/lottie.dart';
+import 'package:matrix/matrix.dart';
+
+import '../../../../../utils/matrix/default_emoji_tone.dart';
+
+class ToneButton extends StatelessWidget {
+  ToneButton({super.key, this.tone, required this.client}) {
+    final tone = this.tone;
+    _glyph = tone == null
+        ? _baseGlyph
+        : Emojis.bySkinTone(tone)
+            .firstWhere(
+              (emoji) => emoji.name.contains(_baseEmojiName),
+            )
+            .value;
+  }
+
+  final SkinTone? tone;
+  late final String _glyph;
+  final Client client;
+
+  static const _baseGlyph = '\u{1f44b}';
+  static const _baseEmojiName = 'Waving Hand';
+  static const _size = 20.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final tone = this.tone;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: StreamBuilder<SyncUpdate>(
+        stream: client.onSync.stream
+            .where((update) => update.accountData?.isNotEmpty ?? false),
+        builder: (context, _) => IconButton(
+          isSelected: client.defaultEmojiTone == tone,
+          selectedIcon: SizedBox.square(
+            dimension: _size * 1.5,
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: Lottie.memory(
+                Uint8List.fromList(
+                  AnimatedEmoji.all
+                      .firstWhere(
+                        (e) => e.fallback == _glyph,
+                      )
+                      .lottieAnimation
+                      .codeUnits,
+                ),
+                width: _size,
+                height: _size,
+              ),
+            ),
+          ),
+          onPressed: () => client.setDefaultEmojiTone(tone),
+          icon: AspectRatio(
+            aspectRatio: 1,
+            child: SizedBox.square(
+              dimension: _size * 1.5,
+              child: Center(
+                child: Text(
+                  _glyph,
+                  style: const TextStyle(fontSize: _size),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

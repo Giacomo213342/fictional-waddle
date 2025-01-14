@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -114,6 +115,9 @@ class IntentManager extends State<IntentManagerWidget> {
   }
 
   Future<void> _subscribeShareIntents() async {
+    if (kIsWeb) {
+      return;
+    }
     try {
       _shareIntentSubscription =
           ReceiveSharingIntentPlus.getMediaStream().listen(_handleShareIntent);
