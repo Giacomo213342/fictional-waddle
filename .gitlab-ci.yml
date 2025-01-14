@@ -244,6 +244,7 @@ build:ipa:
     - keychain add-certificates
     - xcode-project use-profiles --export-options-plist=export_options.plist
     - flutter build ipa --export-options-plist=export_options.plist $FLUTTER_ARGS
+    - app-store-connect publish --path build/ios/ipa/polycule.ipa
     - rm -rf polycule-$POLYCULE_VERSION.ipa || true
     - mv build/ios/ipa/polycule.ipa polycule-$POLYCULE_VERSION.ipa
   after_script:
