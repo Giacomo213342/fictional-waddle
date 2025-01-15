@@ -11,6 +11,7 @@ import '../../../widgets/dynamic_context_menu.dart';
 import '../../../widgets/matrix/avatar_builder/room_avatar.dart';
 import '../../../widgets/matrix/avatar_builder/room_builder.dart';
 import '../../room/room.dart';
+import '../../room_details/room_details.dart';
 import '../../user_page/user_page.dart';
 import '../room_list.dart';
 import 'room_list_trailing.dart';
@@ -122,6 +123,12 @@ class RoomListTileState extends State<RoomListTile> {
           icon: Icons.person,
           label: AppLocalizations.of(context).userDetails,
           onPressed: _userDetails,
+        )
+      else
+        ContextMenuItem(
+          icon: Icons.list,
+          label: AppLocalizations.of(context).roomDetails,
+          onPressed: _roomDetails,
         ),
       ContextMenuItem(
         icon: Icons.favorite,
@@ -203,5 +210,9 @@ class RoomListTileState extends State<RoomListTile> {
 
   Future<void> _userDetails() => context.pushMultiClient(
         UserPage.makeRouteName(room.directChatMatrixID),
+      );
+
+  Future<void> _roomDetails() => context.pushMultiClient(
+        RoomDetailsPage.makeRouteName(room.id),
       );
 }

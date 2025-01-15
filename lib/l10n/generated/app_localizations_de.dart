@@ -1021,4 +1021,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get blackSkin => 'Black skin';
+
+  @override
+  String get roomDetails => 'Room details';
 }

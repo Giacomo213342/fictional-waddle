@@ -1843,6 +1843,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Black skin'**
   String get blackSkin;
+
+  /// No description provided for @roomDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Room details'**
+  String get roomDetails;
 }
 
 class _AppLocalizationsDelegate
