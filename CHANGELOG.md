@@ -1,3 +1,7 @@
+## v0.0.5
+
+- fix: replace MLKit with zxing (The one with the braid)
+
 ## v0.0.4
 
 - chore: add iOS code signing (The one with the braid)
