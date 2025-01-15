@@ -1,12 +1,17 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:async/async.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:matrix/matrix.dart';
+import 'package:media_store_plus/media_store_plus.dart';
+import 'package:mime/mime.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../utils/file_selector.dart';
@@ -435,5 +440,48 @@ class RoomController extends State<RoomPage> {
       inReplyTo: replyEvent,
       editEventId: editEvent?.eventId,
     );
+  }
+
+  Future<void> sendKeyboardSticker(KeyboardInsertedContent sticker) async {
+    Uint8List? bytes = sticker.data;
+    try {
+      if (bytes == null) {
+        if (!kIsWeb && Platform.isAndroid) {
+          await FileSelector.ensureAndroidInitialized();
+          final tmp = await getTemporaryDirectory();
+          final file = File(
+            '${tmp.path}/import.${extensionFromMime(sticker.mimeType) ?? 'file'}',
+          );
+          await MediaStore().readFileUsingUri(
+            uriString: sticker.uri,
+            tempFilePath: file.path,
+          );
+          bytes = await file.readAsBytes();
+        } else {
+          return;
+        }
+      }
+
+      final uri = await room.client.uploadContent(bytes);
+      await room.sendEvent(
+        {
+          'body': MessageTypes.Sticker,
+          'url': uri.toString(),
+        },
+        type: MessageTypes.Sticker,
+        inReplyTo: replyEvent,
+        editEventId: editEvent?.eventId,
+      );
+    } catch (e, s) {
+      Logs().e('Error sending sticker', e, s);
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).errorSendingSticker),
+        ),
+      );
+    }
   }
 }

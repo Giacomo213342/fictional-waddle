@@ -542,5 +542,6 @@
   "mediumSkin": "Medium skin",
   "brownSkin": "Brown skin",
   "blackSkin": "Black skin",
-  "roomDetails": "Room details"
+  "roomDetails": "Room details",
+  "errorSendingSticker": "Error sending custom sticker."
 }

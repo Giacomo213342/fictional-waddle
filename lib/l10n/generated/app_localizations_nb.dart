@@ -1025,4 +1025,7 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get roomDetails => 'Room details';
+
+  @override
+  String get errorSendingSticker => 'Error sending custom sticker.';
 }

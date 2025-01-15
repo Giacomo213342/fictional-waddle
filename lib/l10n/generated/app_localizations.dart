@@ -1849,6 +1849,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Room details'**
   String get roomDetails;
+
+  /// No description provided for @errorSendingSticker.
+  ///
+  /// In en, this message translates to:
+  /// **'Error sending custom sticker.'**
+  String get errorSendingSticker;
 }
 
 class _AppLocalizationsDelegate

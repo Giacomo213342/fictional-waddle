@@ -76,6 +76,19 @@ class MessageInput extends StatelessWidget {
                         Platform.isLinux ||
                         Platform.isMacOS),
                 autocorrect: true,
+                contentInsertionConfiguration: ContentInsertionConfiguration(
+                  onContentInserted: controller.sendKeyboardSticker,
+                  allowedMimeTypes: [
+                    ...kDefaultContentInsertionMimeTypes,
+                    'image/svg+xml',
+                    'image/avif',
+                    'image/apng',
+                    // Lottie
+                    'application/json',
+                    'application/gzip',
+                    'application/zip',
+                  ],
+                ),
                 cursorWidth: 10,
                 onSubmitted: (_) => controller.sendMessage(),
                 textInputAction: TextInputAction.newline,
