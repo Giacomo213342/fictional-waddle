@@ -1,3 +1,7 @@
+## v0.0.6
+
+- fix: F-Droid going crazy
+
 ## v0.0.5
 
 - fix: replace MLKit with zxing (The one with the braid)

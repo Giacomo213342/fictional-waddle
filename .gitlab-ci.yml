@@ -298,6 +298,21 @@ build:apk:
   script:
     - $BUNDLETOOL build-apks --aapt2="$(which aapt2)" --ks="android/app/keystore.jks" --ks-pass=file:"${KEYSTORE_PASS_FILE}" --ks-key-alias="${KEYSTORE_ALIAS}" --key-pass=file:"${KEYSTORE_KEY_FILE}" --mode=universal --bundle=polycule-$POLYCULE_VERSION.aab --output=polycule-$POLYCULE_VERSION.apks
   <<: *signed
+  except:
+    - tags
+
+build:apk:tag:
+  extends: .android
+  script:
+    - *reproducible-before
+    - flutter build apk $FLUTTER_ARGS
+    - *reproducible-after
+    - mv build/app/outputs/flutter-apk/app-release.apk polycule-$POLYCULE_VERSION.apk
+  artifacts:
+    paths:
+      - polycule-*.apk
+  only:
+    - tags
 
 build:web:
   image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-web
