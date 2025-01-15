@@ -27,19 +27,13 @@ class _CuteEventMessageState extends MatrixState<CuteEventMessage> {
 
   @override
   Widget build(BuildContext context) {
-    const dimension = 512.0;
-    return ConstrainedBox(
-      constraints: const BoxConstraints(
-        maxHeight: dimension,
-        maxWidth: dimension,
-      ),
-      child: DefaultTextStyle(
-        style: const TextStyle(fontSize: dimension / 2),
-        child: GestureDetector(
-          onDoubleTap: _launchConfetti,
-          child: Text.rich(
-            AnimatedEmojiExtension.emojifyTextSpan(widget.event.body),
-          ),
+    final fontSize = (DefaultTextStyle.of(context).style.fontSize ?? 12) * 4;
+    return DefaultTextStyle(
+      style: TextStyle(fontSize: fontSize),
+      child: GestureDetector(
+        onDoubleTap: _launchConfetti,
+        child: Text.rich(
+          AnimatedEmojiExtension.emojifyTextSpan(widget.event.body),
         ),
       ),
     );

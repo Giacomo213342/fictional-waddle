@@ -18,6 +18,7 @@ import 'components/matrix_calls_extension.dart';
 import 'components/matrix_logo_extension.dart';
 import 'components/matrix_uri_extension.dart';
 import 'components/mxc_image_extension.dart';
+import 'components/polycule_emoji_span_extension.dart';
 import 'components/spoiler_extension.dart';
 
 class PolyculeHtmlView extends StatefulWidget {
@@ -170,6 +171,7 @@ class _PolyculeHtmlViewState extends State<PolyculeHtmlView> {
         const TableHtmlExtension(),
         const SvgHtmlExtension(),
         const MatrixLogoExtension(),
+        const PolyculeEmojiSpanExtension(),
         const AnimatedEmojiExtension(),
       ],
       shrinkWrap: false,
