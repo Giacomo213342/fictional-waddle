@@ -142,7 +142,8 @@ class TypeAheadHelper {
       final group = emojiMatch.group(1);
       if (group != null &&
           selection.start <= emojiMatch.end &&
-          selection.end >= emojiMatch.start) {
+          selection.end >= emojiMatch.start &&
+          emojiMatch.end - emojiMatch.start > 3) {
         final unicodeOptions = emojis
             .where(
               (emoji) => emoji.shortcodes.any(

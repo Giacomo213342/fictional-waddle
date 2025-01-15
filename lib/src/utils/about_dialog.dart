@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:url_launcher/link.dart';
@@ -38,16 +41,17 @@ void showInfoDialog(BuildContext context) => showAboutDialog(
             );
           },
         ),
-        Link(
-          uri: Uri.parse(Version.donationLink),
-          builder: (context, followLink) {
-            return OutlinedButton.icon(
-              onPressed: followLink,
-              icon: const Icon(Icons.coffee),
-              label: Text(AppLocalizations.of(context).buyMeACoffee),
-            );
-          },
-        ),
+        if (kIsWeb || !Platform.isIOS)
+          Link(
+            uri: Uri.parse(Version.donationLink),
+            builder: (context, followLink) {
+              return OutlinedButton.icon(
+                onPressed: followLink,
+                icon: const Icon(Icons.coffee),
+                label: Text(AppLocalizations.of(context).buyMeACoffee),
+              );
+            },
+          ),
       ]
           .map(
             (e) => Padding(
