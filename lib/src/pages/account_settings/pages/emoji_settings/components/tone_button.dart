@@ -7,6 +7,7 @@ import 'package:emoji_extension/emoji_extension.dart';
 import 'package:lottie/lottie.dart';
 import 'package:matrix/matrix.dart';
 
+import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../utils/matrix/default_emoji_tone.dart';
 
 class ToneButton extends StatelessWidget {
@@ -58,6 +59,7 @@ class ToneButton extends StatelessWidget {
             ),
           ),
           onPressed: () => client.setDefaultEmojiTone(tone),
+          tooltip: _tooltip(context),
           icon: AspectRatio(
             aspectRatio: 1,
             child: SizedBox.square(
@@ -74,4 +76,13 @@ class ToneButton extends StatelessWidget {
       ),
     );
   }
+
+  String _tooltip(BuildContext context) => switch (tone) {
+        null => AppLocalizations.of(context).yellowSkin,
+        SkinTone.light => AppLocalizations.of(context).paleSkin,
+        SkinTone.mediumLight => AppLocalizations.of(context).demiPaleSkin,
+        SkinTone.medium => AppLocalizations.of(context).mediumSkin,
+        SkinTone.mediumDark => AppLocalizations.of(context).brownSkin,
+        SkinTone.dark => AppLocalizations.of(context).blackSkin,
+      };
 }

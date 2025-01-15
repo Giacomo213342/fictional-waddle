@@ -1004,4 +1004,22 @@ class AppLocalizationsNb extends AppLocalizations {
   @override
   String get autoplayAnimations =>
       'Automatically play animated images and stickers';
+
+  @override
+  String get yellowSkin => 'Yellow skin';
+
+  @override
+  String get paleSkin => 'Pale skin';
+
+  @override
+  String get demiPaleSkin => 'Demi pale skin';
+
+  @override
+  String get mediumSkin => 'Medium skin';
+
+  @override
+  String get brownSkin => 'Brown skin';
+
+  @override
+  String get blackSkin => 'Black skin';
 }

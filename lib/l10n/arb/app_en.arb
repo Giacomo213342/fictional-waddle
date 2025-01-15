@@ -535,5 +535,11 @@
   "noHomeserverConnection": "No connection to homeserver.",
   "emojiSettings": "Emoji settings",
   "defaultEmojiTone": "Default emoji tone",
-  "autoplayAnimations": "Automatically play animated images and stickers"
+  "autoplayAnimations": "Automatically play animated images and stickers",
+  "yellowSkin": "Yellow skin",
+  "paleSkin": "Pale skin",
+  "demiPaleSkin": "Demi pale skin",
+  "mediumSkin": "Medium skin",
+  "brownSkin": "Brown skin",
+  "blackSkin": "Black skin"
 }
