@@ -27,6 +27,7 @@ dependencies:
   file_selector: ^1.0.3
   flutter:
     sdk: flutter
+  flutter_confetti: ^0.3.4
   flutter_highlighting: ^0.9.0+11.8.0
   flutter_html: ^3.0.0-beta.2
   flutter_html_svg: ^3.0.0-beta.2

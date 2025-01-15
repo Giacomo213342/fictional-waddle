@@ -1807,6 +1807,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Automatically play animated images and stickers'**
   String get autoplayAnimations;
+
+  /// No description provided for @yellowSkin.
+  ///
+  /// In en, this message translates to:
+  /// **'Yellow skin'**
+  String get yellowSkin;
+
+  /// No description provided for @paleSkin.
+  ///
+  /// In en, this message translates to:
+  /// **'Pale skin'**
+  String get paleSkin;
+
+  /// No description provided for @demiPaleSkin.
+  ///
+  /// In en, this message translates to:
+  /// **'Demi pale skin'**
+  String get demiPaleSkin;
+
+  /// No description provided for @mediumSkin.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium skin'**
+  String get mediumSkin;
+
+  /// No description provided for @brownSkin.
+  ///
+  /// In en, this message translates to:
+  /// **'Brown skin'**
+  String get brownSkin;
+
+  /// No description provided for @blackSkin.
+  ///
+  /// In en, this message translates to:
+  /// **'Black skin'**
+  String get blackSkin;
 }
 
 class _AppLocalizationsDelegate
