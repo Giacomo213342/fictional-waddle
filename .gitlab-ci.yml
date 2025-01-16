@@ -306,9 +306,12 @@ build:apk:tag:
   extends: .android
   script:
     - *reproducible-before
-    - flutter build apk $FLUTTER_ARGS
-    - zipalign -p 4 build/app/outputs/flutter-apk/app-release.apk polycule-$POLYCULE_VERSION.apk
-    - apksigner sign --ks="android/app/keystore.jks" --ks-pass=file:"${KEYSTORE_PASS_FILE}" --ks-key-alias="${KEYSTORE_ALIAS}" --key-pass=file:"${KEYSTORE_KEY_FILE}" polycule-$POLYCULE_VERSION.apk
+    - flutter build apk $FLUTTER_ARGS --release --split-per-abi
+    - |
+      for abi in "armeabi-v7a" "arm64-v8a" "x86_64"; do
+        zipalign -p 4 build/app/outputs/flutter-apk/app-$abi-release.apk polycule-$abi-$POLYCULE_VERSION.apk
+        apksigner sign --ks="android/app/keystore.jks" --ks-pass=file:"${KEYSTORE_PASS_FILE}" --ks-key-alias="${KEYSTORE_ALIAS}" --key-pass=file:"${KEYSTORE_KEY_FILE}" polycule-$abi-$POLYCULE_VERSION.apk
+      done
     - *reproducible-after
   artifacts:
     paths:
