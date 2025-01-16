@@ -60,7 +60,7 @@ class MimedImage extends StatelessWidget {
   // analyzes the frames of a bitmap and either just returns the image or its
   // first frame in case its animated and the user requests to avoid animations
   Widget _bitmapImage(Uint8List bytes) => FutureBuilder<ImageFutureResponse>(
-        future: _buildImageFrames(bytes),
+        future: _analyzeImageFrames(bytes),
         builder: (context, snapshot) {
           final frames = snapshot.data;
           return switch (frames) {
@@ -106,7 +106,7 @@ class MimedImage extends StatelessWidget {
     );
   }
 
-  Future<ImageFutureResponse> _buildImageFrames(Uint8List bytes) async {
+  Future<ImageFutureResponse> _analyzeImageFrames(Uint8List bytes) async {
     final provider = MemoryImage(bytes);
 
     final codec = await instantiateImageCodecWithSize(

@@ -299,6 +299,7 @@ build:apk:
     - $BUNDLETOOL build-apks --aapt2="$(which aapt2)" --ks="android/app/keystore.jks" --ks-pass=file:"${KEYSTORE_PASS_FILE}" --ks-key-alias="${KEYSTORE_ALIAS}" --key-pass=file:"${KEYSTORE_KEY_FILE}" --mode=universal --bundle=polycule-$POLYCULE_VERSION.aab --output=polycule-$POLYCULE_VERSION.apks
   <<: *signed
   except:
+    - schedules
     - tags
 
 build:apk:tag:
@@ -306,8 +307,9 @@ build:apk:tag:
   script:
     - *reproducible-before
     - flutter build apk $FLUTTER_ARGS
+    - zipalign -p 4 build/app/outputs/flutter-apk/app-release.apk polycule-$POLYCULE_VERSION.apk
+    - apksigner sign --ks="android/app/keystore.jks" --ks-pass=file:"${KEYSTORE_PASS_FILE}" --ks-key-alias="${KEYSTORE_ALIAS}" --key-pass=file:"${KEYSTORE_KEY_FILE}" polycule-$POLYCULE_VERSION.apk
     - *reproducible-after
-    - mv build/app/outputs/flutter-apk/app-release.apk polycule-$POLYCULE_VERSION.apk
   artifacts:
     paths:
       - polycule-*.apk

@@ -34,7 +34,6 @@ in mkShell {
     # configure the dependency cache persistent
     export FLUTTER_VERSION="3.27.2"
     export FLUTTER_HOME="$HOME/build/flutter-$FLUTTER_VERSION"
-    # export GEM_HOME="$HOME/build/gem"
 
     export FLUTTER_GIT_URL="unknown source"
 
@@ -72,7 +71,7 @@ in mkShell {
     # ensure we have the system linker and compile in first position of PATH
     export LD="/usr/bin/clang"
 
-    export PATH="$HOME/.bin:$GEM_HOME/bin:$DEVELOPER_DIR/usr/bin:$DEVELOPER_DIR/Toolchains/XcodeDefault.xctoolchain/usr/bin:$FLUTTER_HOME/bin:$PATH:/usr/sbin:/usr/bin"
+    export PATH="$HOME/.bin:$DEVELOPER_DIR/usr/bin:$DEVELOPER_DIR/Toolchains/XcodeDefault.xctoolchain/usr/bin:$FLUTTER_HOME/bin:$PATH:/usr/sbin:/usr/bin"
 
     if [ ! -f "$FLUTTER_HOME/bin/flutter" ]; then
       git clone -b $FLUTTER_VERSION --depth 1 https://github.com/flutter/flutter.git $FLUTTER_HOME
