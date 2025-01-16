@@ -1,3 +1,8 @@
+## v0.0.7
+
+- fix: manually sign APKs on tags (The one with the braid)
+- fix: support stopping animated bitmap images (The one with the braid)
+
 ## v0.0.6
 
 - fix: F-Droid going crazy
