@@ -26,8 +26,10 @@ class RoomMessageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (event.messageType) {
       case MessageTypes.Sticker:
-        return ImageMessage(
-          event: event,
+        return Center(
+          child: ImageMessage(
+            event: event,
+          ),
         );
       cute_events:
       case CuteEventContent.eventType:
