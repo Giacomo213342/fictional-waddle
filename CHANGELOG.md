@@ -1,3 +1,7 @@
+## v0.0.8
+
+- Build split apks (linsui)
+
 ## v0.0.7
 
 - fix: manually sign APKs on tags (The one with the braid)
