@@ -1,3 +1,7 @@
+## v0.0.9
+
+- fix: ensure no build IDs in NDK builds (The one with the braid)
+
 ## v0.0.8
 
 - Build split apks (linsui)
