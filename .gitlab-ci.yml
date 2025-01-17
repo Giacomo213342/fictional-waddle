@@ -26,7 +26,7 @@ stages:
   - export FLUTTER_ARGS="$($POLYCULE_IS_STABLE || echo "--build-number $CI_PIPELINE_ID") --dart-define=POLYCULE_IS_STABLE=$POLYCULE_IS_STABLE --dart-define=POLYCULE_VERSION=$POLYCULE_VERSION --dart-define=no_default_http_client=true --dart-define=cronetHttpNoPlay=true"
 
 .flutter-setup: &flutter-setup
-  - flutter pub get
+  - flutter pub get --enforce-lockfile
   - flutter gen-l10n
 
 .keystore-setup: &keystore-setup
@@ -38,6 +38,7 @@ stages:
   - cd ..
   - mv "$BUILD_DIR" /tmp/build
   - pushd /tmp/build
+  - export PUB_CACHE=$(pwd)/.pub-cache
 
 .reproducible-after: &reproducible-after
   - popd
@@ -262,9 +263,7 @@ build:ipa:
 build:bundle:debug:
   extends: .android
   script:
-    - *reproducible-before
     - flutter build appbundle --debug $FLUTTER_ARGS
-    - *reproducible-after
     - mv build/app/outputs/bundle/debug/app-debug.aab polycule-$POLYCULE_VERSION-debug.aab
   <<: *unsigned
   artifacts:
@@ -274,9 +273,7 @@ build:bundle:debug:
 build:bundle:
   extends: .android
   script:
-    - *reproducible-before
     - flutter build appbundle $FLUTTER_ARGS
-    - *reproducible-after
     - mv build/app/outputs/bundle/release/app-release.aab polycule-$POLYCULE_VERSION.aab
   <<: *signed
   artifacts:
@@ -304,8 +301,13 @@ build:apk:
 
 build:apk:tag:
   extends: .android
+  before_script:
+    - *versioning-setup
+    - *keystore-setup
   script:
     - *reproducible-before
+    - *flutter-setup
+    - sed -i -e '1a add_link_options("LINKER:--build-id=none")' $PUB_CACHE/hosted/pub.dev/{flutter_zxing,flutter_olm}-*/*/CMakeLists.txt pushd /tmp/build
     - flutter build apk $FLUTTER_ARGS --release --split-per-abi
     - |
       for abi in "armeabi-v7a" "arm64-v8a" "x86_64"; do
