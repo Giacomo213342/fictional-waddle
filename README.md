@@ -2,6 +2,7 @@
 
 [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/polycule_client%2Fpolycule?style=for-the-badge&logo=gitlab)](https://gitlab.com/polycule_client/polycule/-/pipelines)
 [![Weblate project translated](https://img.shields.io/weblate/progress/polycule?style=for-the-badge&logo=weblate)](https://hosted.weblate.org/projects/polycule/)
+[![GitLab Tag](https://img.shields.io/gitlab/v/tag/polycule_client%2Fpolycule?style=for-the-badge&logo=gitlab)](https://gitlab.com/polycule_client/polycule/-/tags)
 
 A geeky and efficient \[matrix\] client for power users.
 
@@ -29,10 +30,22 @@ Flutter Linux-native integrations.
 - terminal style design
 - cross-platform
 
-## Preview
+## Get < polycule >
 
-You can try to web-builds hosted on [GitLab pages](https://polycule.im/web/) or download some
-Linux and Android builds from the CI jobs.
+As a Flutter application < polycule > is available on various platforms as native applications. Some are rather
+experimental in support and not production ready. Consult the chart below for means of distribution and platform
+specific project status.
+
+| Platform         | Supported architectures              | Source                                                                                                                                                                                                              |       Stable       |
+|------------------|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------:|
+| Alpine Linux     | `AArch64`, `amd64`                   | [![Alpine Linux Testing](https://img.shields.io/badge/testing-brightgreen?style=for-the-badge&logo=alpinelinux&label=Alpine%20Linux)](https://pkgs.alpinelinux.org/packages?name=polycule&branch=edge&repo=testing) | :white_check_mark: |
+| Arch Linux       | `AArch64`, `amd64`                   | [![AUR Version](https://img.shields.io/aur/version/polycule?style=for-the-badge&logo=archlinux)](https://aur.archlinux.org/packages/polycule)                                                                       | :white_check_mark: |
+| Debian GNU/Linux | `AArch64`, `amd64`                   | [![DEB package from GitLab CI](https://img.shields.io/gitlab/v/tag/polycule_client%2Fpolycule?style=for-the-badge&logo=debian&label=DEB%20Package)](https://gitlab.com/polycule_client/polycule/-/tags)             |        :x:         |
+| Android          | `arm64-v8a`, `armeabi-v7a`, `x86_64` | [![F-Droid Version](https://img.shields.io/f-droid/v/business.braid.polycule?style=for-the-badge&logo=fdroid)](https://f-droid.org/packages/business.braid.polycule/)                                               | :white_check_mark: |
+| iOS              | iPhone, iPad, Apple Silicon Mac      | [![Apple TestFlight](https://img.shields.io/badge/Open_Beta-blue?style=for-the-badge&logo=apple&label=TestFlight)](https://gitlab.com/groups/polycule_client/-/epics/1)                                             |        :x:         |
+| Web              | Firefox                              | [![Web app](https://img.shields.io/website?url=https%3A%2F%2Fpolycule.im%2Fweb&style=for-the-badge&logo=firefox)](https://polycule.im/web/)                                                                         |        :x:         |
+
+## Screenshots
 
 |                                                              |                                                              |                                                              |                                                              |
 |--------------------------------------------------------------|--------------------------------------------------------------|--------------------------------------------------------------|--------------------------------------------------------------|

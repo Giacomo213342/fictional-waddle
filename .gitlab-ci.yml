@@ -1,9 +1,9 @@
 variables:
   FLUTTER_VERSION: 3.27.2
-  BUNDLETOOL_VERSION: 1.17.1
+  BUNDLETOOL_VERSION: 1.18.0
 
 include:
-  - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.24.0
+  - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.39.0
     inputs:
       gitlab_access_token: $dependabot_gitlab_access_token
       stage_name: scan
@@ -13,17 +13,17 @@ include:
 image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-base
 
 stages:
-  - scan
   - check
   - test
   - build
+  - scan
   - deploy
 
 .versioning-setup: &versioning-setup
   - export PUBSPEC_VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
   - export POLYCULE_VERSION="$(git describe --always)"
   - export POLYCULE_IS_STABLE=$([ -n "$CI_COMMIT_TAG" ] && echo "true" || echo "false")
-  - export FLUTTER_ARGS="$($POLYCULE_IS_STABLE || echo "--build-number $CI_PIPELINE_ID") --dart-define=POLYCULE_IS_STABLE=$POLYCULE_IS_STABLE --dart-define=POLYCULE_VERSION=$POLYCULE_VERSION --dart-define=no_default_http_client=true --dart-define=cronetHttpNoPlay=true"
+  - export FLUTTER_ARGS="$($POLYCULE_IS_STABLE || echo "--build-number $CI_PIPELINE_ID") --no-pub --dart-define=POLYCULE_IS_STABLE=$POLYCULE_IS_STABLE --dart-define=POLYCULE_VERSION=$POLYCULE_VERSION --dart-define=no_default_http_client=true --dart-define=cronetHttpNoPlay=true"
 
 .flutter-setup: &flutter-setup
   - flutter pub get --enforce-lockfile
@@ -260,11 +260,11 @@ build:ipa:
     paths:
       - polycule-*.ipa
 
-build:bundle:debug:
+build:bundle:unsigned:
   extends: .android
   script:
-    - flutter build appbundle --debug $FLUTTER_ARGS
-    - mv build/app/outputs/bundle/debug/app-debug.aab polycule-$POLYCULE_VERSION-debug.aab
+    - flutter build appbundle $FLUTTER_ARGS
+    - mv build/app/outputs/bundle/release/app-release.aab polycule-$POLYCULE_VERSION-unsigned.aab
   <<: *unsigned
   artifacts:
     paths:
@@ -280,13 +280,28 @@ build:bundle:
     paths:
       - polycule-*.aab
 
-build:apk:debug:
+build:apk:unsigned:
   extends: .bundletool
   needs:
-    - build:bundle:debug
+    - build:bundle:unsigned
   script:
-    - $BUNDLETOOL build-apks --aapt2="$(which aapt2)" --mode=universal --bundle=polycule-$POLYCULE_VERSION-debug.aab --output=polycule-$POLYCULE_VERSION-debug.apks
+    - $BUNDLETOOL build-apks --aapt2="$(which aapt2)" --mode=universal --bundle=polycule-$POLYCULE_VERSION-unsigned.aab --output=polycule-$POLYCULE_VERSION-unsigned.apks
   <<: *unsigned
+
+scan:fdroid:
+  needs:
+    - build:apk:unsigned
+  stage: scan
+  before_script:
+    - *versioning-setup
+    - apt update && apt install -y -qq --no-install-recommends fdroidserver dexdump
+  script:
+    - mv polycule-$POLYCULE_VERSION.apk polycule-unsigned.apk
+    - fdroid scanner -v -e polycule-unsigned.apk
+  <<: *unsigned
+  tags:
+    - x86_64
+    - docker
 
 build:apk:
   extends: .bundletool
@@ -327,7 +342,7 @@ build:web:
   script:
     - ./scripts/download-olm.sh
     - dart compile js web/web_worker.dart -m -o web/web_worker.dart.js
-    - flutter build web --native-null-assertions --no-web-resources-cdn --base-href "/web/" --source-maps $FLUTTER_ARGS
+    - flutter build web --native-null-assertions --no-web-resources-cdn --base-href "/web/" --source-maps $FLUTTER_ARGS --dart-define=no_default_http_client=false
     - rm -rf polycule-web-$POLYCULE_VERSION
     - mv build/web polycule-web-$POLYCULE_VERSION
   artifacts:

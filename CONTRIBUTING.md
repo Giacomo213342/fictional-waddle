@@ -2,12 +2,23 @@
 
 It's easier than you think. < polycule > does not require any complex development environment.
 
-What you need :
+You will need the following development libraries :
 
 - flutter
 - OpenSSL
-- OLM
 - libsecret
+- mimalloc
+- mpv
+- libnotify
+- Olm
+
+Additionally, you will need the following Linux runtime dependencies :
+
+- xdg-user-dirs
+- dbus
+- mpv
+- mimalloc
+- Olm
 
 ### Flutter
 
@@ -17,17 +28,7 @@ Flutter is currently packaged as Alpine package or as SNAP. The Arch User Reposi
 
 In case you don't know Flutter, how about contributing to the translations on [Weblate](https://hosted.weblate.org/projects/polycule/) ?
 
-### OpenSSL
-
-Database encryption requires OpenSSL to be installed on your system.
-
-Use the following packages :
-
-- Ubuntu : `libssl-dev`
-- Fedora : `openssl-devel`
-- Arch : `openssl`
-
-### OLM
+### Olm
 
 Olm is used for the matrix related cryptography. You will only need to install it when deeloping for Desktops.
 
@@ -45,6 +46,21 @@ which yq
 ### libsecret
 
 On Linux, you will need libsecret in order to compile the applications and a running keyring daemon in order to run the application.
+
+### mvp
+
+On desktops, mpv is used for multimedia playback. Ensure it's both available as development library and as runtime shared object.
+
+### mimalloc
+
+On Linux, we use mimalloc as allocator in order to prevent memory leaks. mimalloc is packaged for pretty much any Linux distribution and required as runtime shared object.
+
+## Linux desktop TL;DR
+
+- For Arch Linux, install : `pacman -S gtk3 jsoncpp openssl libsecret mimalloc mpv libnotify libolm && pacman -S xdg-user-dirs dbus mpv mimalloc libolm`
+- For Fedora, install : `dnf install gtk3-devel jsoncpp-devel openssl-devel libsecret-devel mimalloc-devel mpv-devel libnotify-devel libolm-devel && dnf install xdg-user-dirs dbus mpv mimalloc libolm`
+- For Debian/Ubuntu, install : `apt install libgtk-3-dev libjsoncpp-dev libssl-dev libsecret-1-dev libmimalloc-dev libmpv-dev libnotify-dev libolm-dev && apt install xdg-user-dirs dbus mpv libmimalloc2.0 libolm`
+- Development on musl-based distributions is currently not possible
 
 ## Setting up your development environment
 
@@ -73,15 +89,15 @@ Use the following lines of code to ensure your code is properly foratted.
 dart fix --apply
 # check whether there's anything left the linter could not fix automatically
 dart analyze --fatal-infos
-# format the code according to our preferrences
-dart format lib test web
+# format the code according to our preferences
+dart format .
 # sort the imports
-dart run import_sorter:main
+dart run import_sorter:main --no-comments
 ```
 
 ## Building < polycule >
 
-### Prequisite for web
+### Web worker for web
 
 If you want to run < polycule > for web, ensure you build the web worker first.
 
@@ -95,11 +111,10 @@ dart compile js -o web/web_worker.dart.js -m web/web_worker.dart
 flutter run
 ```
 
-### Building a (more or less) release build
+### Building a (more or less) stable build
 
 ```shell
-# decide which platform to build for, e.g. linux, web, apk, appbundle, ios, macos, windows or winuwp
-# Only linux, web, apk and appbundle tested so far.
+# decide which platform to build for, e.g. linux, web, apk, appbundle, ios, ipa, macos, windows or winuwp
 export PLATFORM=linux
 flutter build $PLATFORM
 ```
