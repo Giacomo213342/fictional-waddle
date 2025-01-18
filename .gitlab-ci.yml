@@ -307,7 +307,7 @@ build:apk:tag:
   script:
     - *reproducible-before
     - *flutter-setup
-    - sed -i -e '1a add_link_options("LINKER:--build-id=none")' $PUB_CACHE/hosted/pub.dev/{flutter_zxing,flutter_olm}-*/*/CMakeLists.txt pushd /tmp/build
+    - sed -i -e '1a add_link_options("LINKER:--build-id=none")' $PUB_CACHE/hosted/pub.dev/{flutter_zxing,flutter_olm}-*/*/CMakeLists.txt
     - flutter build apk $FLUTTER_ARGS --release --split-per-abi
     - |
       for abi in "armeabi-v7a" "arm64-v8a" "x86_64"; do
