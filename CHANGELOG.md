@@ -1,3 +1,7 @@
+## v0.1.0
+
+- fix: cmake patch for tags (The one with the braid)
+
 ## v0.0.9
 
 - fix: ensure no build IDs in NDK builds (The one with the braid)
