@@ -375,6 +375,29 @@ build:linux:aarch64:
     paths:
       - polycule-*-aarch64
 
+build:fedora:aarch64:
+  extends: build:linux:aarch64
+  image: fedora
+  before_script:
+    # Flutter tool dependencies
+    - dnf install -y curl git unzip which xz zip
+    # Flutter test dependencies
+    - dnf install -y mesa-libGLU
+    # Flutter desktop dependencies
+    - dnf install -y clang cmake git ninja-build pkg-config gtk3-devel xz-devel libstdc++-devel
+    # < polycule > development dependencies
+    - dnf install -y openssl-devel libsecret-devel mimalloc-devel mpv-devel
+    # < polycule > runtime dependencies
+    - dnf install -y xdg-user-dirs dbus mpv mimalloc libnotify libolm
+    - curl -O https://storage.googleapis.com/dart-archive/channels/stable/release/latest/sdk/dartsdk-linux-arm64-release.zip && unzip dartsdk-linux-arm64-release.zip && rm -f dartsdk-linux-arm64-release.zip
+    - export PATH="$PATH":"$HOME/.pub-cache/bin:$(pwd)/.fvm/flutter_sdk/bin:$(pwd)/dart-sdk/bin"
+    - dart --disable-analytics
+    - dart pub global activate fvm
+    - fvm use --skip-pub-get -f $FLUTTER_VERSION
+    - flutter --disable-analytics
+    - *versioning-setup
+    - *flutter-setup
+
 build:debian:x86_64:
   image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-debian
   extends: .linux
