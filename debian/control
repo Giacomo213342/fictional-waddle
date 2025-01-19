@@ -2,11 +2,11 @@ Source: polycule
 Section: utils
 Priority: optional
 Maintainer: The one with the braid <info@braid-business>
-Build-Depends: debhelper (>=10), cmake, make, ninja-build, clang, pkg-config, libgtk-3-dev, libssl-dev, libsecret-1-dev, libjsoncpp-dev, libssl-dev, libmpv-dev, libmimalloc-dev, rustup
+Build-Depends: debhelper (>=10), cmake, make, ninja-build, clang, pkg-config, libgtk-3-dev, libsecret-1-dev, libssl-dev, libmpv-dev, libmimalloc-dev
 Standards-Version: 4.3.0
 Homepage: https://gitlab.com/polycule_client/polycule
 
 Package: polycule
 Architecture: amd64 arm64
-Depends: ${shlibs:Depends}, ${misc:Depends}, xdg-user-dirs, libolm3, mpv, libmimalloc2.0
+Depends: ${shlibs:Depends}, ${misc:Depends}, dbus, xdg-user-dirs, libolm3, mpv, libmimalloc2.0, libnotify-bin
 Description: A simple and beautiful matrix client written in Flutter.
