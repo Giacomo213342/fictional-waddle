@@ -6,21 +6,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
+import '../../../../widgets/matrix/event_scope.dart';
+import '../../../../widgets/matrix/room_scope.dart';
 import '../../room.dart';
-import '../event/m_reply_container.dart';
+import '../event/quoted_event.dart';
 import 'msgtype_dropdown.dart';
 import 'type_ahead_helper.dart';
 
 class MessageInput extends StatelessWidget {
-  const MessageInput({super.key, required this.controller});
-
-  final RoomController controller;
+  const MessageInput({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = RoomController.of(context);
     final typeAheadHelper = TypeAheadHelper(
       controller: controller.messageController,
-      room: controller.room,
+      room: RoomScope.of(context).room,
       l10n: AppLocalizations.of(context),
     );
 
@@ -43,11 +44,9 @@ class MessageInput extends StatelessWidget {
                     children: [
                       if (quotedEvent != null)
                         Expanded(
-                          child: LayoutBuilder(
-                            builder: (context, constraints) => ReplyContainer(
-                              replyEvent: quotedEvent,
-                              constraints: constraints,
-                            ),
+                          child: EventScope(
+                            event: quotedEvent,
+                            child: const QuotedEvent(),
                           ),
                         ),
                       Padding(
@@ -100,7 +99,7 @@ class MessageInput extends StatelessWidget {
                     borderRadius: BorderRadius.zero,
                   ),
                   floatingLabelBehavior: FloatingLabelBehavior.always,
-                  prefixIcon: MsgtypeDropdown(controller: controller),
+                  prefixIcon: const MsgtypeDropdown(),
                   helperText: '{ "format": "org.matrix.custom.html" }',
                   suffixIcon: IconButton(
                     padding: const EdgeInsets.all(16.0),

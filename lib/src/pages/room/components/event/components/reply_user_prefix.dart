@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 
-import 'package:matrix/matrix.dart';
-
 import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../widgets/human_date.dart';
 import '../../../../../widgets/matrix/avatar_builder/mxc_avatar.dart';
+import '../../../../../widgets/matrix/event_scope.dart';
 
 class ReplyUserPrefix extends StatelessWidget {
-  const ReplyUserPrefix({super.key, required this.replyEvent});
-
-  final Event replyEvent;
+  const ReplyUserPrefix({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final event = EventScope.of(context).event;
     return FutureBuilder(
-      future: replyEvent.fetchSenderUser(),
+      future: event.fetchSenderUser(),
       builder: (context, snapshot) {
-        final user = snapshot.data ?? replyEvent.senderFromMemoryOrFallback;
+        final user = snapshot.data ?? event.senderFromMemoryOrFallback;
         final name = user.displayName ?? user.id;
         return Text.rich(
           textAlign: TextAlign.left,
@@ -27,7 +25,6 @@ class ReplyUserPrefix extends StatelessWidget {
                 alignment: PlaceholderAlignment.middle,
                 child: MxcAvatar(
                   uri: user.avatarUrl,
-                  client: replyEvent.room.client,
                   monogram: name,
                   dimension: 24,
                 ),
@@ -36,7 +33,7 @@ class ReplyUserPrefix extends StatelessWidget {
                 text: r' ' +
                     AppLocalizations.of(context).replyUserSentDate(
                       name,
-                      replyEvent.originServerTs.humanShortDate(
+                      event.originServerTs.humanShortDate(
                         context: context,
                         fullLength: true,
                       ),

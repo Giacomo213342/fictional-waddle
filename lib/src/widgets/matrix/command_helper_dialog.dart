@@ -6,6 +6,7 @@ import 'package:matrix/matrix.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../theme/fonts.dart';
 import '../../utils/matrix/command_localization_helper.dart';
+import 'matrix_scope.dart';
 
 class CommandHelperDialog extends StatelessWidget {
   const CommandHelperDialog({super.key, required this.client});
@@ -28,9 +29,14 @@ class CommandHelperDialog extends StatelessWidget {
   }
 
   Future<String?> show(BuildContext context) async {
+    final scope = MatrixScope.captureAll(context);
     return showAdaptiveDialog<String>(
       context: context,
-      builder: (context) => this,
+      useRootNavigator: true,
+      builder: (context) => MatrixScope(
+        scope: scope,
+        child: this,
+      ),
     );
   }
 }

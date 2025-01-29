@@ -32,9 +32,8 @@ import '../../../utils/oidc_successful_page_response.dart';
 import '../../../utils/polycule_http_client/polycule_http_client.dart';
 import '../../../utils/runtime_suffix.dart';
 import '../../../utils/secure_storage.dart';
-import '../../error_handler_dialog.dart';
+import '../../error_dialog_scope.dart';
 import '../../intent_manager.dart';
-import '../../settings_manager.dart';
 import '../key_verification/key_verification_request_widget.dart';
 import '../uia/uia_oidc_account_management_dialog.dart';
 import '../uia/uia_oidc_dialog.dart';
@@ -100,13 +99,12 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
   bool _initializationStarted = false;
 
-  static Future<void>? waiForInitialization = _initializer.future;
+  static Future<void> waiForInitialization = _initializer.future;
 
   final suffix = getRuntimeSuffix();
 
   @override
   void initState() {
-    _listenErrorLogging();
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => _loadClients(),
     );
@@ -192,7 +190,6 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
   static final Map<int, PushManager> pushManagers = {};
 
-  StreamSubscription<(Object?, StackTrace?)>? _errorListener;
   StreamSubscription<ClientCallback>? _httpClientListener;
 
   ClientCallback? _httpClient;
@@ -236,7 +233,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     _sasVerificationListener[identifier]?.cancel();
     _sasVerificationListener[identifier] = client
         .onKeyVerificationRequest.stream
-        .listen(_handleSasVerificationRequest);
+        .listen((request) => _handleSasVerificationRequest(client, request));
     pushManagers[identifier] = PushManager(
       client,
       AppLocalizations.of(context),
@@ -392,8 +389,11 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      IntentManagerWidget(child: ClientManagerView(this));
+  Widget build(BuildContext context) => ErrorDialogScope(
+        child: IntentManagerWidget(
+          child: ClientManagerView(this),
+        ),
+      );
 
   @override
   void dispose() {
@@ -406,7 +406,6 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     for (final subscription in _sasVerificationListener.values) {
       subscription?.cancel();
     }
-    _errorListener?.cancel();
     _httpClientListener?.cancel();
     super.dispose();
   }
@@ -498,12 +497,15 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     await handler.respond();
   }
 
-  Future<void> _handleSasVerificationRequest(KeyVerification request) async {
+  Future<void> _handleSasVerificationRequest(
+    Client client,
+    KeyVerification request,
+  ) async {
     Logs().d('Incoming key verification request');
     return KeyVerificationRequestWidget.showDialog(
       request,
       context: context,
-      client: getActiveClient(),
+      client: client,
     );
   }
 
@@ -651,26 +653,6 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         macOS: const DarwinInitializationSettings(),
       ),
     );
-  }
-
-  void _listenErrorLogging() {
-    _errorListener = ErrorLogger().errorStream.listen(_showErrorDialog);
-  }
-
-  Future<void> _showErrorDialog((Object?, StackTrace?) event) async {
-    if (!SettingsManager.of(context).initCompleter.isCompleted) {
-      await SettingsManager.of(context).initCompleter.future;
-    }
-    if (!mounted) {
-      return;
-    }
-    if (SettingsManager.of(context).sentryEnabled.value == true) {
-      return;
-    }
-    await ErrorHandlerDialog(
-      error: event.$1,
-      stackTrace: event.$2,
-    ).showDialog(context);
   }
 
   static void _handleOidcEvent(Client client, OidcEvent event) {

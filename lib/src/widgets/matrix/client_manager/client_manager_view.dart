@@ -1,7 +1,10 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
-
+import '../../../pages/splash_screen/splash_screen.dart';
+import '../client_scope.dart';
 import 'client_manager.dart';
 import 'components/client_tab_bar.dart';
 
@@ -12,30 +15,40 @@ class ClientManagerView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final tabBarOnTop = constraints.maxWidth > 764;
-        return Material(
-          child: Column(
-            children: [
-              if (tabBarOnTop)
-                ClientTabBar(
-                  manager,
-                  position: VerticalDirection.up,
-                ),
-              Expanded(
-                child: InheritedProvider<GetClientCallback>(
-                  create: (context) => manager.getActiveClient,
-                  child: Builder(
-                    builder: (context) {
-                      return manager.widget.child;
-                    },
+    return FutureBuilder(
+      future: ClientManager.waiForInitialization,
+      builder: (context, snapshot) {
+        // while we're initializing, don't show the tab bar
+        if (ClientManager.activeClients.isEmpty) {
+          return const SplashPage();
+        }
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final tabBarOnTop =
+                constraints.maxWidth > 764 || (!kIsWeb && Platform.isIOS);
+            return Material(
+              child: Column(
+                children: [
+                  if (tabBarOnTop)
+                    ClientTabBar(
+                      manager,
+                      position: VerticalDirection.up,
+                    ),
+                  Expanded(
+                    child: ClientScope(
+                      client: manager.getActiveClient(),
+                      child: Builder(
+                        builder: (context) {
+                          return manager.widget.child;
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                  if (!tabBarOnTop) ClientTabBar(manager),
+                ],
               ),
-              if (!tabBarOnTop) ClientTabBar(manager),
-            ],
-          ),
+            );
+          },
         );
       },
     );

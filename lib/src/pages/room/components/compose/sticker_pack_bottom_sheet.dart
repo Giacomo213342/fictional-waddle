@@ -4,6 +4,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../widgets/matrix/avatar_builder/mxc_avatar.dart';
+import '../../../../widgets/matrix/matrix_scope.dart';
 import '../../../../widgets/matrix/profile_builder.dart';
 import 'sticker_content_preview.dart';
 
@@ -13,9 +14,14 @@ class StickerPackBottomSheet extends StatelessWidget {
   final Room room;
 
   Future<ImagePackImageContent?> showBottomSheet(BuildContext context) {
+    final scope = MatrixScope.captureAll(context);
     return showModalBottomSheet<ImagePackImageContent>(
       context: context,
-      builder: (context) => this,
+      useRootNavigator: true,
+      builder: (context) => MatrixScope(
+        scope: scope,
+        child: this,
+      ),
       clipBehavior: Clip.hardEdge,
     );
   }
@@ -61,7 +67,6 @@ class StickerPackBottomSheet extends StatelessWidget {
                         ? null
                         : MxcAvatar(
                             uri: url,
-                            client: room.client,
                             monogram: displayName,
                             dimension: 24,
                           ),
@@ -97,7 +102,6 @@ class _OwnProfileTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final userId = client.userID!;
     return ProfileBuilder(
-      client: client,
       userId: userId,
       builder: (context, snapshot) {
         final profile = snapshot.data;
@@ -105,7 +109,6 @@ class _OwnProfileTab extends StatelessWidget {
           text: profile?.displayName ?? userId,
           icon: MxcAvatar(
             uri: profile?.avatarUrl,
-            client: client,
             monogram: profile?.displayName ?? userId,
             dimension: 24,
           ),

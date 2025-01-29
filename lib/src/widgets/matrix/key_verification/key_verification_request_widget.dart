@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 
+import '../matrix_scope.dart';
 import 'components/compare_sas_widget.dart';
 import 'components/incoming_verification_request_widget.dart';
 import 'components/ssss_recovery_input.dart';
@@ -70,13 +71,14 @@ class KeyVerificationRequestWidget extends StatefulWidget {
   }) {
     return showModalBottomSheet(
       context: context,
-      // we need the matrix context, so no root navigator
-      useRootNavigator: false,
       isDismissible: false,
-      builder: (context) => KeyVerificationRequestWidget(
-        request,
-        onClose: Navigator.of(context).pop,
-        client: client,
+      useRootNavigator: true,
+      builder: (context) => MatrixScope(
+        scope: (client, null, null, null),
+        child: KeyVerificationRequestWidget(
+          request,
+          onClose: Navigator.of(context).pop,
+        ),
       ),
     );
   }

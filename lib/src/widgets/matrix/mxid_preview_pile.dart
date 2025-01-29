@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
+import '../../../l10n/matrix/polycule_matrix_localizations.dart';
 import 'avatar_builder/mxc_avatar.dart';
 
 class MxidPreviewPile extends StatelessWidget {
@@ -34,10 +35,16 @@ class MxidPreviewPile extends StatelessWidget {
         case '@':
           final fallbackUser = room?.unsafeGetUserFromMemoryOrFallback(mxid);
           fallback = _LinkMetadata(
-            label: fallbackUser?.calcDisplayname() ?? mxid,
+            label: fallbackUser?.calcDisplayname(
+                  i18n: AppLocalizations.of(context).matrix,
+                ) ??
+                mxid,
             avatar: fallbackUser?.avatarUrl,
           );
-          getMetadataFuture = _getUserProfile(mxid);
+          getMetadataFuture = _getUserProfile(
+            mxid,
+            AppLocalizations.of(context),
+          );
           break;
         case '#':
         case '!':
@@ -73,7 +80,6 @@ class MxidPreviewPile extends StatelessWidget {
         return Chip(
           avatar: MxcAvatar(
             uri: uri,
-            client: client,
             dimension: 24,
             monogram: label,
           ),
@@ -88,11 +94,16 @@ class MxidPreviewPile extends StatelessWidget {
     );
   }
 
-  Future<_LinkMetadata<String?>> _getUserProfile(String mxid) async {
+  Future<_LinkMetadata<String?>> _getUserProfile(
+    String mxid,
+    AppLocalizations l10n,
+  ) async {
     final user = await room?.requestUser(mxid);
     if (user != null) {
       return _LinkMetadata(
-        label: user.calcDisplayname(),
+        label: user.calcDisplayname(
+          i18n: l10n.matrix,
+        ),
         avatar: user.avatarUrl,
       );
     }

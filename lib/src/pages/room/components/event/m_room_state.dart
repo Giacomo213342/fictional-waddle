@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
 
-import 'package:matrix/matrix.dart';
+import '../../../../../l10n/generated/app_localizations.dart';
+import '../../../../../l10n/matrix/polycule_matrix_localizations.dart';
+import '../../../../widgets/matrix/event_scope.dart';
+import '../../../../widgets/matrix/timeline_scope.dart';
 
 class RoomState extends StatelessWidget {
-  const RoomState({super.key, required this.event});
-
-  final Event event;
+  const RoomState({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final event = EventScope.of(context)
+        .event
+        .getDisplayEvent(TimelineScope.of(context).timeline);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
       child: FutureBuilder<String>(
-        future: event.calcLocalizedBody(
-          const MatrixDefaultLocalizations(),
-        ),
+        future: event.calcLocalizedBody(AppLocalizations.of(context).matrix),
         builder: (context, snapshot) {
           return Text(
             snapshot.data ??
                 event.calcLocalizedBodyFallback(
-                  const MatrixDefaultLocalizations(),
+                  AppLocalizations.of(context).matrix,
                 ),
           );
         },

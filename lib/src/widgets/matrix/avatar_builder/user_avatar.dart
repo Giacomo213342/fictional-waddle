@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../l10n/matrix/polycule_matrix_localizations.dart';
 import 'mxc_avatar.dart';
 
 class UserAvatar extends StatelessWidget {
@@ -19,11 +21,12 @@ class UserAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final uri = user.avatarUrl;
-    final monogram = user.calcDisplayname();
+    final monogram = user.calcDisplayname(
+      i18n: AppLocalizations.of(context).matrix,
+    );
 
     return MxcAvatar(
       uri: uri,
-      client: client,
       monogram: monogram,
       dimension: dimension,
     );

@@ -1,90 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-import '../../../l10n/generated/app_localizations.dart';
-import '../../widgets/matrix/avatar_builder/fullscreen_dialog_avatar.dart';
-import '../../widgets/matrix/html/polycule_html_view.dart';
-import '../../widgets/matrix/mxc_uri_image.dart';
-import '../../widgets/share_origin_builder.dart';
-import 'room_details.dart';
+import '../../widgets/matrix/avatar_builder/room_builder.dart';
+import '../../widgets/matrix/room_scope.dart';
+import 'components/public_room_address_tile.dart';
+import 'components/room_detail_sliver_app_bar.dart';
+import 'components/room_topic_view.dart';
 
 class RoomDetailsView extends StatelessWidget {
-  const RoomDetailsView({super.key, required this.controller});
-
-  final RoomDetailsController controller;
+  const RoomDetailsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final room = controller.widget.room;
-
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: room.avatar == null ? null : 256,
-            leading: CloseButton(
-              onPressed: controller.close,
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                room.getLocalizedDisplayname(),
-                overflow: TextOverflow.ellipsis,
+    return RoomBuilder(
+      builder: (context, snapshot) {
+        final room = snapshot.data ?? RoomScope.of(context).room;
+        return Scaffold(
+          body: CustomScrollView(
+            slivers: [
+              const RoomDetailSliverAppBar(),
+              SliverList.list(
+                children: [
+                  if (room.topic.isNotEmpty) const RoomTopicView(),
+                  if (room.canonicalAlias.isNotEmpty)
+                    const PublicRoomAddressTile(),
+                ],
               ),
-              background: room.avatar == null
-                  ? null
-                  : FullScreenAvatar.makeImageButton(
-                      context: context,
-                      child: MxcUriImageBuilder(
-                        uri: room.avatar,
-                        client: controller.client,
-                        fit: BoxFit.cover,
-                      ),
-                      client: controller.client,
-                      uri: room.avatar,
-                      title: room.getLocalizedDisplayname(),
-                    ),
-            ),
-          ),
-          SliverList.list(
-            children: [
-              if (room.topic.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: SelectionArea(
-                    child: PolyculeHtmlView(
-                      html: room.topic.replaceAll('\n', r'<br />'),
-                      client: room.client,
-                      room: room,
-                    ),
-                  ),
-                ),
-              if (room.canonicalAlias.isNotEmpty)
-                ListTile(
-                  title: ShareOriginBuilder(
-                    builder: (context, rect) => ElevatedButton.icon(
-                      onPressed: () => controller.sharePublicAddress(rect),
-                      icon: const Icon(Icons.share),
-                      label: Text(
-                        room.canonicalAlias,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                  trailing: IconButton(
-                    onPressed: () => Clipboard.setData(
-                      ClipboardData(text: room.canonicalAlias),
-                    ),
-                    icon: const Icon(Icons.copy),
-                    tooltip: AppLocalizations.of(context).copyRoomAddress,
-                  ),
-                ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 
-import 'package:matrix/matrix.dart';
-
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../theme/poly_colors.dart';
 import '../../../utils/matrix/room_security_level_extension.dart';
 import '../../../widgets/matrix/avatar_builder/room_builder.dart';
+import '../../../widgets/matrix/room_scope.dart';
 
 class RoomEncryptionIndicator extends StatelessWidget {
-  const RoomEncryptionIndicator({super.key, required this.room});
-
-  final Room room;
+  const RoomEncryptionIndicator({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return RoomBuilder(
-      room: room,
       builder: (context, snapshot) {
-        final room = snapshot.data ?? this.room;
+        final room = snapshot.data ?? RoomScope.of(context).room;
         final securityState = room.calcRoomSecurityState();
         if (securityState is RoomSecurityState) {
           return RoomSecurityIcon(

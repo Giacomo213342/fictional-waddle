@@ -79,14 +79,17 @@ class PolyculeThemeBuilder extends StatelessWidget {
             seedColor: PolyColors.cyan,
             brightness: Brightness.dark,
           );
+
           final darkColorScheme =
               themeState.colorMode == PolyculeColorMode.system
                   ? darkDynamic ?? darkFallback
                   : darkFallback;
+
           final lightFallback = ColorScheme.fromSeed(
             seedColor: PolyColors.pink,
             brightness: Brightness.light,
           );
+
           final lightColorScheme =
               themeState.colorMode == PolyculeColorMode.system
                   ? lightDynamic ?? lightFallback

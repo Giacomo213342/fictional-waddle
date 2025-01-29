@@ -2,18 +2,19 @@ import 'package:flutter/material.dart' hide Element, Text;
 
 import 'package:matrix/matrix.dart';
 
+import '../../../../../../l10n/generated/app_localizations.dart';
+import '../../../../../../l10n/matrix/polycule_matrix_localizations.dart';
+import '../../../../../widgets/matrix/event_scope.dart';
 import '../../../../../widgets/matrix/html/polycule_html_view.dart';
 
 class TextMessage extends StatelessWidget {
   const TextMessage({
     super.key,
-    required this.event,
   });
-
-  final Event event;
 
   @override
   Widget build(BuildContext context) {
+    final event = EventScope.of(context).event;
     String html;
     if (event.isRichMessage) {
       html = event.formattedText;
@@ -24,7 +25,7 @@ class TextMessage extends StatelessWidget {
     // in case the message was redacted or similar
     if (html.isEmpty) {
       html = event.calcLocalizedBodyFallback(
-        const MatrixDefaultLocalizations(),
+        AppLocalizations.of(context).matrix,
         hideReply: true,
         hideEdit: false,
       );
@@ -32,7 +33,7 @@ class TextMessage extends StatelessWidget {
 
     if (event.messageType == MessageTypes.Emote) {
       // Unicode Bullet
-      html = '\u2022 $html';
+      html = ' \u2022 $html';
     }
     return PolyculeHtmlView(
       html: html,

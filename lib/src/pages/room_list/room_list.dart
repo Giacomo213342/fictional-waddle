@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../router/extensions/go_router_path_extension.dart';
-import '../../utils/matrix/matrix_state.dart';
+import '../../widgets/matrix/client_scope.dart';
 import '../../widgets/matrix/command_error_dialog.dart';
 import '../account_settings/account_settings.dart';
 import '../room/room.dart';
@@ -21,14 +21,36 @@ class RoomListPage extends StatefulWidget {
   State<RoomListPage> createState() => RoomListController();
 }
 
-class RoomListController extends MatrixState<RoomListPage> {
+class _RoomListScope extends InheritedWidget {
+  const _RoomListScope({
+    required this.controller,
+    required super.child,
+  });
+
+  final RoomListController controller;
+
+  @override
+  bool updateShouldNotify(covariant _RoomListScope oldWidget) =>
+      controller != oldWidget.controller;
+}
+
+class RoomListController extends State<RoomListPage> {
+  static RoomListController of(BuildContext context) {
+    final _RoomListScope scope =
+        context.dependOnInheritedWidgetOfExactType<_RoomListScope>()!;
+    return scope.controller;
+  }
+
   static final Map<String, FocusNode> _focusNodes = {};
 
   final searchController = SearchController();
   final searchFocus = FocusNode();
 
-  List<Room> get filteredRooms =>
-      client.rooms.where((r) => !r.isSpace && !r.isArchived).toList();
+  List<Room> getRegularRooms() => ClientScope.of(context)
+      .client
+      .rooms
+      .where((r) => !r.isSpace && !r.isArchived)
+      .toList();
 
   /// provides the [FocusNode] for the room list tile of the given Room [id].
   static FocusNode getFocusNode(String id) {
@@ -38,12 +60,15 @@ class RoomListController extends MatrixState<RoomListPage> {
 
   @override
   void initState() {
-    _processFirstSync();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _processFirstSync());
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) => RoomListView(this);
+  Widget build(BuildContext context) => _RoomListScope(
+        controller: this,
+        child: RoomListView(this),
+      );
 
   @override
   void dispose() {
@@ -52,7 +77,7 @@ class RoomListController extends MatrixState<RoomListPage> {
 
   List<Room> filterRooms(String filter) {
     filter = filter.toLowerCase();
-    return filteredRooms
+    return getRegularRooms()
         .where(
           (room) =>
               room.name.toLowerCase().contains(filter) ||
@@ -66,6 +91,7 @@ class RoomListController extends MatrixState<RoomListPage> {
   }
 
   Future<void> _processFirstSync() async {
+    final client = ClientScope.of(context).client;
     // wait for all basic data to be synced
     await client.accountDataLoading;
     await client.roomsLoading;
@@ -86,7 +112,7 @@ class RoomListController extends MatrixState<RoomListPage> {
   /// checks whether our room list contains any item and tries to focus it
   /// In case of success, it cancels the further sync listener
   void _focusFirstRoom() {
-    final firstRoom = filteredRooms.firstOrNull;
+    final firstRoom = getRegularRooms().firstOrNull;
     if (firstRoom == null) {
       return;
     }
@@ -113,6 +139,7 @@ class RoomListController extends MatrixState<RoomListPage> {
   }
 
   void searchSubmitted(String query) {
+    final client = ClientScope.of(context).client;
     if (query.startsWith('/')) {
       final command = client.commands.keys
           .where(
@@ -141,7 +168,7 @@ class RoomListController extends MatrixState<RoomListPage> {
 
   Future<void> runCommand(String command, CommandArgs args) async {
     final stdout = StringBuffer();
-    final callback = client.commands[command];
+    final callback = ClientScope.of(context).client.commands[command];
     try {
       await callback?.call(args, stdout);
       final result = stdout.toString();

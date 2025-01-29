@@ -6,11 +6,12 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../l10n/matrix/polycule_matrix_localizations.dart';
 
 Future<void> handlePushNotification({
   required Client client,
   required PushNotification notification,
-  required AppLocalizations localizations,
+  required AppLocalizations l10n,
 }) async {
   final notificationsPlugin = FlutterLocalNotificationsPlugin();
   // this code is mostly based on FluffyChat's implementation - huge credits
@@ -46,9 +47,9 @@ Future<void> handlePushNotification({
   final id = notification.roomId.hashCode;
 
   final body = event.type == EventTypes.Encrypted
-      ? localizations.newNotification
+      ? l10n.newNotification
       : await event.calcLocalizedBody(
-          const MatrixDefaultLocalizations(),
+          l10n.matrix,
           plaintextBody: true,
           withSenderNamePrefix: false,
           hideReply: true,
@@ -66,21 +67,21 @@ Future<void> handlePushNotification({
     Person(
       bot: event.messageType == MessageTypes.Notice,
       key: event.senderId,
-      name: event.senderFromMemoryOrFallback.calcDisplayname(),
+      name: event.senderFromMemoryOrFallback.calcDisplayname(
+        i18n: l10n.matrix,
+      ),
     ),
   );
 
   messagingStyleInformation?.messages?.add(newMessage);
 
   final roomName = event.room.getLocalizedDisplayname(
-    const MatrixDefaultLocalizations(),
+    l10n.matrix,
   );
 
   final notificationGroupId =
       event.room.isDirectChat ? 'directChats' : 'groupChats';
-  final groupName = event.room.isDirectChat
-      ? localizations.directChats
-      : localizations.groups;
+  final groupName = event.room.isDirectChat ? l10n.directChats : l10n.groups;
 
   final messageRooms = AndroidNotificationChannelGroup(
     notificationGroupId,
@@ -103,7 +104,7 @@ Future<void> handlePushNotification({
 
   final androidPlatformChannelSpecifics = AndroidNotificationDetails(
     'polycule.notifications',
-    localizations.pushChannelName,
+    l10n.pushChannelName,
     number: notification.counts?.unread,
     category: AndroidNotificationCategory.message,
     icon: '@drawable/ic_launcher_foreground',
@@ -111,7 +112,9 @@ Future<void> handlePushNotification({
     styleInformation: messagingStyleInformation ??
         MessagingStyleInformation(
           Person(
-            name: event.senderFromMemoryOrFallback.calcDisplayname(),
+            name: event.senderFromMemoryOrFallback.calcDisplayname(
+              i18n: l10n.matrix,
+            ),
             key: event.roomId,
             important: event.room.isFavourite,
           ),
@@ -120,7 +123,7 @@ Future<void> handlePushNotification({
           messages: [newMessage],
         ),
     ticker: event.calcLocalizedBodyFallback(
-      const MatrixDefaultLocalizations(),
+      l10n.matrix,
       plaintextBody: true,
       withSenderNamePrefix: true,
       hideReply: true,
@@ -137,8 +140,7 @@ Future<void> handlePushNotification({
     iOS: iOSPlatformChannelSpecifics,
   );
 
-  final title =
-      event.room.getLocalizedDisplayname(const MatrixDefaultLocalizations());
+  final title = event.room.getLocalizedDisplayname(l10n.matrix);
 
   await notificationsPlugin.show(
     id,

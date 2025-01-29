@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
-import '../../utils/matrix/matrix_state.dart';
+import '../../widgets/matrix/client_scope.dart';
 import 'public_room_view.dart';
 
 class PublicRoomPage extends StatefulWidget {
@@ -24,7 +24,7 @@ class PublicRoomPage extends StatefulWidget {
   State<PublicRoomPage> createState() => PublicRoomController();
 }
 
-class PublicRoomController extends MatrixState<PublicRoomPage> {
+class PublicRoomController extends State<PublicRoomPage> {
   PublicRoomsChunk? room;
 
   bool loading = false;
@@ -54,6 +54,8 @@ class PublicRoomController extends MatrixState<PublicRoomPage> {
       null,
     };
 
+    final client = ClientScope.of(context).client;
+
     for (final server in via) {
       final response = await client.queryPublicRooms(
         server: server,
@@ -74,6 +76,7 @@ class PublicRoomController extends MatrixState<PublicRoomPage> {
   Future<void> knockRoom() => joinRoom();
 
   Future<void> joinRoom() async {
+    final client = ClientScope.of(context).client;
     final room = this.room;
     if (room == null) {
       return;
@@ -116,7 +119,9 @@ class PublicRoomController extends MatrixState<PublicRoomPage> {
 
     // TODO: support rendering timeline preview
     // ignore: unused_local_variable
-    final events = await client.getRoomEvents(room.roomId, Direction.b);
+    final events = await ClientScope.of(context)
+        .client
+        .getRoomEvents(room.roomId, Direction.b);
 
     setState(() {
       loading = false;

@@ -5,6 +5,7 @@ import 'package:oidc/oidc.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../ascii_progress_indicator.dart';
+import '../matrix_scope.dart';
 
 class UiaOidcDialog extends StatefulWidget {
   const UiaOidcDialog({
@@ -18,11 +19,17 @@ class UiaOidcDialog extends StatefulWidget {
   final Client client;
   final OidcUserManager oidc;
 
-  Future<OidcUser?> show(BuildContext context) => showDialog<OidcUser?>(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => this,
-      );
+  Future<OidcUser?> show(BuildContext context) {
+    final scope = MatrixScope.captureAll(context);
+    return showAdaptiveDialog<OidcUser?>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => MatrixScope(
+        scope: scope,
+        child: this,
+      ),
+    );
+  }
 
   @override
   State<UiaOidcDialog> createState() => _UiaOidcDialogState();

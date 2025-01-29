@@ -35,7 +35,6 @@ class IncomingVerificationRequestContentWidget extends StatelessWidget {
           if (client != null)
             MxcAvatar(
               uri: profile.avatarUrl,
-              client: client,
               monogram: profile.displayName ?? profile.userId,
               dimension: 64,
             ),

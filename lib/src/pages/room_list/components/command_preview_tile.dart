@@ -9,13 +9,11 @@ class CommandPreviewTile extends StatelessWidget {
     super.key,
     required this.command,
     this.description,
-    required this.controller,
     required this.args,
   });
 
   final String command;
   final String? description;
-  final RoomListController controller;
   final CommandArgs args;
 
   @override
@@ -24,7 +22,7 @@ class CommandPreviewTile extends StatelessWidget {
     return ListTile(
       title: Text('/$command'),
       subtitle: description != null ? Text(description) : null,
-      onTap: () => controller.runCommand(command, args),
+      onTap: () => RoomListController.of(context).runCommand(command, args),
     );
   }
 }

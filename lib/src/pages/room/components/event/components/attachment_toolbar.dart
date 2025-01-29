@@ -12,30 +12,29 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../utils/file_selector.dart';
-import '../../../../../utils/matrix/matrix_state.dart';
+import '../../../../../widgets/matrix/client_scope.dart';
+import '../../../../../widgets/matrix/event_scope.dart';
 import '../../../../../widgets/polycule_overflow_bar.dart';
 import '../../../../../widgets/share_origin_builder.dart';
 
 class AttachmentToolbar extends StatefulWidget {
   const AttachmentToolbar({
     super.key,
-    required this.event,
     required this.child,
   });
 
   final Widget child;
-  final Event event;
 
   @override
   State<AttachmentToolbar> createState() => _AttachmentToolbarState();
 }
 
-class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
+class _AttachmentToolbarState extends State<AttachmentToolbar> {
   final canDownload = true;
   final canSaveAs = !kIsWeb && !Platform.isIOS && !Platform.isAndroid;
   final canShare = !kIsWeb && !Platform.isLinux;
 
-  bool get isPdf => widget.event.attachmentMimetype == 'application/pdf';
+  bool isPdf(Event event) => event.attachmentMimetype == 'application/pdf';
 
   bool get canView =>
       !kIsWeb && (Platform.isLinux || Platform.isMacOS || Platform.isWindows);
@@ -46,6 +45,7 @@ class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
 
   @override
   Widget build(BuildContext context) {
+    final event = EventScope.of(context).event;
     final density = Theme.of(context).visualDensity;
     final densityOffset = density.vertical - density.baseSizeAdjustment.dx;
     return Center(
@@ -75,7 +75,7 @@ class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
                           return IconButton(
                             tooltip: MaterialLocalizations.of(context)
                                 .shareButtonLabel,
-                            onPressed: () => _share(rect),
+                            onPressed: () => _share(event, rect),
                             icon: const Icon(Icons.share),
                           );
                         },
@@ -85,7 +85,7 @@ class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
                         builder: (context, rect) {
                           return IconButton(
                             tooltip: AppLocalizations.of(context).download,
-                            onPressed: () => _download(rect),
+                            onPressed: () => _download(event, rect),
                             icon: const Icon(Icons.save_alt),
                           );
                         },
@@ -93,13 +93,13 @@ class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
                     if (canSaveAs)
                       IconButton(
                         tooltip: AppLocalizations.of(context).saveAs,
-                        onPressed: _saveAs,
+                        onPressed: () => _saveAs(event),
                         icon: const Icon(Icons.save_as),
                       ),
                     if (canView)
                       IconButton(
                         tooltip: AppLocalizations.of(context).openFile,
-                        onPressed: _openExternally,
+                        onPressed: () => _openExternally(event),
                         icon: const Icon(Icons.visibility),
                       ),
                   ],
@@ -113,25 +113,25 @@ class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
     );
   }
 
-  XFile _buildXFile(MatrixFile mxFile) {
+  XFile _buildXFile(Event event, MatrixFile mxFile) {
     final bytes = mxFile.bytes;
     final mimeType = mxFile.mimeType;
     return XFile.fromData(
       bytes,
       mimeType: mimeType,
       name: mxFile.name,
-      lastModified: widget.event.originServerTs,
+      lastModified: event.originServerTs,
     );
   }
 
-  Future<void> _share(Rect? rect) async {
+  Future<void> _share(Event event, Rect? rect) async {
     setState(() {
       loading = true;
     });
 
     try {
-      final mxFile = await widget.event.downloadAndDecryptAttachment();
-      final xfile = _buildXFile(mxFile);
+      final mxFile = await event.downloadAndDecryptAttachment();
+      final xfile = _buildXFile(event, mxFile);
 
       Share.shareXFiles(
         [xfile],
@@ -146,19 +146,20 @@ class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
     }
   }
 
-  Future<void> _download(Rect? rect) async {
+  Future<void> _download(Event event, Rect? rect) async {
+    final client = ClientScope.of(context).client;
     if (kIsWeb) {
-      return _share(rect);
+      return _share(event, rect);
     }
     if (Platform.isAndroid) {
-      return _downloadAndroid(rect);
+      return _downloadAndroid(event, rect);
     }
     setState(() {
       loading = true;
     });
     try {
-      final mxFile = await widget.event.downloadAndDecryptAttachment();
-      final xfile = _buildXFile(mxFile);
+      final mxFile = await event.downloadAndDecryptAttachment();
+      final xfile = _buildXFile(event, mxFile);
 
       final directory = await getDownloadsDirectory();
 
@@ -196,15 +197,15 @@ class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
     }
   }
 
-  Future<void> _downloadAndroid([Rect? rect]) async {
+  Future<void> _downloadAndroid(Event event, [Rect? rect]) async {
     setState(() {
       loading = true;
     });
     try {
       await FileSelector.ensureAndroidInitialized();
 
-      final mxFile = await widget.event.downloadAndDecryptAttachment();
-      final xfile = _buildXFile(mxFile);
+      final mxFile = await event.downloadAndDecryptAttachment();
+      final xfile = _buildXFile(event, mxFile);
 
       final directory = await getTemporaryDirectory();
       final tmpPath = directory.path + separator + mxFile.name;
@@ -236,13 +237,13 @@ class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
     }
   }
 
-  Future<void> _saveAs() async {
+  Future<void> _saveAs(Event event) async {
     setState(() {
       loading = true;
     });
     try {
-      final mxFile = await widget.event.downloadAndDecryptAttachment();
-      final xfile = _buildXFile(mxFile);
+      final mxFile = await event.downloadAndDecryptAttachment();
+      final xfile = _buildXFile(event, mxFile);
 
       final location = await getSaveLocation(
         suggestedName: mxFile.name,
@@ -264,16 +265,17 @@ class _AttachmentToolbarState extends MatrixState<AttachmentToolbar> {
     }
   }
 
-  Future<void> _openExternally() async {
+  Future<void> _openExternally(Event event) async {
     if (kIsWeb) {
       return;
     }
+    final client = ClientScope.of(context).client;
     setState(() {
       loading = true;
     });
     try {
-      final mxFile = await widget.event.downloadAndDecryptAttachment();
-      final xfile = _buildXFile(mxFile);
+      final mxFile = await event.downloadAndDecryptAttachment();
+      final xfile = _buildXFile(event, mxFile);
 
       final directory = await getTemporaryDirectory();
       // no, I would not expect a temporary directory present on my Arch Linux

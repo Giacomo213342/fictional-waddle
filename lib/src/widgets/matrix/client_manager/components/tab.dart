@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
 import 'package:url_launcher/link.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../pages/splash_screen/splash_screen.dart';
 import '../../avatar_builder/mxc_avatar.dart';
+import '../../client_scope.dart';
 import '../../profile_builder.dart';
 import '../client_manager.dart';
 
@@ -18,8 +18,7 @@ class ClientTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final client =
-        Provider.of<GetClientCallback>(context, listen: false).call();
+    final client = ClientScope.of(context).client;
     final userId = client.userID;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -63,7 +62,6 @@ class ClientTab extends StatelessWidget {
                                 message: userId,
                                 child: ProfileBuilder(
                                   userId: userId,
-                                  client: client,
                                   builder: (context, snapshot) {
                                     final profile = snapshot.data;
                                     return Text.rich(
@@ -72,7 +70,6 @@ class ClientTab extends StatelessWidget {
                                           WidgetSpan(
                                             child: MxcAvatar(
                                               uri: profile?.avatarUrl,
-                                              client: client,
                                               monogram: profile?.displayName ??
                                                   userId,
                                               dimension: 24,

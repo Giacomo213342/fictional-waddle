@@ -18,14 +18,14 @@ import '../../utils/file_selector.dart';
 import '../../widgets/intent_manager.dart';
 import '../../widgets/matrix/command_error_dialog.dart';
 import '../../widgets/matrix/command_helper_dialog.dart';
+import '../../widgets/matrix/room_scope.dart';
 import '../room_list/room_list.dart';
 import 'components/compose/sticker_pack_bottom_sheet.dart';
 import 'components/compose/type_ahead_helper.dart';
-import 'components/timeline_event_tile.dart';
 import 'room_view.dart';
 
 class RoomPage extends StatefulWidget {
-  const RoomPage({super.key, required this.room});
+  const RoomPage({super.key});
 
   static const pathParameter = 'roomId';
 
@@ -33,14 +33,13 @@ class RoomPage extends StatefulWidget {
     return '${RoomListPage.routeName}/${Uri.encodeComponent(roomId)}';
   }
 
-  final Room room;
-
   @override
   State<RoomPage> createState() => RoomController();
 }
 
 class _RoomScope extends InheritedWidget {
   const _RoomScope({
+    super.key,
     required super.child,
     required RoomController roomState,
   }) : _roomState = roomState;
@@ -48,7 +47,11 @@ class _RoomScope extends InheritedWidget {
   final RoomController _roomState;
 
   @override
-  bool updateShouldNotify(_RoomScope old) => _roomState != old._roomState;
+  bool updateShouldNotify(_RoomScope old) =>
+      _roomState.sendMsgType != old._roomState.sendMsgType ||
+      _roomState.replyEvent != old._roomState.replyEvent ||
+      _roomState.loading != old._roomState.loading ||
+      _roomState.editEvent != old._roomState.editEvent;
 }
 
 class RoomController extends State<RoomPage> {
@@ -67,10 +70,7 @@ class RoomController extends State<RoomPage> {
 
   String sendMsgType = MessageTypes.Text;
 
-  final eventKeyRegistry = <String, GlobalKey<TimelineEventTileState>>{};
   final Map<String, CancelableOperation<String?>> txids = {};
-
-  Room get room => widget.room;
 
   Event? editEvent;
   Event? replyEvent;
@@ -100,15 +100,25 @@ class RoomController extends State<RoomPage> {
 
   @override
   Widget build(BuildContext context) => _RoomScope(
+        key: ValueKey(
+          replyEvent.hashCode *
+              editEvent.hashCode *
+              loading.hashCode *
+              sendMsgType.hashCode,
+        ),
         roomState: this,
-        child: RoomView(this),
+        child: const RoomView(),
       );
 
-  void focusBack() => RoomListController.getFocusNode(room.id).requestFocus();
+  void focusBack() {
+    final room = RoomScope.of(context).room;
+    RoomListController.getFocusNode(room.id).requestFocus();
+  }
 
   Future<void> knockRoom() => joinRoom();
 
   Future<void> joinRoom() async {
+    final room = RoomScope.of(context).room;
     setState(() {
       loading = true;
     });
@@ -136,6 +146,7 @@ class RoomController extends State<RoomPage> {
   }
 
   Future<void> sendMessage() async {
+    final room = RoomScope.of(context).room;
     String message = messageController.text.trim();
     if (message.isEmpty) {
       return;
@@ -267,6 +278,7 @@ class RoomController extends State<RoomPage> {
   }
 
   Future<bool> sendFileSelection(FileSelector selector) async {
+    final room = RoomScope.of(context).room;
     final selection = await selector.previewSelection(context);
     if (!mounted) {
       return false;
@@ -339,6 +351,7 @@ class RoomController extends State<RoomPage> {
   }
 
   Future<void> cancelSend(Event event) async {
+    final room = RoomScope.of(context).room;
     final txid = event.eventId;
 
     await txids[txid]?.cancel();
@@ -351,6 +364,7 @@ class RoomController extends State<RoomPage> {
   }
 
   Future<void> _sendFileTransaction(MatrixFileTuple tuple) async {
+    final room = RoomScope.of(context).room;
     final txid = room.client.generateUniqueTransactionId();
 
     final operation = txids[txid] = CancelableOperation.fromFuture(
@@ -419,10 +433,12 @@ class RoomController extends State<RoomPage> {
   }
 
   Future<String?> showCommandHelp() async {
+    final room = RoomScope.of(context).room;
     return await CommandHelperDialog(client: room.client).show(context);
   }
 
   Future<void> showStickerSelector(String? msgType) async {
+    final room = RoomScope.of(context).room;
     final emote = await StickerPackBottomSheet(
       room: room,
     ).showBottomSheet(context);
@@ -443,6 +459,7 @@ class RoomController extends State<RoomPage> {
   }
 
   Future<void> sendKeyboardSticker(KeyboardInsertedContent sticker) async {
+    final room = RoomScope.of(context).room;
     Uint8List? bytes = sticker.data;
     try {
       if (bytes == null) {

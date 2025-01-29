@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'package:matrix/matrix.dart';
 
+import '../../widgets/matrix/client_scope.dart';
 import 'components/fade_in_room_list.dart';
 import 'components/initial_sync_tile.dart';
 import 'components/room_search_bar.dart';
@@ -23,17 +24,15 @@ class RoomListView extends StatelessWidget {
         const CharacterActivator(':'): controller.search,
       },
       child: Scaffold(
-        appBar: AppBar(
-          flexibleSpace: RoomSearchBar(controller: controller),
-        ),
+        appBar: AppBar(flexibleSpace: const RoomSearchBar()),
         body: Column(
           children: [
-            InitialSyncTile(client: controller.client),
-            Expanded(
-              child: FadeInRoomList(controller),
+            const InitialSyncTile(),
+            const Expanded(
+              child: FadeInRoomList(),
             ),
             StreamBuilder<SyncUpdate>(
-              stream: controller.client.onSync.stream,
+              stream: ClientScope.of(context).client.onSync.stream,
               builder: (context, snapshot) {
                 return SyncUpdateStatusRow(
                   syncUpdate: snapshot.data,

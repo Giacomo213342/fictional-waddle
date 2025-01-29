@@ -177,7 +177,6 @@ class TypeAheadHelper {
                   child: MxcUriImageBuilder.dpiRespective(
                     key: ValueKey(content.url),
                     uri: content.url,
-                    client: client,
                     height: 18,
                     width: 18,
                   ),

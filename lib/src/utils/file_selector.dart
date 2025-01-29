@@ -12,6 +12,7 @@ import 'package:media_store_plus/media_store_plus.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../widgets/file_preview_dialog/file_preview_dialog.dart';
+import '../widgets/matrix/matrix_scope.dart';
 
 class FileSelector {
   FileSelector(this.msgType);
@@ -142,13 +143,17 @@ class FileSelector {
     if (files == null || files.isEmpty) {
       return null;
     }
+    final scope = MatrixScope.captureAll(context);
     final selection = await showAdaptiveDialog<FileSendProperties>(
       context: context,
-      builder: (context) => FilePreviewDialog(
-        files: files,
-        allowCompress: allowCompress,
+      builder: (context) => MatrixScope(
+        scope: scope,
+        child: FilePreviewDialog(
+          files: files,
+          allowCompress: allowCompress,
+        ),
       ),
-      useRootNavigator: false,
+      useRootNavigator: true,
     );
     if (selection == null) {
       return null;

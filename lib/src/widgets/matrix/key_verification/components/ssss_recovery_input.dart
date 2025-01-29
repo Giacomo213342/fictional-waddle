@@ -47,7 +47,6 @@ class _SsssRecoveryInputState extends State<SsssRecoveryInput> {
                 if (profile != null && client != null)
                   MxcAvatar(
                     uri: profile.avatarUrl,
-                    client: client,
                     monogram: profile.displayName ?? profile.userId,
                     dimension: 64,
                   ),

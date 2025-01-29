@@ -17,6 +17,7 @@ import 'components/code_block_extension.dart';
 import 'components/matrix_calls_extension.dart';
 import 'components/matrix_logo_extension.dart';
 import 'components/matrix_uri_extension.dart';
+import 'components/mx_color_span_extension.dart';
 import 'components/mxc_image_extension.dart';
 import 'components/polycule_emoji_span_extension.dart';
 import 'components/spoiler_extension.dart';
@@ -173,6 +174,7 @@ class _PolyculeHtmlViewState extends State<PolyculeHtmlView> {
         const MatrixLogoExtension(),
         const PolyculeEmojiSpanExtension(),
         const AnimatedEmojiExtension(),
+        const MxColorSpanExtension(),
       ],
       shrinkWrap: false,
       onLinkTap: (url, attributes, element) {

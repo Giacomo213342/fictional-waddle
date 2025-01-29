@@ -129,9 +129,7 @@ class PolyculeRouter extends GoRouter {
                               const PolyculePlaceholder(),
                           routes: [
                             RoomAvailableShellRoute(
-                              builder: (context, state, room) => RoomPage(
-                                room: room,
-                              ),
+                              builder: (context, state) => const RoomPage(),
                               roomUnavailableBuilder: (
                                 context,
                                 state,
@@ -149,13 +147,13 @@ class PolyculeRouter extends GoRouter {
                               routes: [
                                 RoomAvailableRoute(
                                   path: RoomPage.pathParameter.asGoRouterPath(),
-                                  builder: (context, state, room) =>
+                                  builder: (context, state) =>
                                       const PolyculePlaceholder(),
                                 ),
                                 RoomAvailableRoute(
                                   path: RoomDetailsPage.path,
-                                  builder: (context, state, room) =>
-                                      RoomDetailsPage(room: room),
+                                  builder: (context, state) =>
+                                      const RoomDetailsPage(),
                                 ),
                               ],
                             ),

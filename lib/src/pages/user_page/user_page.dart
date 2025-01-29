@@ -4,7 +4,7 @@ import 'package:matrix/encryption.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
-import '../../utils/matrix/matrix_state.dart';
+import '../../widgets/matrix/client_scope.dart';
 import '../../widgets/matrix/key_verification/key_verification_request_widget.dart';
 import '../room/room.dart';
 import 'user_view.dart';
@@ -22,7 +22,7 @@ class UserPage extends StatefulWidget {
   State<UserPage> createState() => UserController();
 }
 
-class UserController extends MatrixState<UserPage> {
+class UserController extends State<UserPage> {
   bool loading = false;
 
   @override
@@ -32,10 +32,10 @@ class UserController extends MatrixState<UserPage> {
     setState(() {
       loading = true;
     });
-    final roomId = await client.startDirectChat(
-      widget.mxid,
-      enableEncryption: true,
-    );
+    final roomId = await ClientScope.of(context).client.startDirectChat(
+          widget.mxid,
+          enableEncryption: true,
+        );
     if (!mounted) {
       return;
     }
@@ -46,6 +46,7 @@ class UserController extends MatrixState<UserPage> {
   }
 
   Future<void> toggleIgnore() async {
+    final client = ClientScope.of(context).client;
     setState(() {
       loading = true;
     });
@@ -67,6 +68,7 @@ class UserController extends MatrixState<UserPage> {
   }
 
   Future<void> startVerification() async {
+    final client = ClientScope.of(context).client;
     final encryption = client.encryption;
     final roomId = client.getDirectChatFromUserId(widget.mxid);
     if (roomId == null || encryption == null) {

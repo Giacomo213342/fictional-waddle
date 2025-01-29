@@ -5,9 +5,10 @@ import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
-import '../../utils/matrix/matrix_state.dart';
 import '../../utils/runtime_suffix.dart';
 import '../../utils/secure_storage.dart';
+import '../../widgets/matrix/client_scope.dart';
+import '../../widgets/matrix/matrix_scope.dart';
 import '../fatal_error/fatal_error_page.dart';
 import '../room_list/room_list.dart';
 import 'components/ask_wipe_ssss_widget.dart';
@@ -24,7 +25,7 @@ class SsssBootstrapPage extends StatefulWidget {
   State<SsssBootstrapPage> createState() => SsssBootstrapController();
 }
 
-class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
+class SsssBootstrapController extends State<SsssBootstrapPage> {
   Bootstrap? bootstrap;
 
   bool _wipeSsss = false;
@@ -35,11 +36,12 @@ class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
 
   @override
   void initState() {
-    _startBootstrap();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startBootstrap());
     super.initState();
   }
 
   Future<void> _startBootstrap() async {
+    final client = ClientScope.of(context).client;
     // ensure we know all our sessions
     await client.oneShotSync();
     setState(() {
@@ -118,6 +120,7 @@ class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
   Widget build(BuildContext context) => SsssBootstrapPageView(this);
 
   Future<void> interactiveSasVerification() async {
+    final client = ClientScope.of(context).client;
     final user = client.userID!;
 
     keyVerificationRequest =
@@ -171,16 +174,20 @@ class SsssBootstrapController extends MatrixState<SsssBootstrapPage> {
           .selfSign(keyOrPassphrase: key);
     } on InvalidPassphraseException {
       if (mounted) {
+        final scope = MatrixScope.captureAll(context);
         await showAdaptiveDialog(
           context: context,
-          builder: (context) => AlertDialog.adaptive(
-            title: Text(AppLocalizations.of(context).errorTryAgain),
-            actions: [
-              TextButton(
-                onPressed: Navigator.of(context).pop,
-                child: Text(AppLocalizations.of(context).close),
-              ),
-            ],
+          builder: (context) => MatrixScope(
+            scope: scope,
+            child: AlertDialog.adaptive(
+              title: Text(AppLocalizations.of(context).errorTryAgain),
+              actions: [
+                TextButton(
+                  onPressed: Navigator.of(context).pop,
+                  child: Text(AppLocalizations.of(context).close),
+                ),
+              ],
+            ),
           ),
         );
       }

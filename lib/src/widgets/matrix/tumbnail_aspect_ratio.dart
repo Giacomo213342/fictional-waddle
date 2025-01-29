@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 
-import 'package:matrix/matrix.dart';
+import 'event_scope.dart';
 
 class ThumbnailAspectRatio extends StatelessWidget {
   const ThumbnailAspectRatio({
     super.key,
-    required this.event,
     required this.child,
   });
 
-  final Event event;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
+    final event = EventScope.of(context).event;
     final thumbnailInfo = event.thumbnailInfoMap as Map<String, Object?>?;
     final info = event.infoMap as Map<String, Object?>?;
 

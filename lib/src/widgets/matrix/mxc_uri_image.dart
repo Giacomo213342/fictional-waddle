@@ -8,6 +8,7 @@ import 'package:matrix/matrix.dart';
 
 import '../device_pixel_ratio_builder.dart';
 import '../mimed_image.dart';
+import 'client_scope.dart';
 
 typedef MxcUriImageBuilderCallback = Widget Function(
   BuildContext context,
@@ -19,7 +20,6 @@ class MxcUriImageBuilder extends StatefulWidget {
   const MxcUriImageBuilder({
     super.key,
     required this.uri,
-    required this.client,
     this.imageBuilder = defaultImageBuilder,
     this.width,
     this.height,
@@ -30,7 +30,6 @@ class MxcUriImageBuilder extends StatefulWidget {
   static Widget dpiRespective({
     Key? key,
     required Uri? uri,
-    required Client client,
     MxcUriImageBuilderCallback imageBuilder = defaultImageBuilder,
     double? width,
     double? height,
@@ -40,7 +39,6 @@ class MxcUriImageBuilder extends StatefulWidget {
         builder: (context, ratio) => MxcUriImageBuilder(
           key: key,
           uri: uri,
-          client: client,
           imageBuilder: imageBuilder,
           width: width,
           height: height,
@@ -49,7 +47,7 @@ class MxcUriImageBuilder extends StatefulWidget {
         ),
       );
 
-  static final Map<String, Uint8List> _runtimeCache = {};
+  static final Map<Uri, Map<int, Uint8List>> _runtimeCache = {};
 
   static Widget defaultImageBuilder(
     BuildContext context,
@@ -59,7 +57,6 @@ class MxcUriImageBuilder extends StatefulWidget {
       image.data ?? Container();
 
   final Uri? uri;
-  final Client client;
   final MxcUriImageBuilderCallback imageBuilder;
   final double? width;
   final double? height;
@@ -74,21 +71,51 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
   CancelableOperation<Widget>? imageOperation;
   AsyncSnapshot<Widget> image = const AsyncSnapshot.nothing();
 
+  Map<int, Uint8List>? get _cacheField {
+    final uri = widget.uri;
+    if (uri == null) {
+      return null;
+    }
+    return MxcUriImageBuilder._runtimeCache[uri] ??= {};
+  }
+
+  int get _cacheKey =>
+      widget.ratio.toInt() *
+      (widget.width?.toInt() ?? 1) *
+      (widget.height?.toInt() ?? 1);
+
   @override
   void initState() {
-    startImageOperation();
+    final uri = widget.uri;
+    if (uri == null) {
+      return;
+    }
+    final cached = _cacheField?[_cacheKey];
+    if (cached != null) {
+      Logs().v(
+        'Found MxcUri runtime cache for ${widget.uri}. Skipping Uri lookup.',
+      );
+      image = AsyncSnapshot.withData(
+        ConnectionState.done,
+        _buildWidget(cached, uri.path),
+      );
+    } else {
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => startImageOperation());
+    }
 
     super.initState();
   }
 
   Future<Uri>? getDownloadUri() {
+    final client = ClientScope.of(context).client;
     final width = widget.width;
     final height = widget.height;
     if (width == null && height == null) {
-      return widget.uri?.getDownloadUri(widget.client);
+      return widget.uri?.getDownloadUri(client);
     }
     return widget.uri?.getThumbnailUri(
-      widget.client,
+      client,
       width: width == null ? null : width * widget.ratio,
       height: height == null ? null : height * widget.ratio,
     );
@@ -117,22 +144,23 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
     super.dispose();
   }
 
-  Future<Uint8List> _downloadCacheMxc(Uri mxcUri) async {
-    final cached = MxcUriImageBuilder._runtimeCache[mxcUri.toString()];
+  Future<Uint8List> _downloadMaybeCachedMxcUri(Uri mxcUri) async {
+    final client = ClientScope.of(context).client;
+    final cached = _cacheField?[_cacheKey];
     if (cached is Uint8List) {
       return cached;
     }
 
-    final database = widget.client.database;
+    final database = client.database;
     final stored = await database?.getFile(mxcUri);
     if (stored is Uint8List) {
       return stored;
     }
 
-    final httpClient = widget.client.httpClient;
+    final httpClient = client.httpClient;
     final response = await httpClient.get(
       mxcUri,
-      headers: {'authorization': 'Bearer ${widget.client.accessToken}'},
+      headers: {'authorization': 'Bearer ${client.accessToken}'},
     );
     if (response.statusCode != 200) {
       throw response;
@@ -140,7 +168,6 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
 
     final bytes = response.bodyBytes;
     if (bytes.length < (database?.maxFileSize ?? 5 * 1024 * 1024)) {
-      MxcUriImageBuilder._runtimeCache[mxcUri.toString()] = bytes;
       if (database != null) {
         await database.storeFile(
           mxcUri,
@@ -153,19 +180,24 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
   }
 
   Future<Widget> _buildCachedImageWidget(Uri uri) async {
-    final bytes = await _downloadCacheMxc(uri);
-
-    return MimedImage(
-      key: ValueKey(widget.uri),
-      bytes: bytes,
-      name: uri.path,
-      fit: widget.fit,
-      width: widget.width,
-      height: widget.height,
-    );
+    final bytes = await _downloadMaybeCachedMxcUri(uri);
+    _cacheField?[_cacheKey] = bytes;
+    return _buildWidget(bytes, uri.path);
   }
 
+  Widget _buildWidget(Uint8List bytes, String name) => MimedImage(
+        key: ValueKey(widget.uri),
+        bytes: bytes,
+        name: name,
+        fit: widget.fit,
+        width: widget.width,
+        height: widget.height,
+      );
+
   Future<void> startImageOperation() async {
+    if (!mounted) {
+      return;
+    }
     final uri = await getDownloadUri();
     if (uri == null) {
       return;

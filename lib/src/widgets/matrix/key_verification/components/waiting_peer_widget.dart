@@ -39,7 +39,6 @@ class WaitingPeerWidget extends StatelessWidget {
                 if (profile != null && client != null)
                   MxcAvatar(
                     uri: profile.avatarUrl,
-                    client: client,
                     monogram: profile.displayName ?? profile.userId,
                     dimension: 64,
                   ),

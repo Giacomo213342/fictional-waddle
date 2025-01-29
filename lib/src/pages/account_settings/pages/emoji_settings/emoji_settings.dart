@@ -5,7 +5,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../utils/matrix/autoplay_animated_content_extension.dart';
-import '../../../../utils/matrix/matrix_state.dart';
+import '../../../../widgets/matrix/client_scope.dart';
 import 'components/tone_button.dart';
 
 class EmojiSettingsPage extends StatefulWidget {
@@ -17,9 +17,10 @@ class EmojiSettingsPage extends StatefulWidget {
   State<EmojiSettingsPage> createState() => _EmojiSettingsPageState();
 }
 
-class _EmojiSettingsPageState extends MatrixState<EmojiSettingsPage> {
+class _EmojiSettingsPageState extends State<EmojiSettingsPage> {
   @override
   Widget build(BuildContext context) {
+    final client = ClientScope.of(context).client;
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).emojiSettings),
@@ -49,7 +50,6 @@ class _EmojiSettingsPageState extends MatrixState<EmojiSettingsPage> {
                     .map(
                       (tone) => ToneButton(
                         tone: tone,
-                        client: client,
                       ),
                     )
                     .toList(),

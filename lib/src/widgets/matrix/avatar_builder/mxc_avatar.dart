@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:matrix/matrix.dart';
-
 import '../mxc_uri_image.dart';
 import 'components/monogram_text.dart';
 
@@ -9,7 +7,6 @@ class MxcAvatar extends StatelessWidget {
   const MxcAvatar({
     super.key,
     required this.uri,
-    required this.client,
     required this.monogram,
     required this.dimension,
   });
@@ -17,7 +14,6 @@ class MxcAvatar extends StatelessWidget {
   static const kFadeDuration = Duration(milliseconds: 300);
 
   final Uri? uri;
-  final Client client;
   final String monogram;
   final double dimension;
 
@@ -47,7 +43,6 @@ class MxcAvatar extends StatelessWidget {
               child: MxcUriImageBuilder.dpiRespective(
                 key: ValueKey(uri),
                 uri: uri,
-                client: client,
                 width: dimension - 4,
                 height: dimension - 4,
                 imageBuilder: (context, snapshot, retryCallback) {

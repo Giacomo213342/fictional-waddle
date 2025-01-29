@@ -5,8 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../router/extensions/go_router_path_extension.dart';
-import '../../utils/matrix/matrix_state.dart';
 import '../../widgets/matrix/client_manager/client_manager.dart';
+import '../../widgets/matrix/client_scope.dart';
 import '../fatal_error/fatal_error_page.dart';
 import '../homeserver/homeserver.dart';
 import '../room_list/room_list.dart';
@@ -21,7 +21,7 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => SplashController();
 }
 
-class SplashController extends MatrixState<SplashPage> {
+class SplashController extends State<SplashPage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkLoginState());
@@ -30,6 +30,10 @@ class SplashController extends MatrixState<SplashPage> {
 
   Future<void> _checkLoginState() async {
     await ClientManager.waiForInitialization;
+    if (!mounted || ClientManager.activeClients.isEmpty) {
+      return;
+    }
+    final client = ClientScope.of(context).client;
     if (client.isLogged()) {
       _roomList();
     }

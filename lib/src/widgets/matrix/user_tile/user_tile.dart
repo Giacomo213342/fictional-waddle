@@ -4,15 +4,15 @@ import 'package:matrix/matrix.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../../utils/matrix/matrix_state.dart';
 import '../../../utils/matrix_to_extension.dart';
 import '../../ascii_progress_indicator.dart';
 import '../../polycule_overflow_bar.dart';
 import '../../share_origin_builder.dart';
 import '../avatar_builder/fullscreen_dialog_avatar.dart';
 import '../avatar_builder/mxc_avatar.dart';
+import '../client_scope.dart';
 
-class UserTile extends StatefulWidget {
+class UserTile extends StatelessWidget {
   const UserTile({
     super.key,
     required this.profile,
@@ -31,15 +31,10 @@ class UserTile extends StatefulWidget {
   final String? action;
 
   @override
-  State<UserTile> createState() => _UserTileState();
-}
-
-class _UserTileState extends MatrixState<UserTile> {
-  @override
   Widget build(BuildContext context) {
-    final name = widget.profile.displayName ?? widget.profile.userId;
-    final subtitle =
-        widget.profile.displayName != null ? widget.profile.userId : null;
+    final client = ClientScope.of(context).client;
+    final name = profile.displayName ?? profile.userId;
+    final subtitle = profile.displayName != null ? profile.userId : null;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -50,13 +45,11 @@ class _UserTileState extends MatrixState<UserTile> {
           leading: FullScreenAvatar.makeImageButton(
             context: context,
             child: MxcAvatar(
-              uri: widget.profile.avatarUrl,
-              client: client,
+              uri: profile.avatarUrl,
               monogram: name,
               dimension: 48,
             ),
-            uri: widget.profile.avatarUrl,
-            client: client,
+            uri: profile.avatarUrl,
             title: name,
           ),
           isThreeLine: subtitle != null,
@@ -66,43 +59,42 @@ class _UserTileState extends MatrixState<UserTile> {
         PolyculeOverflowBar(
           alignment: MainAxisAlignment.spaceEvenly,
           children: [
-            if (widget.loading)
+            if (loading)
               const AsciiProgressIndicator()
             else ...[
-              client.getDirectChatFromUserId(widget.profile.userId) != null
+              client.getDirectChatFromUserId(profile.userId) != null
                   ? FilledButton.tonal(
-                      onPressed: widget.onDirectChat,
+                      onPressed: onDirectChat,
                       child: Text(
                         AppLocalizations.of(context).openDirectChat,
                       ),
                     )
                   : ElevatedButton(
-                      onPressed: widget.onDirectChat,
+                      onPressed: onDirectChat,
                       child: Text(
                         AppLocalizations.of(context).startDirectChat,
                       ),
                     ),
-              if (client.getDirectChatFromUserId(widget.profile.userId) !=
-                      null &&
-                  widget.onVerification != null)
+              if (client.getDirectChatFromUserId(profile.userId) != null &&
+                  onVerification != null)
                 ElevatedButton(
-                  onPressed: widget.onVerification,
+                  onPressed: onVerification,
                   child: Text(
                     AppLocalizations.of(context).startVerification,
                   ),
                 ),
               ShareOriginBuilder(
                 builder: (context, rect) => ElevatedButton(
-                  onPressed: () => share(rect),
+                  onPressed: () => share(context, rect),
                   child: Text(
                     MaterialLocalizations.of(context).shareButtonLabel,
                   ),
                 ),
               ),
               ElevatedButton(
-                onPressed: widget.onIgnore,
+                onPressed: onIgnore,
                 child: Text(
-                  client.ignoredUsers.contains(widget.profile.userId)
+                  client.ignoredUsers.contains(profile.userId)
                       ? AppLocalizations.of(context).unignoreUser
                       : AppLocalizations.of(context).ignoreUser,
                 ),
@@ -114,24 +106,14 @@ class _UserTileState extends MatrixState<UserTile> {
     );
   }
 
-  @override
-  void didUpdateWidget(covariant UserTile oldWidget) {
-    if (oldWidget.profile != widget.profile ||
-        oldWidget.action != widget.action ||
-        oldWidget.loading != widget.loading) {
-      setState(() {});
-    }
-    super.didUpdateWidget(oldWidget);
-  }
-
-  Future<void> share(Rect? sharePositionOrigin) async {
+  Future<void> share(BuildContext context, [Rect? sharePositionOrigin]) async {
     final link = MatrixIdentifierStringExtensionResults(
-      primaryIdentifier: widget.profile.userId,
-      action: widget.action,
+      primaryIdentifier: profile.userId,
+      action: action,
     ).toMatrixToUrl();
     final uri = Uri.tryParse(link);
 
-    final name = widget.profile.displayName ?? widget.profile.userId;
+    final name = profile.displayName ?? profile.userId;
     final subject = AppLocalizations.of(context).matrixRoomShareSubject(name);
 
     if (uri == null) {

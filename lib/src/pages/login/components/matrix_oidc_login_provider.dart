@@ -5,6 +5,7 @@ import 'package:matrix/matrix.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/ascii_progress_indicator.dart';
 import '../../../widgets/matrix/client_manager/client_manager.dart';
+import '../../../widgets/matrix/client_scope.dart';
 import '../login.dart';
 
 class MatrixOidcLoginProvider extends StatefulWidget {
@@ -59,7 +60,7 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
       _loading = true;
     });
     try {
-      final client = widget.controller.client;
+      final client = ClientScope.of(context).client;
       final appName = AppLocalizations.of(context).appName;
       final manager = await ClientManager.buildOidcManager(
         client,
@@ -103,7 +104,7 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
         newTokenExpiresAt: expiresAt,
         newRefreshToken: token.refreshToken,
         newUserID: tokenInfo.userId,
-        newHomeserver: widget.controller.client.homeserver,
+        newHomeserver: client.homeserver,
         newDeviceName: appName,
         newDeviceID: tokenInfo.deviceId,
       );

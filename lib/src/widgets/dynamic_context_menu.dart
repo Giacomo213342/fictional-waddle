@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+
+import 'matrix/matrix_scope.dart';
 
 typedef DynamicContextMenuItemBuilder = List<ContextMenuItem> Function();
 
-class DynamicContextMenu extends StatefulWidget {
+class DynamicContextMenu extends StatelessWidget {
   const DynamicContextMenu({
     super.key,
     required this.itemBuilder,
@@ -21,62 +22,34 @@ class DynamicContextMenu extends StatefulWidget {
 
   final Widget child;
   final DynamicContextMenuItemBuilder itemBuilder;
-  final LayoutWidgetBuilder? previewBuilder;
+  final WidgetBuilder? previewBuilder;
   final FocusNode? focusNode;
   final VoidCallback? onTap;
   final VoidCallback? onSecondaryTap;
 
   @override
-  State<DynamicContextMenu> createState() => _DynamicContextMenuState();
-}
-
-class _DynamicContextMenuState extends State<DynamicContextMenu> {
-  final controller = ContextMenuController();
-
-  @override
-  void didUpdateWidget(covariant DynamicContextMenu oldWidget) {
-    if (oldWidget.child != widget.child) {
-      setState(() {});
-    }
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
     if (kIsWeb) {
       BrowserContextMenu.disableContextMenu();
     }
-  }
 
-  @override
-  void dispose() {
-    if (kIsWeb) {
-      BrowserContextMenu.enableContextMenu();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+    final scope = MatrixScope.captureAll(context);
     if (!kIsWeb && Platform.isIOS) {
       return LayoutBuilder(
         builder: (context, constraints) => CupertinoContextMenu.builder(
-          actions: widget.itemBuilder
+          actions: itemBuilder
               .call()
               .map(
                 (item) => Builder(
-                  builder: (context) {
-                    return CupertinoContextMenuAction(
-                      trailingIcon: item.icon,
-                      isDestructiveAction: item.isDestructiveAction,
-                      onPressed: () {
-                        item.onPressed();
-                        Navigator.pop(context);
-                      },
-                      child: Text(item.label),
-                    );
-                  },
+                  builder: (context) => CupertinoContextMenuAction(
+                    trailingIcon: item.icon,
+                    isDestructiveAction: item.isDestructiveAction,
+                    onPressed: () {
+                      item.onPressed();
+                      Navigator.pop(context);
+                    },
+                    child: Text(item.label),
+                  ),
                 ),
               )
               .toList(),
@@ -85,15 +58,13 @@ class _DynamicContextMenuState extends State<DynamicContextMenu> {
             animation: animation,
             builder: (_, child) => Padding(
               padding: EdgeInsets.all(animation.value * 16),
-              child: OverflowBox(
-                fit: OverflowBoxFit.deferToChild,
+              child: MatrixScope(
+                scope: scope,
                 child: animation.value > CupertinoContextMenu.animationOpensAt
                     ? Material(
                         color: Theme.of(context).colorScheme.surface,
                         clipBehavior: Clip.hardEdge,
-                        child:
-                            widget.previewBuilder?.call(context, constraints) ??
-                                widget.child,
+                        child: previewBuilder?.call(context) ?? child,
                       )
                     : Material(
                         color: Colors.transparent,
@@ -105,10 +76,10 @@ class _DynamicContextMenuState extends State<DynamicContextMenu> {
             child: InheritedTheme.captureAll(
               context,
               InkWell(
-                focusNode: widget.focusNode,
+                focusNode: focusNode,
                 canRequestFocus: true,
                 onTap: _onTap,
-                child: widget.child,
+                child: child,
               ),
               // to: innerContext,
             ),
@@ -117,30 +88,30 @@ class _DynamicContextMenuState extends State<DynamicContextMenu> {
       );
     }
     return InkWell(
-      focusNode: widget.focusNode,
+      focusNode: focusNode,
       canRequestFocus: true,
-      onSecondaryTapUp: _secondaryTap,
-      onSecondaryTap: widget.onSecondaryTap ?? () {},
-      onLongPress: _longPress,
+      onSecondaryTapUp: (details) => _secondaryTap(context, details),
+      onSecondaryTap: onSecondaryTap ?? () {},
+      onLongPress: () => _longPress(context, scope),
       onTap: _onTap,
-      child: widget.child,
+      child: child,
     );
   }
 
   void _onTap() {
     ContextMenuController.removeAny();
-    widget.onTap?.call();
+    onTap?.call();
   }
 
-  void _secondaryTap(TapUpDetails details) {
-    controller.show(
+  void _secondaryTap(BuildContext context, TapUpDetails details) {
+    ContextMenuController().show(
       context: context,
       contextMenuBuilder: (context) {
         return AdaptiveTextSelectionToolbar.buttonItems(
           anchors: TextSelectionToolbarAnchors(
             primaryAnchor: details.globalPosition,
           ),
-          buttonItems: widget.itemBuilder
+          buttonItems: itemBuilder
               .call()
               .map(
                 (item) => ContextMenuButtonItem(
@@ -158,39 +129,38 @@ class _DynamicContextMenuState extends State<DynamicContextMenu> {
     );
   }
 
-  Future<void> _longPress() async {
+  Future<void> _longPress(BuildContext context, scope) async {
     ContextMenuController.removeAny();
-    final items = widget.itemBuilder.call();
+    final items = itemBuilder.call();
     await showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       clipBehavior: Clip.hardEdge,
-      builder: (context) => ListView.builder(
-        shrinkWrap: true,
-        itemCount: items.length + 1,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: LayoutBuilder(
-                builder: widget.previewBuilder ??
-                    (context, constraints) {
-                      return widget.child;
-                    },
-              ),
+      builder: (context) => MatrixScope(
+        scope: scope,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: items.length + 1,
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: previewBuilder?.call(context) ?? child,
+              );
+            }
+            index--;
+            final button = items[index];
+            final icon = button.icon;
+            return ListTile(
+              leading: icon != null ? Icon(icon) : null,
+              title: Text(button.label),
+              onTap: () {
+                Navigator.of(context).pop();
+                button.onPressed.call();
+              },
             );
-          }
-          index--;
-          final button = items[index];
-          final icon = button.icon;
-          return ListTile(
-            leading: icon != null ? Icon(icon) : null,
-            title: Text(button.label),
-            onTap: () {
-              Navigator.of(context).pop();
-              button.onPressed.call();
-            },
-          );
-        },
+          },
+        ),
       ),
     );
   }

@@ -8,8 +8,8 @@ import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
-import '../../utils/matrix/matrix_state.dart';
 import '../../utils/password_cache_manager.dart';
+import '../../widgets/matrix/client_scope.dart';
 import '../homeserver/homeserver.dart';
 import 'login_view.dart';
 
@@ -36,7 +36,7 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => LoginController();
 }
 
-class LoginController extends MatrixState<LoginPage> {
+class LoginController extends State<LoginPage> {
   bool loginLoading = false;
 
   Uri get homeserver => widget.homeserver;
@@ -46,13 +46,12 @@ class LoginController extends MatrixState<LoginPage> {
 
   @override
   void initState() {
-    homeserverCheck = Future<
-        (
-          DiscoveryInformation?,
-          GetVersionsResponse,
-          List<LoginFlow>
-        )?>.value(client.checkHomeserver(homeserver))
-      ..onError(_popHomeserverError);
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => homeserverCheck = Future<
+          (DiscoveryInformation?, GetVersionsResponse, List<LoginFlow>)?>.value(
+        ClientScope.of(context).client.checkHomeserver(homeserver),
+      )..onError(_popHomeserverError),
+    );
     super.initState();
   }
 
@@ -89,12 +88,12 @@ class LoginController extends MatrixState<LoginPage> {
       loginLoading = true;
     });
     try {
-      await client.login(
-        LoginType.mLoginPassword,
-        identifier: identifier,
-        initialDeviceDisplayName: _generateDeviceDisplayName(),
-        password: password,
-      );
+      await ClientScope.of(context).client.login(
+            LoginType.mLoginPassword,
+            identifier: identifier,
+            initialDeviceDisplayName: _generateDeviceDisplayName(),
+            password: password,
+          );
     } on MatrixException catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

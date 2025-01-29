@@ -5,6 +5,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../theme/fonts.dart';
+import 'matrix_scope.dart';
 
 class CommandErrorDialog extends StatelessWidget {
   const CommandErrorDialog({super.key, required this.error});
@@ -29,9 +30,13 @@ class CommandErrorDialog extends StatelessWidget {
   }
 
   Future<String?> show(BuildContext context) async {
+    final scope = MatrixScope.captureAll(context);
     return showAdaptiveDialog<String>(
       context: context,
-      builder: (context) => this,
+      builder: (context) => MatrixScope(
+        scope: scope,
+        child: this,
+      ),
     );
   }
 }

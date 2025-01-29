@@ -2,25 +2,35 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
+import '../../../../../utils/matrix/neighboaring_event_extension.dart';
+import '../../../../../utils/matrix/same_message_bubble_extension.dart';
+import '../../../../../widgets/matrix/event_scope.dart';
+import '../../../../../widgets/matrix/timeline_scope.dart';
 import '../../message_user_avatar.dart';
 import 'edit_tooltip.dart';
 
 class MessageSuffix extends StatelessWidget {
-  const MessageSuffix({
-    super.key,
-    required this.event,
-    this.editEvent,
-    required this.isOwnMessage,
-    required this.nextMessageSameSender,
-  });
+  const MessageSuffix({super.key});
 
-  final Event event;
-  final Event? editEvent;
-  final bool isOwnMessage;
-  final bool nextMessageSameSender;
   @override
   Widget build(BuildContext context) {
-    final editEvent = this.editEvent;
+    final timeline = TimelineScope.of(context).timeline;
+    final event = EventScope.of(context).event.getDisplayEvent(timeline);
+    timeline.getPreviousDisplayEvent(timeline.events.indexOf(event));
+    final nextEvent =
+        timeline.getNextDisplayEvent(timeline.events.indexOf(event));
+
+    final isOwnMessage = event.senderId == event.room.client.userID;
+
+    final edits =
+        event.aggregatedEvents(timeline, RelationshipTypes.edit).toList();
+    edits.sort(
+      (a, b) => a.originServerTs.compareTo(b.originServerTs),
+    );
+    final editEvent = edits.lastOrNull;
+
+    final nextMessageSameSender =
+        nextEvent?.isSameMessageBubble(event) ?? false;
     final showOwnAvatar = isOwnMessage && !nextMessageSameSender;
 
     Widget? editNotice;
