@@ -23,11 +23,10 @@ class AccountSettingsView extends StatelessWidget {
       body: ListView(
         children: [
           OwnProfilePreview(
-            client: controller.client,
             onEdit: controller.editAvatar,
             onRemove: controller.deleteAvatar,
           ),
-          MxidQRCodeTile(controller),
+          const MxidQRCodeTile(),
           EmojiSettingsTile(controller),
           OidcAccountSettingsTile(controller),
           ManageSessionsTile(controller),

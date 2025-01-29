@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../widgets/matrix/matrix_scope.dart';
 
 class AskWipeSsssWidget extends StatelessWidget {
   const AskWipeSsssWidget({super.key});
 
-  static Future<bool?> show(BuildContext context) => showAdaptiveDialog<bool>(
-        context: context,
-        builder: (context) => const AskWipeSsssWidget(),
-      );
+  static Future<bool?> show(BuildContext context) {
+    final scope = MatrixScope.captureAll(context);
+    return showAdaptiveDialog<bool>(
+      context: context,
+      builder: (context) => MatrixScope(
+        scope: scope,
+        child: const AskWipeSsssWidget(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

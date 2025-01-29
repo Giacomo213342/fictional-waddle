@@ -14,7 +14,10 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../utils/file_selector.dart';
 import '../../ascii_progress_indicator.dart';
+import '../../chess_grid_paint.dart';
 import '../../share_origin_builder.dart';
+import '../client_scope.dart';
+import '../matrix_scope.dart';
 import '../mxc_uri_image.dart';
 import '../retry_download_button.dart';
 import 'mxc_avatar.dart';
@@ -23,7 +26,6 @@ class FullScreenAvatar extends StatelessWidget {
   const FullScreenAvatar({
     super.key,
     required this.uri,
-    required this.client,
     required this.title,
   });
 
@@ -31,30 +33,33 @@ class FullScreenAvatar extends StatelessWidget {
     required BuildContext context,
     required Widget child,
     Uri? uri,
-    required Client client,
     required String title,
   }) {
     if (uri == null) {
       return child;
     }
     return InkWell(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => FullScreenAvatar(
-            client: client,
-            uri: uri,
-            title: title,
+      onTap: () {
+        final scope = MatrixScope.captureAll(context);
+        Navigator.of(context, rootNavigator: true).push(
+          MaterialPageRoute(
+            builder: (context) => MatrixScope(
+              scope: scope,
+              child: FullScreenAvatar(
+                uri: uri,
+                title: title,
+              ),
+            ),
+            fullscreenDialog: true,
+            barrierDismissible: true,
           ),
-          fullscreenDialog: true,
-          barrierDismissible: true,
-        ),
-      ),
+        );
+      },
       child: child,
     );
   }
 
   final Uri uri;
-  final Client client;
   final String title;
 
   @override
@@ -68,7 +73,7 @@ class FullScreenAvatar extends StatelessWidget {
             builder: (context, rect) {
               return IconButton(
                 tooltip: AppLocalizations.of(context).share,
-                onPressed: () => _share(rect),
+                onPressed: () => _share(context, rect),
                 icon: const Icon(Icons.save_alt),
               );
             },
@@ -86,7 +91,6 @@ class FullScreenAvatar extends StatelessWidget {
         constrained: true,
         child: MxcUriImageBuilder(
           uri: uri,
-          client: client,
           fit: BoxFit.scaleDown,
           imageBuilder: (context, snapshot, retryCallback) {
             final image = snapshot.data;
@@ -94,11 +98,17 @@ class FullScreenAvatar extends StatelessWidget {
               alignment: Alignment.center,
               fit: StackFit.loose,
               children: [
+                /*AnimatedOpacity(
+                  opacity: image == null ? 0 : 1,
+                  duration: MxcAvatar.kFadeDuration,
+                  curve: Curves.easeInOut,
+                  child: const ChessGridWidget(),
+                ),*/
                 AnimatedOpacity(
                   opacity: image == null ? 0 : 1,
                   duration: MxcAvatar.kFadeDuration,
                   curve: Curves.easeInOut,
-                  child: image,
+                  child: ChessGridWidget(child: image),
                 ),
                 AnimatedOpacity(
                   opacity: image == null ? 1 : 0,
@@ -120,7 +130,8 @@ class FullScreenAvatar extends StatelessWidget {
     );
   }
 
-  Future<void> _share([Rect? rect]) async {
+  Future<void> _share(BuildContext context, [Rect? rect]) async {
+    final client = ClientScope.of(context).client;
     final uri = await this.uri.getDownloadUri(client);
 
     final bytes = await client.httpClient.readBytes(

@@ -5,22 +5,22 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/matrix/avatar_builder/profile_avatar_builder.dart';
+import '../../../widgets/matrix/client_scope.dart';
 import '../../../widgets/matrix/profile_builder.dart';
 
 class OwnProfilePreview extends StatelessWidget {
   const OwnProfilePreview({
     super.key,
-    required this.client,
     this.onEdit,
     this.onRemove,
   });
 
-  final Client client;
   final VoidCallback? onEdit;
   final VoidCallback? onRemove;
 
   @override
   Widget build(BuildContext context) {
+    final client = ClientScope.of(context).client;
     final userId = client.userID!;
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -32,7 +32,6 @@ class OwnProfilePreview extends StatelessWidget {
             children: [
               ProfileAvatarBuilder(
                 userId: userId,
-                client: client,
                 dimension: 96,
                 canOpenFullscreen: true,
               ),
@@ -60,7 +59,6 @@ class OwnProfilePreview extends StatelessWidget {
             flex: 1,
             child: ProfileBuilder(
               userId: userId,
-              client: client,
               builder: (context, snapshot) {
                 final displayName =
                     snapshot.data?.displayName ?? userId.localpart ?? userId;

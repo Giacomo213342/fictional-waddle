@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../utils/file_selector.dart';
-import '../../utils/matrix/matrix_state.dart';
 import '../../utils/matrix/oidc_delegation_extension.dart';
+import '../../widgets/matrix/client_scope.dart';
 import 'account_settings_view.dart';
 
 class AccountSettings extends StatefulWidget {
@@ -20,27 +20,28 @@ class AccountSettings extends StatefulWidget {
   State<AccountSettings> createState() => AccountSettingsController();
 }
 
-class AccountSettingsController extends MatrixState<AccountSettings> {
+class AccountSettingsController extends State<AccountSettings> {
   @override
   Widget build(BuildContext context) => AccountSettingsView(controller: this);
 
   Future<void> oidcAccountSettings() async {
-    await client.oidcAccountManagement();
+    await ClientScope.of(context).client.oidcAccountManagement();
   }
 
   Future<void> manageSessions() async {
-    await client.oidcAccountManagement(
-      action: OidcAccountManagementActions.sessionView,
-    );
+    await ClientScope.of(context).client.oidcAccountManagement(
+          action: OidcAccountManagementActions.sessionView,
+        );
   }
 
   Future<void> deactivateAccount() async {
-    await client.oidcAccountManagement(
-      action: OidcAccountManagementActions.accountDeactivate,
-    );
+    await ClientScope.of(context).client.oidcAccountManagement(
+          action: OidcAccountManagementActions.accountDeactivate,
+        );
   }
 
   Future<void> editAvatar() async {
+    final client = ClientScope.of(context).client;
     final selector = FileSelector(MessageTypes.Image);
     final openedFiles = await selector.selectFiles(
       context,
@@ -65,6 +66,6 @@ class AccountSettingsController extends MatrixState<AccountSettings> {
   }
 
   Future<void> deleteAvatar() async {
-    await client.setAvatar(null);
+    await ClientScope.of(context).client.setAvatar(null);
   }
 }

@@ -1855,6 +1855,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error sending custom sticker.'**
   String get errorSendingSticker;
+
+  /// No description provided for @viewSourceCode.
+  ///
+  /// In en, this message translates to:
+  /// **'View source code'**
+  String get viewSourceCode;
+
+  /// No description provided for @eventSourceCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Event source code'**
+  String get eventSourceCode;
+
+  /// No description provided for @eventSourceContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event content'**
+  String get eventSourceContent;
+
+  /// No description provided for @eventSourceJson.
+  ///
+  /// In en, this message translates to:
+  /// **'Full JSON'**
+  String get eventSourceJson;
+
+  /// No description provided for @eventSourceOriginal.
+  ///
+  /// In en, this message translates to:
+  /// **'Original event'**
+  String get eventSourceOriginal;
+
+  /// No description provided for @eventSourceBodyRaw.
+  ///
+  /// In en, this message translates to:
+  /// **'Event body (raw)'**
+  String get eventSourceBodyRaw;
+
+  /// No description provided for @eventSourceBodyHtml.
+  ///
+  /// In en, this message translates to:
+  /// **'Event body (HTML)'**
+  String get eventSourceBodyHtml;
+
+  /// No description provided for @eventSourceUnsigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsigned content'**
+  String get eventSourceUnsigned;
+
+  /// No description provided for @eventRendered.
+  ///
+  /// In en, this message translates to:
+  /// **'Rendered event'**
+  String get eventRendered;
+
+  /// No description provided for @eventQuoted.
+  ///
+  /// In en, this message translates to:
+  /// **'Quoted event'**
+  String get eventQuoted;
+
+  /// No description provided for @eventPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Event preview'**
+  String get eventPreview;
+
+  /// No description provided for @blurHash.
+  ///
+  /// In en, this message translates to:
+  /// **'Blur hash'**
+  String get blurHash;
 }
 
 class _AppLocalizationsDelegate

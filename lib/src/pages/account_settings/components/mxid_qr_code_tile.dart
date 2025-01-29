@@ -9,17 +9,15 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../utils/matrix_to_extension.dart';
+import '../../../widgets/matrix/client_scope.dart';
 import '../../../widgets/share_origin_builder.dart';
-import '../account_settings.dart';
 
 class MxidQRCodeTile extends StatelessWidget {
-  const MxidQRCodeTile(this.controller, {super.key});
-
-  final AccountSettingsController controller;
+  const MxidQRCodeTile({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final userId = controller.client.userID!;
+    final userId = ClientScope.of(context).client.userID!;
     final link = MatrixIdentifierStringExtensionResults(
       primaryIdentifier: userId,
     ).toMatrixToUrl();

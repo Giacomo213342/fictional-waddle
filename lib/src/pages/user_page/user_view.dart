@@ -17,7 +17,6 @@ class UserView extends StatelessWidget {
       body: Center(
         child: ProfileBuilder(
           userId: controller.widget.mxid,
-          client: controller.client,
           builder: (context, snapshot) {
             final profile = snapshot.data;
             if (profile == null) {

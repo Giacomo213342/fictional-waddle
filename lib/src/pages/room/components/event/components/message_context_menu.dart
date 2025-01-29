@@ -4,11 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
+import '../../../../../../l10n/matrix/polycule_matrix_localizations.dart';
 import '../../../../../widgets/dynamic_context_menu.dart';
+import '../../../../../widgets/matrix/event_source_code_dialog.dart';
+import '../../../../../widgets/matrix/matrix_scope.dart';
 import '../../../room.dart';
-import '../m_reply_container.dart';
+import '../quoted_event.dart';
 
-class MessageContextMenu extends StatefulWidget {
+class MessageContextMenu extends StatelessWidget {
   const MessageContextMenu({
     super.key,
     required this.child,
@@ -19,74 +22,74 @@ class MessageContextMenu extends StatefulWidget {
   final Event event;
 
   @override
-  State<MessageContextMenu> createState() => _MessageContextMenuState();
-}
-
-class _MessageContextMenuState extends State<MessageContextMenu> {
-  @override
   Widget build(BuildContext context) {
     return DynamicContextMenu(
-      itemBuilder: _getContextMenuButtons,
-      previewBuilder: (context, constraints) => ReplyContainer(
-        replyEvent: widget.event,
-        constraints: constraints,
-      ),
+      itemBuilder: () => _getContextMenuButtons(context),
+      previewBuilder: (context) => const QuotedEvent(),
       child: Dismissible(
-        key: Key(widget.event.eventId),
+        key: Key(event.eventId),
         confirmDismiss: (_) async {
-          _replyMessage();
+          _replyMessage(context);
           return false;
         },
         direction: DismissDirection.startToEnd,
-        child: widget.child,
+        child: child,
       ),
     );
   }
 
-  Future<void> _redactMessage() async {
+  Future<void> _redactMessage(BuildContext context) async {
+    final scope = MatrixScope.captureAll(context);
     final response = await showAdaptiveDialog(
       context: context,
-      builder: (context) => AlertDialog.adaptive(
-        title: Text(
-          AppLocalizations.of(context).confirmRedact,
-        ),
-        content: Text(
-          AppLocalizations.of(context).redactEventLong(
-            widget.event.eventId,
+      useRootNavigator: true,
+      builder: (context) => MatrixScope(
+        scope: scope,
+        child: AlertDialog.adaptive(
+          title: Text(
+            AppLocalizations.of(context).confirmRedact,
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(
-              AppLocalizations.of(context).cancel,
+          content: Text(
+            AppLocalizations.of(context).redactEventLong(
+              event.eventId,
             ),
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(
-              AppLocalizations.of(context).redact,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(
+                AppLocalizations.of(context).cancel,
+              ),
             ),
-          ),
-        ],
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(
+                AppLocalizations.of(context).redact,
+              ),
+            ),
+          ],
+        ),
       ),
     );
     if (response != true) {
       return;
     }
-    await widget.event.redactEvent();
+    await event.redactEvent();
   }
 
-  void _editMessage() {
-    RoomController.of(context).setEditEvent(widget.event);
+  Future<void> _viewSourceCode(BuildContext context) =>
+      const EventSourceCodeDialog().showDialog(context: context);
+
+  void _editMessage(BuildContext context) {
+    RoomController.of(context).setEditEvent(event);
   }
 
-  void _replyMessage() {
-    RoomController.of(context).setReplyEvent(widget.event);
+  void _replyMessage(BuildContext context) {
+    RoomController.of(context).setReplyEvent(event);
   }
 
-  void _reactMessage() {
-    RoomController.of(context).setReplyEvent(widget.event);
+  void _reactMessage(BuildContext context) {
+    RoomController.of(context).setReplyEvent(event);
     const reactionPrefix = '/react :';
     RoomController.of(context).messageController.value = const TextEditingValue(
       text: reactionPrefix,
@@ -94,48 +97,54 @@ class _MessageContextMenuState extends State<MessageContextMenu> {
     );
   }
 
-  Future<void> _copyMessage() async {
-    final body = await widget.event.calcLocalizedBody(
-      const MatrixDefaultLocalizations(),
+  Future<void> _copyMessage(BuildContext context) async {
+    final body = await event.calcLocalizedBody(
+      AppLocalizations.of(context).matrix,
       hideReply: true,
     );
     await Clipboard.setData(ClipboardData(text: body));
   }
 
-  List<ContextMenuItem> _getContextMenuButtons() {
-    final room = widget.event.room;
+  List<ContextMenuItem> _getContextMenuButtons(BuildContext context) {
+    final room = event.room;
 
     return [
       ContextMenuItem(
-        onPressed: _copyMessage,
+        onPressed: () => _copyMessage(context),
         label: AppLocalizations.of(context).copyMessage,
         type: ContextMenuButtonType.copy,
         icon: Icons.copy,
       ),
       if (room.canSendDefaultMessages)
         ContextMenuItem(
-          onPressed: _replyMessage,
+          onPressed: () => _replyMessage(context),
           label: AppLocalizations.of(context).reply,
           type: ContextMenuButtonType.custom,
           icon: Icons.reply,
         ),
       if (room.canSendEvent(EventTypes.Reaction))
         ContextMenuItem(
-          onPressed: _reactMessage,
+          onPressed: () => _reactMessage(context),
           label: AppLocalizations.of(context).react,
           type: ContextMenuButtonType.custom,
           icon: Icons.emoji_emotions,
         ),
-      if (widget.event.senderId == room.client.userID)
+      if (event.senderId == room.client.userID)
         ContextMenuItem(
-          onPressed: _editMessage,
+          onPressed: () => _editMessage(context),
           label: AppLocalizations.of(context).edit,
           type: ContextMenuButtonType.custom,
           icon: Icons.edit,
         ),
-      if (widget.event.canRedact)
+      ContextMenuItem(
+        onPressed: () => _viewSourceCode(context),
+        label: AppLocalizations.of(context).viewSourceCode,
+        type: ContextMenuButtonType.custom,
+        icon: Icons.developer_mode,
+      ),
+      if (event.canRedact)
         ContextMenuItem(
-          onPressed: _redactMessage,
+          onPressed: () => _redactMessage(context),
           label: AppLocalizations.of(context).redact,
           type: ContextMenuButtonType.delete,
           isDestructiveAction: true,

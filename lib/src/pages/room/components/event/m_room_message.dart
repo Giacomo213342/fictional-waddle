@@ -1,38 +1,36 @@
 import 'package:flutter/material.dart';
 
+import 'package:collection/collection.dart';
 import 'package:matrix/matrix.dart';
 
+import '../../../../utils/matrix/neighboaring_event_extension.dart';
 import '../../../../utils/matrix/same_message_bubble_extension.dart';
+import '../../../../widgets/matrix/event_scope.dart';
+import '../../../../widgets/matrix/timeline_scope.dart';
 import 'components/message_context_menu.dart';
 import 'components/message_prefix.dart';
 import 'components/message_suffix.dart';
 import 'components/reaction_row.dart';
-import 'm_reply_container.dart';
 import 'm_room_message_content.dart';
 import 'message_bubble_timestamp.dart';
+import 'quoted_event.dart';
 
 class RoomMessage extends StatelessWidget {
   const RoomMessage({
     super.key,
-    required this.event,
-    this.previousEvent,
-    this.nextEvent,
-    required this.timeline,
   });
-
-  final Timeline timeline;
-  final Event event;
-  final Event? previousEvent;
-  final Event? nextEvent;
-
-  Client get client => event.room.client;
 
   @override
   Widget build(BuildContext context) {
-    final nextEvent = this.nextEvent?.getDisplayEvent(timeline);
-    final previousEvent = this.previousEvent?.getDisplayEvent(timeline);
+    final scope = EventScope.of(context);
 
-    final isOwnMessage = event.senderId == client.userID;
+    final timeline = TimelineScope.of(context).timeline;
+
+    final event = scope.event;
+    final previousEvent =
+        timeline.getPreviousDisplayEvent(timeline.events.indexOf(event));
+    final nextEvent =
+        timeline.getNextDisplayEvent(timeline.events.indexOf(event));
 
     final previousMessageSameSender =
         previousEvent?.isSameMessageBubble(event) ?? false;
@@ -42,13 +40,6 @@ class RoomMessage extends StatelessWidget {
     final border = BorderSide(
       color: Theme.of(context).colorScheme.primary,
     );
-
-    final edits =
-        event.aggregatedEvents(timeline, RelationshipTypes.edit).toList();
-    edits.sort(
-      (a, b) => a.originServerTs.compareTo(b.originServerTs),
-    );
-    final editEvent = edits.lastOrNull;
 
     Event? replyEventFallback;
     if (event.relationshipType == RelationshipTypes.reply) {
@@ -65,6 +56,11 @@ class RoomMessage extends StatelessWidget {
         bottom: !nextMessageSameSender ? 16 : 0,
       ),
       child: LayoutBuilder(
+        key: ValueKey(
+          event.hashCode *
+              (previousEvent?.hashCode ?? 1) *
+              (nextEvent?.hashCode ?? 1),
+        ),
         builder: (context, constraints) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -79,12 +75,7 @@ class RoomMessage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  MessagePrefix(
-                    event: event,
-                    editEvent: editEvent,
-                    isOwnMessage: isOwnMessage,
-                    nextMessageSameSender: nextMessageSameSender,
-                  ),
+                  const MessagePrefix(),
                   ConstrainedBox(
                     constraints: const BoxConstraints(minHeight: 32),
                     child: Padding(
@@ -120,23 +111,24 @@ class RoomMessage extends StatelessWidget {
                                       duration:
                                           const Duration(milliseconds: 150),
                                       alignment: Alignment.centerLeft,
-                                      child: replyEvent == null
-                                          ? SizedBox(
-                                              width: constraints.maxWidth - 74,
-                                            )
-                                          : ReplyContainer(
-                                              replyEvent: replyEvent
-                                                  .getDisplayEvent(timeline),
-                                              constraints: constraints,
-                                            ),
+                                      child: SizedBox(
+                                        width: constraints.maxWidth - 74,
+                                        child: replyEvent == null
+                                            ? null
+                                            : EventScope(
+                                                event:
+                                                    replyEvent.getDisplayEvent(
+                                                  timeline,
+                                                ),
+                                                child: const QuotedEvent(),
+                                              ),
+                                      ),
                                     );
                                   },
                                 ),
                                 SizedBox(
                                   width: constraints.maxWidth - 74,
-                                  child: RoomMessageContent(
-                                    event: event.getDisplayEvent(timeline),
-                                  ),
+                                  child: const RoomMessageContent(),
                                 ),
                                 ReactionRow(
                                   event: event,
@@ -149,12 +141,7 @@ class RoomMessage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  MessageSuffix(
-                    event: event,
-                    editEvent: editEvent,
-                    isOwnMessage: isOwnMessage,
-                    nextMessageSameSender: nextMessageSameSender,
-                  ),
+                  const MessageSuffix(),
                 ],
               ),
             ],

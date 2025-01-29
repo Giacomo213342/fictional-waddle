@@ -6,13 +6,8 @@ import 'package:matrix/matrix.dart';
 import '../../pages/fatal_error/fatal_error_page.dart';
 import '../../pages/room/room.dart';
 import '../../widgets/matrix/client_manager/client_manager.dart';
+import '../../widgets/matrix/room_scope.dart';
 import '../../widgets/responsive_sidebar_layout.dart';
-
-typedef RoomAvailableBuilder = Widget Function(
-  BuildContext context,
-  GoRouterState state,
-  Room room,
-);
 
 typedef RoomUnavailableBuilder = Widget Function(
   BuildContext context,
@@ -25,7 +20,7 @@ typedef RoomUnavailableBuilder = Widget Function(
 
 class RoomAvailableShellRoute extends ShellRoute {
   RoomAvailableShellRoute({
-    required RoomAvailableBuilder builder,
+    required GoRouterWidgetBuilder builder,
     super.observers,
     required super.routes,
     super.parentNavigatorKey,
@@ -44,7 +39,7 @@ class RoomAvailableShellRoute extends ShellRoute {
         );
 
   static GoRouterWidgetBuilder _roomInjectedBuilder(
-    RoomAvailableBuilder builder,
+    GoRouterWidgetBuilder builder,
     RoomUnavailableBuilder? roomUnavailableBuilder,
   ) =>
       (
@@ -91,6 +86,9 @@ class RoomAvailableShellRoute extends ShellRoute {
               const FatalErrorPage();
         }
 
-        return builder.call(context, state, room);
+        return RoomScope(
+          room: room,
+          child: builder.call(context, state),
+        );
       };
 }

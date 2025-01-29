@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/matrix/autoplay_animated_content_extension.dart';
-import '../../utils/matrix/matrix_state.dart';
+import 'client_scope.dart';
 
 typedef AnimatedChildBuilder = Widget Function(
   BuildContext context,
@@ -26,14 +26,14 @@ class AnimationEnabledBuilder extends StatefulWidget {
       AnimationEnabledBuilderState();
 }
 
-class AnimationEnabledBuilderState
-    extends MatrixState<AnimationEnabledBuilder> {
+class AnimationEnabledBuilderState extends State<AnimationEnabledBuilder> {
   /// whether to animate though autoplay disabled
   bool animating = false;
 
   @override
   Widget build(BuildContext context) {
-    final autoplay = client.autoplayAnimatedContent ?? true;
+    final autoplay =
+        ClientScope.of(context).client.autoplayAnimatedContent ?? true;
 
     final box = widget.builder.call(context, autoplay || animating);
 

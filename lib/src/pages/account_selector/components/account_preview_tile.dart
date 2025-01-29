@@ -37,7 +37,6 @@ class AccountPreviewTile extends StatelessWidget {
         return ListTile(
           leading: ProfileAvatarBuilder(
             userId: userId,
-            client: client,
             dimension: 32,
           ),
           title: Text(userId),

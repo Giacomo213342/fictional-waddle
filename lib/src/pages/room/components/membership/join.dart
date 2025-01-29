@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
 import '../../../../utils/matrix/neighboaring_event_extension.dart';
 import '../../../../widgets/ascii_progress_indicator.dart';
-import '../../room.dart';
+import '../../../../widgets/matrix/event_scope.dart';
+import '../../../../widgets/matrix/room_scope.dart';
+import '../../../../widgets/matrix/timeline_scope.dart';
 import '../compose/message_input.dart';
 import '../load_history_indicator.dart';
 import '../timeline_event_tile.dart';
@@ -12,12 +16,7 @@ import '../timeline_event_tile.dart';
 class MembershipJoinView extends StatefulWidget {
   const MembershipJoinView({
     super.key,
-    required this.controller,
-    required this.room,
   });
-
-  final RoomController controller;
-  final Room room;
 
   @override
   State<MembershipJoinView> createState() => _MembershipJoinViewState();
@@ -25,11 +24,12 @@ class MembershipJoinView extends StatefulWidget {
 
 class _MembershipJoinViewState extends State<MembershipJoinView> {
   Timeline? timeline;
-  final GlobalKey<AnimatedListState> listKey = GlobalKey();
+  final listKey = GlobalKey<AnimatedListState>();
+  final eventUpdateStreamController = StreamController<Event>.broadcast();
 
   @override
   void initState() {
-    _getTimeline();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getTimeline());
     super.initState();
   }
 
@@ -42,40 +42,46 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
   @override
   Widget build(BuildContext context) {
     final timeline = this.timeline;
-    if (timeline == null) {
+    if (timeline == null || timeline.events.isEmpty) {
       return const Center(
         child: AsciiProgressIndicator(),
       );
     }
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: SelectionArea(
-            child: AnimatedList(
-              shrinkWrap: true,
-              key: listKey,
-              reverse: true,
-              initialItemCount: timeline.events.length + 1,
-              itemBuilder: (context, index, animation) {
-                if (index == timeline.events.length) {
-                  return LoadHistoryIndicator(
+    final room = RoomScope.of(context).room;
+
+    return TimelineScope(
+      timeline: timeline,
+      eventChangeStream: eventUpdateStreamController.stream,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: SelectionArea(
+              child: AnimatedList(
+                shrinkWrap: true,
+                key: listKey,
+                reverse: true,
+                initialItemCount: timeline.events.length + 1,
+                itemBuilder: (context, index, animation) {
+                  if (index == timeline.events.length) {
+                    return LoadHistoryIndicator(
+                      timeline: timeline,
+                    );
+                  }
+                  return buildTransitionedTile(
+                    animation: animation,
+                    index: index,
                     timeline: timeline,
                   );
-                }
-                return buildTransitionedTile(
-                  animation: animation,
-                  index: index,
-                  timeline: timeline,
-                );
-              },
+                },
+              ),
             ),
           ),
-        ),
-        if (widget.room.canSendDefaultMessages)
-          MessageInput(controller: widget.controller),
-      ],
+          if (room.canSendDefaultMessages) const MessageInput(),
+        ],
+      ),
     );
   }
 
@@ -93,26 +99,25 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
 
     return SizeTransition(
       sizeFactor: animation,
-      child: TimelineEventTile(
-        key: widget.controller.eventKeyRegistry[event.eventId] ??=
-            GlobalKey<TimelineEventTileState>(),
+      child: EventScope(
+        key: ValueKey(event.eventId),
         event: event,
-        previousEvent: previousEvent,
-        nextEvent: nextEvent,
-        room: widget.room,
-        controller: widget.controller,
-        timeline: timeline,
+        child: const TimelineEventTile(),
       ),
     );
   }
 
   Future<void> _getTimeline() async {
-    final timeline = await widget.room.getTimeline(
+    final room = RoomScope.of(context).room;
+    final timeline = await room.getTimeline(
       onInsert: _insertEvent,
       onRemove: _removeEvent,
       onChange: _changeEvent,
     );
 
+    if (!mounted) {
+      return;
+    }
     setState(() {
       this.timeline = timeline;
     });
@@ -120,6 +125,8 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
 
   void _insertEvent(int insertID) {
     listKey.currentState?.insertItem(insertID);
+
+    _notifyNeighboringEvents(insertID);
   }
 
   void _removeEvent(int index) {
@@ -131,11 +138,13 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
     if (event == null) {
       return;
     }
+    _notifyNeighboringEvents(index);
 
     listKey.currentState!.removeItem(
       index,
       (context, animation) {
-        final oldWidget = widget.controller.eventKeyRegistry
+        return Container();
+        /*final oldWidget = widget.controller.eventKeyRegistry
             .remove(event.eventId)
             ?.currentState
             ?.widget;
@@ -151,10 +160,9 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
           event: oldEvent,
           previousEvent: previousEvent,
           nextEvent: nextEvent,
-        );
+        );*/
       },
     );
-    widget.controller.eventKeyRegistry.remove(event.eventId);
   }
 
   void _changeEvent(int index) {
@@ -164,38 +172,36 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
     }
     final event = timeline.events.elementAtOrNull(index);
     if (event == null) {
-      return;
-    }
-
-    final state =
-        widget.controller.eventKeyRegistry[event.eventId]?.currentState;
-    if (state != null) {
-      final previousEvent = timeline.getPreviousDisplayEvent(index);
-      final nextEvent = timeline.getNextDisplayEvent(index);
-      state.updateEvent(
-        event: event,
-        previousEvent: previousEvent,
-        nextEvent: nextEvent,
-      );
-      if (previousEvent != null) {
-        widget.controller.eventKeyRegistry[previousEvent.eventId]?.currentState
-            ?.updateEvent(
-          nextEvent: event,
-        );
-      }
-      if (nextEvent != null) {
-        widget.controller.eventKeyRegistry[nextEvent.eventId]?.currentState
-            ?.updateEvent(
-          previousEvent: event,
-        );
-      }
-    } else {
       listKey.currentState?.removeItem(
         index,
         (context, animation) => SizedBox.fromSize(size: Size.zero),
         duration: Duration.zero,
       );
       listKey.currentState?.insertItem(index, duration: Duration.zero);
+      return;
+    }
+    _notifyNeighboringEvents(index);
+  }
+
+  void _notifyNeighboringEvents(int index) {
+    final timeline = this.timeline;
+    if (timeline == null) {
+      return;
+    }
+    final event = timeline.events.elementAtOrNull(index);
+    if (event == null) {
+      return;
+    }
+
+    eventUpdateStreamController.add(event);
+
+    final previousEvent = timeline.getPreviousDisplayEvent(index);
+    if (previousEvent != null) {
+      eventUpdateStreamController.add(previousEvent);
+    }
+    final nextEvent = timeline.getNextDisplayEvent(index);
+    if (nextEvent != null) {
+      eventUpdateStreamController.add(nextEvent);
     }
   }
 }

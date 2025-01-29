@@ -1027,4 +1027,40 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get errorSendingSticker => 'Error sending custom sticker.';
+
+  @override
+  String get viewSourceCode => 'View source code';
+
+  @override
+  String get eventSourceCode => 'Event source code';
+
+  @override
+  String get eventSourceContent => 'Event content';
+
+  @override
+  String get eventSourceJson => 'Full JSON';
+
+  @override
+  String get eventSourceOriginal => 'Original event';
+
+  @override
+  String get eventSourceBodyRaw => 'Event body (raw)';
+
+  @override
+  String get eventSourceBodyHtml => 'Event body (HTML)';
+
+  @override
+  String get eventSourceUnsigned => 'Unsigned content';
+
+  @override
+  String get eventRendered => 'Rendered event';
+
+  @override
+  String get eventQuoted => 'Quoted event';
+
+  @override
+  String get eventPreview => 'Event preview';
+
+  @override
+  String get blurHash => 'Blur hash';
 }

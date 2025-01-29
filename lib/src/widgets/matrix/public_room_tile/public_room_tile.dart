@@ -4,7 +4,6 @@ import 'package:matrix/matrix.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../../utils/matrix/matrix_state.dart';
 import '../../../utils/matrix_to_extension.dart';
 import '../../ascii_progress_indicator.dart';
 import '../../polycule_overflow_bar.dart';
@@ -34,7 +33,7 @@ class PublicRoomTile extends StatefulWidget {
   State<PublicRoomTile> createState() => _PublicRoomTileState();
 }
 
-class _PublicRoomTileState extends MatrixState<PublicRoomTile> {
+class _PublicRoomTileState extends State<PublicRoomTile> {
   @override
   Widget build(BuildContext context) {
     final name =
@@ -52,7 +51,6 @@ class _PublicRoomTileState extends MatrixState<PublicRoomTile> {
         ListTile(
           leading: MxcAvatar(
             uri: widget.room.avatarUrl,
-            client: client,
             monogram: name,
             dimension: 48,
           ),
@@ -63,7 +61,6 @@ class _PublicRoomTileState extends MatrixState<PublicRoomTile> {
               : SelectionArea(
                   child: PolyculeHtmlView(
                     html: topic.replaceAll('\n', r'<br />'),
-                    client: client,
                   ),
                 ),
         ),

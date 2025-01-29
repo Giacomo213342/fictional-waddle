@@ -4,13 +4,11 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../room_list.dart';
+import '../../../widgets/matrix/client_scope.dart';
 import 'sliding_sync_proxy.dart';
 
 class FadeInRoomList extends StatefulWidget {
-  const FadeInRoomList(this.controller, {super.key});
-
-  final RoomListController controller;
+  const FadeInRoomList({super.key});
 
   @override
   State<FadeInRoomList> createState() => _FadeInRoomListState();
@@ -23,7 +21,7 @@ class _FadeInRoomListState extends State<FadeInRoomList>
 
   @override
   Widget build(BuildContext context) {
-    final animation = makeAnimation();
+    final animation = makeAnimation(context);
 
     return AnimatedBuilder(
       animation: animation,
@@ -31,7 +29,9 @@ class _FadeInRoomListState extends State<FadeInRoomList>
         opacity: .5 + (animation.value - .5).abs(),
         child: child,
       ),
-      child: SlidingSyncProxy(controller: widget.controller),
+      child: SlidingSyncProxy(
+        key: Key(ClientScope.of(context).client.clientName),
+      ),
     );
   }
 
@@ -42,11 +42,12 @@ class _FadeInRoomListState extends State<FadeInRoomList>
     super.dispose();
   }
 
-  AnimationController makeAnimation() {
+  AnimationController makeAnimation(BuildContext context) {
     AnimationController? animation = _animation;
     if (animation != null) {
       return animation;
     }
+    final client = ClientScope.of(context).client;
 
     _animation = animation = AnimationController(
       lowerBound: 0,
@@ -55,10 +56,10 @@ class _FadeInRoomListState extends State<FadeInRoomList>
       duration: const Duration(seconds: 2),
     );
 
-    final sync = widget.controller.client.onSync.value;
+    final sync = client.onSync.value;
     if (sync == null) {
       animation.repeat();
-      _subscription = widget.controller.client.onSync.stream.listen(
+      _subscription = client.onSync.stream.listen(
         (_) => _cancelAnimation(),
       );
     }

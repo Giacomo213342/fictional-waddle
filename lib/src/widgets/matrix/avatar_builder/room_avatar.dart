@@ -20,7 +20,6 @@ class RoomAvatar extends StatelessWidget {
           dimension: dimension,
         ),
         uri: room.avatar,
-        client: room.client,
         title: room.getLocalizedDisplayname(),
       );
 
@@ -41,7 +40,6 @@ class RoomAvatar extends StatelessWidget {
 
     return MxcAvatar(
       uri: uri,
-      client: room.client,
       monogram: monogram,
       dimension: dimension,
     );

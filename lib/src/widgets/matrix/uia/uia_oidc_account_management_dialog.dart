@@ -6,6 +6,7 @@ import 'package:oidc/oidc.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../utils/matrix/oidc_delegation_extension.dart';
 import '../../ascii_progress_indicator.dart';
+import '../matrix_scope.dart';
 
 class UiaOidcAccountManagementDialog extends StatefulWidget {
   const UiaOidcAccountManagementDialog({
@@ -21,11 +22,17 @@ class UiaOidcAccountManagementDialog extends StatefulWidget {
   final OidcUserManager oidc;
   final OidcAccountManagementActions action;
 
-  Future<bool?> show(BuildContext context) => showDialog<bool>(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => this,
-      );
+  Future<bool?> show(BuildContext context) {
+    final scope = MatrixScope.captureAll(context);
+    return showAdaptiveDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => MatrixScope(
+        scope: scope,
+        child: this,
+      ),
+    );
+  }
 
   @override
   State<UiaOidcAccountManagementDialog> createState() =>

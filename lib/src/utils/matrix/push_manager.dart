@@ -119,7 +119,7 @@ class PushManager {
     await handlePushNotification(
       client: client,
       notification: notification,
-      localizations: localizations,
+      l10n: localizations,
     );
   }
 

@@ -4,29 +4,38 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../router/extensions/go_router_path_extension.dart';
+import '../../../../../utils/matrix/neighboaring_event_extension.dart';
+import '../../../../../utils/matrix/same_message_bubble_extension.dart';
+import '../../../../../widgets/matrix/event_scope.dart';
+import '../../../../../widgets/matrix/timeline_scope.dart';
 import '../../../../user_page/user_page.dart';
 import '../../message_user_avatar.dart';
 import 'edit_tooltip.dart';
 
 class MessagePrefix extends StatelessWidget {
-  const MessagePrefix({
-    super.key,
-    required this.event,
-    this.editEvent,
-    required this.isOwnMessage,
-    required this.nextMessageSameSender,
-  });
-
-  final Event event;
-  final Event? editEvent;
-  final bool isOwnMessage;
-  final bool nextMessageSameSender;
+  const MessagePrefix({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final editEvent = this.editEvent;
+    final timeline = TimelineScope.of(context).timeline;
+    final event = EventScope.of(context).event.getDisplayEvent(timeline);
+    timeline.getPreviousDisplayEvent(timeline.events.indexOf(event));
+    final nextEvent =
+        timeline.getNextDisplayEvent(timeline.events.indexOf(event));
 
+    final isOwnMessage = event.senderId == event.room.client.userID;
+
+    final edits =
+        event.aggregatedEvents(timeline, RelationshipTypes.edit).toList();
+    edits.sort(
+      (a, b) => a.originServerTs.compareTo(b.originServerTs),
+    );
+    final editEvent = edits.lastOrNull;
+
+    final nextMessageSameSender =
+        nextEvent?.isSameMessageBubble(event) ?? false;
     final showOtherSenderAvatar = !isOwnMessage && !nextMessageSameSender;
+
     Widget? prefix;
 
     Widget? editNotice;

@@ -1,0 +1,43 @@
+import 'package:flutter/material.dart';
+
+import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../l10n/matrix/polycule_matrix_localizations.dart';
+import '../../../widgets/matrix/event_scope.dart';
+
+class PlainEventPreviewText extends StatelessWidget {
+  const PlainEventPreviewText({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final event = EventScope.of(context).event;
+
+    return FutureBuilder(
+      future: event.calcLocalizedBody(
+        AppLocalizations.of(context).matrix,
+        hideReply: true,
+        hideEdit: true,
+        withSenderNamePrefix: true,
+        removeMarkdown: true,
+        plaintextBody: true,
+      ),
+      builder: (context, snapshot) {
+        final text = snapshot.data ??
+            event.calcLocalizedBodyFallback(
+              AppLocalizations.of(context).matrix,
+              hideReply: true,
+              hideEdit: true,
+              withSenderNamePrefix: true,
+              removeMarkdown: true,
+              plaintextBody: true,
+            );
+        return Text(
+          text
+              // unicode bullet
+              .replaceAll('\n', ' \u2022 '),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        );
+      },
+    );
+  }
+}

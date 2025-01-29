@@ -543,5 +543,17 @@
   "brownSkin": "Brown skin",
   "blackSkin": "Black skin",
   "roomDetails": "Room details",
-  "errorSendingSticker": "Error sending custom sticker."
+  "errorSendingSticker": "Error sending custom sticker.",
+  "viewSourceCode": "View source code",
+  "eventSourceCode": "Event source code",
+  "eventSourceContent": "Event content",
+  "eventSourceJson": "Full JSON",
+  "eventSourceOriginal": "Original event",
+  "eventSourceBodyRaw": "Event body (raw)",
+  "eventSourceBodyHtml": "Event body (HTML)",
+  "eventSourceUnsigned": "Unsigned content",
+  "eventRendered": "Rendered event",
+  "eventQuoted": "Quoted event",
+  "eventPreview": "Event preview",
+  "blurHash": "Blur hash"
 }

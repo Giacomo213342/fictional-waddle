@@ -9,9 +9,10 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../utils/matrix/default_emoji_tone.dart';
+import '../../../../../widgets/matrix/client_scope.dart';
 
 class ToneButton extends StatelessWidget {
-  ToneButton({super.key, this.tone, required this.client}) {
+  ToneButton({super.key, this.tone}) {
     final tone = this.tone;
     _glyph = tone == null
         ? _baseGlyph
@@ -24,7 +25,6 @@ class ToneButton extends StatelessWidget {
 
   final SkinTone? tone;
   late final String _glyph;
-  final Client client;
 
   static const _baseGlyph = '\u{1f44b}';
   static const _baseEmojiName = 'Waving Hand';
@@ -33,6 +33,7 @@ class ToneButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tone = this.tone;
+    final client = ClientScope.of(context).client;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: StreamBuilder<SyncUpdate>(

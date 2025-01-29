@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:diffutil_dart/diffutil.dart';
 import 'package:matrix/matrix.dart';
 
+import '../../../widgets/matrix/client_scope.dart';
+import '../../../widgets/matrix/room_scope.dart';
 import '../room_list.dart';
 import 'room_list_tile.dart';
 
 class SlidingSyncProxy extends StatefulWidget {
-  const SlidingSyncProxy({super.key, required this.controller});
-
-  final RoomListController controller;
+  const SlidingSyncProxy({super.key});
 
   @override
   State<SlidingSyncProxy> createState() => _SlidingSyncProxyState();
@@ -20,30 +20,33 @@ class SlidingSyncProxy extends StatefulWidget {
 class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
   final listKey = GlobalKey<AnimatedListState>();
 
-  List<Room> roomsCache = [];
+  List<Room>? roomsCache;
 
   StreamSubscription<SyncUpdate>? _slidingSyncListener;
 
   @override
   void initState() {
-    roomsCache = [...widget.controller.filteredRooms];
-
-    _slidingSyncListener =
-        widget.controller.client.onSync.stream.listen(_simulateSlidingSync);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startSlidingSync());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = RoomListController.of(context);
+    final rooms = controller.getRegularRooms();
+    final roomsCache = this.roomsCache ??= rooms;
+
     return AnimatedList(
       key: listKey,
       itemBuilder: (context, index, animation) {
-        final room = widget.controller.filteredRooms[index];
+        final room = RoomListController.of(context).getRegularRooms()[index];
         return SizeTransition(
+          key: Key(room.id),
           sizeFactor: animation,
-          child: RoomListTile(
-            widget.controller,
+          child: RoomScope(
+            key: ValueKey(room.id),
             room: room,
+            child: const RoomListTile(),
           ),
         );
       },
@@ -58,12 +61,13 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
   }
 
   void _simulateSlidingSync(SyncUpdate syncUpdate) {
+    final roomsCache = this.roomsCache;
     final listState = listKey.currentState;
-    if (listState == null) {
+    if (listState == null || roomsCache == null) {
       return;
     }
 
-    final rooms = widget.controller.filteredRooms;
+    final rooms = RoomListController.of(context).getRegularRooms();
 
     final diffResult = calculateListDiff<Room>(
       roomsCache,
@@ -82,10 +86,12 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
             listState.removeItem(
               pos,
               (context, animation) => SizeTransition(
+                key: Key(room.id),
                 sizeFactor: animation,
-                child: RoomListTile(
-                  widget.controller,
+                child: RoomScope(
+                  key: ValueKey(room.id),
                   room: room,
+                  child: const RoomListTile(),
                 ),
               ),
             );
@@ -96,18 +102,31 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
         move: (from, to) {
           listState.removeItem(
             from,
-            (context, animation) => SizeTransition(
-              sizeFactor: animation,
-              child: RoomListTile(
-                widget.controller,
-                room: roomsCache[to],
-              ),
-            ),
+            (context, animation) {
+              final room = roomsCache[to];
+              return SizeTransition(
+                key: Key(room.id),
+                sizeFactor: animation,
+                child: RoomScope(
+                  key: ValueKey(room.id),
+                  room: room,
+                  child: const RoomListTile(),
+                ),
+              );
+            },
           );
           listState.insertItem(to);
         },
       );
     }
-    roomsCache = [...rooms];
+    this.roomsCache = [...rooms];
+  }
+
+  void _startSlidingSync() {
+    _slidingSyncListener = ClientScope.of(context)
+        .client
+        .onSync
+        .stream
+        .listen(_simulateSlidingSync);
   }
 }

@@ -16,9 +16,11 @@ dependencies:
   collection: ^1.19.1
   cross_file: ^0.3.4+1
   # required for native iOS icons
+  csslib: ^0.17.3
   cupertino_http: ^2.0.1
   cupertino_icons: ^1.0.8
   dart_animated_emoji: ^0.0.3
+  dbus: ^0.7.11
   diacritic: ^0.1.6
   diffutil_dart: ^4.0.1
   dynamic_color: ^1.6.9
@@ -66,7 +68,6 @@ dependencies:
   oidc: ^0.9.0
   olm: ^2.0.3
   path_provider: ^2.1.4
-  provider: ^6.1.1
   receive_sharing_intent_plus: ^1.0.1
   sentry: ^8.12.0
   share_plus: ^10.1.0

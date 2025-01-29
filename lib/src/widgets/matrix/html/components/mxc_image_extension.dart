@@ -45,7 +45,6 @@ class MxcImageExtension extends ImageExtension {
                   child: MxcUriImageBuilder.dpiRespective(
                     key: ValueKey(src),
                     uri: Uri.parse(src),
-                    client: client,
                     width: width,
                     height: height,
                   ),

@@ -7,15 +7,13 @@ import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
+import '../../../../../widgets/matrix/event_scope.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
 
 class AudioMessage extends StatefulWidget {
   const AudioMessage({
     super.key,
-    required this.event,
   });
-
-  final Event event;
 
   @override
   State<AudioMessage> createState() => _AudioMessageState();
@@ -59,7 +57,7 @@ class _AudioMessageState extends State<AudioMessage>
       child: SizedBox(
         height: 96,
         child: MxcEncryptedFileBuilder<Duration, MatrixFile>(
-          event: widget.event,
+          event: EventScope.of(context).event,
           attachmentTransformer: _makeAudio,
           thumbnail: ThumbnailRequest.attachmentOnly,
           builder: (context, thumbnail, attachment, retryCallback) {
@@ -180,6 +178,12 @@ class _AudioMessageState extends State<AudioMessage>
         await player.seek(Duration.zero);
         break;
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    setState(() {});
+    super.didChangeDependencies();
   }
 
   @override

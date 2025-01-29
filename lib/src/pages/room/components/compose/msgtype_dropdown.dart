@@ -7,8 +7,8 @@ import 'package:matrix/matrix.dart';
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../room.dart';
 
-class MsgtypeDropdown extends StatefulWidget {
-  const MsgtypeDropdown({super.key, required this.controller});
+class MsgtypeDropdown extends StatelessWidget {
+  const MsgtypeDropdown({super.key});
 
   static const _colon = Text(':');
 
@@ -37,27 +37,21 @@ class MsgtypeDropdown extends StatefulWidget {
     MessageTypes.None: Icons.square,
   };
 
-  final RoomController controller;
-
-  @override
-  State<MsgtypeDropdown> createState() => _MsgtypeDropdownState();
-}
-
-class _MsgtypeDropdownState extends State<MsgtypeDropdown> {
   @override
   Widget build(BuildContext context) {
+    final controller = RoomController.of(context);
     return LayoutBuilder(
       builder: (context, _) {
         return DropdownMenu<String>(
           enableSearch: true,
           width: 128 + 32,
           searchCallback: _searchEntries,
-          dropdownMenuEntries: _buildDropdownEntries(),
-          onSelected: _onMsgTypeSelected,
+          dropdownMenuEntries: _buildDropdownEntries(context),
+          onSelected: (value) => _onMsgTypeSelected(context, value),
           trailingIcon: MsgtypeDropdown._colon,
           selectedTrailingIcon: MsgtypeDropdown._colon,
-          initialSelection: widget.controller.msgtypeController.text,
-          controller: widget.controller.msgtypeController,
+          initialSelection: controller.msgtypeController.text,
+          controller: controller.msgtypeController,
           alignmentOffset: _computeScaffoldPositionFix(context),
           inputDecorationTheme: const InputDecorationTheme(
             border: InputBorder.none,
@@ -68,7 +62,7 @@ class _MsgtypeDropdownState extends State<MsgtypeDropdown> {
     );
   }
 
-  List<DropdownMenuEntry<String>> _buildDropdownEntries() {
+  List<DropdownMenuEntry<String>> _buildDropdownEntries(BuildContext context) {
     final l = AppLocalizations.of(context);
     final msgTypesTooltips = {
       MessageTypes.Text: l.msgTypeText,
@@ -109,22 +103,23 @@ class _MsgtypeDropdownState extends State<MsgtypeDropdown> {
     return index != -1 ? index : null;
   }
 
-  void _onMsgTypeSelected(String? msgType) {
+  void _onMsgTypeSelected(context, String? msgType) {
+    final controller = RoomController.of(context);
     switch (msgType) {
       case MessageTypes.Text:
       case MessageTypes.Notice:
       case MessageTypes.Emote:
-        widget.controller.setSendMsgType(msgType);
+        controller.setSendMsgType(msgType);
         break;
       case MessageTypes.Image:
       case MessageTypes.Video:
       case MessageTypes.Audio:
       case MessageTypes.File:
-        widget.controller.sendFile(msgType);
+        controller.sendFile(msgType);
       case MessageTypes.Sticker:
-        widget.controller.showStickerSelector(msgType);
+        controller.showStickerSelector(msgType);
       default:
-        widget.controller.setSendMsgType(MessageTypes.Text);
+        controller.setSendMsgType(MessageTypes.Text);
 
         break;
     }

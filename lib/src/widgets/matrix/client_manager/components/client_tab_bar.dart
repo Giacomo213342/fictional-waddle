@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
+import '../../client_scope.dart';
 import '../client_manager.dart';
 import 'settings_button.dart';
 import 'tab.dart';
@@ -67,9 +67,8 @@ class ClientTabBar extends StatelessWidget implements PreferredSizeWidget {
                         return SettingsButton(manager: manager);
                       }
 
-                      return InheritedProvider<GetClientCallback>(
-                        create: (context) =>
-                            () => ClientManager.activeClients[index],
+                      return ClientScope(
+                        client: ClientManager.activeClients[index],
                         child: Builder(
                           builder: (context) {
                             return ClientTab(manager);

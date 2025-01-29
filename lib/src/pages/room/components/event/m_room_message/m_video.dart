@@ -9,6 +9,7 @@ import 'package:media_kit_video/media_kit_video.dart';
 import '../../../../../widgets/ascii_progress_indicator.dart';
 import '../../../../../widgets/matrix/avatar_builder/mxc_avatar.dart';
 import '../../../../../widgets/matrix/blur_hash_indicator.dart';
+import '../../../../../widgets/matrix/event_scope.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
 import '../../../../../widgets/matrix/retry_download_button.dart';
 import '../../../../../widgets/matrix/tumbnail_aspect_ratio.dart';
@@ -18,10 +19,7 @@ import '../../../../../widgets/polycule_text_shadow.dart';
 class VideoMessage extends StatefulWidget {
   const VideoMessage({
     super.key,
-    required this.event,
   });
-
-  final Event event;
 
   @override
   State<VideoMessage> createState() => _VideoMessageState();
@@ -52,9 +50,8 @@ class _VideoMessageState extends State<VideoMessage>
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: 512, maxWidth: 512),
         child: ThumbnailAspectRatio(
-          event: widget.event,
           child: MxcEncryptedFileBuilder<Playable, MatrixFile>(
-            event: widget.event,
+            event: EventScope.of(context).event,
             attachmentTransformer: _makePlayable,
             builder: (context, thumbnail, attachment, retryCallback) {
               final playable = attachment.data;
@@ -72,10 +69,7 @@ class _VideoMessageState extends State<VideoMessage>
                     opacity: playable == null && thumb == null ? 1 : 0,
                     duration: MxcAvatar.kFadeDuration,
                     curve: Curves.easeInOut,
-                    child: BlurHashIndicator(
-                      event: widget.event,
-                      label: label,
-                    ),
+                    child: BlurHashIndicator(label: label),
                   ),
                   AnimatedOpacity(
                     opacity: thumb == null ? 0 : 1,
@@ -125,6 +119,12 @@ class _VideoMessageState extends State<VideoMessage>
     await player.open(playable);
     await player.pause();
     return playable;
+  }
+
+  @override
+  void didChangeDependencies() {
+    setState(() {});
+    super.didChangeDependencies();
   }
 
   @override

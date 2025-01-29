@@ -4,14 +4,14 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/ascii_progress_indicator.dart';
+import '../../../widgets/matrix/client_scope.dart';
 
 class InitialSyncTile extends StatelessWidget {
-  const InitialSyncTile({required this.client, super.key});
-
-  final Client client;
+  const InitialSyncTile({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final client = ClientScope.of(context).client;
     return StreamBuilder(
       stream: client.onSyncStatus.stream,
       builder: (context, snapshot) {

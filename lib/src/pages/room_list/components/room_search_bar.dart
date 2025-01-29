@@ -6,19 +6,21 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../utils/matrix/command_localization_helper.dart';
 import '../../../widgets/matrix/avatar_builder/profile_avatar_builder.dart';
+import '../../../widgets/matrix/client_scope.dart';
+import '../../../widgets/matrix/room_scope.dart';
 import '../room_list.dart';
 import 'command_preview_tile.dart';
 import 'room_list_tile.dart';
 
 class RoomSearchBar extends StatelessWidget {
-  const RoomSearchBar({super.key, required this.controller});
-
-  final RoomListController controller;
+  const RoomSearchBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final userId = ClientScope.of(context).client.userID!;
     final cmdL10nHelper =
         CommandLocalizationHelper(AppLocalizations.of(context));
+    final controller = RoomListController.of(context);
     return SafeArea(
       child: SearchAnchor(
         searchController: controller.searchController,
@@ -40,7 +42,7 @@ class RoomSearchBar extends StatelessWidget {
               },
               onSubmitted: controller.searchSubmitted,
               hintText: AppLocalizations.of(context).hajUser(
-                controller.client.userID,
+                userId,
               ),
               leading: IconButton(
                 onPressed: searchController.openView,
@@ -52,8 +54,7 @@ class RoomSearchBar extends StatelessWidget {
                   onPressed: controller.accountSettings,
                   tooltip: AppLocalizations.of(context).accountSettings,
                   icon: ProfileAvatarBuilder(
-                    userId: controller.client.userID!,
-                    client: controller.client,
+                    userId: userId,
                     dimension: 32,
                   ),
                 ),
@@ -62,15 +63,18 @@ class RoomSearchBar extends StatelessWidget {
           );
         },
         headerHeight: 56 - 1,
-        suggestionsBuilder: (_, searchController) {
+        suggestionsBuilder: (context, searchController) {
+          final client = ClientScope.of(context).client;
           final query = searchController.text;
           final rooms = controller.filterRooms(query).map(
-                (room) => RoomListTile(
-                  controller,
+                (room) => RoomScope(
                   room: room,
-                  clientifyLocationCallback: context.clientifyLocation,
-                  onActivate: () => searchController.closeView(
-                    room.getLocalizedDisplayname(),
+                  child: RoomListTile(
+                    key: Key(room.id),
+                    clientifyLocationCallback: context.clientifyLocation,
+                    onActivate: () => searchController.closeView(
+                      room.getLocalizedDisplayname(),
+                    ),
                   ),
                 ),
               );
@@ -80,14 +84,13 @@ class RoomSearchBar extends StatelessWidget {
             final msg = query.replaceFirst('/$command', '').trim();
             final args = CommandArgs(
               msg: msg,
-              client: controller.client,
+              client: client,
             );
 
-            commands = controller.client.commands.keys
+            commands = client.commands.keys
                 .where((cmd) => cmd.startsWith(command))
                 .map(
                   (cmd) => CommandPreviewTile(
-                    controller: controller,
                     command: cmd,
                     description: cmdL10nHelper.lookupCommandDescription(cmd),
                     args: args,
@@ -98,7 +101,7 @@ class RoomSearchBar extends StatelessWidget {
 
           return [...commands, ...rooms];
         },
-        viewOnSubmitted: controller.searchSubmitted,
+        viewOnSubmitted: RoomListController.of(context).searchSubmitted,
         viewBackgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
         viewConstraints: const BoxConstraints(minHeight: double.maxFinite),
         viewHintText: AppLocalizations.of(context).searchPromptLabel,

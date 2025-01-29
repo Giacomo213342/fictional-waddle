@@ -2,24 +2,17 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import 'package:matrix/matrix.dart';
-
 import '../../../../../l10n/generated/app_localizations.dart';
-import '../../../../widgets/ascii_progress_indicator.dart';
 import '../../../../widgets/matrix/avatar_builder/room_avatar.dart';
 import '../../../../widgets/matrix/avatar_builder/room_builder.dart';
+import '../../../../widgets/matrix/room_scope.dart';
 import '../../../../widgets/polycule_overflow_bar.dart';
-import '../../room.dart';
+import '../join_room_button.dart';
 
 class MembershipInviteTile extends StatelessWidget {
   const MembershipInviteTile({
     super.key,
-    required this.controller,
-    required this.room,
   });
-
-  final RoomController controller;
-  final Room room;
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +25,8 @@ class MembershipInviteTile extends StatelessWidget {
             border: Border.all(color: Theme.of(context).colorScheme.primary),
           ),
           child: RoomBuilder(
-            room: room,
             builder: (context, snapshot) {
-              final room = snapshot.data ?? this.room;
+              final room = snapshot.data ?? RoomScope.of(context).room;
               return LayoutBuilder(
                 builder: (context, constraints) {
                   final isRowMode = constraints.maxWidth > 500;
@@ -78,35 +70,10 @@ class MembershipInviteTile extends StatelessWidget {
                             ),
                           ),
                         ),
-                      PolyculeOverflowBar(
+                      const PolyculeOverflowBar(
                         alignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          if (controller.loading)
-                            const AsciiProgressIndicator()
-                          else
-                            switch (room.joinRules) {
-                              JoinRules.public ||
-                              JoinRules.invite =>
-                                ElevatedButton(
-                                  onPressed: controller.joinRoom,
-                                  child: Text(
-                                    AppLocalizations.of(context).joinRoom,
-                                  ),
-                                ),
-                              JoinRules.knock => ElevatedButton(
-                                  onPressed: controller.knockRoom,
-                                  child: Text(
-                                    AppLocalizations.of(context).knockRoom,
-                                  ),
-                                ),
-                              _ => ElevatedButton(
-                                  onPressed: null,
-                                  child: Text(
-                                    AppLocalizations.of(context)
-                                        .youCannotJoinThisRoom,
-                                  ),
-                                ),
-                            },
+                          JoinRoomButton(),
                         ],
                       ),
                     ],
