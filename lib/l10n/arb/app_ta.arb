@@ -1,0 +1,792 @@
+{
+  "connect": "இணை",
+  "@connect": {},
+  "customColor": "தனிப்பயன் நிறம்",
+  "@customColor": {},
+  "errorSendingSticker": "தனிப்பயன் ச்டிக்கரை அனுப்புவதில் பிழை.",
+  "@errorSendingSticker": {},
+  "totalSendSize": "{size, plural, =0{மொத்த அனுப்பு அளவு : 0 பைட்டுகள்} =1{மொத்த அனுப்பு அளவு : 1 பைட்} other{மொத்த அனுப்பு அளவு: {size} பைட்டுகள்}}",
+  "@totalSendSize": {
+    "placeholders": {
+      "size": {
+        "type": "int"
+      }
+    }
+  },
+  "roomParticipants": "{participants, plural, =0{பங்கேற்பாளர் இல்லை} =1{ஒரு பங்கேற்பாளர்} other{{participants} பங்கேற்பாளர்கள்}}",
+  "@roomParticipants": {
+    "placeholders": {
+      "participants": {
+        "type": "int"
+      }
+    }
+  },
+  "redactEventLong": "நிகழ்வை {eventId} ஐ மாற்றியமைக்க நீங்கள் நிரந்தரமாக விரும்புகிறீர்களா?",
+  "@redactEventLong": {
+    "placeholders": {
+      "eventId": {
+        "type": "String"
+      }
+    }
+  },
+  "appName": "<பாலிகுல்>",
+  "@appName": {},
+  "matrixRoomShareSubject": "[மேட்ரிக்ச்] இல் «{roomname} »அறையில் சேரவும்",
+  "@matrixRoomShareSubject": {
+    "placeholders": {
+      "roomname": {
+        "type": "String"
+      }
+    }
+  },
+  "about": "பற்றி",
+  "@about": {},
+  "author": "ஆசிரியர்: {author}",
+  "@author": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
+  "appSlogan": "ஆற்றல் பயனர்களுக்கான அழகற்ற மற்றும் திறமையான [மேட்ரிக்ச்] கிளையன்ட்.",
+  "@appSlogan": {},
+  "repoLabel": "மூலக் குறியீடு (கிட்லாப்)",
+  "@repoLabel": {},
+  "releaseNotes": "வெளியீட்டு குறிப்புகள்",
+  "@releaseNotes": {},
+  "buyMeACoffee": "எனக்கு ஒரு காபி வாங்கவும்",
+  "@buyMeACoffee": {},
+  "homeserverHeadline": "ஆச்! <பாலிகுல்> க்கு வருக",
+  "@homeserverHeadline": {
+    "description": "Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'."
+  },
+  "aMatrixClient": "- மற்றொரு [மேட்ரிக்ச்] கிளையன்ட்",
+  "@aMatrixClient": {},
+  "connectToHomeserver": "உங்கள் ஓம்சர்வருடன் இணைக்கவும்",
+  "@connectToHomeserver": {},
+  "discoverHomeservers": "புதிய ஓம்சர்சர்களைக் கண்டறியவும்",
+  "@discoverHomeservers": {},
+  "newToMatrixLong": "[மேட்ரிக்ச்] பிரபஞ்சத்திலிருந்து தகுதியான ஓம்சர்சர்களைக் கண்டறியவும். இது Joinmatrix.org உடன் இணைக்கும்.",
+  "@newToMatrixLong": {},
+  "homeserverNotValid": "இது செல்லுபடியாகும் ஓம்சர்வர் உள்ளீடு அல்ல.",
+  "@homeserverNotValid": {},
+  "pleaseProvideHomeserver": "தயவுசெய்து ஒரு ஓம்சரவரை வழங்கவும்.",
+  "@pleaseProvideHomeserver": {},
+  "errorConnectingToHomeserver": "{homeserver} இணைக்க முடியவில்லை. உங்கள் தேர்வை சரிபார்க்கவும்.",
+  "@errorConnectingToHomeserver": {
+    "placeholders": {
+      "homeserver": {
+        "type": "String"
+      }
+    }
+  },
+  "connectingToHomeserver": "{homeserver} உடன் இணைக்கிறது…",
+  "@connectingToHomeserver": {
+    "placeholders": {
+      "homeserver": {
+        "type": "String"
+      }
+    }
+  },
+  "howWouldYouLikeToConnect": "நீங்கள் எவ்வாறு இணைக்க விரும்புகிறீர்கள்?",
+  "@howWouldYouLikeToConnect": {},
+  "loginPassword": "கடவுச்சொல்லைப் பயன்படுத்தி உள்நுழைக",
+  "@loginPassword": {},
+  "username": "பயனர்பெயர்",
+  "@username": {},
+  "email": "மின்னஞ்சல்",
+  "@email": {},
+  "password": "கடவுச்சொல்",
+  "@password": {},
+  "pleaseProvideEmail": "உங்கள் மின்னஞ்சலை வழங்கவும்.",
+  "@pleaseProvideEmail": {},
+  "pleaseProvidePassword": "உங்கள் கடவுச்சொல்லை உள்ளிடவும்.",
+  "@pleaseProvidePassword": {},
+  "pleaseProvideUsername": "உங்கள் பயனர்பெயரை உள்ளிடவும்.",
+  "@pleaseProvideUsername": {},
+  "emailMinimals": "உங்கள் மின்னஞ்சலில் @ அடையாளம், உள்ளக பகுதி மற்றும் உங்கள் டொமைன் இருக்க வேண்டும்.",
+  "@emailMinimals": {},
+  "mxidSyntax": "அனுமதிக்கப்பட்ட எழுத்துக்கள்: A-Z, 0-9 மற்றும் சின்னங்கள்., _, =,-, /, மற்றும் +.",
+  "@mxidSyntax": {},
+  "clientDisplayName": "<பாலிகுல்> {platform}",
+  "@clientDisplayName": {
+    "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
+    "placeholders": {
+      "platform": {
+        "type": "String",
+        "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
+      }
+    }
+  },
+  "platformWeb": "விரலிடைத் தோல்",
+  "@platformWeb": {},
+  "loginError": "உள்நுழைய முடியவில்லை; உங்கள் சான்றுகளை சரிபார்க்கவும்.",
+  "@loginError": {},
+  "loginErrorMessage": "உள்நுழைய முடியவில்லை: {message}",
+  "@loginErrorMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "hajUser": "அச் {localpart}!",
+  "@hajUser": {
+    "placeholders": {
+      "localpart": {
+        "type": "String?"
+      }
+    }
+  },
+  "syncInProgress": "முன்னேற்றத்தில் ஒத்திசைக்கவும்",
+  "@syncInProgress": {},
+  "initialSync": "ஆரம்ப ஒத்திசைவு செயலில் உள்ளது",
+  "@initialSync": {},
+  "syncOffline": "ஒத்திசைவு குறுக்கிட்டது",
+  "@syncOffline": {},
+  "syncFunctional": "நிலை ஆரோக்கியமாக ஒத்திசைக்கவும்",
+  "@syncFunctional": {},
+  "lastSyncReceived": "கடைசி ஒத்திசைவு: {timestamp} ({duration} எம்.எச்)",
+  "@lastSyncReceived": {
+    "placeholders": {
+      "timestamp": {
+        "type": "DateTime",
+        "format": "jms"
+      },
+      "duration": {
+        "format": "int"
+      }
+    }
+  },
+  "editedToday": "திருத்தப்பட்டது: {timestamp}",
+  "@editedToday": {
+    "placeholders": {
+      "timestamp": {
+        "type": "DateTime",
+        "format": "jm"
+      }
+    }
+  },
+  "editedAt": "திருத்தப்பட்டது: {timestamp}",
+  "@editedAt": {
+    "placeholders": {
+      "timestamp": {
+        "type": "String"
+      }
+    }
+  },
+  "authenticationRequired": "ஏற்பு தேவை",
+  "@authenticationRequired": {},
+  "replyUserSentDate": "{username} எழுதியது {formattedDate}:",
+  "@replyUserSentDate": {
+    "placeholders": {
+      "username": {
+        "format": "String"
+      },
+      "formattedDate": {
+        "format": "String"
+      }
+    }
+  },
+  "view": "பார்வை",
+  "@view": {},
+  "passphraseNotEmpty": "கடவுச்சொல் காலியாக இருக்க முடியாது",
+  "@passphraseNotEmpty": {},
+  "cancel": "ரத்துசெய்",
+  "@cancel": {},
+  "noMatch": "பொருந்தவில்லை",
+  "@noMatch": {},
+  "keysMatch": "விசைகள் பொருந்துகின்றன",
+  "@keysMatch": {},
+  "wipeAccount": "கணக்கை துடைக்கவும்",
+  "@wipeAccount": {},
+  "wipeAccountWarning": "உங்கள் சாதனத்தை இழந்தால், உங்கள் கணக்கை துடைத்து மீட்டமைக்கலாம். எல்லா செய்திகளும் அரட்டைகளும் இழக்கப்படும்.",
+  "@wipeAccountWarning": {},
+  "deleteAll": "அனைத்தையும் நீக்கு",
+  "@deleteAll": {},
+  "previous": "முந்தைய",
+  "@previous": {},
+  "next": "அடுத்தது",
+  "@next": {},
+  "connectPreviousDevice": "முந்தைய சாதனத்தை இணைக்கவும்",
+  "@connectPreviousDevice": {},
+  "connectPreviousDeviceLong": "இருக்கும் சாதனத்தை சரிபார்க்கவும்.",
+  "@connectPreviousDeviceLong": {},
+  "deviceNotAvailable": "எனது சாதனம் கிடைக்கவில்லை.",
+  "@deviceNotAvailable": {},
+  "compareSasNumbers": "பாதுகாப்பு எண்களை ஒப்பிடுக",
+  "@compareSasNumbers": {},
+  "compareSasExplanation": "உங்கள் சாதனத்தில் உள்ள எண்கள் சரிபார்ப்பைக் கோரும் மற்ற சாதனத்தின் எண்களுடன் ஒத்ததா என்று சரிபார்க்கவும்.",
+  "@compareSasExplanation": {},
+  "incomingVerificationRequest": "உள்வரும் சரிபார்ப்பு கோரிக்கை",
+  "@incomingVerificationRequest": {},
+  "waitingForVerification": "சரிபார்ப்புக்காக காத்திருக்கிறது",
+  "@waitingForVerification": {},
+  "waitingForVerificationFallback": "உங்கள் இரண்டாவது சாதனத்தைப் பயன்படுத்துவதை சரிபார்க்கவும் அல்லது உங்கள் மீட்பு சொற்றொடரை உள்ளிடவும்.",
+  "@waitingForVerificationFallback": {},
+  "incomingVerificationRequestUser": "{user} சரிபார்க்க விரும்புகிறார்",
+  "@incomingVerificationRequestUser": {
+    "placeholders": {
+      "user": {
+        "type": "String?",
+        "description": "User who wants to verify"
+      }
+    }
+  },
+  "incomingVerificationRequestMyself": "உங்கள் கணக்கிற்கான மற்றொரு சாதனத்தை சரிபார்க்க உள்வரும் சரிபார்ப்பு கோரிக்கை உள்ளது.",
+  "@incomingVerificationRequestMyself": {},
+  "incomingVerificationRequestLong": "உள்வரும் சரிபார்ப்பு கோரிக்கை உள்ளது, சரிபார்ப்பு கோரிக்கையை கையாள விரும்புகிறீர்களா?",
+  "@incomingVerificationRequestLong": {},
+  "reject": "நிராகரிக்கவும்",
+  "@reject": {},
+  "proceed": "தொடரவும்",
+  "@proceed": {},
+  "enterRecoveryPhrase": "மீட்பு சொற்றொடரை உள்ளிடவும்",
+  "@enterRecoveryPhrase": {},
+  "keyVerificationErrorGeneric": "உங்கள் சாதனத்தை சரிபார்க்க பிழை ஏற்பட்டது.",
+  "@keyVerificationErrorGeneric": {},
+  "keyVerificationErrorUser": "சரிபார்ப்பு நிராகரிக்கப்பட்டது.",
+  "@keyVerificationErrorUser": {},
+  "close": "மூடு",
+  "@close": {},
+  "verificationSuccessful": "முக்கிய சரிபார்ப்பு வெற்றிகரமாக",
+  "@verificationSuccessful": {},
+  "verifyLogin": "உங்கள் புதிய உள்நுழைவை சரிபார்க்கவும்",
+  "@verifyLogin": {},
+  "finish": "முடிக்க",
+  "@finish": {},
+  "or": "அல்லது",
+  "@or": {},
+  "verifyWithOtherDevice": "மற்ற சாதனங்களுடன் சரிபார்க்கவும்",
+  "@verifyWithOtherDevice": {},
+  "verifyMethodsNotAvailable": "உங்களிடம் சரிபார்ப்பு முறை கிடைக்கவில்லையா?",
+  "@verifyMethodsNotAvailable": {},
+  "resetAccountWarning": "உங்கள் கடந்த கால செய்திகளையும் பயன்படுத்துவீர்கள். இதை செயல்தவிர்க்க முடியாது.",
+  "@resetAccountWarning": {},
+  "verifyWithPassphrase": "கடவுச்சொற்றுடன் சரிபார்க்கவும்",
+  "@verifyWithPassphrase": {},
+  "passphraseNoWhitespace": "பாச்ஃபிரேசில் எந்த இடைவெளி எழுத்துக்களும் இருக்க முடியாது!",
+  "@passphraseNoWhitespace": {},
+  "errorTryAgain": "பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.",
+  "@errorTryAgain": {},
+  "submit": "சமர்ப்பிக்கவும்",
+  "@submit": {},
+  "togglePassword": "கடவுச்சொல் தெரிவுநிலையை மாற்றவும்",
+  "@togglePassword": {},
+  "loggingInToClient": "கணக்கில் உள்நுழைக",
+  "@loggingInToClient": {},
+  "pendingInvite": "அழைப்பு நிலுவையில்",
+  "@pendingInvite": {},
+  "invite": "அழைக்கவும்",
+  "@invite": {},
+  "inviteLongDM": "«{displayname}» உடன் விவாதிக்க அழைக்கப்படுகிறீர்கள்.",
+  "@inviteLongDM": {},
+  "joinRoom": "அறையில் சேரவும்",
+  "@joinRoom": {},
+  "knockRoom": "சேர தட்டவும்",
+  "@knockRoom": {},
+  "youCannotJoinThisRoom": "இந்த அறையில் நீங்கள் சேர முடியாது.",
+  "@youCannotJoinThisRoom": {},
+  "addAccount": "மற்றொரு கணக்கைச் சேர்க்கவும்",
+  "@addAccount": {},
+  "regionAccountSwitcher": "திரை பகுதி: கணக்கு ச்விட்சர்.",
+  "@regionAccountSwitcher": {},
+  "regionChatContents": "திரை பகுதி: அரட்டை உள்ளடக்கம்.",
+  "@regionChatContents": {},
+  "loadingHomeservers": "ஓம்சர்வர்களை ஏற்றுகிறது. முன்னேற்றம் தெரியவில்லை. தயவுசெய்து காத்திருங்கள்.",
+  "@loadingHomeservers": {},
+  "send": "அனுப்பு",
+  "@send": {},
+  "typeGroupImages": "படங்கள்",
+  "@typeGroupImages": {},
+  "typeGroupVideos": "வீடியோக்கள்",
+  "@typeGroupVideos": {},
+  "typeGroupAudio": "ஆடியோ",
+  "@typeGroupAudio": {},
+  "typeGroupFiles": "அனைத்து கோப்புகள்",
+  "@typeGroupFiles": {},
+  "msgTypeText": "வழக்கமான உரை செய்தியை அனுப்பவும்.",
+  "@msgTypeText": {},
+  "msgTypeEmote": "உங்கள் மனநிலையை விவரிக்கவும்.",
+  "@msgTypeEmote": {},
+  "msgTypeNotice": "ஒரு தகவலறிந்த செய்தியை அனுப்பவும் போட்ச் பதிலளிக்க முடியாது.",
+  "@msgTypeNotice": {},
+  "msgTypeImage": "படக் கோப்பை அனுப்பவும்.",
+  "@msgTypeImage": {},
+  "msgTypeVideo": "வீடியோ கோப்பை அனுப்பவும்.",
+  "@msgTypeVideo": {},
+  "msgTypeAudio": "ஆடியோ கோப்பை அனுப்பவும்.",
+  "@msgTypeAudio": {},
+  "msgTypeFile": "ஒரு கோப்பை அனுப்பவும்.",
+  "@msgTypeFile": {},
+  "msgTypeLocation": "உங்கள் இருப்பிடத்தைப் பகிரவும்.",
+  "@msgTypeLocation": {},
+  "msgTypeSticker": "ஒரு ச்டிக்கரை அனுப்பவும்.",
+  "@msgTypeSticker": {},
+  "msgTypeBadEncrypted": "அவர்கள் மறைகுறியாக்க முடியாத ஒரு செய்தியுடன் உங்கள் சகாக்களை எரிச்சலூட்டுங்கள்.",
+  "@msgTypeBadEncrypted": {},
+  "msgTypeNone": "எந்த செய்தியும் அனுப்பவும்.",
+  "@msgTypeNone": {},
+  "noFilesSelected": "கோப்புகள் எதுவும் தேர்ந்தெடுக்கப்படவில்லை.",
+  "@noFilesSelected": {},
+  "yesterday": "நேற்று",
+  "@yesterday": {},
+  "thisMonth": "இந்த மாதம்",
+  "@thisMonth": {},
+  "lastMonth": "கடந்த மாதம்",
+  "@lastMonth": {},
+  "download": "பதிவிறக்கம்",
+  "@download": {},
+  "share": "பங்கு",
+  "@share": {},
+  "saveAs": "என சேமி",
+  "@saveAs": {},
+  "settings": "அமைப்புகள்",
+  "@settings": {},
+  "errorDownloadingAttachment": "செய்தி இணைப்பைப் பதிவிறக்குவதில் பிழை.",
+  "@errorDownloadingAttachment": {},
+  "retry": "மீண்டும் முயற்சிக்கவும்",
+  "@retry": {},
+  "searchPromptLabel": "கட்டளை, பயனர், அறை பெயர் அல்லது MXID",
+  "@searchPromptLabel": {},
+  "appearanceAccessibilitySettings": "தோற்றம் மற்றும் அணுகல்",
+  "@appearanceAccessibilitySettings": {},
+  "polyculeSettings": "உங்கள் <பாலிகுல்> உள்ளமைக்கவும்",
+  "@polyculeSettings": {},
+  "systemLanguage": "சாதன மொழி",
+  "@systemLanguage": {},
+  "language": "மொழி",
+  "@language": {},
+  "theme": "கருப்பொருள்",
+  "@theme": {},
+  "dark": "இருண்ட முனையம்",
+  "@dark": {},
+  "light": "ஒளி ரோசா",
+  "@light": {},
+  "systemTheme": "கணினி கருப்பொருள்",
+  "@systemTheme": {},
+  "fontAccessibility": "எழுத்துரு அணுகல்",
+  "@fontAccessibility": {},
+  "inclusiveSans": "அதிகரித்த வாசிப்பு எழுத்துரு",
+  "@inclusiveSans": {},
+  "openDyslexic": "டிச்லெக்சியா-உதவி எழுத்துரு",
+  "@openDyslexic": {},
+  "serif": "செரிஃப் எழுத்துரு",
+  "@serif": {},
+  "defaultFont": "இயல்புநிலை எழுத்துரு",
+  "@defaultFont": {},
+  "color": "வண்ண அமைப்புகள்",
+  "@color": {},
+  "systemColor": "கணினி நிறம்",
+  "@systemColor": {},
+  "defaultColor": "கருப்பொருள் இயல்புநிலை நிறம்",
+  "@defaultColor": {},
+  "highContrast": "உயர் வேறுபாடு",
+  "@highContrast": {},
+  "aboutPolycule": "<பாலிகுல்> பற்றி",
+  "@aboutPolycule": {},
+  "contentNotice": "சி.என்: «{notice}»",
+  "@contentNotice": {
+    "description": "A content notice warning about spoilers or sensitive contents of a message.\nPlease keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
+    "placeholders": {
+      "notice": {
+        "description": "The warning/notice message.",
+        "type": "String"
+      }
+    }
+  },
+  "contentNoticeFallback": "உள்ளடக்க அறிவிப்பு",
+  "@contentNoticeFallback": {},
+  "webUriHandlerTitle": "<பாலிகுல்> [மேட்ரிக்ச்] வாடிக்கையாளர்",
+  "@webUriHandlerTitle": {},
+  "jumpToMessage": "செய்திக்கு செல்லவும் {message}",
+  "@jumpToMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "selectAccount": "தொடர கணக்கைத் தேர்ந்தெடுக்கவும்",
+  "@selectAccount": {},
+  "sharingText": "உரையை அறைக்கு பகிரவும்",
+  "@sharingText": {},
+  "sendFiles": "கோப்புகளை அனுப்பவும்",
+  "@sendFiles": {},
+  "checkingTotalSendSize": "மொத்த அனுப்பும் அளவை சரிபார்க்கிறது ...",
+  "@checkingTotalSendSize": {},
+  "mimeType": "கோப்பு வகை: {mimeType}",
+  "@mimeType": {
+    "placeholders": {
+      "mimeType": {
+        "type": "String?"
+      }
+    }
+  },
+  "fileSize": "{size, plural, =0{கோப்பு அளவு : 0 பைட்டுகள்} =1{கோப்பு அளவு : 1 பைட்} other{கோப்பு அளவு: {size} பைட்டுகள்}}",
+  "@fileSize": {
+    "placeholders": {
+      "size": {
+        "type": "int"
+      }
+    }
+  },
+  "matrixUserShareSubject": "[மேட்ரிக்ச்] இல் «{mxid} »ஐ தொடர்பு கொள்ளவும்",
+  "@matrixUserShareSubject": {
+    "placeholders": {
+      "mxid": {
+        "type": "String"
+      }
+    }
+  },
+  "fileDownloadedTo": "கோப்பு «{name}» என சேமிக்கப்பட்டது.",
+  "@fileDownloadedTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openFile": "திற",
+  "@openFile": {},
+  "compressFiles": "கோப்புகளை சுருக்கவும்",
+  "@compressFiles": {},
+  "compressFilesSubtitle": "உதவி கோப்பு வகைகளுக்கு மட்டுமே",
+  "@compressFilesSubtitle": {},
+  "cancelSending": "அனுப்புவதை ரத்துசெய்",
+  "@cancelSending": {},
+  "retrySending": "அனுப்புவதை மீண்டும் முயற்சிக்கவும்",
+  "@retrySending": {},
+  "accountSettings": "கணக்கு அமைப்புகள்",
+  "@accountSettings": {},
+  "previewRoom": "விருந்தினராக முன்னோட்டம்",
+  "@previewRoom": {},
+  "joinMatrixCall": "சேர [மேட்ரிக்ச்] அழைப்பு",
+  "@joinMatrixCall": {},
+  "matrixCallTooltip": "ஐடியை அழைக்கவும்: {roomId}",
+  "@matrixCallTooltip": {
+    "placeholders": {
+      "roomId": {
+        "type": "String"
+      }
+    }
+  },
+  "pushSettings": "அறிவிப்புகளை அழுத்தவும்",
+  "@pushSettings": {},
+  "unifiedPushUnavailable": "உங்கள் சாதனத்தில் UNIFIDEPUSH கிடைக்கவில்லை.",
+  "@unifiedPushUnavailable": {},
+  "selectPushDistributor": "உங்கள் ஒருங்கிணைந்த புச் விநியோகச்தரைத் தேர்ந்தெடுக்கவும்",
+  "@selectPushDistributor": {},
+  "disablePushNotifications": "புச் அறிவிப்புகளை முடக்கு",
+  "@disablePushNotifications": {},
+  "pushInformationPolycule": "தற்போது, <licicule> ஆண்ட்ராய்டு இல் புச் அறிவிப்புகளை மட்டுமே ஆதரிக்கிறது. லினக்ச் உதவி திட்டமிடப்பட்டுள்ளது.",
+  "@pushInformationPolycule": {},
+  "unifiedPushAbout": "புச் அறிவிப்புகளுக்கு நீங்கள் ஒரு விநியோகச்தரை நிறுவ வேண்டும்.\n மேலும் தகவல்களை நீங்கள் இங்கு காணலாம்: https://unifiedpush.org/users/intro/",
+  "@unifiedPushAbout": {},
+  "unifiedPushLink": "https://unifiedpush.org/users/intro/",
+  "@unifiedPushLink": {},
+  "setupUnifiedPush": "அமைவு UNIFIDEPUSH",
+  "@setupUnifiedPush": {},
+  "googleFirebase": "கூகிள் ஃபயர்பேச் முகில் செய்தி",
+  "@googleFirebase": {},
+  "newNotification": "<பாலிசீல்> இல் புதிய செய்தி",
+  "@newNotification": {},
+  "pushChannelName": "உள்வரும் செய்திகள்",
+  "@pushChannelName": {},
+  "directChats": "நேரடி செய்தி அறைகள்",
+  "@directChats": {},
+  "groups": "குழு அறைகள்",
+  "@groups": {},
+  "unifiedPush": "UNIFIDEPUSH",
+  "@unifiedPush": {},
+  "reply": "பதில்",
+  "@reply": {},
+  "edit": "தொகு",
+  "@edit": {},
+  "redact": "திருத்துதல்",
+  "@redact": {},
+  "copyMessage": "செய்தியை நகலெடுக்கவும்",
+  "@copyMessage": {},
+  "confirmRedact": "Redact நிகழ்வு",
+  "@confirmRedact": {},
+  "logoutCommandSyntax": "இந்த கணக்கிலிருந்து வெளியேறுதல்.",
+  "@logoutCommandSyntax": {},
+  "roomnameCommandSyntax": "அறை பெயரை [பெயர்] என அமைக்கவும்.",
+  "@roomnameCommandSyntax": {},
+  "roomdescriptionCommandSyntax": "அறை விளக்கத்தை [விளக்கம்] என அமைக்கவும்.",
+  "@roomdescriptionCommandSyntax": {},
+  "sendCommandSyntax": "உரை செய்தியை அனுப்பவும். [M.Text]",
+  "@sendCommandSyntax": {},
+  "meCommandSyntax": "உங்கள் மனநிலையை விவரிக்கவும். [M.EMOTE]",
+  "@meCommandSyntax": {},
+  "createCommandSyntax": "ஒரு அறையை உருவாக்கவும். [பெயர்?] [-இல்லை-உணர்திறன்?]",
+  "@createCommandSyntax": {},
+  "plainCommandSyntax": "மார்க் பேரூர் பாகுபடுத்தாமல் ஒரு குறுஞ்செய்தியை அனுப்பவும். [M.Text]",
+  "@plainCommandSyntax": {},
+  "htmlCommandSyntax": "மூல உஉகுமொ இல் ஒரு உரை செய்தியை அனுப்பவும். [M.Text]",
+  "@htmlCommandSyntax": {},
+  "reactCommandSyntax": "ஒரு எதிர்வினையுடன் பதிலளிக்கவும். [எதிர்வினை]",
+  "@reactCommandSyntax": {},
+  "joinCommandSyntax": "ஒரு அறையில் சேரவும். [MXID]",
+  "@joinCommandSyntax": {},
+  "leaveCommandSyntax": "தற்போதைய அறையை விட்டு விடுங்கள்.",
+  "@leaveCommandSyntax": {},
+  "opCommandSyntax": "உறுப்பினர் ஆற்றல் மட்டத்தை அமைக்கவும். [MXID] [50?]",
+  "@opCommandSyntax": {},
+  "kickCommandSyntax": "கிக் உறுப்பினர். [MXID]",
+  "@kickCommandSyntax": {},
+  "banCommandSyntax": "தடை உறுப்பினர். [MXID]",
+  "@banCommandSyntax": {},
+  "unbanCommandSyntax": "கட்டுப்பாடற்ற உறுப்பினர். [MXID]",
+  "@unbanCommandSyntax": {},
+  "inviteCommandSyntax": "உறுப்பினரை அழைக்கவும். [MXID]",
+  "@inviteCommandSyntax": {},
+  "myroomnickCommandSyntax": "இந்த அறையில் தனிப்பயன் நிக் அமைக்கவும். [காட்சி பெயர்]",
+  "@myroomnickCommandSyntax": {},
+  "myroomavatarCommandSyntax": "இந்த அறையில் தனிப்பயன் MXC அவதாரத்தை அமைக்கவும். [MXC]",
+  "@myroomavatarCommandSyntax": {},
+  "discardsessionCommandSyntax": "உங்கள் வெளிச்செல்லும் அறை அமர்வை நிராகரிக்கவும்.",
+  "@discardsessionCommandSyntax": {},
+  "clearcacheCommandSyntax": "கணக்கின் உள்ளக தற்காலிக சேமிப்பை அழிக்கவும்.",
+  "@clearcacheCommandSyntax": {},
+  "markasdmCommandSyntax": "தற்போதைய அறையை ஒரு உறுப்பினருடன் டி.எம். [MXID]",
+  "@markasdmCommandSyntax": {},
+  "markasgroupCommandSyntax": "டி.எம் பட்டியலிலிருந்து தற்போதைய அறையை அகற்றவும்.",
+  "@markasgroupCommandSyntax": {},
+  "hugCommandSyntax": "மெய்நிகர் அணைப்புகளை அனுப்பவும்.",
+  "@hugCommandSyntax": {},
+  "googlyCommandSyntax": "மெய்நிகர் கூகிள் கண்களை அனுப்பவும்.",
+  "@googlyCommandSyntax": {},
+  "cuddleCommandSyntax": "மெய்நிகர் கட்ல்களை அனுப்பவும்.",
+  "@cuddleCommandSyntax": {},
+  "sendrawCommandSyntax": "ஒரு மூல நிகழ்வை அனுப்பவும். [உள்ளடக்கம்]",
+  "@sendrawCommandSyntax": {},
+  "ignoreCommandSyntax": "ஒரு பயனரை புறக்கணிக்கவும். [MXID]",
+  "@ignoreCommandSyntax": {},
+  "unignoreCommandSyntax": "ஒரு பயனரை இணைக்கவும். [MXID]",
+  "@unignoreCommandSyntax": {},
+  "noErrorReported": "பிழை எதுவும் தெரிவிக்கப்படவில்லை.",
+  "@noErrorReported": {},
+  "commandInvalid": "இது செல்லுபடியாகாத <பாலிகுல்> கட்டளை அல்ல.",
+  "@commandInvalid": {},
+  "commandHelp": "உதவியைக் காட்டு",
+  "@commandHelp": {},
+  "availableCommands": "கிடைக்கும் கட்டளைகள்",
+  "@availableCommands": {},
+  "commandError": "வெளியேறும் குறியீடு 1",
+  "@commandError": {},
+  "noStickerPacks": "உங்கள் கணக்கோ அல்லது இந்த அறையோ எந்த ச்டிக்கர் பேக் கிடைக்கவில்லை.",
+  "@noStickerPacks": {},
+  "react": "எதிர்வினை அனுப்பவும்",
+  "@react": {},
+  "logs": "பயன்பாட்டு பதிவுகள்",
+  "@logs": {},
+  "reload": "ஏற்றவும்",
+  "@reload": {},
+  "runtimeError": "உங்கள் <பாலிகுல்> தரமற்றதாக இருந்தது",
+  "@runtimeError": {},
+  "logSingleError": "அநாமதேயமாக பகிர்ந்து கொள்ளுங்கள்",
+  "@logSingleError": {},
+  "enableSentry": "எப்போதும் பகிரவும்",
+  "@enableSentry": {},
+  "errorReporting": "பிழை அறிக்கை",
+  "@errorReporting": {},
+  "errorReportingLong": "<licicule> இல் பிழைகளைக் கண்டறிய உதவும் பிழை அறிக்கையை நீங்கள் இயக்கலாம்.",
+  "@errorReportingLong": {},
+  "errorReportingPrivacy": "இது <licyle> இன் மூலக் குறியீடு புரவலன் மற்றும் அநாமதேயமாக நிகழும் பிழைகள் மற்றும் அவற்றின் காரணங்களை அநாமதேயமாக பகிர்ந்து கொள்ளும் Gitlab.com உடன் இணைக்கும். இது எந்தவொரு தனிப்பட்ட தரவையும் டெவலப்பருக்கு பகிர்ந்து கொள்ளாது.",
+  "@errorReportingPrivacy": {},
+  "learnMore": "மேலும் அறிக",
+  "@learnMore": {},
+  "gitLabPrivacy": "https://gitlab.com/help/operations/error_tracking.md",
+  "@gitLabPrivacy": {
+    "translatable": false
+  },
+  "fontSize": "எழுத்துரு அளவு",
+  "@fontSize": {},
+  "reset": "மீட்டமை",
+  "@reset": {},
+  "fontScaleLabel": "{scale}",
+  "@fontScaleLabel": {
+    "placeholders": {
+      "scale": {
+        "type": "double",
+        "format": "decimalPercentPattern",
+        "optionalParameters": {
+          "decimalDigits": 1
+        }
+      }
+    }
+  },
+  "openDirectChat": "நேரடி அரட்டை திறக்கவும்",
+  "@openDirectChat": {},
+  "startDirectChat": "நேரடி அரட்டையைத் தொடங்கவும்",
+  "@startDirectChat": {},
+  "ignoreUser": "புறக்கணிக்கவும்",
+  "@ignoreUser": {},
+  "unignoreUser": "இணக்கமானவர்",
+  "@unignoreUser": {},
+  "ignoreToggleWaiting": "செயலாக்கம் நிலையை புறக்கணிக்கவும். இதற்கு சிறிது நேரம் ஆகும்.",
+  "@ignoreToggleWaiting": {},
+  "roomStateWtf": "இந்த அறையின் பாதுகாப்பு ஒரு குழப்பம். தவிர்க்க சிறந்தது.",
+  "@roomStateWtf": {},
+  "roomStatePublic": "இந்த அறை அனைவருக்கும் பகிரங்கமாக தெரியும்",
+  "@roomStatePublic": {},
+  "roomStatePublicKnock": "இந்த அறை அனைவருக்கும் பகிரங்கமாக தெரியும், ஆனால் அவர்கள் சேருவதற்கு முன்பு தட்ட வேண்டும்.",
+  "@roomStatePublicKnock": {},
+  "roomStateOpen": "இந்த அறை அதன் இணைப்பை அறிந்த அனைவருக்கும் திறந்திருக்கும்.",
+  "@roomStateOpen": {},
+  "roomStateKnock": "இந்த அறையில் சேருவதற்கு முன்பு பயனர்கள் தட்ட வேண்டும்.",
+  "@roomStateKnock": {},
+  "roomStateSpace": "இந்த அறை விண்வெளி உறுப்பினர்களுக்கு மட்டுமே திறந்திருக்கும்.",
+  "@roomStateSpace": {},
+  "roomStateUnpublic": "இந்த அறை தனிப்பட்டது ஆனால் குறியாக்கம் செய்யப்படவில்லை.",
+  "@roomStateUnpublic": {},
+  "roomStateEncrypted": "இந்த அறை குறியாக்கம் செய்யப்பட்டுள்ளது, ஆனால் சில உறுப்பினர்கள் சரிபார்க்கப்படவில்லை.",
+  "@roomStateEncrypted": {},
+  "roomStateVerifiedEncrypted": "இந்த அறை குறியாக்கம் செய்யப்பட்டுள்ளது மற்றும் ஒவ்வொரு அமர்வும் குறுக்கு கையெழுத்திட்டது.",
+  "@roomStateVerifiedEncrypted": {},
+  "oidcAppName": "<பாலிகுல்>",
+  "@oidcAppName": {
+    "translatable": false
+  },
+  "oidcContact": "info@braid.business",
+  "@oidcContact": {
+    "translatable": false
+  },
+  "oidcAppUrl": "https://polycule.im/web",
+  "@oidcAppUrl": {
+    "translatable": false
+  },
+  "oidcLogoUrl": "https://polycule.im/web/assets/assets/logo/logo-circle.png",
+  "@oidcLogoUrl": {
+    "translatable": false
+  },
+  "oidcTosUrl": "https://polycule.im/web/tos.html",
+  "@oidcTosUrl": {
+    "translatable": false
+  },
+  "oicPolicyUri": "https://polycule.im/web/policy.html",
+  "@oicPolicyUri": {},
+  "loginOidc": "OpenID இணைப்பைப் பயன்படுத்தி உள்நுழைக",
+  "@loginOidc": {},
+  "oidcConfirm": "உறுதிப்படுத்தவும்",
+  "@oidcConfirm": {},
+  "manageSessions": "அமர்வுகளை நிர்வகிக்கவும்",
+  "@manageSessions": {},
+  "deactivateAccount": "கணக்கை செயலிழக்கச் செய்யுங்கள்",
+  "@deactivateAccount": {},
+  "networkSettings": "பிணைய அமைப்புகள்",
+  "@networkSettings": {},
+  "useSystemProxy": "சாதன பதிலாள் அமைப்புகளை அனுமதிக்கவும்",
+  "@useSystemProxy": {},
+  "verifyCertificates": "TLS சான்றிதழ்களை சரிபார்க்கவும்",
+  "@verifyCertificates": {},
+  "verifyTlsCertificatesAndroid": "பழைய ஆண்ட்ராய்டு பதிப்புகளுக்கு, சுழற்றப்பட்ட லெட்ச் ஐ.எச்.ஆர்.சி ரூட் ஃச் 1 சான்றிதழ் ஏற்கனவே சேர்க்கப்பட்டுள்ளது.",
+  "@verifyTlsCertificatesAndroid": {},
+  "sendTlsSNI": "எளிய உரை சேவையக பெயர் குறிப்பை அனுப்பவும்",
+  "@sendTlsSNI": {},
+  "minTlsVersion": "ஓம்சர்வர் மூலம் குறைந்தபட்ச தேவையான டி.எல்.எச் பதிப்பு",
+  "@minTlsVersion": {},
+  "tls12": "டி.எல்.எச் 1.2",
+  "@tls12": {},
+  "tls13": "டி.எல்.எச் 1.3",
+  "@tls13": {},
+  "favoriteAdd": "பிடித்தவைகளில் சேர்க்கவும்",
+  "@favoriteAdd": {},
+  "favoriteRemove": "பிடித்தவைகளிலிருந்து அகற்று",
+  "@favoriteRemove": {},
+  "markRead": "படித்தபடி குறி",
+  "@markRead": {},
+  "markUnread": "படிக்காத எனக் குறிக்கவும்",
+  "@markUnread": {},
+  "leaveRoom": "அறை விடுங்கள்",
+  "@leaveRoom": {},
+  "leaveRoomLong": "அறையை நிரந்தரமாக விட்டுச் செல்லுங்கள் «{name}».",
+  "@leaveRoomLong": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "userDetails": "பயனர் சுயவிவரத்தைக் காண்க",
+  "@userDetails": {},
+  "markMute": "முடக்கு அறை",
+  "@markMute": {},
+  "markUnmute": "ஈடுசெய்யும் அறை",
+  "@markUnmute": {},
+  "copyRoomAddress": "பொது அறை முகவரியை நகலெடுக்கவும்",
+  "@copyRoomAddress": {},
+  "search": "தேடல்",
+  "@search": {},
+  "startVerification": "சரிபார்ப்பைத் தொடங்கவும்",
+  "@startVerification": {},
+  "keyVerificationRequestSent": "முக்கிய சரிபார்ப்பு கோரிக்கை அனுப்பப்பட்டது.",
+  "@keyVerificationRequestSent": {},
+  "noHomeserverConnection": "ஓம்சர்வருக்கு எந்த தொடர்பும் இல்லை.",
+  "@noHomeserverConnection": {},
+  "emojiSettings": "ஈமோசி அமைப்புகள்",
+  "@emojiSettings": {},
+  "defaultEmojiTone": "இயல்புநிலை ஈமோசி தொனி",
+  "@defaultEmojiTone": {},
+  "autoplayAnimations": "அனிமேசன் படங்கள் மற்றும் ச்டிக்கர்களை தானாக இயக்கவும்",
+  "@autoplayAnimations": {},
+  "yellowSkin": "மஞ்சள் தோல்",
+  "@yellowSkin": {},
+  "paleSkin": "வெளிர் தோல்",
+  "@paleSkin": {},
+  "demiPaleSkin": "அரை வெளிர் தோல்",
+  "@demiPaleSkin": {},
+  "mediumSkin": "நடுத்தர தோல்",
+  "@mediumSkin": {},
+  "brownSkin": "பழுப்பு தோல்",
+  "@brownSkin": {},
+  "blackSkin": "கருப்பு தோல்",
+  "@blackSkin": {},
+  "roomDetails": "அறை விவரங்கள்",
+  "@roomDetails": {},
+  "welcomeToHomeserver": "{homeserver} க்கு வருக!",
+  "@welcomeToHomeserver": {
+    "placeholders": {
+      "homeserver": {
+        "type": "String"
+      }
+    }
+  },
+  "authenticateForAccount": "{mxid} க்கான உங்கள் சான்றுகளுடன் அங்கீகரிக்கவும்.",
+  "@authenticateForAccount": {
+    "placeholders": {
+      "mxid": {
+        "format": "String"
+      }
+    }
+  },
+  "inviteLongRoom": "அறையில் சேர நீங்கள் அழைக்கப்படுகிறீர்கள்: « {roomname} ».",
+  "@inviteLongRoom": {
+    "description": "Please keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
+    "placeholders": {
+      "roomname": {
+        "type": "String"
+      }
+    }
+  },
+  "dmCommandSyntax": "ஒரு டி.எம் அறையை உருவாக்கவும். [mxid] [--no-encryption?]",
+  "@dmCommandSyntax": {},
+  "sharingFiles": "{files, plural, =1{ஒரு கோப்பு} other{{files} கோப்புகள்}} அனுப்புகிறது.",
+  "@sharingFiles": {
+    "placeholders": {
+      "files": {
+        "type": "int"
+      }
+    }
+  },
+  "sendingFiles": "{files, plural, =0{அனுப்ப கோப்பு இல்லை.} =1{ஒரு கோப்பு} other{{files} கோப்புகள்}} அனுப்புதல்...}",
+  "@sendingFiles": {
+    "placeholders": {
+      "files": {
+        "type": "int"
+      }
+    }
+  }
+}
