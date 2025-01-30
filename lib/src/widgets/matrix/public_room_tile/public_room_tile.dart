@@ -8,6 +8,7 @@ import '../../../utils/matrix_to_extension.dart';
 import '../../ascii_progress_indicator.dart';
 import '../../polycule_overflow_bar.dart';
 import '../../share_origin_builder.dart';
+import '../avatar_builder/fullscreen_dialog_avatar.dart';
 import '../avatar_builder/mxc_avatar.dart';
 import '../html/polycule_html_view.dart';
 
@@ -49,10 +50,15 @@ class _PublicRoomTileState extends State<PublicRoomTile> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ListTile(
-          leading: MxcAvatar(
+          leading: FullScreenAvatar.makeImageButton(
+            context: context,
             uri: widget.room.avatarUrl,
-            monogram: name,
-            dimension: 48,
+            title: name,
+            child: MxcAvatar(
+              uri: widget.room.avatarUrl,
+              monogram: name,
+              dimension: 48,
+            ),
           ),
           isThreeLine: topic != null,
           title: Text(name),

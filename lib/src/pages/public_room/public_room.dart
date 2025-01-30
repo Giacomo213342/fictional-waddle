@@ -40,7 +40,7 @@ class PublicRoomController extends State<PublicRoomPage> {
 
   @override
   void initState() {
-    _getRoomPreview();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getRoomPreview());
     super.initState();
   }
 
