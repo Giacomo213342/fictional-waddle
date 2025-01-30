@@ -1754,7 +1754,7 @@ packages:
     description:
       path: unifiedpush
       ref: "braid/flutter-cleanup"
-      resolved-ref: "0e53e769d116f960b5dc75127d06042a597b8e29"
+      resolved-ref: "687dbcd02dbd94fd7f69a6f5749e09715035119e"
       url: "https://github.com/TheOneWithTheBraid/flutter-connector.git"
     source: git
     version: "6.0.0"

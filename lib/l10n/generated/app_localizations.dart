@@ -9,6 +9,7 @@ import 'app_localizations_en.dart' deferred as app_localizations_en;
 import 'app_localizations_et.dart' deferred as app_localizations_et;
 import 'app_localizations_nb.dart' deferred as app_localizations_nb;
 import 'app_localizations_nl.dart' deferred as app_localizations_nl;
+import 'app_localizations_ta.dart' deferred as app_localizations_ta;
 
 // ignore_for_file: type=lint
 
@@ -100,7 +101,8 @@ abstract class AppLocalizations {
     Locale('en'),
     Locale('et'),
     Locale('nb'),
-    Locale('nl')
+    Locale('nl'),
+    Locale('ta')
   ];
 
   /// No description provided for @appName.
@@ -1939,8 +1941,14 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['de', 'en', 'et', 'nb', 'nl'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+        'de',
+        'en',
+        'et',
+        'nb',
+        'nl',
+        'ta'
+      ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1969,6 +1977,10 @@ Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
       return app_localizations_nl
           .loadLibrary()
           .then((dynamic _) => app_localizations_nl.AppLocalizationsNl());
+    case 'ta':
+      return app_localizations_ta
+          .loadLibrary()
+          .then((dynamic _) => app_localizations_ta.AppLocalizationsTa());
   }
 
   throw FlutterError(
