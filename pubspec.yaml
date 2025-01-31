@@ -15,7 +15,6 @@ dependencies:
   blurhash_dart: ^1.2.1
   collection: ^1.19.1
   cross_file: ^0.3.4+1
-  # required for native iOS icons
   csslib: ^0.17.3
   cupertino_http: ^2.0.1
   cupertino_icons: ^1.0.8
@@ -131,7 +130,7 @@ flutter:
         - asset: assets/fonts/notocoloremoji/NotoColorEmoji-Regular.ttf
     - family: Noto Sans Mono
       fonts:
-       - asset: assets/fonts/notosansmono/NotoSansMono-VariableFont.ttf
+        - asset: assets/fonts/notosansmono/NotoSansMono-VariableFont.ttf
     - family: Marck Script
       fonts:
         - asset: assets/fonts/marckscript/MarckScript-Regular.ttf
@@ -203,4 +202,3 @@ flutter_launcher_icons:
   macos:
     generate: true
     image_path: "assets/logo/logo-background.png"
-

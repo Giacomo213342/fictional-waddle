@@ -8,7 +8,6 @@ import '../pages/application_settings/application_settings.dart';
 import '../pages/application_settings/pages/error_reporting.dart';
 import '../pages/application_settings/pages/logs/log_row.dart';
 import '../utils/error_logger.dart';
-import 'matrix/matrix_scope.dart';
 import 'settings_manager.dart';
 
 class ErrorHandlerDialog extends StatelessWidget {
@@ -18,10 +17,9 @@ class ErrorHandlerDialog extends StatelessWidget {
   final StackTrace? stackTrace;
 
   Future<void> showDialog(BuildContext context) {
-    final scope = MatrixScope.captureAll(context);
     return showAdaptiveDialog(
       context: context,
-      builder: (context) => MatrixScope(scope: scope, child: this),
+      builder: (context) => this,
     );
   }
 

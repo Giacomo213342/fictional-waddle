@@ -159,6 +159,11 @@ class PolyculeRouter extends GoRouter {
                             ),
                           ],
                         ),
+                        GoRoute(
+                          path: '/user'.asMultiClientRoute(),
+                          redirect: (context, state) => state.uri.path
+                              .substring(0, state.uri.path.lastIndexOf('/')),
+                        ),
                         RequiresLoginRoute(
                           path: UserPage.makeRouteName().asMultiClientRoute(),
                           builder: (context, state) => UserPage(
