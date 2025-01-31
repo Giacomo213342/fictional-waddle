@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 
 import 'package:dart_animated_emoji/dart_animated_emoji.dart';
@@ -45,14 +43,12 @@ class ToneButton extends StatelessWidget {
             dimension: _size * 1.5,
             child: AspectRatio(
               aspectRatio: 1,
-              child: Lottie.memory(
-                Uint8List.fromList(
-                  AnimatedEmoji.all
-                      .firstWhere(
-                        (e) => e.fallback == _glyph,
-                      )
-                      .lottieAnimation
-                      .codeUnits,
+              child: Lottie.asset(
+                AnimatedEmoji.flutterNotoDotLottieAsset,
+                decoder: (bytes) => LottieComposition.decodeZip(
+                  bytes,
+                  filePicker:
+                      AnimatedEmoji.fromGlyph(_glyph)?.archiveFilePicker,
                 ),
                 width: _size,
                 height: _size,
