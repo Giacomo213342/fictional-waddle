@@ -19,7 +19,7 @@ dependencies:
   csslib: ^0.17.3
   cupertino_http: ^2.0.1
   cupertino_icons: ^1.0.8
-  dart_animated_emoji: ^0.0.3
+  dart_animated_emoji: ^0.1.2
   dbus: ^0.7.11
   diacritic: ^0.1.6
   diffutil_dart: ^4.0.1
@@ -120,6 +120,7 @@ flutter:
     - assets/logo/logo-circle.png
     - assets/icons/matrix.svg
     - assets/icons/rosahaj/base/Rosahaj_Peek.png
+    - packages/dart_animated_emoji/generated/noto-animated.lottie
 
   fonts:
     - family: Overpass Mono

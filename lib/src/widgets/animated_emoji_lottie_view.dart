@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 
 import 'package:dart_animated_emoji/dart_animated_emoji.dart';
@@ -32,9 +30,13 @@ class AnimatedEmojiLottieView extends StatelessWidget {
           child: AnimationEnabledBuilder(
             iconSize: size / 2.5,
             builder: (context, animate) {
-              return Lottie.memory(
+              return Lottie.asset(
                 key: ValueKey(emoji.name + size.toString()),
-                Uint8List.fromList(emoji.lottieAnimation.codeUnits),
+                AnimatedEmoji.flutterNotoDotLottieAsset,
+                decoder: (bytes) => LottieComposition.decodeZip(
+                  bytes,
+                  filePicker: emoji.archiveFilePicker,
+                ),
                 animate: animate,
               );
             },

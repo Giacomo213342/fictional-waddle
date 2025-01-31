@@ -102,9 +102,7 @@ class AnimatedEmojiExtension extends HtmlExtension {
   static WidgetSpan _lottieSpan(String emoji, [double? size]) {
     return WidgetSpan(
       child: AnimatedEmojiLottieView(
-        emoji: AnimatedEmoji.all.singleWhere(
-          (e) => e.fallback == emoji,
-        ),
+        emoji: AnimatedEmoji.fromGlyph(emoji)!,
         size: size,
       ),
     );
