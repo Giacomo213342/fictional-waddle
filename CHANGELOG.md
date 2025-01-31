@@ -1,3 +1,18 @@
+## v0.1.1
+
+- Added translation using Weblate (Tamil) (தமிழ்நேரம்)
+- build(deps): bump org.jetbrains.kotlin.android in /android (The one with the braid)
+- chore: migrate to dotLottie animated emoji font (The one with the braid)
+- chore: refactor state management (The one with the braid)
+- feat: add F-Droid FOSS scanner job (The one with the braid)
+- feat: build against fedora for testing (The one with the braid)
+- fix: hotfix state refactoring (The one with the braid)
+- fix: improve back button behavior (The one with the braid)
+- Translated using Weblate (Tamil) (The one with the braid)
+- Translated using Weblate (Tamil) (தமிழ்நேரம்)
+- Translated using Weblate (Tamil) (தமிழ்நேரம்)
+- Update translation files (Hosted Weblate)
+
 ## v0.1.0
 
 - fix: cmake patch for tags (The one with the braid)
