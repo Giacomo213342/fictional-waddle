@@ -33,11 +33,11 @@ class SplashController extends State<SplashPage> {
     if (!mounted || ClientManager.activeClients.isEmpty) {
       return;
     }
-    final client = ClientScope.of(context).client;
-    if (client.isLogged()) {
-      _roomList();
-    }
     try {
+      final client = ClientScope.of(context).client;
+      if (client.isLogged()) {
+        _roomList();
+      }
       final loginState = client.onLoginStateChanged.value ??
           await client.onLoginStateChanged.stream.first.timeout(
             const Duration(seconds: 45),
@@ -54,15 +54,27 @@ class SplashController extends State<SplashPage> {
   }
 
   void _loginView() => WidgetsBinding.instance.addPostFrameCallback(
-        (_) => context.goMultiClient(HomeserverPage.routeName),
+        (_) {
+          if (mounted) {
+            context.goMultiClient(HomeserverPage.routeName);
+          }
+        },
       );
 
   void _roomList() => WidgetsBinding.instance.addPostFrameCallback(
-        (_) => context.goMultiClient(RoomListPage.routeName),
+        (_) {
+          if (mounted) {
+            context.goMultiClient(RoomListPage.routeName);
+          }
+        },
       );
 
   void _fatalError() => WidgetsBinding.instance.addPostFrameCallback(
-        (_) => context.goMultiClient(FatalErrorPage.routeName),
+        (_) {
+          if (mounted) {
+            context.goMultiClient(FatalErrorPage.routeName);
+          }
+        },
       );
 
   @override

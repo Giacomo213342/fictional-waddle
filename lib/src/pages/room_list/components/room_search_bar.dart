@@ -17,7 +17,7 @@ class RoomSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userId = ClientScope.of(context).client.userID!;
+    final userId = ClientScope.of(context).client.userID;
     final cmdL10nHelper =
         CommandLocalizationHelper(AppLocalizations.of(context));
     final controller = RoomListController.of(context);
@@ -54,7 +54,7 @@ class RoomSearchBar extends StatelessWidget {
                   onPressed: controller.accountSettings,
                   tooltip: AppLocalizations.of(context).accountSettings,
                   icon: ProfileAvatarBuilder(
-                    userId: userId,
+                    userId: userId ?? '',
                     dimension: 32,
                   ),
                 ),
@@ -63,7 +63,7 @@ class RoomSearchBar extends StatelessWidget {
           );
         },
         headerHeight: 56 - 1,
-        suggestionsBuilder: (context, searchController) {
+        suggestionsBuilder: (c, searchController) {
           final client = ClientScope.of(context).client;
           final query = searchController.text;
           final rooms = controller.filterRooms(query).map(

@@ -48,7 +48,17 @@ class ClientTabBar extends StatelessWidget implements PreferredSizeWidget {
                       if (index == 0) {
                         return SizedBox.square(
                           dimension: 48,
-                          child: BackButton(onPressed: context.pop),
+                          child: BackButton(
+                            onPressed: () {
+                              final path = GoRouterState.of(context).uri.path;
+                              if (path.length == 1) {
+                                return;
+                              }
+                              context.pushReplacement(
+                                path.substring(0, path.lastIndexOf('/')),
+                              );
+                            },
+                          ),
                         );
                       } else {
                         index--;
