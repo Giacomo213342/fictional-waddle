@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:url_launcher/link.dart';
-
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
 import '../account_settings.dart';
@@ -14,20 +12,15 @@ class EmojiSettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Link(
-      uri: Uri.parse(
-        context.clientifyLocation(
-          AccountSettings.makeSettingsUri(
-            EmojiSettingsPage.routeName,
-          ),
-        ),
+    return ListTile(
+      leading: const Icon(Icons.emoji_emotions),
+      title: Text(
+        AppLocalizations.of(context).emojiSettings,
       ),
-      builder: (context, followLink) => ListTile(
-        leading: const Icon(Icons.emoji_emotions),
-        title: Text(
-          AppLocalizations.of(context).emojiSettings,
+      onTap: () => context.pushMultiClient(
+        AccountSettings.makeSettingsUri(
+          EmojiSettingsPage.routeName,
         ),
-        onTap: followLink,
       ),
     );
   }

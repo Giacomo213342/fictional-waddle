@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:url_launcher/link.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../theme/fonts.dart';
@@ -87,23 +87,20 @@ class HomeserverView extends StatelessWidget {
             ),
             PolyculeOverflowBar(
               children: [
-                Link(
-                  uri: ApplicationSettingsPage.makeSettingsUri(
-                    AppearanceSettingsPage.routeName,
+                OutlinedButton.icon(
+                  onPressed: () => context.push(
+                    ApplicationSettingsPage.makeSettingsUri(
+                      AppearanceSettingsPage.routeName,
+                    ),
                   ),
-                  builder: (context, followLink) {
-                    return OutlinedButton.icon(
-                      onPressed: followLink,
-                      icon: const Icon(Icons.settings_accessibility),
-                      label: Text(
-                        AppLocalizations.of(context)
-                            .appearanceAccessibilitySettings,
-                        style: TextStyle(
-                          fontFamily: PolyculeFonts.inclusiveSans.name,
-                        ),
-                      ),
-                    );
-                  },
+                  icon: const Icon(Icons.settings_accessibility),
+                  label: Text(
+                    AppLocalizations.of(context)
+                        .appearanceAccessibilitySettings,
+                    style: TextStyle(
+                      fontFamily: PolyculeFonts.inclusiveSans.name,
+                    ),
+                  ),
                 ),
                 OutlinedButton.icon(
                   onPressed: controller.showAboutDialog,

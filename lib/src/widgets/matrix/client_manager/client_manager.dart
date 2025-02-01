@@ -376,7 +376,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     _loginClients.add(identifier);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.goMultiClient('/client/$identifier${SplashPage.routeName}');
+      context.pushMultiClient('/client/$identifier${SplashPage.routeName}');
     });
   }
 
@@ -384,7 +384,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     final identifier = client.clientName.clientIdentifier;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.goMultiClient('/client/$identifier${SplashPage.routeName}');
+      context.pushMultiClient('/client/$identifier${SplashPage.routeName}');
     });
   }
 
@@ -437,7 +437,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
                   AccountSelectorPage.routeName,
                 )) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.goMultiClient(RoomListPage.routeName);
+            context.pushMultiClient(RoomListPage.routeName);
           });
         }
 

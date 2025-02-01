@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:url_launcher/link.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import 'application_settings.dart';
@@ -25,41 +27,40 @@ class ApplicationSettingsView extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          Link(
-            uri: ApplicationSettingsPage.makeSettingsUri(
-              AppearanceSettingsPage.routeName,
+          ListTile(
+            leading: const Icon(Icons.color_lens),
+            title: Text(
+              AppLocalizations.of(context).appearanceAccessibilitySettings,
             ),
-            builder: (context, followLink) => ListTile(
-              leading: const Icon(Icons.color_lens),
-              title: Text(
-                AppLocalizations.of(context).appearanceAccessibilitySettings,
+            onTap: () => context.push(
+              ApplicationSettingsPage.makeSettingsUri(
+                AppearanceSettingsPage.routeName,
               ),
-              onTap: followLink,
             ),
           ),
-          Link(
-            uri: ApplicationSettingsPage.makeSettingsUri(
-              PushSettingsPage.routeName,
-            ),
-            builder: (context, followLink) => ListTile(
+          if (kIsWeb ||
+              (!Platform.isIOS && !Platform.isMacOS && !Platform.isWindows))
+            ListTile(
               leading: const Icon(Icons.notifications),
               title: Text(
                 AppLocalizations.of(context).pushSettings,
               ),
-              onTap: followLink,
-            ),
-          ),
-          if (!kIsWeb)
-            Link(
-              uri: ApplicationSettingsPage.makeSettingsUri(
-                NetworkSettingsPage.routeName,
-              ),
-              builder: (context, followLink) => ListTile(
-                leading: const Icon(Icons.settings_ethernet),
-                title: Text(
-                  AppLocalizations.of(context).networkSettings,
+              onTap: () => context.push(
+                ApplicationSettingsPage.makeSettingsUri(
+                  PushSettingsPage.routeName,
                 ),
-                onTap: followLink,
+              ),
+            ),
+          if (!kIsWeb)
+            ListTile(
+              leading: const Icon(Icons.settings_ethernet),
+              title: Text(
+                AppLocalizations.of(context).networkSettings,
+              ),
+              onTap: () => context.push(
+                ApplicationSettingsPage.makeSettingsUri(
+                  NetworkSettingsPage.routeName,
+                ),
               ),
             ),
           ListTile(
@@ -67,29 +68,27 @@ class ApplicationSettingsView extends StatelessWidget {
             title: Text(AppLocalizations.of(context).language),
             onTap: controller.showLanguageDialog,
           ),
-          Link(
-            uri: ApplicationSettingsPage.makeSettingsUri(
-              ErrorReportingSettingsPage.routeName,
+          ListTile(
+            leading: const Icon(Icons.error),
+            title: Text(
+              AppLocalizations.of(context).errorReporting,
             ),
-            builder: (context, followLink) => ListTile(
-              leading: const Icon(Icons.error),
-              title: Text(
-                AppLocalizations.of(context).errorReporting,
+            onTap: () => context.push(
+              ApplicationSettingsPage.makeSettingsUri(
+                ErrorReportingSettingsPage.routeName,
               ),
-              onTap: followLink,
             ),
           ),
           const Divider(),
-          Link(
-            uri: ApplicationSettingsPage.makeSettingsUri(
-              LogsPage.routeName,
+          ListTile(
+            leading: const Icon(Icons.developer_mode),
+            title: Text(
+              AppLocalizations.of(context).logs,
             ),
-            builder: (context, followLink) => ListTile(
-              leading: const Icon(Icons.developer_mode),
-              title: Text(
-                AppLocalizations.of(context).logs,
+            onTap: () => context.push(
+              ApplicationSettingsPage.makeSettingsUri(
+                LogsPage.routeName,
               ),
-              onTap: followLink,
             ),
           ),
           ListTile(

@@ -11,9 +11,8 @@ class ApplicationSettingsPage extends StatefulWidget {
 
   static const routeName = '/settings';
 
-  static Uri makeSettingsUri(String routeName) {
-    return Uri.parse('${ApplicationSettingsPage.routeName}/$routeName');
-  }
+  static String makeSettingsUri(String routeName) =>
+      '${ApplicationSettingsPage.routeName}/$routeName';
 
   @override
   State<ApplicationSettingsPage> createState() =>

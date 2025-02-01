@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:url_launcher/link.dart';
-
 import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
 import '../../widgets/matrix/avatar_builder/room_avatar.dart';
@@ -36,36 +34,22 @@ class RoomView extends StatelessWidget {
         title: RoomBuilder(
           builder: (context, snapshot) {
             final room = snapshot.data ?? RoomScope.of(context).room;
-            Uri? link;
-            if (room.isDirectChat) {
-              link = Uri.parse(
-                context.clientifyLocation(
-                  UserPage.makeRouteName(room.directChatMatrixID),
-                ),
-              );
-            } else {
-              link = Uri.parse(
-                context.clientifyLocation(
-                  RoomDetailsPage.makeRouteName(room.id),
-                ),
-              );
-            }
+
             final style = DefaultTextStyle.of(context);
-            return Link(
-              uri: link,
-              builder: (context, followLink) {
-                return TextButton(
-                  onPressed: followLink,
-                  child: DefaultTextStyle(
-                    style: style.style,
-                    overflow: style.overflow,
-                    textAlign: style.textAlign,
-                    softWrap: style.softWrap,
-                    maxLines: style.maxLines,
-                    child: const RoomDisplayNameText(),
-                  ),
-                );
-              },
+            return TextButton(
+              onPressed: () => context.pushMultiClient(
+                room.isDirectChat
+                    ? UserPage.makeRouteName(room.directChatMatrixID)
+                    : RoomDetailsPage.makeRouteName(room.id),
+              ),
+              child: DefaultTextStyle(
+                style: style.style,
+                overflow: style.overflow,
+                textAlign: style.textAlign,
+                softWrap: style.softWrap,
+                maxLines: style.maxLines,
+                child: const RoomDisplayNameText(),
+              ),
             );
           },
         ),

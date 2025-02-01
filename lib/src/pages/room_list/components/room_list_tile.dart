@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
-import 'package:url_launcher/link.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
@@ -37,33 +37,26 @@ class RoomListTile extends StatelessWidget {
     final path = clientifyLocationCallback?.call(location) ??
         context.clientifyLocation(location);
 
-    return Link(
-      uri: Uri.parse(path),
-      builder: (context, followLink) {
-        return DynamicContextMenu(
-          itemBuilder: () => _buildContextMenu(context, room),
-          // make the tle keyboard focusable by request
-          focusNode: RoomListController.getFocusNode(room.id),
-          onTap: followLink == null
-              ? null
-              : () {
-                  onActivate?.call();
-                  followLink.call();
-                },
-          child: ListTile(
-            key: ValueKey(room.lastEvent),
-            visualDensity: VisualDensity.compact,
-            leading: RoomAvatar(
-              key: ValueKey(room.id),
-              room: room,
-              dimension: 36,
-            ),
-            title: const RoomDisplayNameText(),
-            subtitle: const RoomLastEventPreview(),
-            trailing: const RoomListTrailing(),
-          ),
-        );
+    return DynamicContextMenu(
+      itemBuilder: () => _buildContextMenu(context, room),
+      // make the tle keyboard focusable by request
+      focusNode: RoomListController.getFocusNode(room.id),
+      onTap: () {
+        onActivate?.call();
+        context.push(path);
       },
+      child: ListTile(
+        key: ValueKey(room.lastEvent),
+        visualDensity: VisualDensity.compact,
+        leading: RoomAvatar(
+          key: ValueKey(room.id),
+          room: room,
+          dimension: 36,
+        ),
+        title: const RoomDisplayNameText(),
+        subtitle: const RoomLastEventPreview(),
+        trailing: const RoomListTrailing(),
+      ),
     );
   }
 

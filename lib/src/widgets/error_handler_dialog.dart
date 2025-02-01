@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
-import 'package:url_launcher/link.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../pages/application_settings/application_settings.dart';
@@ -49,23 +49,22 @@ class ErrorHandlerDialog extends StatelessWidget {
             },
             child: Text(AppLocalizations.of(context).logSingleError),
           ),
-        Link(
-          uri: ApplicationSettingsPage.makeSettingsUri(
-            ErrorReportingSettingsPage.routeName,
-          ),
-          builder: (context, followLink) => TextButton(
-            onPressed: () {
-              if (!SettingsManager.of(context).sentryEnabled.value) {
-                _logError();
-              }
-              Navigator.of(context).pop();
-              followLink?.call();
-            },
-            child: Text(
-              SettingsManager.of(context).sentryEnabled.value
-                  ? AppLocalizations.of(context).errorReporting
-                  : AppLocalizations.of(context).enableSentry,
-            ),
+        TextButton(
+          onPressed: () {
+            if (!SettingsManager.of(context).sentryEnabled.value) {
+              _logError();
+            }
+            Navigator.of(context).pop();
+            context.push(
+              ApplicationSettingsPage.makeSettingsUri(
+                ErrorReportingSettingsPage.routeName,
+              ),
+            );
+          },
+          child: Text(
+            SettingsManager.of(context).sentryEnabled.value
+                ? AppLocalizations.of(context).errorReporting
+                : AppLocalizations.of(context).enableSentry,
           ),
         ),
       ],

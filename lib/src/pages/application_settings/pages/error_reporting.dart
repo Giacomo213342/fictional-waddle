@@ -37,12 +37,10 @@ class _ErrorReportingSettingsPageState
             children: [
               Link(
                 uri: Uri.parse(AppLocalizations.of(context).gitLabPrivacy),
-                builder: (context, followLink) {
-                  return TextButton(
-                    onPressed: followLink,
-                    child: Text(AppLocalizations.of(context).learnMore),
-                  );
-                },
+                builder: (context, followLink) => TextButton(
+                  onPressed: followLink,
+                  child: Text(AppLocalizations.of(context).learnMore),
+                ),
               ),
             ],
           ),
