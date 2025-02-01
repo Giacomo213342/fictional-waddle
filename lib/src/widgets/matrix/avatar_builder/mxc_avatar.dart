@@ -9,11 +9,13 @@ class MxcAvatar extends StatelessWidget {
     required this.uri,
     required this.monogram,
     required this.dimension,
+    this.fit,
   });
 
   static const kFadeDuration = Duration(milliseconds: 300);
 
   final Uri? uri;
+  final BoxFit? fit;
   final String monogram;
   final double dimension;
 
@@ -45,6 +47,7 @@ class MxcAvatar extends StatelessWidget {
                 uri: uri,
                 width: dimension - 4,
                 height: dimension - 4,
+                fit: fit,
                 imageBuilder: (context, snapshot, retryCallback) {
                   final image = snapshot.data;
                   return Stack(

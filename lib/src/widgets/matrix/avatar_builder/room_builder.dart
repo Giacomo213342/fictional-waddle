@@ -13,7 +13,7 @@ class RoomBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     final room = RoomScope.of(context).room;
     return StreamBuilder<Room>(
-      key: ValueKey(room.id),
+      key: Key(room.id),
       initialData: room,
       stream: room.client.onSync.stream
           .where(
@@ -24,10 +24,9 @@ class RoomBuilder extends StatelessWidget {
               ...?update.rooms?.knock?.keys,
             ].contains(room.id),
           )
-          .map((update) => room.client.getRoomById(room.id) ?? room)
-          .asyncMap((room) => room.loadHeroUsers().then((_) => room)),
+          .map((update) => room.client.getRoomById(room.id) ?? room),
       builder: (context, snapshot) => RoomScope(
-        room: snapshot.data ?? room,
+        room: snapshot.data ?? RoomScope.of(context).room,
         child: builder(context, snapshot),
       ),
     );

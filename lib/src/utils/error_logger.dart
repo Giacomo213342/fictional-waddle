@@ -17,7 +17,7 @@ class ErrorLogger {
   final initializer = Completer<void>();
 
   final _errorStreamController =
-      StreamController<(Object?, StackTrace?)>.broadcast();
+      StreamController<(Object?, StackTrace?, bool)>.broadcast();
 
   static const _defaultDSN =
       'https://glet_5aa7a776f705926a2b4ba172ea060efe@observe.gitlab.com:443/errortracking/api/v1/projects/53926201';
@@ -26,10 +26,14 @@ class ErrorLogger {
 
   bool sentryEnabled = false;
 
-  Stream<(Object?, StackTrace?)> get errorStream =>
+  Stream<(Object?, StackTrace?, bool)> get errorStream =>
       _errorStreamController.stream;
 
-  Future<void> captureStackTrace(Object? e, [StackTrace? s]) async {
+  Future<void> captureStackTrace(
+    Object? e, [
+    StackTrace? s,
+    bool prompt = false,
+  ]) async {
     Level level = Level.error;
     // handle acceptable errors
     if (e is PlatformException ||
@@ -38,7 +42,7 @@ class ErrorLogger {
       level = Level.warning;
     }
     if (level.index <= Level.error.index) {
-      _errorStreamController.add((e, s));
+      _errorStreamController.add((e, s, prompt));
     }
     Logs().addLogEvent(
       LogEvent(

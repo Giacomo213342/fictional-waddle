@@ -16,7 +16,7 @@ class ErrorDialogScope extends StatefulWidget {
 }
 
 class _ErrorDialogScopeState extends State<ErrorDialogScope> {
-  StreamSubscription<(Object?, StackTrace?)>? _errorListener;
+  StreamSubscription<(Object?, StackTrace?, bool)>? _errorListener;
 
   @override
   void initState() {
@@ -37,7 +37,10 @@ class _ErrorDialogScopeState extends State<ErrorDialogScope> {
     _errorListener = ErrorLogger().errorStream.listen(_showErrorDialog);
   }
 
-  Future<void> _showErrorDialog((Object?, StackTrace?) event) async {
+  Future<void> _showErrorDialog((Object?, StackTrace?, bool) event) async {
+    if (!event.$3) {
+      return;
+    }
     if (!SettingsManager.of(context).initCompleter.isCompleted) {
       await SettingsManager.of(context).initCompleter.future;
     }

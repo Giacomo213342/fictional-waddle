@@ -9,6 +9,7 @@ import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../widgets/dynamic_context_menu.dart';
 import '../../../widgets/matrix/avatar_builder/room_avatar.dart';
 import '../../../widgets/matrix/matrix_scope.dart';
+import '../../../widgets/matrix/room_display_name_text.dart';
 import '../../../widgets/matrix/room_scope.dart';
 import '../../room/room.dart';
 import '../../room_details/room_details.dart';
@@ -57,10 +58,7 @@ class RoomListTile extends StatelessWidget {
               room: room,
               dimension: 36,
             ),
-            title: Text(
-              room.getLocalizedDisplayname(),
-              overflow: TextOverflow.ellipsis,
-            ),
+            title: const RoomDisplayNameText(),
             subtitle: const RoomLastEventPreview(),
             trailing: const RoomListTrailing(),
           ),

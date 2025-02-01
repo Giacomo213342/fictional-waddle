@@ -6,18 +6,25 @@ import 'fullscreen_dialog_avatar.dart';
 import 'mxc_avatar.dart';
 
 class RoomAvatar extends StatelessWidget {
-  const RoomAvatar({super.key, required this.room, this.dimension = 48});
+  const RoomAvatar({
+    super.key,
+    required this.room,
+    this.dimension = 48,
+    this.fit,
+  });
 
   static Widget fullScreenButton({
     required BuildContext context,
     required Room room,
     double dimension = 48,
+    BoxFit? fit,
   }) =>
       FullScreenAvatar.makeImageButton(
         context: context,
         child: RoomAvatar(
           room: room,
           dimension: dimension,
+          fit: fit,
         ),
         uri: room.avatar,
         title: room.getLocalizedDisplayname(),
@@ -25,6 +32,7 @@ class RoomAvatar extends StatelessWidget {
 
   final Room room;
   final double dimension;
+  final BoxFit? fit;
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +43,16 @@ class RoomAvatar extends StatelessWidget {
       size *= factor;
     }
 
-    final uri = room.avatar;
     final monogram = room.getLocalizedDisplayname();
 
-    return MxcAvatar(
-      uri: uri,
-      monogram: monogram,
-      dimension: dimension,
+    return FutureBuilder(
+      future: room.loadHeroUsers(),
+      builder: (context, _) => MxcAvatar(
+        uri: room.avatar,
+        monogram: monogram,
+        dimension: dimension,
+        fit: fit,
+      ),
     );
   }
 }
