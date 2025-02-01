@@ -18,5 +18,11 @@ class RoomScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant RoomScope oldWidget) =>
-      room.id != oldWidget.room.id;
+      room.id != oldWidget.room.id ||
+      room.membership != oldWidget.room.membership ||
+      room.summary != oldWidget.room.summary ||
+      room.directChatMatrixID != oldWidget.room.directChatMatrixID ||
+      room.topic != oldWidget.room.topic ||
+      room.avatar != oldWidget.room.avatar ||
+      room.lastEvent?.eventId != oldWidget.room.lastEvent?.eventId;
 }

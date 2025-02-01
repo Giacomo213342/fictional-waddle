@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../widgets/matrix/avatar_builder/room_avatar.dart';
 import '../../../../widgets/matrix/avatar_builder/room_builder.dart';
+import '../../../../widgets/matrix/room_display_name_text.dart';
 import '../../../../widgets/matrix/room_scope.dart';
 import '../../../../widgets/polycule_overflow_bar.dart';
 import '../join_room_button.dart';
@@ -32,12 +33,12 @@ class MembershipInviteTile extends StatelessWidget {
                   final isRowMode = constraints.maxWidth > 500;
                   final avatar = Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: RoomAvatar(
+                    child: RoomAvatar.fullScreenButton(
+                      context: context,
                       room: room,
                       dimension: 96,
                     ),
                   );
-
                   final primary = Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -46,15 +47,8 @@ class MembershipInviteTile extends StatelessWidget {
                         AppLocalizations.of(context).pendingInvite,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      ListTile(
-                        title: Text(
-                          room.isDirectChat
-                              ? AppLocalizations.of(context)
-                                  .inviteLongDM(room.getLocalizedDisplayname())
-                              : AppLocalizations.of(context).inviteLongRoom(
-                                  room.getLocalizedDisplayname(),
-                                ),
-                        ),
+                      const ListTile(
+                        title: RoomDisplayNameText(),
                       ),
                       if (!room.isDirectChat && room.topic.trim().isNotEmpty)
                         ListTile(

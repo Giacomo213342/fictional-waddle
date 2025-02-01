@@ -6,6 +6,7 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
 import '../../widgets/matrix/avatar_builder/room_avatar.dart';
 import '../../widgets/matrix/avatar_builder/room_builder.dart';
+import '../../widgets/matrix/room_display_name_text.dart';
 import '../../widgets/matrix/room_scope.dart';
 import '../room_details/room_details.dart';
 import '../user_page/user_page.dart';
@@ -61,9 +62,7 @@ class RoomView extends StatelessWidget {
                     textAlign: style.textAlign,
                     softWrap: style.softWrap,
                     maxLines: style.maxLines,
-                    child: Text(
-                      room.getLocalizedDisplayname(),
-                    ),
+                    child: const RoomDisplayNameText(),
                   ),
                 );
               },

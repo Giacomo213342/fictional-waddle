@@ -12,10 +12,10 @@ import 'src/utils/error_logger.dart';
 
 void main(List<String>? args) {
   FlutterError.onError = (details) {
-    ErrorLogger().captureStackTrace(details.exception, details.stack);
+    ErrorLogger().captureStackTrace(details.exception, details.stack, false);
   };
   PlatformDispatcher.instance.onError = (error, stack) {
-    ErrorLogger().captureStackTrace(error, stack);
+    ErrorLogger().captureStackTrace(error, stack, false);
     return true;
   };
   // used to capture errors in main thread
