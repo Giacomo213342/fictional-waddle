@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../router/extensions/go_router_path_extension.dart';
-import '../../../widgets/matrix/avatar_builder/room_avatar.dart';
+import '../../../widgets/matrix/avatar_builder/fullscreen_dialog_avatar.dart';
 import '../../../widgets/matrix/avatar_builder/room_builder.dart';
+import '../../../widgets/matrix/mxc_uri_image.dart';
 import '../../../widgets/matrix/room_display_name_text.dart';
 import '../../../widgets/matrix/room_scope.dart';
 import '../../room/room.dart';
@@ -31,10 +32,14 @@ class RoomDetailSliverAppBar extends StatelessWidget {
             title: const RoomDisplayNameText(),
             background: room.avatar == null
                 ? null
-                : RoomAvatar.fullScreenButton(
+                : FullScreenAvatar.makeImageButton(
                     context: context,
-                    room: room,
-                    fit: BoxFit.cover,
+                    uri: room.avatar,
+                    title: room.getLocalizedDisplayname(),
+                    child: MxcUriImageBuilder(
+                      uri: room.avatar,
+                      fit: BoxFit.cover,
+                    ),
                   ),
           ),
         );

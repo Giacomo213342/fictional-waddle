@@ -34,6 +34,9 @@ class _DevicePixelRatioBuilderState extends State<DevicePixelRatioBuilder>
   @override
   void didChangeMetrics() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
       final pixelRatio = MediaQuery.of(context).devicePixelRatio;
       if (pixelRatio != _currentDevicePixelRatio) {
         setState(() => _currentDevicePixelRatio = pixelRatio);
