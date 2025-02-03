@@ -1,5 +1,5 @@
 variables:
-  FLUTTER_VERSION: 3.27.2
+  FLUTTER_VERSION: 3.27.3
   BUNDLETOOL_VERSION: 1.18.0
 
 include:
@@ -147,10 +147,11 @@ check:podfile:
       - PLATFORM: [ ios, macos ]
   script:
     - pushd $PLATFORM
-    - cp Podfile.lock Podfile.lock.orig
+    - cp Podfile.lock ../Podfile.lock.orig
     - pod install --deployment
     - pod update
-    - diff -u Podfile.lock.orig Podfile.lock > Podfile.lock.diff
+    - diff -u ../Podfile.lock.orig Podfile.lock > ../Podfile.lock.diff
+    - cp Podfile.lock ..
     - popd
   artifacts:
     paths:
@@ -173,7 +174,7 @@ check:podfile:commit:
   script:
     - pushd $PLATFORM
     - pod update
-    - git diff . > podfile.diff
+    - git diff . > ../podfile.diff
     - git config --local user.name "< polycule > CI Pipeline"
     - git config --local user.email "gitlab@polycule.im"
     - git add Podfile Podfile.lock
