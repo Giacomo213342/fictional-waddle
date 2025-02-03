@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
+import '../../router/extensions/go_router_path_extension.dart';
 import '../../utils/matrix/oidc_delegation_extension.dart';
 import '../../widgets/ascii_progress_indicator.dart';
+import '../../widgets/matrix/client_scope.dart';
+import '../homeserver/homeserver.dart';
 import 'components/matrix_oidc_login_provider.dart';
 import 'components/password_login_provider.dart';
 import 'login.dart';
@@ -21,9 +24,29 @@ class LoginView extends StatelessWidget {
       body: Center(
         child: FutureBuilder<
             (DiscoveryInformation?, GetVersionsResponse, List<LoginFlow>)?>(
-          future: controller.homeserverCheck,
+          future: ClientScope.of(context)
+              .client
+              .checkHomeserver(controller.homeserver),
           builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context).errorConnectingToHomeserver(
+                        controller.homeserver.toString(),
+                      ),
+                    ),
+                  ),
+                );
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();
+                }
+                context.goMultiClient(HomeserverPage.routeName);
+              });
+            }
             final data = snapshot.data;
+
             if (data == null) {
               return Center(
                 child: Column(

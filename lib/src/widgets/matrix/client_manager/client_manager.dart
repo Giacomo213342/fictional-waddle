@@ -690,7 +690,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
     final account = await database?.getClient(client.clientName);
 
-    if (account != null) {
+    if (account != null && account.containsKey('homeserver_url')) {
       final homeserver = Uri.parse(account['homeserver_url']);
 
       client.baseUri = homeserver;

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
-import '../../router/extensions/go_router_path_extension.dart';
 import '../../utils/password_cache_manager.dart';
 import '../../widgets/matrix/client_scope.dart';
 import '../homeserver/homeserver.dart';
@@ -41,44 +40,8 @@ class LoginController extends State<LoginPage> {
 
   Uri get homeserver => widget.homeserver;
 
-  Future<(DiscoveryInformation?, GetVersionsResponse, List<LoginFlow>)?>?
-      homeserverCheck;
-
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => homeserverCheck = Future<
-          (DiscoveryInformation?, GetVersionsResponse, List<LoginFlow>)?>.value(
-        ClientScope.of(context).client.checkHomeserver(homeserver),
-      )..onError(_popHomeserverError),
-    );
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) => LoginView(this);
-
-  FutureOr<(DiscoveryInformation?, GetVersionsResponse, List<LoginFlow>)?>
-      _popHomeserverError(
-    Object error,
-    StackTrace stackTrace,
-  ) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          AppLocalizations.of(context)
-              .errorConnectingToHomeserver(homeserver.toString()),
-        ),
-      ),
-    );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-      context.goMultiClient(HomeserverPage.routeName);
-    });
-    return null;
-  }
 
   Future<void> passwordLogin(
     AuthenticationIdentifier identifier,
