@@ -7,7 +7,7 @@ updates:
       interval: daily
     versioning-strategy: increase
     allow:
-      dependency-type: all
+      - dependency-type: all
   - package-ecosystem: gradle
     directory: /android
     schedule:
