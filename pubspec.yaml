@@ -57,7 +57,7 @@ dependencies:
   linkify: ^5.0.0
   locale_names: ^1.1.1
   lottie: ^3.3.1
-  matrix: ^0.35.0
+  matrix: ^0.37.0
   matrix_homeserver_recommendations: ^0.4.0
   media_kit: ^1.1.10+1
   media_kit_libs_video: ^1.0.5
@@ -89,8 +89,8 @@ dependency_overrides:
   js: ">=0.7.0 <2.0.0"
   matrix:
     git:
-      url: https://github.com/TheOneWithTheBraid/matrix-dart-sdk.git
-      ref: braid/command-runner
+      url: https://github.com/famedly/matrix-dart-sdk.git
+      ref: main
   # https://github.com/media-kit/media-kit/issues/886
   media_kit:
     git:

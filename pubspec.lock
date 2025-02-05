@@ -77,10 +77,10 @@ packages:
     dependency: transitive
     description:
       name: audio_session
-      sha256: a92eed06a93721bcc8a8b57d0a623e3fb9d2e4e11cef0a08ed448c73886700b7
+      sha256: "2b7fff16a552486d078bfc09a8cde19f426dc6d6329262b684182597bec5b1ac"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.24"
+    version: "0.1.25"
   barcode:
     dependency: transitive
     description:
@@ -905,10 +905,10 @@ packages:
     dependency: "direct main"
     description:
       name: just_audio
-      sha256: a516a7ebb97beb7f6959e69c4b31441ff993d48499abea53febe9f9f7a86a0a8
+      sha256: f978d5b4ccea08f267dae0232ec5405c1b05d3f3cd63f82097ea46c015d5c09e
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.45"
+    version: "0.9.46"
   just_audio_media_kit:
     dependency: "direct main"
     description:
@@ -1041,9 +1041,9 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "braid/command-runner"
-      resolved-ref: "60b5afcdfebf61fbc2e7fb288c373c2a826dd01c"
-      url: "https://github.com/TheOneWithTheBraid/matrix-dart-sdk.git"
+      ref: main
+      resolved-ref: "24a0cfb9a8df1d7cfd446f921c35022ac6fc12ab"
+      url: "https://github.com/famedly/matrix-dart-sdk.git"
     source: git
     version: "0.37.0"
   matrix_homeserver_recommendations:
@@ -1284,18 +1284,18 @@ packages:
     dependency: transitive
     description:
       name: package_info_plus
-      sha256: b15fad91c4d3d1f2b48c053dd41cb82da007c27407dc9ab5f9aa59881d0e39d4
+      sha256: c447a3c3e7be4addf129b8f9ab6a4bd5d166b78918223e223b61fddf4d07e254
       url: "https://pub.dev"
     source: hosted
-    version: "8.1.4"
+    version: "8.2.0"
   package_info_plus_platform_interface:
     dependency: transitive
     description:
       name: package_info_plus_platform_interface
-      sha256: a5ef9986efc7bf772f2696183a3992615baa76c1ffb1189318dd8803778fb05b
+      sha256: "205ec83335c2ab9107bbba3f8997f9356d72ca3c715d2f038fc773d0366b4c76"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.2"
+    version: "3.1.0"
   path:
     dependency: transitive
     description:
@@ -1874,10 +1874,10 @@ packages:
     dependency: transitive
     description:
       name: vector_graphics
-      sha256: a1870d398158844fe5db12441611ed9a2222ff4340258b539eaf3590c1b4bd7e
+      sha256: "44cc7104ff32563122a929e4620cf3efd584194eec6d1d913eb5ba593dbcf6de"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.17"
+    version: "1.1.18"
   vector_graphics_codec:
     dependency: transitive
     description:
