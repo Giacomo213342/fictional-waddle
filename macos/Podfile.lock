@@ -158,7 +158,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   app_links: 10e0a0ab602ffaf34d142cd4862f29d34b303b2a
   AppAuth: 182c5b88630569df5acb672720534756c29b3358
-  audio_session: dea1f41890dbf1718f04a56f1d6150fd50039b72
+  audio_session: 728ae3823d914f809c485d390274861a24b0904e
   cupertino_http: 947a233f40cfea55167a49f2facc18434ea117ba
   dynamic_color: 2eaa27267de1ca20d879fbd6e01259773fb1670f
   file_selector_macos: cc3858c981fe6889f364731200d6232dac1d812d

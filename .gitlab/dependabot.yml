@@ -1,9 +1,13 @@
 version: 2
 updates:
+  # https://github.com/dependabot/dependabot-core/issues/11489
   - package-ecosystem: pub
     directory: /
     schedule:
       interval: daily
+    versioning-strategy: increase
+    allow:
+      dependency-type: all
   - package-ecosystem: gradle
     directory: /android
     schedule:
@@ -16,4 +20,7 @@ updates:
     directory: /ios
     schedule:
       interval: daily
-
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: daily
