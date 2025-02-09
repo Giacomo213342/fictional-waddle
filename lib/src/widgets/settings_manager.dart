@@ -39,7 +39,7 @@ class SettingsManager extends InheritedWidget {
     network.value = storedNetwork;
     network.addListener(_storeNetwork);
 
-    PolyculeHttpClientManager.init(network);
+    await PolyculeHttpClientManager.init(network);
 
     final storedLocale = await _settingsInterface.getLocale();
     locale.value = storedLocale;

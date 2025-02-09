@@ -19,8 +19,8 @@ abstract class PolyculeHttpClientManager {
       'polycule/${Version.version} (+${Version.gitlabRepoBase})';
   static const cacheSize = 64 * 1024 * 1024;
 
-  static void init(ValueListenable<NetworkState> settings) {
-    _buildHttpClient(settings.value);
+  static Future<void> init(ValueListenable<NetworkState> settings) async {
+    await _buildHttpClient(settings.value);
     settings.addListener(() => _buildHttpClient(settings.value));
   }
 
@@ -30,8 +30,8 @@ abstract class PolyculeHttpClientManager {
   static Stream<ClientCallback> get httpClientCallbackStream =>
       _clientController.stream;
 
-  static void _buildHttpClient(NetworkState settings) {
-    updateHttpClientSettings(settings);
+  static Future<void> _buildHttpClient(NetworkState settings) async {
+    await updateHttpClientSettings(settings);
     _clientController.add(getHttpClientPlatformCallback());
   }
 }
