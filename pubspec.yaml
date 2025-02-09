@@ -116,6 +116,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/ca/isrgrootx1.pem
     - assets/logo/logo-circle.png
     - assets/icons/matrix.svg
     - assets/icons/rosahaj/base/Rosahaj_Peek.png

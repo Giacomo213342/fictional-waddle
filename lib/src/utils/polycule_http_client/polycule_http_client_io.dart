@@ -1,12 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
+
+import 'package:flutter/services.dart';
 
 import 'package:cupertino_http/cupertino_http.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 
 import '../../widgets/settings_manager.dart';
-import '../isrg_x1.dart';
 import 'polycule_http_client.dart';
 
 URLSessionConfiguration _cupertinoConfig =
@@ -14,7 +14,7 @@ URLSessionConfiguration _cupertinoConfig =
 
 SecurityContext _ioContext = SecurityContext.defaultContext;
 
-void updateHttpClientSettings(NetworkState settings) {
+Future<void> updateHttpClientSettings(NetworkState settings) async {
   if (Platform.isIOS || Platform.isMacOS) {
     _cupertinoConfig = URLSessionConfiguration.ephemeralSessionConfiguration()
       ..cache = URLCache.withCapacity(
@@ -26,8 +26,10 @@ void updateHttpClientSettings(NetworkState settings) {
   } else {
     _ioContext = SecurityContext.defaultContext;
     try {
-      final bytes = utf8.encode(ISRG_X1);
-      _ioContext.setTrustedCertificatesBytes(bytes);
+      // Let's Encrypt on Android 6
+      // Certificate details: https://crt.sh/?id=9314791
+      final isrgX1 = await rootBundle.load('assets/ca/isrgrootx1.pem');
+      _ioContext.setTrustedCertificatesBytes(Uint8List.sublistView(isrgX1));
     } on TlsException catch (e) {
       if (e.osError != null &&
           e.osError!.message.contains('CERT_ALREADY_IN_HASH_TABLE')) {
