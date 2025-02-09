@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../router/extensions/go_router_path_extension.dart';
@@ -30,7 +32,14 @@ class SplashController extends State<SplashPage> {
 
   Future<void> _checkLoginState() async {
     await ClientManager.waiForInitialization;
-    if (!mounted || ClientManager.activeClients.isEmpty) {
+    if (!mounted) {
+      return;
+    }
+    if (ClientManager.activeClients.isEmpty) {
+      // web is yet buggy
+      if (kIsWeb) {
+        context.go('/client/1/${HomeserverPage.routeName}');
+      }
       return;
     }
     try {

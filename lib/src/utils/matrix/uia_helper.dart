@@ -1,34 +1,23 @@
 import 'package:matrix/matrix.dart';
-import 'package:oidc/oidc.dart';
 
 import '../password_cache_manager.dart';
-import 'oidc_delegation_extension.dart';
 
 typedef UiaTokenCallback = Future<String?> Function(UiaRequest request);
-typedef UiaOidcTokenCallback = Future<OidcUser?> Function(
-  UiaRequest request,
-  OidcUserManager oidc,
-);
 typedef UiaOidcAccountManagementCallback = Future<bool?> Function(
   UiaRequest request,
-  OidcUserManager oidc,
   OidcAccountManagementActions action,
 );
 
 class UiaHelper {
   const UiaHelper({
     required this.client,
-    this.oidc,
     required this.request,
-    required this.authenticationOidcCallback,
     required this.authenticationOidcAccountManagementCallback,
     required this.authenticationPasswordCallback,
   });
 
   final Client client;
-  final OidcUserManager? oidc;
   final UiaRequest request;
-  final UiaOidcTokenCallback authenticationOidcCallback;
   final UiaOidcAccountManagementCallback
       authenticationOidcAccountManagementCallback;
   final UiaTokenCallback authenticationPasswordCallback;
@@ -41,18 +30,15 @@ class UiaHelper {
       case UiaRequestState.loading:
         return;
       case UiaRequestState.waitForUser:
-        final oidc = this.oidc;
-
         final accountAction = OidcAccountManagementActions.values
             .where((action) => request.nextStages.contains(action.action))
             .singleOrNull;
 
         /// OIDC pseudo stages
-        if (accountAction != null && oidc != null) {
+        if (accountAction != null) {
           final response =
               await authenticationOidcAccountManagementCallback.call(
             request,
-            oidc,
             accountAction,
           );
           if (response != true) {
@@ -61,23 +47,6 @@ class UiaHelper {
 
           final auth = AuthenticationData(
             session: request.session,
-          );
-          await request.completeStage(auth);
-
-          return;
-        } else if (request.nextStages.contains(LoginType.mLoginToken) &&
-            oidc != null) {
-          final user = await authenticationOidcCallback.call(request, oidc);
-          if (user == null) {
-            return;
-          }
-          final token = user.token.accessToken;
-          if (token == null) {
-            return;
-          }
-          final auth = AuthenticationToken(
-            session: request.session,
-            token: token,
           );
           await request.completeStage(auth);
 

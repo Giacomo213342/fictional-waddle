@@ -1,12 +1,6 @@
 PODS:
   - app_links (0.0.2):
     - Flutter
-  - AppAuth (1.7.4):
-    - AppAuth/Core (= 1.7.4)
-    - AppAuth/ExternalUserAgent (= 1.7.4)
-  - AppAuth/Core (1.7.4)
-  - AppAuth/ExternalUserAgent (1.7.4):
-    - AppAuth/Core
   - audio_session (0.0.1):
     - Flutter
   - camera_avfoundation (0.0.1):
@@ -17,9 +11,6 @@ PODS:
   - file_selector_ios (0.0.1):
     - Flutter
   - Flutter (1.0.0)
-  - flutter_appauth (0.0.1):
-    - AppAuth (= 1.7.4)
-    - Flutter
   - flutter_keyboard_visibility (0.0.1):
     - Flutter
   - flutter_local_notifications (0.0.1):
@@ -47,8 +38,6 @@ PODS:
   - media_kit_video (0.0.1):
     - Flutter
   - objective_c (0.0.1):
-    - Flutter
-  - oidc_ios (0.0.1):
     - Flutter
   - OpenSSL-Universal (3.3.2000)
   - package_info_plus (0.4.5):
@@ -89,7 +78,6 @@ DEPENDENCIES:
   - cupertino_http (from `.symlinks/plugins/cupertino_http/darwin`)
   - file_selector_ios (from `.symlinks/plugins/file_selector_ios/ios`)
   - Flutter (from `Flutter`)
-  - flutter_appauth (from `.symlinks/plugins/flutter_appauth/ios`)
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_olm (from `.symlinks/plugins/flutter_olm/ios`)
@@ -103,7 +91,6 @@ DEPENDENCIES:
   - media_kit_native_event_loop (from `.symlinks/plugins/media_kit_native_event_loop/ios`)
   - media_kit_video (from `.symlinks/plugins/media_kit_video/ios`)
   - objective_c (from `.symlinks/plugins/objective_c/ios`)
-  - oidc_ios (from `.symlinks/plugins/oidc_ios/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - pointer_interceptor_ios (from `.symlinks/plugins/pointer_interceptor_ios/ios`)
@@ -118,7 +105,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - AppAuth
     - OpenSSL-Universal
     - SQLCipher
 
@@ -135,8 +121,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/file_selector_ios/ios"
   Flutter:
     :path: Flutter
-  flutter_appauth:
-    :path: ".symlinks/plugins/flutter_appauth/ios"
   flutter_keyboard_visibility:
     :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   flutter_local_notifications:
@@ -163,8 +147,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/media_kit_video/ios"
   objective_c:
     :path: ".symlinks/plugins/objective_c/ios"
-  oidc_ios:
-    :path: ".symlinks/plugins/oidc_ios/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
@@ -190,13 +172,11 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   app_links: e7a6750a915a9e161c58d91bc610e8cd1d4d0ad0
-  AppAuth: 182c5b88630569df5acb672720534756c29b3358
   audio_session: 19e9480dbdd4e5f6c4543826b2e8b0e4ab6145fe
   camera_avfoundation: dd002b0330f4981e1bbcb46ae9b62829237459a4
   cupertino_http: 947a233f40cfea55167a49f2facc18434ea117ba
   file_selector_ios: f0670c1064a8c8450e38145d8043160105d0b97c
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_appauth: 1ce438877bc111c5d8f42da47729909290624886
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_local_notifications: df98d66e515e1ca797af436137b4459b160ad8c9
   flutter_olm: b5e343c93a22c07f939ad277adf6275c8337d062
@@ -210,7 +190,6 @@ SPEC CHECKSUMS:
   media_kit_native_event_loop: e6b2ab20cf0746eb1c33be961fcf79667304fa2a
   media_kit_video: 5da63f157170e5bf303bf85453b7ef6971218a2e
   objective_c: 77e887b5ba1827970907e10e832eec1683f3431d
-  oidc_ios: e80c00b7089ae7cdc45ab9ed636fdaed3e01e6a1
   OpenSSL-Universal: b60a3702c9fea8b3145549d421fdb018e53ab7b4
   package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46

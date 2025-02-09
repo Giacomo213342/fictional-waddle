@@ -1,11 +1,19 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import 'package:matrix/matrix.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../utils/matrix/oidc_delegation_extension.dart';
 import '../../../widgets/ascii_progress_indicator.dart';
-import '../../../widgets/matrix/client_manager/client_manager.dart';
+import '../../../widgets/intent_manager.dart';
 import '../../../widgets/matrix/client_scope.dart';
+import '../../../widgets/polycule_highlight_view.dart';
 import '../login.dart';
 
 class MatrixOidcLoginProvider extends StatefulWidget {
@@ -50,7 +58,52 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
             label: Text(AppLocalizations.of(context).connect),
           ),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 16),
+        Center(
+          child: AnimatedSize(
+            duration: const Duration(milliseconds: 150),
+            child: SizedBox(
+              height: _loading ? null : 0,
+              child: ClipRect(
+                clipBehavior: Clip.hardEdge,
+                child: OverflowBox(
+                  fit: OverflowBoxFit.deferToChild,
+                  child: TextButton.icon(
+                    onPressed: _cancel,
+                    icon: const Icon(Icons.cancel),
+                    label: Text(AppLocalizations.of(context).cancel),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        if (!kIsWeb && Platform.isLinux)
+          AnimatedSize(
+            duration: const Duration(milliseconds: 300),
+            child: SizedBox(
+              height: _loading ? null : 0,
+              child: ClipRect(
+                clipBehavior: Clip.hardEdge,
+                child: OverflowBox(
+                  fit: OverflowBoxFit.deferToChild,
+                  child: SelectionArea(
+                    child: ListTile(
+                      leading: const Icon(Icons.developer_mode),
+                      title: Text(
+                        AppLocalizations.of(context).linuxOidcWorkaround,
+                      ),
+                      subtitle: PolyculeHighlightView(
+                        AppLocalizations.of(context).linuxOidcWorkaroundSnippet,
+                      ),
+                      isThreeLine: true,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        const SizedBox(height: 16),
       ],
     );
   }
@@ -61,53 +114,29 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
     });
     try {
       final client = ClientScope.of(context).client;
-      final appName = AppLocalizations.of(context).appName;
-      final manager = await ClientManager.buildOidcManager(
-        client,
-        [AppLocalizations.of(context).localeName],
-        // TODO: dehydrated devices ?
-        enforceNewDevice: true,
+
+      final oidcClientId = await client.oidcEnsureDynamicClientId(
+        await PolyculeOidcDynamicClientRegistrationData.fromAppLocalizations(),
       );
-      if (manager == null) {
+      if (oidcClientId == null) {
         setState(() {
           _loading = false;
         });
         return;
       }
 
-      final user = await manager.loginAuthorizationCodeFlow(
-        originalUri: Uri.parse('about:blank'),
+      final nativeCompleter = IntentManager.oidcCallbackCompleter =
+          Completer<OidcCallbackResponse>();
+      await client.oidcAuthorizationGrantFlow(
+        nativeCompleter: nativeCompleter,
+        oidcClientId: oidcClientId,
+        redirectUri: _makePlatformRedirectUrl(),
+        launchOAuth2Uri: launchUrl,
+        responseMode: kIsWeb ? 'fragment' : 'query',
+        prompt: 'consent',
+        enforceNewDeviceId: true,
       );
-
-      final token = user?.token;
-      if (user == null || token == null) {
-        setState(() {
-          _loading = false;
-        });
-        return;
-      }
-
-      DateTime? expiresAt;
-
-      final expiresIn = token.expiresIn;
-      if (expiresIn != null) {
-        expiresAt = DateTime.now().add(expiresIn);
-      }
-
-      // workaround missing user ID in token
-      client.bearerToken = token.accessToken;
-      final tokenInfo = await client.getTokenOwner();
-      client.bearerToken = null;
-
-      await client.init(
-        newToken: token.accessToken,
-        newTokenExpiresAt: expiresAt,
-        newRefreshToken: token.refreshToken,
-        newUserID: tokenInfo.userId,
-        newHomeserver: client.homeserver,
-        newDeviceName: appName,
-        newDeviceID: tokenInfo.deviceId,
-      );
+      IntentManager.oidcCallbackCompleter = null;
     } catch (e, s) {
       Logs().e('Error during OIDC login.', e, s);
     }
@@ -115,6 +144,23 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
     if (!mounted) {
       return;
     }
+
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  Uri _makePlatformRedirectUrl() => Uri.parse(
+        kIsWeb
+            ? 'https://polycule.im/web/?action=oauth2redirect'
+            : 'im.polycule:/oauth2redirect/',
+      );
+
+  void _cancel() {
+    IntentManager.oidcCallbackCompleter?.completeError(
+      Exception('Canceled by user'),
+    );
+    IntentManager.oidcCallbackCompleter = null;
 
     setState(() {
       _loading = false;

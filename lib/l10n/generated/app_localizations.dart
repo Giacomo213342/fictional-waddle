@@ -1929,6 +1929,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Blur hash'**
   String get blurHash;
+
+  /// No description provided for @linuxOidcWorkaround.
+  ///
+  /// In en, this message translates to:
+  /// **'In case your web browser won\'t prompt you to open < polycule > after logging in, please ensure you granted to handle OAuth2.0 redirects in < polycule > by launching the following command in a terminal emulator :'**
+  String get linuxOidcWorkaround;
+
+  /// No description provided for @linuxOidcWorkaroundSnippet.
+  ///
+  /// In en, this message translates to:
+  /// **'gio mime x-scheme-handler/im.polycule business.braid.polycule.desktop'**
+  String get linuxOidcWorkaroundSnippet;
+
+  /// No description provided for @setupSSSSLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Encryption setup running. This might take a while.'**
+  String get setupSSSSLoading;
 }
 
 class _AppLocalizationsDelegate

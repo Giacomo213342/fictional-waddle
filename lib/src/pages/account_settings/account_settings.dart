@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../utils/file_selector.dart';
-import '../../utils/matrix/oidc_delegation_extension.dart';
 import '../../widgets/matrix/client_scope.dart';
 import 'account_settings_view.dart';
 
@@ -25,19 +25,31 @@ class AccountSettingsController extends State<AccountSettings> {
   Widget build(BuildContext context) => AccountSettingsView(controller: this);
 
   Future<void> oidcAccountSettings() async {
-    await ClientScope.of(context).client.oidcAccountManagement();
+    final uri = ClientScope.of(context).client.getOidcAccountManagementUri();
+    if (uri == null) {
+      return;
+    }
+    launchUrl(uri);
   }
 
   Future<void> manageSessions() async {
-    await ClientScope.of(context).client.oidcAccountManagement(
+    final uri = ClientScope.of(context).client.getOidcAccountManagementUri(
           action: OidcAccountManagementActions.sessionView,
         );
+    if (uri == null) {
+      return;
+    }
+    launchUrl(uri);
   }
 
   Future<void> deactivateAccount() async {
-    await ClientScope.of(context).client.oidcAccountManagement(
+    final uri = ClientScope.of(context).client.getOidcAccountManagementUri(
           action: OidcAccountManagementActions.accountDeactivate,
         );
+    if (uri == null) {
+      return;
+    }
+    launchUrl(uri);
   }
 
   Future<void> editAvatar() async {

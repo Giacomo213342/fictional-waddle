@@ -13,6 +13,7 @@ import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
 import '../pages/account_selector/account_selector.dart';
 import '../router/extensions/polycule_deeplink_route.dart';
 import '../utils/matrix_to_extension.dart';
+import '../utils/oauth2_web/oauth2.dart';
 
 const _kPolyculeUriScheme = 'web+polycule';
 
@@ -32,10 +33,12 @@ class IntentManager extends State<IntentManagerWidget> {
   StreamSubscription<String>? _shareTextSubscription;
 
   // prevent from interpreting a deep link as share
-  static final _shareCache = Cache<String>(const Duration(milliseconds: 200));
+  static final _shareCache = Cache<Uri>(const Duration(milliseconds: 200));
 
   static final sharedTextListener = ValueNotifier<String?>(null);
   static final sharedFilesListener = ValueNotifier<List<XFile>?>(null);
+
+  static Completer<OidcCallbackResponse>? oidcCallbackCompleter;
 
   @override
   void initState() {
@@ -58,6 +61,12 @@ class IntentManager extends State<IntentManagerWidget> {
 
   Future<void> _subscribeDeepLinks() async {
     try {
+      // tiny workaround for OAuth2.0 on web
+      if (kIsWeb) {
+        _appLinkSubscription =
+            listenWebBroadcastChannel().listen(_handleDeeplink);
+        return;
+      }
       _appLinkSubscription = AppLinks().uriLinkStream.listen(_handleDeeplink);
 
       final initialLink = await AppLinks().getInitialLink();
@@ -75,9 +84,29 @@ class IntentManager extends State<IntentManagerWidget> {
   void _handleDeeplink(Uri uri) {
     String link = Uri.decodeComponent(uri.toString());
     // prevent from interpreting a deep link as share
-    _shareCache.data = link;
+    _shareCache.data = uri;
 
     final fragment = Uri.decodeComponent(uri.fragment);
+    final segments = uri.pathSegments;
+
+    // handle oauth2redirect
+    final isWebOAuth2Redirect =
+        kIsWeb && uri.queryParameters['action'] == 'oauth2redirect';
+    final isNativeOAuth2Redirect = !kIsWeb &&
+        uri.scheme == 'im.polycule' &&
+        segments.isNotEmpty &&
+        segments.first == 'oauth2redirect';
+
+    if (isWebOAuth2Redirect || isNativeOAuth2Redirect) {
+      oidcCallbackCompleter ??= Completer<OidcCallbackResponse>();
+      oidcCallbackCompleter?.complete(
+        OidcCallbackResponse.parse(
+          uri.toString(),
+          kIsWeb ? 'fragment' : 'query',
+        ),
+      );
+      return;
+    }
 
     if (uri.scheme == 'https' && uri.host == 'polycule.im') {
       context.go(fragment);
@@ -111,6 +140,7 @@ class IntentManager extends State<IntentManagerWidget> {
           '${PolyculeDeeplinkRoute.routeName}/${Uri.encodeComponent(link)}',
         );
       }
+      return;
     }
   }
 
@@ -173,7 +203,8 @@ class IntentManager extends State<IntentManagerWidget> {
     }
     // prevent from interpreting a deep link as share
     await Future.delayed(const Duration(milliseconds: 50));
-    if (_shareCache.data == text) {
+    if (_shareCache.data == Uri.tryParse(text)) {
+      Logs().v('Shared text was already handled as deep-link.');
       return;
     }
     // first empty both share listeners

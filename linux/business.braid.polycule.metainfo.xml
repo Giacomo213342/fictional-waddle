@@ -87,6 +87,9 @@
             x-scheme-handler/web+polycule
         </mediatype>
         <mediatype>
+            x-scheme-handler/im.polycule
+        </mediatype>
+        <mediatype>
             x-scheme-handler/io.element.call
         </mediatype>
     </provides>
