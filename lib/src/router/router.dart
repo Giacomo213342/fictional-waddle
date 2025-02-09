@@ -53,6 +53,11 @@ class PolyculeRouter extends GoRouter {
                       path: SplashPage.routeName,
                       builder: (context, state) => const SplashPage(),
                     ),
+                    GoRoute(
+                      path: FatalErrorPage.routeName.asMultiClientRoute(),
+                      builder: (context, state) =>
+                          FatalErrorPage(error: state.extra),
+                    ),
                     // in order to initialize particular client
                     GoRoute(
                       path: SplashPage.routeName.asMultiClientRoute(),

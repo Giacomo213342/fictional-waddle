@@ -32,6 +32,8 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>ShareMedia-$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+				<string>matrix</string>
+				<string>web+polycule</string>
 				<string>im.polycule</string>
 			</array>
 		</dict>

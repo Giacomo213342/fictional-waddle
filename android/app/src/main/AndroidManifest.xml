@@ -56,6 +56,13 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
+                <!-- handle polycule OIDC redirects -->
+                <data android:scheme="im.polycule"/>
+            </intent-filter>
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
                 <!-- handle polycule deeplinks for OIDC "web+polycule:” -->
                 <data android:scheme="web+polycule"/>
             </intent-filter>

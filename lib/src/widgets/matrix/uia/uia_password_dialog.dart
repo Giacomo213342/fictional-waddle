@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
-import '../matrix_scope.dart';
+import '../client_scope.dart';
 
 class UiaPasswordDialog extends StatefulWidget {
   const UiaPasswordDialog({
@@ -16,12 +16,11 @@ class UiaPasswordDialog extends StatefulWidget {
   final Client client;
 
   Future<String?> show(BuildContext context) {
-    final scope = MatrixScope.captureAll(context);
     return showAdaptiveDialog<String?>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => MatrixScope(
-        scope: scope,
+      builder: (context) => ClientScope(
+        client: client,
         child: this,
       ),
     );

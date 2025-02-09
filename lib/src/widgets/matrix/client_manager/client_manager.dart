@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -8,27 +7,27 @@ import 'package:flutter/widgets.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' hide Client;
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
-import 'package:oidc/oidc.dart';
 import 'package:olm/olm.dart' as olm;
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../pages/account_selector/account_selector.dart';
+import '../../../pages/account_settings/account_settings.dart';
 import '../../../pages/application_settings/application_settings.dart';
 import '../../../pages/fatal_error/fatal_error_page.dart';
 import '../../../pages/homeserver/homeserver.dart';
 import '../../../pages/room_list/room_list.dart';
 import '../../../pages/splash_screen/splash_screen.dart';
+import '../../../pages/ssss_bootstrap/ssss_bootstrap.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../utils/error_logger.dart';
 import '../../../utils/matrix/database/polycule_database_builder.dart';
-import '../../../utils/matrix/oidc_delegation_extension.dart';
 import '../../../utils/matrix/polycule_command_extension.dart';
 import '../../../utils/matrix/push_manager.dart';
 import '../../../utils/matrix/uia_helper.dart';
-import '../../../utils/oidc_successful_page_response.dart';
 import '../../../utils/polycule_http_client/polycule_http_client.dart';
 import '../../../utils/runtime_suffix.dart';
 import '../../../utils/secure_storage.dart';
@@ -36,7 +35,6 @@ import '../../error_dialog_scope.dart';
 import '../../intent_manager.dart';
 import '../key_verification/key_verification_request_widget.dart';
 import '../uia/uia_oidc_account_management_dialog.dart';
-import '../uia/uia_oidc_dialog.dart';
 import '../uia/uia_password_dialog.dart';
 import 'client_manager_view.dart';
 
@@ -175,12 +173,6 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     return true;
   }
 
-  static final Map<int, OidcUserManager> _oidc = {};
-
-  static final Map<int, StreamSubscription<OidcEvent>?> _oidcSubscription = {};
-  static final Map<int, StreamSubscription<OidcUser?>?> _oidcUserSubscription =
-      {};
-
   final Map<int, StreamSubscription<LoginState>?> _loginStateListener = {};
 
   final Map<int, StreamSubscription<UiaRequest>?> _uiaListener = {};
@@ -239,111 +231,10 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       AppLocalizations.of(context),
     );
 
-    _initClient(client);
+    client.init(
+      waitForFirstSync: false,
+    );
     return client;
-  }
-
-  static void storeOidcManager(Client client, OidcUserManager oidc) {
-    if (_oidc.containsKey(client.clientName.clientIdentifier)) {
-      return;
-    }
-    _oidcSubscription[client.clientName.clientIdentifier] =
-        oidc.events().listen(
-              (event) => _handleOidcEvent(client, event),
-            );
-
-    _oidcUserSubscription[client.clientName.clientIdentifier] =
-        oidc.userChanges().listen(
-              (user) => _handleOidcUserEvent(client, user),
-            );
-    _oidc[client.clientName.clientIdentifier] = oidc;
-  }
-
-  static Future<OidcUserManager?> buildOidcManager(
-    Client client,
-    List<String> locales, {
-    bool enforceNewDevice = false,
-  }) async {
-    try {
-      final store = client.oidcStore;
-
-      final deviceId = client.deviceID ??
-          await client.oidcEnsureDeviceId(
-            enforceNewDevice,
-          );
-
-      final settings = OidcUserManagerSettings(
-        redirectUri: _makePlatformRedirectUrl('oauth2redirect'),
-        postLogoutRedirectUri: _makePlatformRedirectUrl('endsessionredirect'),
-        frontChannelLogoutUri:
-            kIsWeb ? Uri.parse('https://polycule.im/web/redirect.html') : null,
-        uiLocales: locales,
-        supportOfflineAuth: true,
-        scope: [
-          ...OidcUserManagerSettings.defaultScopes,
-          // 'urn:matrix:client:api:*',
-          'urn:matrix:org.matrix.msc2967.client:api:*',
-          // 'urn:matrix:client:device:*',
-          'urn:matrix:org.matrix.msc2967.client:device:$deviceId',
-        ],
-        prompt: ['consent'],
-        extraAuthenticationParameters: {
-          if (kIsWeb) 'response_mode': 'fragment',
-        },
-        options: const OidcPlatformSpecificOptions(
-          linux: OidcPlatformSpecificOptions_Native(
-            successfulPageResponse: oidcSuccessfulPageResponse,
-          ),
-        ),
-      );
-
-      final clientCredentials = OidcClientAuthentication.none(
-        clientId: await client.oidcEnsureDynamicClientId(
-          await OidcDynamicRegistrationData.fromAppLocalizations(),
-        ),
-      );
-
-      final discoveryDocument = await client.oidcProviderMetadata();
-
-      OidcUserManager manager;
-
-      // the refresh request sometimes fails to afterwards verify with 401
-      // TODO: investigate this
-
-      manager = OidcUserManager(
-        discoveryDocument: discoveryDocument,
-        clientCredentials: clientCredentials,
-        store: store,
-        settings: settings,
-        httpClient: client.httpClient,
-      );
-      try {
-        await manager.init();
-      } on FormatException {
-        try {
-          await manager.dispose();
-        } catch (_) {}
-        manager = OidcUserManager(
-          discoveryDocument: discoveryDocument,
-          clientCredentials: clientCredentials,
-          store: store,
-          settings: settings,
-          httpClient: client.httpClient,
-        );
-        await manager.init();
-      }
-
-      storeOidcManager(client, manager);
-      return manager;
-    } catch (e, s) {
-      if (e is OidcException) {
-        Logs().e('OIDC exception for client ${client.clientName}.', e, s);
-        rethrow;
-      } else {
-        Logs().v('Client ${client.clientName} does not support OIDC.');
-        return null;
-      }
-    }
   }
 
   Client _buildNewClient() {
@@ -431,13 +322,22 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
           context.goMultiClient(FatalErrorPage.routeName, extra: e);
           return;
         }
-        if (client.clientName.clientIdentifier ==
-                getActiveClient().clientName.clientIdentifier &&
-            !GoRouterState.of(context).uri.path.startsWith(
-                  AccountSelectorPage.routeName,
-                )) {
+
+        final path = GoRouterState.of(context).uri.path;
+        final isActiveClient = client.clientName.clientIdentifier ==
+            getActiveClient().clientName.clientIdentifier;
+        final isAccountSelector = path.startsWith(
+          AccountSelectorPage.routeName,
+        );
+        // TODO: remove awful match
+        final isLoggedInRoute = path.startsWith(
+          RegExp('/client/${client.clientName.clientIdentifier}'
+              '(${RoomListPage.routeName}|${SsssBootstrapPage.routeName}|'
+              '/user|${AccountSettings.routeName})'),
+        );
+        if (isActiveClient && !isAccountSelector && !isLoggedInRoute) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.pushMultiClient(RoomListPage.routeName);
+            context.goMultiClient(RoomListPage.routeName);
           });
         }
 
@@ -446,13 +346,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         break;
 
       case LoginState.softLoggedOut:
-        final oidc = _oidc[client.clientName.clientIdentifier];
-        if (oidc != null) {
-          return;
-        }
-        continue loggedOut;
-
-      loggedOut:
+        // we let the SDK handle soft log out
+        break;
       case LoginState.loggedOut:
         if (client.clientName.clientIdentifier ==
                 getActiveClient().clientName.clientIdentifier &&
@@ -472,21 +367,13 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   }
 
   Future<void> _handleUiaRequest(Client client, UiaRequest request) async {
-    final oidc = _oidc[client.clientName.clientIdentifier];
     final handler = UiaHelper(
       client: client,
-      oidc: oidc,
       request: request,
-      authenticationOidcCallback: (request, oidc) => UiaOidcDialog(
-        request: request,
-        client: client,
-        oidc: oidc,
-      ).show(context),
-      authenticationOidcAccountManagementCallback: (request, oidc, action) =>
+      authenticationOidcAccountManagementCallback: (request, action) =>
           UiaOidcAccountManagementDialog(
         request: request,
         client: client,
-        oidc: oidc,
         action: action,
       ).show(context),
       authenticationPasswordCallback: (request) => UiaPasswordDialog(
@@ -530,11 +417,6 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     final identifier = client.clientName.clientIdentifier;
 
     await client.database?.delete();
-
-    await _oidc[client.clientName.clientIdentifier]?.forgetUser();
-    await _oidc[client.clientName.clientIdentifier]?.dispose();
-    await _oidcSubscription[client.clientName.clientIdentifier]?.cancel();
-    await _oidcUserSubscription[client.clientName.clientIdentifier]?.cancel();
 
     await client.dispose();
 
@@ -655,157 +537,25 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     );
   }
 
-  static void _handleOidcEvent(Client client, OidcEvent event) {
-    Logs().d('OIDC event $event');
-  }
-
-  static void _handleOidcUserEvent(Client client, OidcUser? user) {
-    client.accessToken = user?.token.accessToken;
-
-    Logs().d('OIDC user update for ${user?.userInfo}');
-  }
-
-  static Uri _makePlatformRedirectUrl(String method) => Uri.parse(
-        kIsWeb
-            ? 'https://polycule.im/web/redirect.html'
-            : Platform.isAndroid || Platform.isIOS || Platform.isMacOS
-                ? 'im.polycule:/$method'
-                : Platform.isWindows || Platform.isLinux
-                    // using port 0 means that we don't care which port is used,
-                    // and a random unused port will be assigned.
-                    //
-                    // this is safer than passing a port yourself.
-                    ? 'http://localhost:0/$method'
-                    : 'http://localhost:0/$method',
-      );
-
-  Future<void> _initClient(Client client) async {
-    final locale = AppLocalizations.of(context).localeName;
-
-    DatabaseApi? database;
-    final databaseBuilder = client.databaseBuilder;
-    if (databaseBuilder != null) {
-      database ??= await databaseBuilder(client);
-    }
-
-    final account = await database?.getClient(client.clientName);
-
-    if (account != null && account.containsKey('homeserver_url')) {
-      final homeserver = Uri.parse(account['homeserver_url']);
-
-      client.baseUri = homeserver;
-
-      final oidc = await buildOidcManager(
-        client,
-        [locale],
-      );
-      if (oidc != null) {
-        OidcUser? user;
-        try {
-          user = await oidc.refreshToken();
-        } on OidcException catch (e) {
-          // our refresh token expired or got lost - give the user a chance to
-          // still reuse the session without wiping all data
-          if (e.errorResponse?.error == 'invalid_grant') {
-            user = await oidc.loginAuthorizationCodeFlow();
-          } else {
-            rethrow;
-          }
-        }
-
-        final token = user?.token;
-        final accessToken = token?.accessToken;
-        if (user != null && token != null && accessToken != null) {
-          storeOidcManager(client, oidc);
-
-          /// as of now, we do not let the SDK handle our token refresh
-
-          /*DateTime? expiresAt;
-
-          final expiresIn = token.expiresIn;
-          if (expiresIn != null) {
-            expiresAt = DateTime.now().add(expiresIn);
-          }*/
-
-          // workaround missing user ID in token
-          client.bearerToken = accessToken;
-          final tokenInfo = await client.getTokenOwner();
-          client.bearerToken = null;
-
-          database?.updateClient(
-            homeserver.toString(),
-            accessToken,
-
-            /// as of now, we do not let the SDK handle our token refresh
-            // expiresAt,
-            // token.refreshToken,
-            null,
-            null,
-            tokenInfo.userId,
-            tokenInfo.deviceId ?? account['device_id'],
-            account['device_name'],
-            account['prev_batch'],
-            account['olm_account'],
-          );
-          await database?.close();
-        }
-      }
-    }
-    await client.init(
-      waitForFirstSync: false,
-    );
-  }
-
   Future<void> _updateHttpClients(ClientCallback httpClientCallback) async {
     _httpClient = httpClientCallback;
-    final locales = [AppLocalizations.of(context).localeName];
     for (final client in activeClients) {
       client.httpClient.close();
       client.httpClient = httpClientCallback.call();
-      // ensure to also apply the new HTTP client to any OidcUserManager
-      // therefore just rebuild the OIDC client
-      final oidc = _oidc[client.clientName.clientIdentifier];
-      if (oidc != null) {
-        await oidc.dispose();
-        await buildOidcManager(client, locales);
-      }
     }
   }
 
   Future<void> _handleSoftLogout(Client client) async {
-    // TODO: support Client._accessTokenExpiresAt
-
-    final oidc = _oidc[client.clientName.clientIdentifier];
-    if (oidc == null) {
-      return client.refreshAccessToken();
-    }
-    try {
-      OidcUser? user;
+    while (true) {
       try {
-        user = await oidc.refreshToken();
-      } on OidcException catch (e) {
-        // our refresh token expired or got lost - give the user a chance to
-        // still reuse the session without wiping all data
-        if (e.errorResponse?.error == 'invalid_grant') {
-          user = await oidc.loginAuthorizationCodeFlow();
-        } else {
-          rethrow;
-        }
-      }
-      if (user == null) {
-        // SDK will trigger hard logout
+        await client.refreshAccessToken();
         return;
+      } on ClientException catch (e, s) {
+        // keep waiting on network errors. This is likely due to
+        // power savings on mobile.
+        Logs().w('Error refreshing token. Retrying in 10 seconds.', e, s);
+        await Future.delayed(const Duration(seconds: 10));
       }
-      client.accessToken = user.token.accessToken;
-      await client.login(
-        LoginType.mLoginToken,
-        deviceId: client.deviceID,
-        token: user.token.accessToken,
-      );
-    } catch (e, s) {
-      Logs().e('Error refreshing session', e, s);
-      // SDK will trigger hard logout
-      return;
     }
   }
 

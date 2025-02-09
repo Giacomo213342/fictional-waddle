@@ -1,34 +1,30 @@
 import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
-import 'package:oidc/oidc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../../utils/matrix/oidc_delegation_extension.dart';
 import '../../ascii_progress_indicator.dart';
-import '../matrix_scope.dart';
+import '../client_scope.dart';
 
 class UiaOidcAccountManagementDialog extends StatefulWidget {
   const UiaOidcAccountManagementDialog({
     super.key,
     required this.request,
     required this.client,
-    required this.oidc,
     required this.action,
   });
 
   final UiaRequest request;
   final Client client;
-  final OidcUserManager oidc;
   final OidcAccountManagementActions action;
 
   Future<bool?> show(BuildContext context) {
-    final scope = MatrixScope.captureAll(context);
     return showAdaptiveDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => MatrixScope(
-        scope: scope,
+      builder: (context) => ClientScope(
+        client: client,
         child: this,
       ),
     );
@@ -90,10 +86,14 @@ class _UiaOidcAccountManagementDialogState
     });
 
     try {
-      await widget.client.oidcAccountManagement(
+      final uri = widget.client.getOidcAccountManagementUri(
         action: widget.action,
         deviceId: widget.client.deviceID,
       );
+      if (uri == null) {
+        return;
+      }
+      await launchUrl(uri);
 
       setState(() {
         _loading = false;

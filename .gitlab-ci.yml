@@ -134,8 +134,8 @@ check:codestyle:
   extends: .check
   script:
     - dart analyze --fatal-infos
-    - dart format lib test web --set-exit-if-changed
-    - dart run import_sorter:main --exit-if-changed
+    - dart format . --set-exit-if-changed
+    - dart run import_sorter:main --no-comments --exit-if-changed
 
 check:flutter_version:
   extends: .check

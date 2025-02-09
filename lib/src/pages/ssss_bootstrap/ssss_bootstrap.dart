@@ -196,20 +196,26 @@ class SsssBootstrapController extends State<SsssBootstrapPage> {
   }
 
   Future<void> _storeCrossSigningKey() async {
+    final bootstrap = this.bootstrap;
+    if (bootstrap == null) {
+      return;
+    }
     final suffix = getRuntimeSuffix();
 
     if (widget.passphrase != null) {
-      kPolyculeSecureStorage.delete(key: _ssssKeyStorage + suffix);
+      kPolyculeSecureStorage.delete(
+        key: bootstrap.client.clientName + _ssssKeyStorage + suffix,
+      );
       return;
     }
 
-    final key = bootstrap?.newSsssKey?.recoveryKey;
+    final key = bootstrap.newSsssKey?.recoveryKey;
     if (key == null) {
       return;
     }
 
     await kPolyculeSecureStorage.write(
-      key: _ssssKeyStorage + suffix,
+      key: bootstrap.client.clientName + _ssssKeyStorage + suffix,
       value: key,
     );
   }

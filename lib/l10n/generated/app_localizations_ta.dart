@@ -1079,4 +1079,16 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get blurHash => 'Blur hash';
+
+  @override
+  String get linuxOidcWorkaround =>
+      'In case your web browser won\'t prompt you to open < polycule > after logging in, please ensure you granted to handle OAuth2.0 redirects in < polycule > by launching the following command in a terminal emulator :';
+
+  @override
+  String get linuxOidcWorkaroundSnippet =>
+      'gio mime x-scheme-handler/im.polycule business.braid.polycule.desktop';
+
+  @override
+  String get setupSSSSLoading =>
+      'Encryption setup running. This might take a while.';
 }

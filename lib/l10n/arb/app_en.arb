@@ -555,5 +555,11 @@
   "eventRendered": "Rendered event",
   "eventQuoted": "Quoted event",
   "eventPreview": "Event preview",
-  "blurHash": "Blur hash"
+  "blurHash": "Blur hash",
+  "linuxOidcWorkaround": "In case your web browser won't prompt you to open < polycule > after logging in, please ensure you granted to handle OAuth2.0 redirects in < polycule > by launching the following command in a terminal emulator :",
+  "linuxOidcWorkaroundSnippet": "gio mime x-scheme-handler/im.polycule business.braid.polycule.desktop",
+  "@linuxOidcWorkaroundSnippet": {
+    "translatable": false
+  },
+  "setupSSSSLoading": "Encryption setup running. This might take a while."
 }
