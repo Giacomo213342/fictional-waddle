@@ -279,6 +279,12 @@ abstract class AppLocalizations {
   /// **'< polycule > on {platform}'**
   String clientDisplayName(String platform);
 
+  /// Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.
+  ///
+  /// In en, this message translates to:
+  /// **'< polycule > on on {hostname} ({platform})'**
+  String clientDisplayNameHostname(String hostname, String platform);
+
   /// No description provided for @platformWeb.
   ///
   /// In en, this message translates to:
