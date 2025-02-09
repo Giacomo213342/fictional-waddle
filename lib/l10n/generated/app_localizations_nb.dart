@@ -110,6 +110,11 @@ class AppLocalizationsNb extends AppLocalizations {
   }
 
   @override
+  String clientDisplayNameHostname(String hostname, String platform) {
+    return '< polycule > on on $hostname ($platform)';
+  }
+
+  @override
   String get platformWeb => 'veven';
 
   @override

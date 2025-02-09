@@ -83,10 +83,14 @@ class LoginController extends State<LoginPage> {
   }
 
   String _generateDeviceDisplayName() {
-    final platform = kIsWeb
-        ? AppLocalizations.of(context).platformWeb
-        : Platform.operatingSystem;
-
-    return AppLocalizations.of(context).clientDisplayName(platform);
+    if (kIsWeb) {
+      return AppLocalizations.of(context).clientDisplayName(
+        AppLocalizations.of(context).platformWeb,
+      );
+    }
+    return AppLocalizations.of(context).clientDisplayNameHostname(
+      Platform.localHostname,
+      Platform.operatingSystem,
+    );
   }
 }

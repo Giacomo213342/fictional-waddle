@@ -134,6 +134,7 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
         launchOAuth2Uri: launchUrl,
         responseMode: kIsWeb ? 'fragment' : 'query',
         prompt: 'consent',
+        initialDeviceDisplayName: _generateDeviceDisplayName(),
         enforceNewDeviceId: true,
       );
       IntentManager.oidcCallbackCompleter = null;
@@ -148,6 +149,18 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
     setState(() {
       _loading = false;
     });
+  }
+
+  String _generateDeviceDisplayName() {
+    if (kIsWeb) {
+      return AppLocalizations.of(context).clientDisplayName(
+        AppLocalizations.of(context).platformWeb,
+      );
+    }
+    return AppLocalizations.of(context).clientDisplayNameHostname(
+      Platform.localHostname,
+      Platform.operatingSystem,
+    );
   }
 
   Uri _makePlatformRedirectUrl() => Uri.parse(

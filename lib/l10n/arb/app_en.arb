@@ -68,6 +68,20 @@
       }
     }
   },
+  "clientDisplayNameHostname": "< polycule > on on {hostname} ({platform})",
+  "@clientDisplayNameHostname": {
+    "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
+    "placeholders": {
+      "hostname": {
+        "type": "String",
+        "description": "The device name."
+      },
+      "platform": {
+        "type": "String",
+        "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
+      }
+    }
+  },
   "platformWeb": "web",
   "loginError": "Could not log in ; please check your credentials.",
   "loginErrorMessage": "Could not log in : {message}",
