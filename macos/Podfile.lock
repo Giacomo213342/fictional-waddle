@@ -21,6 +21,7 @@ PODS:
     - Flutter
     - FlutterMacOS
   - just_waveform (0.0.1):
+    - Flutter
     - FlutterMacOS
   - media_kit_libs_macos_video (1.0.4):
     - FlutterMacOS
@@ -66,7 +67,7 @@ DEPENDENCIES:
   - flutter_zxing (from `Flutter/ephemeral/.symlinks/plugins/flutter_zxing/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - just_audio (from `Flutter/ephemeral/.symlinks/plugins/just_audio/darwin`)
-  - just_waveform (from `Flutter/ephemeral/.symlinks/plugins/just_waveform/macos`)
+  - just_waveform (from `Flutter/ephemeral/.symlinks/plugins/just_waveform/darwin`)
   - media_kit_libs_macos_video (from `Flutter/ephemeral/.symlinks/plugins/media_kit_libs_macos_video/macos`)
   - media_kit_native_event_loop (from `Flutter/ephemeral/.symlinks/plugins/media_kit_native_event_loop/macos`)
   - media_kit_video (from `Flutter/ephemeral/.symlinks/plugins/media_kit_video/macos`)
@@ -106,7 +107,7 @@ EXTERNAL SOURCES:
   just_audio:
     :path: Flutter/ephemeral/.symlinks/plugins/just_audio/darwin
   just_waveform:
-    :path: Flutter/ephemeral/.symlinks/plugins/just_waveform/macos
+    :path: Flutter/ephemeral/.symlinks/plugins/just_waveform/darwin
   media_kit_libs_macos_video:
     :path: Flutter/ephemeral/.symlinks/plugins/media_kit_libs_macos_video/macos
   media_kit_native_event_loop:
@@ -143,7 +144,7 @@ SPEC CHECKSUMS:
   flutter_zxing: ea030278aa2a051cd81a5b0053be9d0569d11c9a
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
   just_audio: a42c63806f16995daf5b219ae1d679deb76e6a79
-  just_waveform: 1ab8cecd081342f77c51392910db0162720f0cba
+  just_waveform: dbade622f9d7a0c8de7cc8e43c424617c6bc7113
   media_kit_libs_macos_video: b3e2bbec2eef97c285f2b1baa7963c67c753fb82
   media_kit_native_event_loop: 81fd5b45192b72f8b5b69eaf5b540f45777eb8d5
   media_kit_video: c75b07f14d59706c775778e4dd47dd027de8d1e5
