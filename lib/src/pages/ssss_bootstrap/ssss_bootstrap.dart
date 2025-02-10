@@ -204,7 +204,7 @@ class SsssBootstrapController extends State<SsssBootstrapPage> {
 
     if (widget.passphrase != null) {
       kPolyculeSecureStorage.delete(
-        key: bootstrap.client.clientName + _ssssKeyStorage + suffix,
+        key: '${bootstrap.client.clientName}_$_ssssKeyStorage$suffix',
       );
       return;
     }
@@ -215,7 +215,7 @@ class SsssBootstrapController extends State<SsssBootstrapPage> {
     }
 
     await kPolyculeSecureStorage.write(
-      key: bootstrap.client.clientName + _ssssKeyStorage + suffix,
+      key: '${bootstrap.client.clientName}_$_ssssKeyStorage$suffix',
       value: key,
     );
   }

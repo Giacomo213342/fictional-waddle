@@ -360,7 +360,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         }
 
         if (!_loginClients.contains(client.clientName.clientIdentifier)) {
-          _removeFromClientList(client);
+          await _removeFromClientList(client);
         }
         break;
     }
