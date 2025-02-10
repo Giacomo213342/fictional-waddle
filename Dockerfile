@@ -1,4 +1,4 @@
-FROM registry.gitlab.com/theonewiththebraid/flutter-dockerimages:3.27.3-web AS builder
+FROM registry.gitlab.com/theonewiththebraid/flutter-dockerimages:3.27.4-web AS builder
 
 ARG POLYCULE_IS_STABLE=false
 ARG POLYCULE_VERSION=debug

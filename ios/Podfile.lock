@@ -31,6 +31,7 @@ PODS:
     - FlutterMacOS
   - just_waveform (0.0.1):
     - Flutter
+    - FlutterMacOS
   - media_kit_libs_ios_video (1.0.4):
     - Flutter
   - media_kit_native_event_loop (1.0.0):
@@ -86,7 +87,7 @@ DEPENDENCIES:
   - flutter_zxing (from `.symlinks/plugins/flutter_zxing/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/darwin`)
-  - just_waveform (from `.symlinks/plugins/just_waveform/ios`)
+  - just_waveform (from `.symlinks/plugins/just_waveform/darwin`)
   - media_kit_libs_ios_video (from `.symlinks/plugins/media_kit_libs_ios_video/ios`)
   - media_kit_native_event_loop (from `.symlinks/plugins/media_kit_native_event_loop/ios`)
   - media_kit_video (from `.symlinks/plugins/media_kit_video/ios`)
@@ -138,7 +139,7 @@ EXTERNAL SOURCES:
   just_audio:
     :path: ".symlinks/plugins/just_audio/darwin"
   just_waveform:
-    :path: ".symlinks/plugins/just_waveform/ios"
+    :path: ".symlinks/plugins/just_waveform/darwin"
   media_kit_libs_ios_video:
     :path: ".symlinks/plugins/media_kit_libs_ios_video/ios"
   media_kit_native_event_loop:
@@ -185,7 +186,7 @@ SPEC CHECKSUMS:
   flutter_zxing: 19a866d17c8a87ee1026d68521c69d2f008635f6
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   just_audio: a42c63806f16995daf5b219ae1d679deb76e6a79
-  just_waveform: e03174d1eadf4b096b01715a3e3ccbf940a05d25
+  just_waveform: dbade622f9d7a0c8de7cc8e43c424617c6bc7113
   media_kit_libs_ios_video: a5fe24bc7875ccd6378a0978c13185e1344651c1
   media_kit_native_event_loop: e6b2ab20cf0746eb1c33be961fcf79667304fa2a
   media_kit_video: 5da63f157170e5bf303bf85453b7ef6971218a2e
