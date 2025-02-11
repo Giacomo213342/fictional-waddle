@@ -30,10 +30,10 @@ class AccountPreviewTile extends StatelessWidget {
             title: Text(AppLocalizations.of(context).loggingInToClient),
           );
         }
-        if (snapshot.data != LoginState.loggedIn) {
+        final userId = client.userID;
+        if (userId == null) {
           return SizedBox.fromSize(size: Size.zero);
         }
-        final userId = client.userID!;
         return ListTile(
           leading: ProfileAvatarBuilder(
             userId: userId,

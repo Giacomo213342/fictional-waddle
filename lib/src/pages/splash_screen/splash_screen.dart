@@ -1,10 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
 
 import '../../router/extensions/go_router_path_extension.dart';
 import '../../widgets/matrix/client_manager/client_manager.dart';
@@ -36,10 +32,6 @@ class SplashController extends State<SplashPage> {
       return;
     }
     if (ClientManager.activeClients.isEmpty) {
-      // web is yet buggy
-      if (kIsWeb) {
-        context.go('/client/1/${HomeserverPage.routeName}');
-      }
       return;
     }
     try {
@@ -47,12 +39,14 @@ class SplashController extends State<SplashPage> {
       if (client.isLogged()) {
         _roomList();
       }
-      final loginState = client.onLoginStateChanged.value ??
-          await client.onLoginStateChanged.stream.first.timeout(
-            const Duration(seconds: 45),
-          );
+      // ensure we are completely initialized
+      if (client.onLoginStateChanged.value == null) {
+        await client.onLoginStateChanged.stream.first.timeout(
+          const Duration(seconds: 45),
+        );
+      }
 
-      if (loginState != LoginState.loggedIn) {
+      if (!client.isLogged()) {
         _loginView();
       }
     } on TimeoutException {

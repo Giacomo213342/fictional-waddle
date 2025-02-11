@@ -26,6 +26,7 @@ class ClientManagerView extends StatelessWidget {
           builder: (context, constraints) {
             final tabBarOnTop =
                 constraints.maxWidth > 764 || (!kIsWeb && Platform.isIOS);
+            final client = manager.getActiveClient();
             return Material(
               child: Column(
                 children: [
@@ -35,14 +36,12 @@ class ClientManagerView extends StatelessWidget {
                       position: VerticalDirection.up,
                     ),
                   Expanded(
-                    child: ClientScope(
-                      client: manager.getActiveClient(),
-                      child: Builder(
-                        builder: (context) {
-                          return manager.widget.child;
-                        },
-                      ),
-                    ),
+                    child: client == null
+                        ? manager.widget.child
+                        : ClientScope(
+                            client: client,
+                            child: manager.widget.child,
+                          ),
                   ),
                   if (!tabBarOnTop) ClientTabBar(manager),
                 ],

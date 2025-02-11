@@ -986,7 +986,7 @@ packages:
     description:
       path: "."
       ref: "braid/msc3861-native-oidc"
-      resolved-ref: "8244f300306881f00509cf99ba60b66d2000de13"
+      resolved-ref: "590f349aab812e3119a624ef29f6313109c9793c"
       url: "https://github.com/TheOneWithTheBraid/matrix-dart-sdk.git"
     source: git
     version: "0.38.0"
