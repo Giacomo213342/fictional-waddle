@@ -2,6 +2,9 @@ import 'package:flutter/widgets.dart';
 
 import 'package:go_router/go_router.dart';
 
+import '../../pages/splash_screen/splash_screen.dart';
+import '../../widgets/matrix/client_manager/client_manager.dart';
+
 const pathParameter = 'client';
 
 extension GoRouterPathExtension on String {
@@ -32,7 +35,12 @@ extension GoRouterMultiClient on BuildContext {
       if (arguments is Map<String, String>) {
         final client = arguments['client'];
         if (client == null) {
-          location = '/client/1?from=${Uri.encodeComponent(location)}';
+          if (ClientManager.activeClients.isEmpty) {
+            return SplashPage.routeName;
+          }
+          final client = ClientManager.activeClients.first;
+          location = '/client/${client.clientName.clientIdentifier}'
+              '?from=${Uri.encodeComponent(location)}';
         } else {
           location = '/client/$client$location';
         }

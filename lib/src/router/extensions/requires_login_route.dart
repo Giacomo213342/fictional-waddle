@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 
 import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
 
 import '../../pages/splash_screen/splash_screen.dart';
 import '../../widgets/matrix/client_manager/client_manager.dart';
@@ -27,8 +26,7 @@ class RequiresLoginRoute extends GoRoute {
       return context.clientifyLocation(SplashPage.routeName);
     }
     final client = ClientManager.getClientByIdentifier(identifier);
-    final loginState = client?.onLoginStateChanged.value;
-    if (loginState != LoginState.loggedIn) {
+    if (client == null || !client.isLogged()) {
       return context.clientifyLocation(SplashPage.routeName);
     }
     return null;

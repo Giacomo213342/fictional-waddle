@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
 
 import '../../pages/fatal_error/fatal_error_page.dart';
 import '../../pages/homeserver/homeserver.dart';
@@ -51,11 +50,7 @@ class HomeserverUriRoute extends GoRoute {
       return context.clientifyLocation(SplashPage.routeName);
     }
     final client = ClientManager.getClientByIdentifier(identifier);
-    if (client == null) {
-      return context.clientifyLocation(SplashPage.routeName);
-    }
-    final loginState = client.onLoginStateChanged.value;
-    if (loginState != LoginState.loggedOut) {
+    if (client == null || client.isLogged()) {
       return context.clientifyLocation(SplashPage.routeName);
     }
 

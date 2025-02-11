@@ -44,7 +44,7 @@ class ClientManagerWidget extends StatefulWidget {
   const ClientManagerWidget({
     super.key,
     required this.child,
-    this.activeClientIdentifier = 1,
+    this.activeClientIdentifier,
   });
 
   factory ClientManagerWidget.routeBuilder(
@@ -248,17 +248,16 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     return client;
   }
 
-  Client getActiveClient() {
+  Client? getActiveClient() {
     final matchingClients = activeClients.where(
       (client) =>
-          client.clientName.clientIdentifier ==
-          (widget.activeClientIdentifier ?? 1),
+          client.clientName.clientIdentifier == widget.activeClientIdentifier,
     );
     if (matchingClients.isNotEmpty) {
       return matchingClients.single;
     }
 
-    return _buildNewClient();
+    return null;
   }
 
   void addLoginClient() {
@@ -311,6 +310,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
   Future<void> _handleLoginStateChange(Client client, LoginState state) async {
     switch (state) {
+      case LoginState.softLoggedOut:
+      // we let the SDK handle soft log out
       case LoginState.loggedIn:
         // under no case start the app if encryption not supported
         // This should prevent from CI accidentally forgetting to bundle OLM
@@ -324,8 +325,9 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         }
 
         final path = GoRouterState.of(context).uri.path;
-        final isActiveClient = client.clientName.clientIdentifier ==
-            getActiveClient().clientName.clientIdentifier;
+        final isActiveClient =
+            path.startsWith('/client/${client.clientName.clientIdentifier}') ||
+                path == '/';
         final isAccountSelector = path.startsWith(
           AccountSelectorPage.routeName,
         );
@@ -344,16 +346,12 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         _ensureClientInDb(client);
 
         break;
-
-      case LoginState.softLoggedOut:
-        // we let the SDK handle soft log out
-        break;
       case LoginState.loggedOut:
-        if (client.clientName.clientIdentifier ==
-                getActiveClient().clientName.clientIdentifier &&
-            !GoRouterState.of(context).uri.path.startsWith(
-                  AccountSelectorPage.routeName,
-                )) {
+        final path = GoRouterState.of(context).uri.path;
+        if (path.startsWith('/client/${client.clientName.clientIdentifier}') &&
+            !path.startsWith(
+              AccountSelectorPage.routeName,
+            )) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             context.goMultiClient(HomeserverPage.routeName);
           });
