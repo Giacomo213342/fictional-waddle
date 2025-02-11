@@ -101,6 +101,8 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
 
   final suffix = getRuntimeSuffix();
 
+  String? olmVersion;
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
@@ -315,13 +317,14 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       case LoginState.loggedIn:
         // under no case start the app if encryption not supported
         // This should prevent from CI accidentally forgetting to bundle OLM
-        try {
-          Logs().d(
-            'Launching with OLM version ${olm.get_library_version().join('.')}',
-          );
-        } on ArgumentError catch (e) {
-          context.goMultiClient(FatalErrorPage.routeName, extra: e);
-          return;
+        if (olmVersion == null) {
+          try {
+            olmVersion = olm.get_library_version().join('.');
+            Logs().d('Running with OLM version $olmVersion');
+          } on ArgumentError catch (e) {
+            context.goMultiClient(FatalErrorPage.routeName, extra: e);
+            return;
+          }
         }
 
         final path = GoRouterState.of(context).uri.path;
@@ -343,7 +346,9 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
           });
         }
 
-        _ensureClientInDb(client);
+        if (_loginClients.contains(client.clientName.clientIdentifier)) {
+          _ensureClientInDb(client);
+        }
 
         break;
       case LoginState.loggedOut:
