@@ -44,6 +44,8 @@ class UiaHelper {
           if (response != true) {
             return;
           }
+          // ensure we got a valid refresh token
+          await Future.delayed(const Duration(seconds: 15));
 
           final auth = AuthenticationData(
             session: request.session,

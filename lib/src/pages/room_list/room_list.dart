@@ -92,6 +92,7 @@ class RoomListController extends State<RoomListPage> {
 
   Future<void> _processFirstSync() async {
     final client = ClientScope.of(context).client;
+    unawaited(_checkSSSS(client));
     // wait for all basic data to be synced
     await client.accountDataLoading;
     await client.roomsLoading;
@@ -100,13 +101,7 @@ class RoomListController extends State<RoomListPage> {
       return;
     }
     _focusFirstRoom();
-    if (client.isUnknownSession ||
-        await client.encryption?.crossSigning.isCached() == false ||
-        await client.encryption?.keyManager.isCached() == false) {
-      if (mounted) {
-        context.goMultiClient(SsssBootstrapPage.routeName);
-      }
-    }
+    await _checkSSSS(client);
   }
 
   /// checks whether our room list contains any item and tries to focus it
@@ -191,5 +186,15 @@ class RoomListController extends State<RoomListPage> {
 
   void accountSettings() {
     context.goMultiClient(AccountSettings.routeName);
+  }
+
+  Future<void> _checkSSSS(Client client) async {
+    if (client.isUnknownSession ||
+        await client.encryption?.crossSigning.isCached() == false ||
+        await client.encryption?.keyManager.isCached() == false) {
+      if (mounted) {
+        context.goMultiClient(SsssBootstrapPage.routeName);
+      }
+    }
   }
 }

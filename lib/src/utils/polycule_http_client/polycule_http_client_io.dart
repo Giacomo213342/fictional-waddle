@@ -54,11 +54,11 @@ ClientCallback getHttpClientPlatformCallback() {
   }
 }
 
-Client _buildCupertinoClient() {
+BaseClient _buildCupertinoClient() {
   return CupertinoClient.fromSessionConfiguration(_cupertinoConfig);
 }
 
-Client _buildIoClient() {
+BaseClient _buildIoClient() {
   return IOClient(
     HttpClient(context: _ioContext)
       ..userAgent = PolyculeHttpClientManager.userAgent,

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:matrix/matrix.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/matrix/matrix_scope.dart';
 
@@ -8,6 +11,13 @@ class AskWipeSsssWidget extends StatelessWidget {
 
   static Future<bool?> show(BuildContext context) {
     final scope = MatrixScope.captureAll(context);
+    // UIA for OIDC is pretty buggy, let's settle preconditions in advance
+    final oidcAction = scope.$1.getOidcAccountManagementUri(
+      action: OidcAccountManagementActions.crossSigningReset,
+    );
+    if (oidcAction != null) {
+      launchUrl(oidcAction);
+    }
     return showAdaptiveDialog<bool>(
       context: context,
       builder: (context) => MatrixScope(

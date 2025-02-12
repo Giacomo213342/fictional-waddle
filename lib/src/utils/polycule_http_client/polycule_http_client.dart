@@ -10,7 +10,7 @@ import '../version.dart';
 import 'polycule_http_client_web.dart'
     if (dart.library.io) 'polycule_http_client_io.dart';
 
-typedef ClientCallback = Client Function();
+typedef ClientCallback = BaseClient Function();
 
 abstract class PolyculeHttpClientManager {
   const PolyculeHttpClientManager._();
