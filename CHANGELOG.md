@@ -1,10 +1,12 @@
 ## v0.2.0
 
 - chore: bump Flutter (The one with the braid)
+- chore: bump matrix (The one with the braid)
 - chore(deps): bump nginx from 1.27.3-alpine-slim to 1.27.4-alpine-slim (The one with the braid)
 - chore(deps): bump theonewiththebraid/flutter-dockerimages from 3.27.3-web to 3.27.4-web (The one with the braid)
 - chore: migrate to SDK side OIDC implementation (The one with the braid)
 - feat: improve dependabot Docker behavior (The one with the braid)
+- feat: less verbose loging on token rotation (The one with the braid)
 - feat: make DevicePixelRatioBuilder stateless (The one with the braid)
 - feat: minor tixes (The one with the braid)
 - feat: use Flutter asset for ISRG X1 (The one with the braid)
@@ -13,6 +15,7 @@
 - fix: better handle weird well-known responses (The one with the braid)
 - fix: bump flutter (The one with the braid)
 - fix: dependency override (The one with the braid)
+- fix: handle token rotation and OIDC UIA stages before any HTTP request (The one with the braid)
 - fix: invalid image builder cnstructor (The one with the braid)
 - fix: remove Link widgets (sad accessibility noises) (The one with the braid)
 - fix: send initial device display name (The one with the braid)
