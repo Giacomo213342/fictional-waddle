@@ -52,7 +52,6 @@ class MsgtypeDropdown extends StatelessWidget {
           selectedTrailingIcon: MsgtypeDropdown._colon,
           initialSelection: controller.msgtypeController.text,
           controller: controller.msgtypeController,
-          alignmentOffset: _computeScaffoldPositionFix(context),
           inputDecorationTheme: const InputDecorationTheme(
             border: InputBorder.none,
             contentPadding: EdgeInsets.all(12),
@@ -120,26 +119,7 @@ class MsgtypeDropdown extends StatelessWidget {
         controller.showStickerSelector(msgType);
       default:
         controller.setSendMsgType(MessageTypes.Text);
-
         break;
     }
-  }
-
-  // Flutter detects the Overlay position relative to the top scaffold. Since we
-  // have several scaffold, we need to compute the offset between the primary
-  // and secondary scaffold on landscape layout
-  Offset? _computeScaffoldPositionFix(BuildContext context) {
-    if (MediaQuery.of(context).size.width < 786) {
-      return null;
-    }
-    Rect? rect;
-    final box = Scaffold.of(context).context.findRenderObject();
-    if (box is RenderBox) {
-      rect = box.localToGlobal(Offset.zero) & box.size;
-    }
-    if (rect == null) {
-      return null;
-    }
-    return Offset(rect.left, -rect.top);
   }
 }
