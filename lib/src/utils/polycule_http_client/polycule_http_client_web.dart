@@ -10,7 +10,7 @@ ClientCallback getHttpClientPlatformCallback() {
   return _buildFetchClient;
 }
 
-Client _buildFetchClient() {
+BaseClient _buildFetchClient() {
   return FetchClient(
     streamRequests: true,
   );

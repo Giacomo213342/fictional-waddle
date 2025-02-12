@@ -25,6 +25,7 @@ import '../../../pages/ssss_bootstrap/ssss_bootstrap.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../utils/error_logger.dart';
 import '../../../utils/matrix/database/polycule_database_builder.dart';
+import '../../../utils/matrix/matrix_refresh_token_client.dart';
 import '../../../utils/matrix/polycule_command_extension.dart';
 import '../../../utils/matrix/push_manager.dart';
 import '../../../utils/matrix/uia_helper.dart';
@@ -193,6 +194,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       : NativeImplementationsIsolate(compute);
 
   Client _buildClient(int identifier) {
+    final httpClient = _httpClient!.call();
     final client = Client(
       _makeClientName(identifier),
       databaseBuilder: _databaseBuilder,
@@ -206,7 +208,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         AuthenticationTypes.sso,
       },
       onSoftLogout: _handleSoftLogout,
-      httpClient: _httpClient?.call(),
+      httpClient: httpClient,
       importantStateEvents: {
         'im.ponies.room_emotes',
       },
@@ -215,6 +217,9 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
       requestHistoryOnLimitedTimeline: true,
       customImageResizer: _customImageResizer,
     );
+
+    client.httpClient = _buildRetryClient(client, httpClient);
+
     client.registerPolyculeCommands();
     _loginStateListener[identifier]?.cancel();
     _loginStateListener[identifier] = client.onLoginStateChanged.stream.listen(
@@ -544,7 +549,7 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     _httpClient = httpClientCallback;
     for (final client in activeClients) {
       client.httpClient.close();
-      client.httpClient = httpClientCallback.call();
+      client.httpClient = _buildRetryClient(client, httpClientCallback.call());
     }
   }
 
@@ -574,6 +579,15 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
         Logs().w('Error shrinking image ${args.fileName}.', e, s);
         return null;
       });
+
+  BaseClient _buildRetryClient(Client client, BaseClient httpClient) =>
+      MatrixRefreshTokenClient(
+        inner: FixedTimeoutHttpClient(
+          httpClient,
+          const Duration(seconds: 20),
+        ),
+        client: client,
+      );
 }
 
 extension ClientIdentifier on String {
