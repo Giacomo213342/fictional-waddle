@@ -4,8 +4,8 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../widgets/matrix/avatar_builder/mxc_avatar.dart';
-import '../../../../widgets/matrix/matrix_scope.dart';
 import '../../../../widgets/matrix/profile_builder.dart';
+import '../../../../widgets/matrix/scopes/matrix_scope.dart';
 import 'sticker_content_preview.dart';
 
 class StickerPackBottomSheet extends StatelessWidget {

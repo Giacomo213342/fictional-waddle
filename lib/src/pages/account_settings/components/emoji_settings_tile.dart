@@ -6,9 +6,7 @@ import '../account_settings.dart';
 import '../pages/emoji_settings/emoji_settings.dart';
 
 class EmojiSettingsTile extends StatelessWidget {
-  const EmojiSettingsTile(this.controller, {super.key});
-
-  final AccountSettingsController controller;
+  const EmojiSettingsTile({super.key});
 
   @override
   Widget build(BuildContext context) {

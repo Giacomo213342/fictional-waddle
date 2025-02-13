@@ -4,7 +4,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
-import '../../client_scope.dart';
+import '../../scopes/client_scope.dart';
 import '../client_manager.dart';
 import 'settings_button.dart';
 import 'tab.dart';

@@ -6,8 +6,8 @@ import 'package:matrix/matrix.dart';
 import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../../l10n/matrix/polycule_matrix_localizations.dart';
 import '../../../../../widgets/dynamic_context_menu.dart';
-import '../../../../../widgets/matrix/event_source_code_dialog.dart';
-import '../../../../../widgets/matrix/matrix_scope.dart';
+import '../../../../../widgets/matrix/dialogs/event_source_code_dialog.dart';
+import '../../../../../widgets/matrix/scopes/matrix_scope.dart';
 import '../../../room.dart';
 import '../quoted_event.dart';
 

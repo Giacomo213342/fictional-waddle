@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../utils/matrix/is_display_event_extension.dart';
-import '../../../widgets/matrix/event_scope.dart';
-import '../../../widgets/matrix/timeline_scope.dart';
+import '../../../widgets/matrix/scopes/event_scope.dart';
+import '../../../widgets/matrix/scopes/timeline_scope.dart';
 import 'event/event_fallback_text.dart';
 import 'event/m_room_message.dart';
 import 'event/m_room_state.dart';

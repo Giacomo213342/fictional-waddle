@@ -10,7 +10,7 @@ import '../../polycule_overflow_bar.dart';
 import '../../share_origin_builder.dart';
 import '../avatar_builder/fullscreen_dialog_avatar.dart';
 import '../avatar_builder/mxc_avatar.dart';
-import '../client_scope.dart';
+import '../scopes/client_scope.dart';
 
 class UserTile extends StatelessWidget {
   const UserTile({

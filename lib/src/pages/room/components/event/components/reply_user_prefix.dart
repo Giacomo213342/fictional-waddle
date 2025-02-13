@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../widgets/human_date.dart';
 import '../../../../../widgets/matrix/avatar_builder/mxc_avatar.dart';
-import '../../../../../widgets/matrix/event_scope.dart';
+import '../../../../../widgets/matrix/scopes/event_scope.dart';
 
 class ReplyUserPrefix extends StatelessWidget {
   const ReplyUserPrefix({super.key});

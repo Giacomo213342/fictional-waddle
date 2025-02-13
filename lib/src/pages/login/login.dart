@@ -8,7 +8,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../utils/password_cache_manager.dart';
-import '../../widgets/matrix/client_scope.dart';
+import '../../widgets/matrix/scopes/client_scope.dart';
 import '../homeserver/homeserver.dart';
 import 'login_view.dart';
 
@@ -86,6 +86,11 @@ class LoginController extends State<LoginPage> {
     if (kIsWeb) {
       return AppLocalizations.of(context).clientDisplayName(
         AppLocalizations.of(context).platformWeb,
+      );
+    }
+    if (Platform.isIOS || Platform.isAndroid) {
+      return AppLocalizations.of(context).clientDisplayName(
+        Platform.operatingSystem,
       );
     }
     return AppLocalizations.of(context).clientDisplayNameHostname(

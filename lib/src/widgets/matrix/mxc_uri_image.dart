@@ -8,7 +8,7 @@ import 'package:matrix/matrix.dart';
 
 import '../device_pixel_ratio_builder.dart';
 import '../mimed_image.dart';
-import 'client_scope.dart';
+import 'scopes/client_scope.dart';
 
 typedef MxcUriImageBuilderCallback = Widget Function(
   BuildContext context,

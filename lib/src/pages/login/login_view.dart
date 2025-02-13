@@ -5,7 +5,7 @@ import 'package:matrix/matrix.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
 import '../../widgets/ascii_progress_indicator.dart';
-import '../../widgets/matrix/client_scope.dart';
+import '../../widgets/matrix/scopes/client_scope.dart';
 import '../homeserver/homeserver.dart';
 import 'components/matrix_oidc_login_provider.dart';
 import 'components/password_login_provider.dart';

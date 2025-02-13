@@ -5,7 +5,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../utils/matrix/autoplay_animated_content_extension.dart';
-import '../../../../widgets/matrix/client_scope.dart';
+import '../../../../widgets/matrix/scopes/client_scope.dart';
 import 'components/tone_button.dart';
 
 class EmojiSettingsPage extends StatefulWidget {

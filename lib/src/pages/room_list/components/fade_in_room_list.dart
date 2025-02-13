@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../../../widgets/matrix/client_scope.dart';
+import '../../../widgets/matrix/scopes/client_scope.dart';
 import 'sliding_sync_proxy.dart';
 
 class FadeInRoomList extends StatefulWidget {

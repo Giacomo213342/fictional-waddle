@@ -12,7 +12,7 @@ import 'package:media_store_plus/media_store_plus.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../widgets/file_preview_dialog/file_preview_dialog.dart';
-import '../widgets/matrix/matrix_scope.dart';
+import '../widgets/matrix/scopes/matrix_scope.dart';
 
 class FileSelector {
   FileSelector(this.msgType);

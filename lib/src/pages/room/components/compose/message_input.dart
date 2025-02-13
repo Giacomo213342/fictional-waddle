@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
-import '../../../../widgets/matrix/event_scope.dart';
-import '../../../../widgets/matrix/room_scope.dart';
+import '../../../../widgets/matrix/scopes/event_scope.dart';
+import '../../../../widgets/matrix/scopes/room_scope.dart';
 import '../../room.dart';
 import '../event/quoted_event.dart';
 import 'msgtype_dropdown.dart';

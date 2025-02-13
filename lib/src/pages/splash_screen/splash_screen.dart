@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 
 import '../../router/extensions/go_router_path_extension.dart';
 import '../../widgets/matrix/client_manager/client_manager.dart';
-import '../../widgets/matrix/client_scope.dart';
+import '../../widgets/matrix/scopes/client_scope.dart';
 import '../fatal_error/fatal_error_page.dart';
 import '../homeserver/homeserver.dart';
 import '../room_list/room_list.dart';

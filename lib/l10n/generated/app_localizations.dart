@@ -282,7 +282,7 @@ abstract class AppLocalizations {
   /// Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.
   ///
   /// In en, this message translates to:
-  /// **'< polycule > on on {hostname} ({platform})'**
+  /// **'< polycule > on {hostname} ({platform})'**
   String clientDisplayNameHostname(String hostname, String platform);
 
   /// No description provided for @platformWeb.
@@ -540,7 +540,7 @@ abstract class AppLocalizations {
   /// No description provided for @verifyLogin.
   ///
   /// In en, this message translates to:
-  /// **'Verify your new login'**
+  /// **'Verify your key material'**
   String get verifyLogin;
 
   /// No description provided for @finish.
@@ -1953,6 +1953,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Encryption setup running. This might take a while.'**
   String get setupSSSSLoading;
+
+  /// No description provided for @sessionId.
+  ///
+  /// In en, this message translates to:
+  /// **'Session ID'**
+  String get sessionId;
+
+  /// No description provided for @sessionIpAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Last IP address'**
+  String get sessionIpAddress;
+
+  /// No description provided for @sessionLastSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen'**
+  String get sessionLastSeen;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @verify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get verify;
+
+  /// No description provided for @verifyAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify again'**
+  String get verifyAgain;
+
+  /// No description provided for @rename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get rename;
+
+  /// No description provided for @renameDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename device'**
+  String get renameDevice;
+
+  /// No description provided for @deviceName.
+  ///
+  /// In en, this message translates to:
+  /// **'Device display name'**
+  String get deviceName;
+
+  /// No description provided for @renameDeviceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave blank to remove display name'**
+  String get renameDeviceHint;
+
+  /// No description provided for @openInIDP.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in identity provider'**
+  String get openInIDP;
+
+  /// No description provided for @deviceNoEncryption.
+  ///
+  /// In en, this message translates to:
+  /// **'Does not support encryption'**
+  String get deviceNoEncryption;
+
+  /// No description provided for @deviceVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Keys verified'**
+  String get deviceVerified;
+
+  /// No description provided for @deviceUnverified.
+  ///
+  /// In en, this message translates to:
+  /// **'Keys unverified'**
+  String get deviceUnverified;
+
+  /// No description provided for @deviceBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Device blocked'**
+  String get deviceBlocked;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// No description provided for @logoutWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm logout'**
+  String get logoutWarning;
+
+  /// No description provided for @logoutWarningLong.
+  ///
+  /// In en, this message translates to:
+  /// **'When you log out and neither have any other session nor your recovery phrase, you will lose access to all you [matrix] messages.'**
+  String get logoutWarningLong;
+
+  /// No description provided for @keyBackupAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'SSSS backup'**
+  String get keyBackupAvailable;
+
+  /// No description provided for @keyBackupExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Secure Secret Storage and Sharing to securely backup message keys for all your devices.'**
+  String get keyBackupExplanation;
+
+  /// No description provided for @ssssRecoveryKey.
+  ///
+  /// In en, this message translates to:
+  /// **'SSSS recovery key'**
+  String get ssssRecoveryKey;
+
+  /// No description provided for @ssssRecoveryKeyExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Carefully store your Secure Secret Storage and Sharing recovery key at a secure place. Without your recovery key, all past messages will be lost forever.'**
+  String get ssssRecoveryKeyExplanation;
+
+  /// No description provided for @confirmSSSSKeyStored.
+  ///
+  /// In en, this message translates to:
+  /// **'Key stored'**
+  String get confirmSSSSKeyStored;
+
+  /// No description provided for @yourCurrentDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current device'**
+  String get yourCurrentDevice;
 }
 
 class _AppLocalizationsDelegate

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../widgets/matrix/avatar_builder/room_builder.dart';
-import '../../widgets/matrix/room_scope.dart';
+import '../../widgets/matrix/scopes/room_scope.dart';
 import 'components/public_room_address_tile.dart';
 import 'components/room_detail_sliver_app_bar.dart';
 import 'components/room_topic_view.dart';

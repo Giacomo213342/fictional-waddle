@@ -68,7 +68,7 @@
       }
     }
   },
-  "clientDisplayNameHostname": "< polycule > on on {hostname} ({platform})",
+  "clientDisplayNameHostname": "< polycule > on {hostname} ({platform})",
   "@clientDisplayNameHostname": {
     "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
     "placeholders": {
@@ -189,7 +189,7 @@
   "keyVerificationErrorUser": "The verification was rejected.",
   "close": "Close",
   "verificationSuccessful": "Key verification successful",
-  "verifyLogin": "Verify your new login",
+  "verifyLogin": "Verify your key material",
   "finish": "Finish",
   "or": "or",
   "verifyWithOtherDevice": "Verify with other device",
@@ -575,5 +575,29 @@
   "@linuxOidcWorkaroundSnippet": {
     "translatable": false
   },
-  "setupSSSSLoading": "Encryption setup running. This might take a while."
+  "setupSSSSLoading": "Encryption setup running. This might take a while.",
+  "sessionId": "Session ID",
+  "sessionIpAddress": "Last IP address",
+  "sessionLastSeen": "Last seen",
+  "delete": "Delete",
+  "verify": "Verify",
+  "verifyAgain": "Verify again",
+  "rename": "Rename",
+  "renameDevice": "Rename device",
+  "deviceName": "Device display name",
+  "renameDeviceHint": "Leave blank to remove display name",
+  "openInIDP": "Open in identity provider",
+  "deviceNoEncryption": "Does not support encryption",
+  "deviceVerified": "Keys verified",
+  "deviceUnverified": "Keys unverified",
+  "deviceBlocked": "Device blocked",
+  "logout": "Logout",
+  "logoutWarning": "Confirm logout",
+  "logoutWarningLong": "When you log out and neither have any other session nor your recovery phrase, you will lose access to all you [matrix] messages.",
+  "keyBackupAvailable": "SSSS backup",
+  "keyBackupExplanation": "Use Secure Secret Storage and Sharing to securely backup message keys for all your devices.",
+  "ssssRecoveryKey": "SSSS recovery key",
+  "ssssRecoveryKeyExplanation": "Carefully store your Secure Secret Storage and Sharing recovery key at a secure place. Without your recovery key, all past messages will be lost forever.",
+  "confirmSSSSKeyStored": "Key stored",
+  "yourCurrentDevice": "Your current device"
 }

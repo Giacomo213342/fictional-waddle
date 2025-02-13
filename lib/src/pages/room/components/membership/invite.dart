@@ -6,7 +6,7 @@ import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../widgets/matrix/avatar_builder/room_avatar.dart';
 import '../../../../widgets/matrix/avatar_builder/room_builder.dart';
 import '../../../../widgets/matrix/room_display_name_text.dart';
-import '../../../../widgets/matrix/room_scope.dart';
+import '../../../../widgets/matrix/scopes/room_scope.dart';
 import '../../../../widgets/polycule_overflow_bar.dart';
 import '../join_room_button.dart';
 

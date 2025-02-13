@@ -7,8 +7,8 @@ import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
-import '../../../../../widgets/matrix/event_scope.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
+import '../../../../../widgets/matrix/scopes/event_scope.dart';
 
 class AudioMessage extends StatefulWidget {
   const AudioMessage({

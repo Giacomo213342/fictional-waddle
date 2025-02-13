@@ -5,7 +5,7 @@ import '../../../widgets/matrix/avatar_builder/fullscreen_dialog_avatar.dart';
 import '../../../widgets/matrix/avatar_builder/room_builder.dart';
 import '../../../widgets/matrix/mxc_uri_image.dart';
 import '../../../widgets/matrix/room_display_name_text.dart';
-import '../../../widgets/matrix/room_scope.dart';
+import '../../../widgets/matrix/scopes/room_scope.dart';
 import '../../room/room.dart';
 
 class RoomDetailSliverAppBar extends StatelessWidget {

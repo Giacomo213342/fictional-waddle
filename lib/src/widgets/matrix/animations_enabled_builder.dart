@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/matrix/autoplay_animated_content_extension.dart';
-import 'client_scope.dart';
+import 'scopes/client_scope.dart';
 
 typedef AnimatedChildBuilder = Widget Function(
   BuildContext context,

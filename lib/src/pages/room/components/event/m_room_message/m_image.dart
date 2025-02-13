@@ -5,9 +5,9 @@ import 'package:matrix/matrix.dart';
 import '../../../../../widgets/ascii_progress_indicator.dart';
 import '../../../../../widgets/matrix/avatar_builder/mxc_avatar.dart';
 import '../../../../../widgets/matrix/blur_hash_indicator.dart';
-import '../../../../../widgets/matrix/event_scope.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
 import '../../../../../widgets/matrix/retry_download_button.dart';
+import '../../../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../../../widgets/matrix/tumbnail_aspect_ratio.dart';
 import '../../../../../widgets/mimed_image.dart';
 

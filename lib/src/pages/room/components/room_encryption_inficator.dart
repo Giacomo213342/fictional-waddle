@@ -4,7 +4,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../../theme/poly_colors.dart';
 import '../../../utils/matrix/room_security_level_extension.dart';
 import '../../../widgets/matrix/avatar_builder/room_builder.dart';
-import '../../../widgets/matrix/room_scope.dart';
+import '../../../widgets/matrix/scopes/room_scope.dart';
 
 class RoomEncryptionIndicator extends StatelessWidget {
   const RoomEncryptionIndicator({

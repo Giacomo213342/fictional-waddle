@@ -422,6 +422,10 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     );
     storageLock = Completer<void>();
 
+    await kPolyculeSecureStorage.delete(
+      key: SsssBootstrapController.ssssKeyStorage(client),
+    );
+
     final identifier = client.clientName.clientIdentifier;
 
     await client.database?.delete();

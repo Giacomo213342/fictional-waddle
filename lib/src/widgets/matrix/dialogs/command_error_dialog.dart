@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../../../l10n/generated/app_localizations.dart';
-import '../../theme/fonts.dart';
-import 'matrix_scope.dart';
+import '../../../../l10n/generated/app_localizations.dart';
+import '../../../theme/fonts.dart';
+import '../scopes/matrix_scope.dart';
 
 class CommandErrorDialog extends StatelessWidget {
   const CommandErrorDialog({super.key, required this.error});

@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'matrix/matrix_scope.dart';
+import 'matrix/scopes/matrix_scope.dart';
 
 typedef DynamicContextMenuItemBuilder = List<ContextMenuItem> Function();
 

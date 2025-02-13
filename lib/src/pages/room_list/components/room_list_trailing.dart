@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../widgets/human_date.dart';
 import '../../../widgets/matrix/avatar_builder/room_builder.dart';
-import '../../../widgets/matrix/room_scope.dart';
+import '../../../widgets/matrix/scopes/room_scope.dart';
 
 class RoomListTrailing extends StatelessWidget {
   const RoomListTrailing({

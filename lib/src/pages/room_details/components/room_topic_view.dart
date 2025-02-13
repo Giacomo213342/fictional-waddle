@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../widgets/matrix/avatar_builder/room_builder.dart';
 import '../../../widgets/matrix/html/polycule_html_view.dart';
-import '../../../widgets/matrix/room_scope.dart';
+import '../../../widgets/matrix/scopes/room_scope.dart';
 
 class RoomTopicView extends StatelessWidget {
   const RoomTopicView({super.key});

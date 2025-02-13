@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../avatar_builder/mxc_avatar.dart';
-import '../../client_scope.dart';
 import '../../profile_builder.dart';
+import '../../scopes/client_scope.dart';
 import '../client_manager.dart';
 
 class ClientTab extends StatelessWidget {

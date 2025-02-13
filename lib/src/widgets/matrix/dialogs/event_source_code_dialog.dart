@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 
 import 'package:html/parser.dart';
 
-import '../../../l10n/generated/app_localizations.dart';
-import '../../pages/room/components/event/m_room_message_content.dart';
-import '../../pages/room/components/event/quoted_event.dart';
-import '../../pages/room_list/components/plain_event_preview_text.dart';
-import '../polycule_highlight_view.dart';
-import 'blur_hash_indicator.dart';
-import 'event_scope.dart';
-import 'matrix_scope.dart';
+import '../../../../l10n/generated/app_localizations.dart';
+import '../../../pages/room/components/event/m_room_message_content.dart';
+import '../../../pages/room/components/event/quoted_event.dart';
+import '../../../pages/room_list/components/plain_event_preview_text.dart';
+import '../../polycule_highlight_view.dart';
+import '../blur_hash_indicator.dart';
+import '../scopes/event_scope.dart';
+import '../scopes/matrix_scope.dart';
 
 class EventSourceCodeDialog extends StatelessWidget {
   const EventSourceCodeDialog({super.key});

@@ -16,10 +16,10 @@ import '../../../utils/file_selector.dart';
 import '../../ascii_progress_indicator.dart';
 import '../../chess_grid_paint.dart';
 import '../../share_origin_builder.dart';
-import '../client_scope.dart';
-import '../matrix_scope.dart';
 import '../mxc_uri_image.dart';
 import '../retry_download_button.dart';
+import '../scopes/client_scope.dart';
+import '../scopes/matrix_scope.dart';
 import 'mxc_avatar.dart';
 
 class FullScreenAvatar extends StatelessWidget {

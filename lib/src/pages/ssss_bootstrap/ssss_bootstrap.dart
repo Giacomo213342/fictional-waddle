@@ -9,17 +9,22 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
 import '../../utils/runtime_suffix.dart';
 import '../../utils/secure_storage.dart';
-import '../../widgets/matrix/client_scope.dart';
-import '../../widgets/matrix/matrix_scope.dart';
+import '../../widgets/matrix/scopes/client_scope.dart';
+import '../../widgets/matrix/scopes/matrix_scope.dart';
 import '../fatal_error/fatal_error_page.dart';
 import '../room_list/room_list.dart';
 import 'components/ask_wipe_ssss_widget.dart';
 import 'ssss_bootstrap_view.dart';
 
 class SsssBootstrapPage extends StatefulWidget {
-  const SsssBootstrapPage({super.key, this.passphrase});
+  const SsssBootstrapPage({
+    super.key,
+    this.passphrase,
+    this.disableSas = false,
+  });
 
   final String? passphrase;
+  final bool disableSas;
 
   static const routeName = '/bootstrap';
 
@@ -35,6 +40,9 @@ class SsssBootstrapController extends State<SsssBootstrapPage> {
   KeyVerification? keyVerificationRequest;
 
   static const _ssssKeyStorage = 'ssss_key';
+
+  static String ssssKeyStorage(Client client) =>
+      '${client.clientName}_$_ssssKeyStorage${getRuntimeSuffix()}';
 
   @override
   void initState() {
@@ -65,9 +73,7 @@ class SsssBootstrapController extends State<SsssBootstrapPage> {
         break;
       case BootstrapState.askNewSsss:
         _nextStage(
-          () => bootstrap
-              .newSsss(widget.passphrase)
-              .then((_) => _storeCrossSigningKey()),
+          () => bootstrap.newSsss(widget.passphrase),
         );
         break;
       case BootstrapState.askSetupCrossSigning:
@@ -108,11 +114,17 @@ class SsssBootstrapController extends State<SsssBootstrapPage> {
         _nextStage(() => context.goMultiClient(FatalErrorPage.routeName));
         break;
       case BootstrapState.done:
-        if (widget.passphrase != null) {
-          Navigator.of(context).pop();
-          return;
-        }
-        _nextStage(() => context.goMultiClient(RoomListPage.routeName));
+        bootstrap.client.oneShotSync().then((_) {
+          unawaited(_storeCrossSigningKey());
+          if (!mounted) {
+            return;
+          }
+          if (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+            return;
+          }
+          _nextStage(() => context.goMultiClient(RoomListPage.routeName));
+        });
         break;
     }
     setState(() => this.bootstrap = bootstrap);
@@ -202,12 +214,9 @@ class SsssBootstrapController extends State<SsssBootstrapPage> {
     if (bootstrap == null) {
       return;
     }
-    final suffix = getRuntimeSuffix();
 
     if (widget.passphrase != null) {
-      kPolyculeSecureStorage.delete(
-        key: '${bootstrap.client.clientName}_$_ssssKeyStorage$suffix',
-      );
+      kPolyculeSecureStorage.delete(key: ssssKeyStorage(bootstrap.client));
       return;
     }
 
@@ -216,9 +225,13 @@ class SsssBootstrapController extends State<SsssBootstrapPage> {
       return;
     }
 
-    await kPolyculeSecureStorage.write(
-      key: '${bootstrap.client.clientName}_$_ssssKeyStorage$suffix',
-      value: key,
-    );
+    if (await bootstrap.encryption.keyManager.isCached() &&
+        await bootstrap.encryption.crossSigning.isCached() &&
+        !bootstrap.client.isUnknownSession) {
+      await kPolyculeSecureStorage.write(
+        key: ssssKeyStorage(bootstrap.client),
+        value: key,
+      );
+    }
   }
 }

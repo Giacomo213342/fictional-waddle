@@ -4,8 +4,8 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../../utils/matrix/neighboaring_event_extension.dart';
 import '../../../../../utils/matrix/same_message_bubble_extension.dart';
-import '../../../../../widgets/matrix/event_scope.dart';
-import '../../../../../widgets/matrix/timeline_scope.dart';
+import '../../../../../widgets/matrix/scopes/event_scope.dart';
+import '../../../../../widgets/matrix/scopes/timeline_scope.dart';
 import '../../message_user_avatar.dart';
 import 'edit_tooltip.dart';
 

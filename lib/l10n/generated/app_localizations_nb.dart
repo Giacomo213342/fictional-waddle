@@ -111,7 +111,7 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String clientDisplayNameHostname(String hostname, String platform) {
-    return '< polycule > on on $hostname ($platform)';
+    return '< polycule > on $hostname ($platform)';
   }
 
   @override
@@ -1081,4 +1081,79 @@ class AppLocalizationsNb extends AppLocalizations {
   @override
   String get setupSSSSLoading =>
       'Encryption setup running. This might take a while.';
+
+  @override
+  String get sessionId => 'Session ID';
+
+  @override
+  String get sessionIpAddress => 'Last IP address';
+
+  @override
+  String get sessionLastSeen => 'Last seen';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get verify => 'Verify';
+
+  @override
+  String get verifyAgain => 'Verify again';
+
+  @override
+  String get rename => 'Rename';
+
+  @override
+  String get renameDevice => 'Rename device';
+
+  @override
+  String get deviceName => 'Device display name';
+
+  @override
+  String get renameDeviceHint => 'Leave blank to remove display name';
+
+  @override
+  String get openInIDP => 'Open in identity provider';
+
+  @override
+  String get deviceNoEncryption => 'Does not support encryption';
+
+  @override
+  String get deviceVerified => 'Keys verified';
+
+  @override
+  String get deviceUnverified => 'Keys unverified';
+
+  @override
+  String get deviceBlocked => 'Device blocked';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get logoutWarning => 'Confirm logout';
+
+  @override
+  String get logoutWarningLong =>
+      'When you log out and neither have any other session nor your recovery phrase, you will lose access to all you [matrix] messages.';
+
+  @override
+  String get keyBackupAvailable => 'SSSS backup';
+
+  @override
+  String get keyBackupExplanation =>
+      'Use Secure Secret Storage and Sharing to securely backup message keys for all your devices.';
+
+  @override
+  String get ssssRecoveryKey => 'SSSS recovery key';
+
+  @override
+  String get ssssRecoveryKeyExplanation =>
+      'Carefully store your Secure Secret Storage and Sharing recovery key at a secure place. Without your recovery key, all past messages will be lost forever.';
+
+  @override
+  String get confirmSSSSKeyStored => 'Key stored';
+
+  @override
+  String get yourCurrentDevice => 'Your current device';
 }

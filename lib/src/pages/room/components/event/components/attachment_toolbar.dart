@@ -12,8 +12,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../utils/file_selector.dart';
-import '../../../../../widgets/matrix/client_scope.dart';
-import '../../../../../widgets/matrix/event_scope.dart';
+import '../../../../../widgets/matrix/scopes/client_scope.dart';
+import '../../../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../../../widgets/polycule_overflow_bar.dart';
 import '../../../../../widgets/share_origin_builder.dart';
 

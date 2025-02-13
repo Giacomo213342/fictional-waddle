@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../ascii_progress_indicator.dart';
 import '../blur_hash_widget.dart';
 import '../polycule_text_shadow.dart';
-import 'event_scope.dart';
+import 'scopes/event_scope.dart';
 
 class BlurHashIndicator extends StatelessWidget {
   const BlurHashIndicator({

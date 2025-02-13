@@ -4,7 +4,7 @@ import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../../widgets/matrix/matrix_scope.dart';
+import '../../../widgets/matrix/scopes/matrix_scope.dart';
 
 class AskWipeSsssWidget extends StatelessWidget {
   const AskWipeSsssWidget({super.key});

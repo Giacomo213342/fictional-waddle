@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:emoji_extension/emoji_extension.dart';
 import 'package:matrix/matrix.dart';
 
-import '../../../../widgets/matrix/event_scope.dart';
+import '../../../../widgets/matrix/scopes/event_scope.dart';
 import 'components/attachment_toolbar.dart';
 import 'event_fallback_text.dart';
 import 'm_room_message/m_audio.dart';

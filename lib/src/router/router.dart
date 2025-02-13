@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../pages/account_selector/account_selector.dart';
 import '../pages/account_settings/account_settings.dart';
 import '../pages/account_settings/pages/emoji_settings/emoji_settings.dart';
+import '../pages/account_settings/pages/session_settings/session_settings.dart';
 import '../pages/application_settings/application_settings.dart';
 import '../pages/application_settings/pages/appearance.dart';
 import '../pages/application_settings/pages/error_reporting.dart';
@@ -121,7 +122,11 @@ class PolyculeRouter extends GoRouter {
                     ),
                     RequiresLoginRoute(
                       path: SsssBootstrapPage.routeName.asMultiClientRoute(),
-                      builder: (context, state) => const SsssBootstrapPage(),
+                      builder: (context, state) => SsssBootstrapPage(
+                        disableSas: state.uri.queryParameters.containsKey(
+                          'disableSas',
+                        ),
+                      ),
                     ),
                     ResponsiveShellRoute(
                       builder: (context, state) => RoomListPage(
@@ -191,6 +196,11 @@ class PolyculeRouter extends GoRouter {
                               path: EmojiSettingsPage.routeName,
                               builder: (context, state) =>
                                   const EmojiSettingsPage(),
+                            ),
+                            RequiresLoginRoute(
+                              path: SessionSettingsPage.routeName,
+                              builder: (context, state) =>
+                                  const SessionSettingsPage(),
                             ),
                           ],
                         ),

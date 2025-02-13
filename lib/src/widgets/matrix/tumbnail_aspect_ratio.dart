@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'event_scope.dart';
+import 'scopes/event_scope.dart';
 
 class ThumbnailAspectRatio extends StatelessWidget {
   const ThumbnailAspectRatio({

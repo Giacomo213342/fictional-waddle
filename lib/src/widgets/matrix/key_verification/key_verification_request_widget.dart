@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 
-import '../matrix_scope.dart';
+import '../scopes/matrix_scope.dart';
 import 'components/compare_sas_widget.dart';
 import 'components/incoming_verification_request_widget.dart';
 import 'components/ssss_recovery_input.dart';
@@ -74,7 +74,7 @@ class KeyVerificationRequestWidget extends StatefulWidget {
       isDismissible: false,
       useRootNavigator: true,
       builder: (context) => MatrixScope(
-        scope: (client, null, null, null),
+        scope: (client, null, null, null, null),
         child: KeyVerificationRequestWidget(
           request,
           onClose: Navigator.of(context).pop,
@@ -87,6 +87,7 @@ class KeyVerificationRequestWidget extends StatefulWidget {
 class _KeyVerificationRequestWidgetState
     extends State<KeyVerificationRequestWidget> {
   Profile? peer;
+  bool loading = false;
 
   @override
   void initState() {
@@ -138,7 +139,8 @@ class _KeyVerificationRequestWidgetState
 
       case KeyVerificationState.error:
         if (widget.request.canceledCode == 'm.accepted' ||
-            widget.request.canceledReason == 'm.accepted') {
+            widget.request.canceledReason == 'm.accepted' ||
+            loading) {
           continue loading;
         }
         return VerificationRequestErrorWidget(
@@ -148,6 +150,9 @@ class _KeyVerificationRequestWidgetState
         );
       case KeyVerificationState.waitingSas:
       case KeyVerificationState.done:
+        if (loading) {
+          continue loading;
+        }
         return VerificationSuccessfulWidget(
           onClose: _closeDialog,
           buttonBarBuilder: widget.buttonBarBuilder,
@@ -194,5 +199,11 @@ class _KeyVerificationRequestWidgetState
 
   Future<void> _rejectSas() => widget.request.rejectSas();
 
-  void _closeDialog() => widget.onClose?.call();
+  Future<void> _closeDialog() async {
+    setState(() {
+      loading = true;
+    });
+    await widget.request.client.oneShotSync();
+    widget.onClose?.call();
+  }
 }
