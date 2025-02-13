@@ -4,8 +4,8 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../../l10n/matrix/polycule_matrix_localizations.dart';
-import '../../../../../widgets/matrix/event_scope.dart';
 import '../../../../../widgets/matrix/mxc_encrypted_file_builder.dart';
+import '../../../../../widgets/matrix/scopes/event_scope.dart';
 
 class FileMessage extends StatelessWidget {
   const FileMessage({

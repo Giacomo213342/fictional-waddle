@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../ascii_progress_indicator.dart';
-import '../client_scope.dart';
+import '../scopes/client_scope.dart';
 
 class UiaOidcAccountManagementDialog extends StatefulWidget {
   const UiaOidcAccountManagementDialog({

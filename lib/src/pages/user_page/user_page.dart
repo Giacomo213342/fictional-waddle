@@ -4,8 +4,8 @@ import 'package:matrix/encryption.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
-import '../../widgets/matrix/client_scope.dart';
 import '../../widgets/matrix/key_verification/key_verification_request_widget.dart';
+import '../../widgets/matrix/scopes/client_scope.dart';
 import '../room/room.dart';
 import 'user_view.dart';
 

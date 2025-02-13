@@ -9,7 +9,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../utils/matrix_to_extension.dart';
-import '../../../widgets/matrix/client_scope.dart';
+import '../../../widgets/matrix/scopes/client_scope.dart';
 import '../../../widgets/share_origin_builder.dart';
 
 class MxidQRCodeTile extends StatelessWidget {

@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../router/extensions/go_router_path_extension.dart';
-import '../../widgets/matrix/client_scope.dart';
-import '../../widgets/matrix/command_error_dialog.dart';
+import '../../widgets/matrix/dialogs/command_error_dialog.dart';
+import '../../widgets/matrix/scopes/client_scope.dart';
 import '../account_settings/account_settings.dart';
 import '../room/room.dart';
 import '../ssss_bootstrap/ssss_bootstrap.dart';

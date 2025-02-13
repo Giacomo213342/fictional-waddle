@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../room_scope.dart';
+import '../scopes/room_scope.dart';
 
 class RoomBuilder extends StatelessWidget {
   const RoomBuilder({super.key, required this.builder});

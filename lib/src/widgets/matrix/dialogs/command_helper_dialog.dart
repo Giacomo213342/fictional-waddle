@@ -3,10 +3,10 @@ import 'package:flutter/services.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../../../l10n/generated/app_localizations.dart';
-import '../../theme/fonts.dart';
-import '../../utils/matrix/command_localization_helper.dart';
-import 'matrix_scope.dart';
+import '../../../../l10n/generated/app_localizations.dart';
+import '../../../theme/fonts.dart';
+import '../../../utils/matrix/command_localization_helper.dart';
+import '../scopes/matrix_scope.dart';
 
 class CommandHelperDialog extends StatelessWidget {
   const CommandHelperDialog({super.key, required this.client});

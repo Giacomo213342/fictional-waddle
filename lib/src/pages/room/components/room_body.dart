@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../widgets/matrix/avatar_builder/room_builder.dart';
-import '../../../widgets/matrix/room_scope.dart';
+import '../../../widgets/matrix/scopes/room_scope.dart';
 import 'membership/invite.dart';
 import 'membership/join.dart';
 

@@ -34,22 +34,24 @@ class OpenExistingSsssView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            AppLocalizations.of(context).waitingForVerificationFallback,
-          ),
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: FloatingActionButton.extended(
-                onPressed: controller.verifyWithDevice,
-                icon: const Icon(Icons.phonelink),
-                label: Text(
-                  AppLocalizations.of(context).verifyWithOtherDevice,
+          if (!controller.disableSas) ...[
+            Text(
+              AppLocalizations.of(context).waitingForVerificationFallback,
+            ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: FloatingActionButton.extended(
+                  onPressed: controller.verifyWithDevice,
+                  icon: const Icon(Icons.phonelink),
+                  label: Text(
+                    AppLocalizations.of(context).verifyWithOtherDevice,
+                  ),
                 ),
               ),
             ),
-          ),
-          const LabeledDivider(),
+            const LabeledDivider(),
+          ],
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Text(

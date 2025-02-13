@@ -6,7 +6,7 @@ import 'package:matrix/matrix.dart';
 import '../../pages/fatal_error/fatal_error_page.dart';
 import '../../pages/room/room.dart';
 import '../../widgets/matrix/client_manager/client_manager.dart';
-import '../../widgets/matrix/room_scope.dart';
+import '../../widgets/matrix/scopes/room_scope.dart';
 import 'requires_login_route.dart';
 
 typedef RoomUnavailableBuilder = Widget Function(

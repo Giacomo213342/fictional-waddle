@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../l10n/matrix/polycule_matrix_localizations.dart';
-import 'room_scope.dart';
+import 'scopes/room_scope.dart';
 
 class RoomDisplayNameText extends StatelessWidget {
   const RoomDisplayNameText({super.key});

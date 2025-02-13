@@ -12,7 +12,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../../utils/matrix/oidc_delegation_extension.dart';
 import '../../../widgets/ascii_progress_indicator.dart';
 import '../../../widgets/intent_manager.dart';
-import '../../../widgets/matrix/client_scope.dart';
+import '../../../widgets/matrix/scopes/client_scope.dart';
 import '../../../widgets/polycule_highlight_view.dart';
 import '../login.dart';
 
@@ -155,6 +155,11 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
     if (kIsWeb) {
       return AppLocalizations.of(context).clientDisplayName(
         AppLocalizations.of(context).platformWeb,
+      );
+    }
+    if (Platform.isIOS || Platform.isAndroid) {
+      return AppLocalizations.of(context).clientDisplayName(
+        Platform.operatingSystem,
       );
     }
     return AppLocalizations.of(context).clientDisplayNameHostname(

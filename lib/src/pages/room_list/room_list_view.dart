@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../../widgets/matrix/client_scope.dart';
+import '../../widgets/matrix/scopes/client_scope.dart';
 import 'components/fade_in_room_list.dart';
 import 'components/initial_sync_tile.dart';
 import 'components/room_search_bar.dart';

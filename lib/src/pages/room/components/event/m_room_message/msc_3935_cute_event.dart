@@ -7,9 +7,9 @@ import 'package:matrix/matrix.dart';
 import '../../../../../theme/fonts.dart';
 import '../../../../../utils/matrix/autoplay_animated_content_extension.dart';
 import '../../../../../utils/polycule_confetti_particle.dart';
-import '../../../../../widgets/matrix/client_scope.dart';
-import '../../../../../widgets/matrix/event_scope.dart';
 import '../../../../../widgets/matrix/html/components/animated_emoji_extension.dart';
+import '../../../../../widgets/matrix/scopes/client_scope.dart';
+import '../../../../../widgets/matrix/scopes/event_scope.dart';
 
 class CuteEventMessage extends StatefulWidget {
   const CuteEventMessage({super.key});

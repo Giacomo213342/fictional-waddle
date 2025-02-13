@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../utils/about_dialog.dart';
-import '../../widgets/matrix/matrix_scope.dart';
+import '../../widgets/matrix/scopes/matrix_scope.dart';
 import '../../widgets/settings_manager.dart';
 import 'application_settings_view.dart';
 import 'components/language_dialog.dart';

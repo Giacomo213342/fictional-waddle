@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../l10n/matrix/polycule_matrix_localizations.dart';
-import '../../../../widgets/matrix/event_scope.dart';
-import '../../../../widgets/matrix/timeline_scope.dart';
+import '../../../../widgets/matrix/scopes/event_scope.dart';
+import '../../../../widgets/matrix/scopes/timeline_scope.dart';
 
 class RoomState extends StatelessWidget {
   const RoomState({super.key});

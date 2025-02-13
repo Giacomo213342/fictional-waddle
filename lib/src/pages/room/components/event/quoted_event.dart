@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import '../../../../widgets/matrix/event_scope.dart';
+import '../../../../widgets/matrix/scopes/event_scope.dart';
 import 'components/reply_user_prefix.dart';
 import 'event_fallback_text.dart';
 import 'm_room_message_content.dart';

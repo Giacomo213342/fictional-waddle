@@ -23,6 +23,8 @@ class OpenExistingSsssController extends State<OpenExistingSsssWidget> {
 
   bool obscurePassphrase = true;
 
+  bool get disableSas => widget.controller.widget.disableSas;
+
   final TextEditingController passphraseTextEditingController =
       TextEditingController();
 

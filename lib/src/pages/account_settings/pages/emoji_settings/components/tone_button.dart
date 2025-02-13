@@ -7,7 +7,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../utils/matrix/default_emoji_tone.dart';
-import '../../../../../widgets/matrix/client_scope.dart';
+import '../../../../../widgets/matrix/scopes/client_scope.dart';
 
 class ToneButton extends StatelessWidget {
   ToneButton({super.key, this.tone}) {

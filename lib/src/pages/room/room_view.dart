@@ -5,7 +5,7 @@ import '../../router/extensions/go_router_path_extension.dart';
 import '../../widgets/matrix/avatar_builder/room_avatar.dart';
 import '../../widgets/matrix/avatar_builder/room_builder.dart';
 import '../../widgets/matrix/room_display_name_text.dart';
-import '../../widgets/matrix/room_scope.dart';
+import '../../widgets/matrix/scopes/room_scope.dart';
 import '../room_details/room_details.dart';
 import '../user_page/user_page.dart';
 import 'components/room_body.dart';

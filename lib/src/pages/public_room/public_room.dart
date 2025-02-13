@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
-import '../../widgets/matrix/client_scope.dart';
+import '../../widgets/matrix/scopes/client_scope.dart';
 import 'public_room_view.dart';
 
 class PublicRoomPage extends StatefulWidget {

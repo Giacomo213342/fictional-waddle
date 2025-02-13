@@ -7,7 +7,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../utils/matrix_to_extension.dart';
 import '../../../widgets/matrix/avatar_builder/room_builder.dart';
-import '../../../widgets/matrix/room_scope.dart';
+import '../../../widgets/matrix/scopes/room_scope.dart';
 import '../../../widgets/share_origin_builder.dart';
 
 class PublicRoomAddressTile extends StatelessWidget {

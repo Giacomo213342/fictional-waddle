@@ -6,9 +6,9 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../utils/matrix/neighboaring_event_extension.dart';
 import '../../../../widgets/ascii_progress_indicator.dart';
-import '../../../../widgets/matrix/event_scope.dart';
-import '../../../../widgets/matrix/room_scope.dart';
-import '../../../../widgets/matrix/timeline_scope.dart';
+import '../../../../widgets/matrix/scopes/event_scope.dart';
+import '../../../../widgets/matrix/scopes/room_scope.dart';
+import '../../../../widgets/matrix/scopes/timeline_scope.dart';
 import '../compose/message_input.dart';
 import '../load_history_indicator.dart';
 import '../timeline_event_tile.dart';

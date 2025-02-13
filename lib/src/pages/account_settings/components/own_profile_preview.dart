@@ -4,20 +4,19 @@ import 'package:flutter/services.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../utils/file_selector.dart';
 import '../../../widgets/matrix/avatar_builder/profile_avatar_builder.dart';
-import '../../../widgets/matrix/client_scope.dart';
 import '../../../widgets/matrix/profile_builder.dart';
+import '../../../widgets/matrix/scopes/client_scope.dart';
 
-class OwnProfilePreview extends StatelessWidget {
-  const OwnProfilePreview({
-    super.key,
-    this.onEdit,
-    this.onRemove,
-  });
+class OwnProfilePreview extends StatefulWidget {
+  const OwnProfilePreview({super.key});
 
-  final VoidCallback? onEdit;
-  final VoidCallback? onRemove;
+  @override
+  State<OwnProfilePreview> createState() => _OwnProfilePreviewState();
+}
 
+class _OwnProfilePreviewState extends State<OwnProfilePreview> {
   @override
   Widget build(BuildContext context) {
     final client = ClientScope.of(context).client;
@@ -41,12 +40,12 @@ class OwnProfilePreview extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   IconButton(
-                    onPressed: onRemove,
+                    onPressed: deleteAvatar,
                     icon: const Icon(Icons.delete_forever),
                     tooltip: AppLocalizations.of(context).redact,
                   ),
                   IconButton(
-                    onPressed: onEdit,
+                    onPressed: editAvatar,
                     icon: const Icon(Icons.edit),
                     tooltip: AppLocalizations.of(context).edit,
                   ),
@@ -95,5 +94,34 @@ class OwnProfilePreview extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> editAvatar() async {
+    final client = ClientScope.of(context).client;
+    final selector = FileSelector(MessageTypes.Image);
+    final openedFiles = await selector.selectFiles(
+      context,
+      enforceSingle: true,
+    );
+    if (!openedFiles || !mounted) {
+      return;
+    }
+    final selection = await selector.previewSelection(
+      context,
+      allowCompress: false,
+    );
+    if (selection == null || selection.files.isEmpty || !mounted) {
+      return;
+    }
+    final mxFiles = await selector.makeMatrixFiles(
+      context,
+      client.nativeImplementations,
+    );
+
+    await client.setAvatar(mxFiles.single.file);
+  }
+
+  Future<void> deleteAvatar() async {
+    await ClientScope.of(context).client.setAvatar(null);
   }
 }

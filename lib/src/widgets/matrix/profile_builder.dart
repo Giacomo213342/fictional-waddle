@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'client_scope.dart';
+import 'scopes/client_scope.dart';
 
 class ProfileBuilder extends StatelessWidget {
   const ProfileBuilder({

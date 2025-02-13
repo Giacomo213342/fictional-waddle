@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:diffutil_dart/diffutil.dart';
 import 'package:matrix/matrix.dart';
 
-import '../../../widgets/matrix/client_scope.dart';
-import '../../../widgets/matrix/room_scope.dart';
+import '../../../widgets/matrix/scopes/client_scope.dart';
+import '../../../widgets/matrix/scopes/room_scope.dart';
 import '../room_list.dart';
 import 'room_list_tile.dart';
 

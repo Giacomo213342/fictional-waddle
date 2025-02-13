@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../pages/splash_screen/splash_screen.dart';
-import '../client_scope.dart';
+import '../scopes/client_scope.dart';
 import 'client_manager.dart';
 import 'components/client_tab_bar.dart';
 
