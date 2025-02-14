@@ -66,7 +66,7 @@ dependencies:
   mime: ^2.0.0
   olm: ^2.0.3
   path_provider: ^2.1.4
-  receive_sharing_intent_plus: ^1.0.1
+  receive_sharing_intent: ^1.8.1
   sentry: ^8.12.0
   share_plus: ^10.1.0
   sqflite: ^2.4.0
@@ -103,6 +103,11 @@ dependency_overrides:
       url: https://github.com/media-kit/media-kit.git
       ref: 50cdb26aed2c7a56f6714277e4be471138123fb8
       path: libs/linux/media_kit_libs_linux
+  # incompatible Java version in 1.8.1 :facepalm:
+  receive_sharing_intent:
+    git:
+      url: https://github.com/KasemJaffer/receive_sharing_intent.git
+      ref: 2cea396843cd3ab1b5ec4334be4233864637874e
   # major version incompatible
   screen_brightness: ^2.0.0
   # https://github.com/UnifiedPush/flutter-connector/pull/155

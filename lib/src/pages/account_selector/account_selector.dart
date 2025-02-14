@@ -75,7 +75,7 @@ class AccountSelectorController extends State<AccountSelectorPage> {
     );
   }
 
-  void _checkSharingData() {
+  Future<void> _checkSharingData() async {
     // funny bug : any deeplink will meanwhile be interpreted as shared text
     // easy workaround : if the shared text is equal to the redirect, we know
     // it was the same data processed
@@ -83,7 +83,7 @@ class AccountSelectorController extends State<AccountSelectorPage> {
 
     if (sharedText == widget.redirect ||
         (sharedText?.startsWith('io.element.call:/') ?? false)) {
-      IntentManager.claimShareIntent();
+      await IntentManager.claimShareIntent();
       return;
     }
     if (IntentManager.sharedFilesListener.value != null) {

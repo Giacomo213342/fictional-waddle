@@ -31,8 +31,8 @@ class _CancelShareButtonState extends State<CancelShareButton> {
     super.dispose();
   }
 
-  void _cancelShare() {
-    IntentManager.claimShareIntent();
+  Future<void> _cancelShare() async {
+    await IntentManager.claimShareIntent();
     _clearBanner();
   }
 

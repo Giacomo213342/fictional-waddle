@@ -48,7 +48,7 @@ PODS:
     - FlutterMacOS
   - pointer_interceptor_ios (0.0.1):
     - Flutter
-  - receive_sharing_intent_plus (1.0.1):
+  - receive_sharing_intent (1.8.1):
     - Flutter
   - screen_brightness_ios (0.1.0):
     - Flutter
@@ -95,7 +95,7 @@ DEPENDENCIES:
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - pointer_interceptor_ios (from `.symlinks/plugins/pointer_interceptor_ios/ios`)
-  - receive_sharing_intent_plus (from `.symlinks/plugins/receive_sharing_intent_plus/ios`)
+  - receive_sharing_intent (from `.symlinks/plugins/receive_sharing_intent/ios`)
   - screen_brightness_ios (from `.symlinks/plugins/screen_brightness_ios/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
@@ -154,8 +154,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   pointer_interceptor_ios:
     :path: ".symlinks/plugins/pointer_interceptor_ios/ios"
-  receive_sharing_intent_plus:
-    :path: ".symlinks/plugins/receive_sharing_intent_plus/ios"
+  receive_sharing_intent:
+    :path: ".symlinks/plugins/receive_sharing_intent/ios"
   screen_brightness_ios:
     :path: ".symlinks/plugins/screen_brightness_ios/ios"
   share_plus:
@@ -180,7 +180,7 @@ SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_local_notifications: df98d66e515e1ca797af436137b4459b160ad8c9
-  flutter_olm: 2e96452fd079f834977bace95b8ce4ff92ba2d15
+  flutter_olm: b5e343c93a22c07f939ad277adf6275c8337d062
   flutter_openssl_crypto: 636ad25f56fbe0f45b9e13b8589540b341a486a1
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
   flutter_zxing: 19a866d17c8a87ee1026d68521c69d2f008635f6
@@ -195,7 +195,7 @@ SPEC CHECKSUMS:
   package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   pointer_interceptor_ios: 508241697ff0947f853c061945a8b822463947c1
-  receive_sharing_intent_plus: f02db0a23c17f7aeef8de465cb2d8705a46143a6
+  receive_sharing_intent: 79c848f5b045674ad60b9fea3bafea59962ad2c1
   screen_brightness_ios: 7437207a2a9bc56553aa10f782afecf830b4c4e2
   share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
   sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
