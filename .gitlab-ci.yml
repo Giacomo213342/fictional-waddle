@@ -20,7 +20,7 @@ stages:
   - deploy
 
 .versioning-setup: &versioning-setup
-  - export PUBSPEC_VERSION=$(cat pubspec.yaml | grep version | awk '{ print $2 }' | cut -f1 -d "+")
+  - export PUBSPEC_VERSION=$(grep -m1 version pubspec.yaml | awk '{ print $2 }' | cut -f1 -d "+")
   - export POLYCULE_VERSION="$(git describe --always)"
   - export POLYCULE_IS_STABLE=$([ -n "$CI_COMMIT_TAG" ] && echo "true" || echo "false")
   - export FLUTTER_ARGS="$($POLYCULE_IS_STABLE || echo "--build-number $CI_PIPELINE_ID") --no-pub --dart-define=POLYCULE_IS_STABLE=$POLYCULE_IS_STABLE --dart-define=POLYCULE_VERSION=$POLYCULE_VERSION --dart-define=no_default_http_client=true --dart-define=cronetHttpNoPlay=true"
@@ -388,8 +388,8 @@ build:web:
     - ./scripts/download-olm.sh
     - dart compile js web/web_worker.dart -m -o web/web_worker.dart.js
     - flutter build web --native-null-assertions --no-web-resources-cdn --base-href "/web/" --source-maps $FLUTTER_ARGS --dart-define=no_default_http_client=false
-    - rm -rf polycule-web-$POLYCULE_VERSION
-    - mv build/web polycule-web-$POLYCULE_VERSION
+    - rm -rf polycule-web-$PUBSPEC_VERSION
+    - mv build/web polycule-web-$PUBSPEC_VERSION
   artifacts:
     paths:
       - polycule-web-*
@@ -447,6 +447,7 @@ build:debian:x86_64:
   image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-debian
   extends: .linux
   script:
+    - rm -R build
     - sed -i "s/DATE/$(date -R)/g" debian/changelog
     - sed -i "s/VERSION/$PUBSPEC_VERSION/g" debian/changelog
 
@@ -463,6 +464,7 @@ build:debian:aarch64:
   image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-debian
   extends: .linux
   script:
+    - rm -R build
     - sed -i "s/DATE/$(date -R)/g" debian/changelog
     - sed -i "s/VERSION/$PUBSPEC_VERSION/g" debian/changelog
     - sed -i "s/x64/arm64/g" debian/polycule.install
@@ -484,7 +486,7 @@ pages:
   script:
     - mkdir -p public/web
     - if [[ -n "$ASSETLINKS_JSON" && -f "$ASSETLINKS_JSON" ]]; then mkdir public/.well-known && cp "$ASSETLINKS_JSON" public/.well-known/assetlinks.json ; fi
-    - cp -r polycule-web-$POLYCULE_VERSION/* public/web/
+    - cp -r polycule-web-$PUBSPEC_VERSION/* public/web/
   artifacts:
     paths:
       - public

@@ -8,7 +8,7 @@ import 'package:app_links/app_links.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:matrix/matrix.dart';
-import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 import '../pages/account_selector/account_selector.dart';
 import '../router/extensions/polycule_deeplink_route.dart';
@@ -149,17 +149,14 @@ class IntentManager extends State<IntentManagerWidget> {
       return;
     }
     try {
-      _shareIntentSubscription =
-          ReceiveSharingIntentPlus.getMediaStream().listen(_handleShareIntent);
-      _shareTextSubscription =
-          ReceiveSharingIntentPlus.getTextStream().listen(_handleTextShare);
+      _shareIntentSubscription = ReceiveSharingIntent.instance
+          .getMediaStream()
+          .listen(_handleShareIntent);
 
       final initialShareIntent =
-          await ReceiveSharingIntentPlus.getInitialMedia();
-      final initialShareText = await ReceiveSharingIntentPlus.getInitialText();
+          await ReceiveSharingIntent.instance.getInitialMedia();
 
       _handleShareIntent(initialShareIntent);
-      _handleTextShare(initialShareText);
     } on MissingPluginException {
       Logs().d(
         'package:receive_sharing_intent_plus is not supported on his device.',
@@ -169,6 +166,13 @@ class IntentManager extends State<IntentManagerWidget> {
 
   void _handleShareIntent(List<SharedMediaFile> files) {
     if (files.isEmpty) {
+      return;
+    }
+    if (files.length == 1 &&
+        [SharedMediaType.text, SharedMediaType.url].contains(
+          files.single.type,
+        )) {
+      _handleTextShare(files.single.path);
       return;
     }
 
@@ -189,12 +193,12 @@ class IntentManager extends State<IntentManagerWidget> {
     context.go(AccountSelectorPage.makeRedirectRoute('/'));
   }
 
-  static void claimShareIntent() {
+  static Future<void> claimShareIntent() async {
     // first empty both share listeners
     sharedTextListener.value = null;
     sharedFilesListener.value = null;
 
-    return ReceiveSharingIntentPlus.reset();
+    await ReceiveSharingIntent.instance.reset();
   }
 
   Future<void> _handleTextShare(String? text) async {

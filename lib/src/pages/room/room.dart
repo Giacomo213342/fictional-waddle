@@ -209,7 +209,7 @@ class RoomController extends State<RoomPage> {
       }
       if (eventId != null) {
         if (IntentManager.sharedTextListener.value != null) {
-          IntentManager.claimShareIntent();
+          await IntentManager.claimShareIntent();
         }
         onMessageSent(eventId);
       }
@@ -332,7 +332,7 @@ class RoomController extends State<RoomPage> {
       selector.files = files;
       final result = await sendFileSelection(selector);
       if (result) {
-        IntentManager.claimShareIntent();
+        await IntentManager.claimShareIntent();
       }
     } else {
       return;
