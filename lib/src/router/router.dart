@@ -33,6 +33,7 @@ import 'extensions/requires_login_route.dart';
 import 'extensions/responsive_shell_route.dart';
 import 'extensions/room_available_route.dart';
 import 'extensions/room_available_shell_route.dart';
+import 'extensions/splash_route.dart';
 
 class PolyculeRouter extends GoRouter {
   PolyculeRouter()
@@ -60,7 +61,7 @@ class PolyculeRouter extends GoRouter {
                           FatalErrorPage(error: state.extra),
                     ),
                     // in order to initialize particular client
-                    GoRoute(
+                    SplashRoute(
                       path: SplashPage.routeName.asMultiClientRoute(),
                       builder: (context, state) => SplashPage(
                         key: ValueKey(state.uri.toString()),
