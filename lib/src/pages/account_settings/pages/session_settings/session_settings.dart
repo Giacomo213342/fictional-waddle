@@ -41,11 +41,8 @@ class _SessionSettingsPageState extends State<SessionSettingsPage> {
               );
             }
             devices.sort((a, b) {
-              final aLastSeen = a.lastSeenTs;
-              final bLastSeen = b.lastSeenTs;
-              if (aLastSeen == null || bLastSeen == null) {
-                return 0;
-              }
+              final aLastSeen = a.lastSeenTs ?? 0;
+              final bLastSeen = b.lastSeenTs ?? 0;
               return bLastSeen.compareTo(aLastSeen);
             });
             return ListView.builder(
