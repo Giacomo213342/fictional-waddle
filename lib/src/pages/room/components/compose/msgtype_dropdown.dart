@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
-import '../../room.dart';
+import 'compose_scope.dart';
+import 'send_file_scope.dart';
 
 class MsgtypeDropdown extends StatelessWidget {
   const MsgtypeDropdown({super.key});
@@ -39,7 +40,6 @@ class MsgtypeDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = RoomController.of(context);
     return LayoutBuilder(
       builder: (context, _) {
         return DropdownMenu<String>(
@@ -50,8 +50,8 @@ class MsgtypeDropdown extends StatelessWidget {
           onSelected: (value) => _onMsgTypeSelected(context, value),
           trailingIcon: MsgtypeDropdown._colon,
           selectedTrailingIcon: MsgtypeDropdown._colon,
-          initialSelection: controller.msgtypeController.text,
-          controller: controller.msgtypeController,
+          initialSelection: ComposeScope.of(context).msgTypeController.text,
+          controller: ComposeScope.of(context).msgTypeController,
           inputDecorationTheme: const InputDecorationTheme(
             border: InputBorder.none,
             contentPadding: EdgeInsets.all(12),
@@ -103,22 +103,21 @@ class MsgtypeDropdown extends StatelessWidget {
   }
 
   void _onMsgTypeSelected(context, String? msgType) {
-    final controller = RoomController.of(context);
     switch (msgType) {
       case MessageTypes.Text:
       case MessageTypes.Notice:
       case MessageTypes.Emote:
-        controller.setSendMsgType(msgType);
+        ComposeScope.of(context).setSendMsgType(msgType);
         break;
       case MessageTypes.Image:
       case MessageTypes.Video:
       case MessageTypes.Audio:
       case MessageTypes.File:
-        controller.sendFile(msgType);
+        SendFileScope.of(context).sendFile(msgType);
       case MessageTypes.Sticker:
-        controller.showStickerSelector(msgType);
+        SendFileScope.of(context).showStickerSelector(msgType);
       default:
-        controller.setSendMsgType(MessageTypes.Text);
+        ComposeScope.of(context).setSendMsgType(MessageTypes.Text);
         break;
     }
   }

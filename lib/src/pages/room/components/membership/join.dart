@@ -9,14 +9,13 @@ import '../../../../widgets/ascii_progress_indicator.dart';
 import '../../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../../widgets/matrix/scopes/room_scope.dart';
 import '../../../../widgets/matrix/scopes/timeline_scope.dart';
+import '../compose/compose_scope.dart';
 import '../compose/message_input.dart';
 import '../load_history_indicator.dart';
 import '../timeline_event_tile.dart';
 
 class MembershipJoinView extends StatefulWidget {
-  const MembershipJoinView({
-    super.key,
-  });
+  const MembershipJoinView({super.key});
 
   @override
   State<MembershipJoinView> createState() => _MembershipJoinViewState();
@@ -49,38 +48,40 @@ class _MembershipJoinViewState extends State<MembershipJoinView> {
     }
     final room = RoomScope.of(context).room;
 
-    return TimelineScope(
-      timeline: timeline,
-      eventChangeStream: eventUpdateStreamController.stream,
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: SelectionArea(
-              child: AnimatedList(
-                shrinkWrap: true,
-                key: listKey,
-                reverse: true,
-                initialItemCount: timeline.events.length + 1,
-                itemBuilder: (context, index, animation) {
-                  if (index == timeline.events.length) {
-                    return LoadHistoryIndicator(
+    return ComposeScopeWidget(
+      child: TimelineScope(
+        timeline: timeline,
+        eventChangeStream: eventUpdateStreamController.stream,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: SelectionArea(
+                child: AnimatedList(
+                  shrinkWrap: true,
+                  key: listKey,
+                  reverse: true,
+                  initialItemCount: timeline.events.length + 1,
+                  itemBuilder: (context, index, animation) {
+                    if (index == timeline.events.length) {
+                      return LoadHistoryIndicator(
+                        timeline: timeline,
+                      );
+                    }
+                    return buildTransitionedTile(
+                      animation: animation,
+                      index: index,
                       timeline: timeline,
                     );
-                  }
-                  return buildTransitionedTile(
-                    animation: animation,
-                    index: index,
-                    timeline: timeline,
-                  );
-                },
+                  },
+                ),
               ),
             ),
-          ),
-          if (room.canSendDefaultMessages) const MessageInput(),
-        ],
+            if (room.canSendDefaultMessages) const MessageInput(),
+          ],
+        ),
       ),
     );
   }

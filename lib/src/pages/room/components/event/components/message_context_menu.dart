@@ -8,7 +8,7 @@ import '../../../../../../l10n/matrix/polycule_matrix_localizations.dart';
 import '../../../../../widgets/dynamic_context_menu.dart';
 import '../../../../../widgets/matrix/dialogs/event_source_code_dialog.dart';
 import '../../../../../widgets/matrix/scopes/matrix_scope.dart';
-import '../../../room.dart';
+import '../../compose/compose_scope.dart';
 import '../quoted_event.dart';
 
 class MessageContextMenu extends StatelessWidget {
@@ -81,17 +81,17 @@ class MessageContextMenu extends StatelessWidget {
       const EventSourceCodeDialog().showDialog(context: context);
 
   void _editMessage(BuildContext context) {
-    RoomController.of(context).setEditEvent(event);
+    ComposeScope.of(context).setEditEvent(event);
   }
 
   void _replyMessage(BuildContext context) {
-    RoomController.of(context).setReplyEvent(event);
+    ComposeScope.of(context).setReplyEvent(event);
   }
 
   void _reactMessage(BuildContext context) {
-    RoomController.of(context).setReplyEvent(event);
+    ComposeScope.of(context).setReplyEvent(event);
     const reactionPrefix = '/react :';
-    RoomController.of(context).messageController.value = const TextEditingValue(
+    ComposeScope.of(context).messageController.value = const TextEditingValue(
       text: reactionPrefix,
       composing: TextRange.collapsed(reactionPrefix.length),
     );

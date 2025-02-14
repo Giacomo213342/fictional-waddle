@@ -23,9 +23,7 @@ class RoomBody extends StatelessWidget {
           Membership.invite ||
           Membership.knock =>
             const MembershipInviteTile(),
-          Membership.join || Membership.leave => MembershipJoinView(
-              key: Key(room.id),
-            )
+          Membership.join || Membership.leave => const MembershipJoinView()
         };
       },
     );
