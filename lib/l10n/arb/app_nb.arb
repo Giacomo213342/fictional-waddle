@@ -127,7 +127,7 @@
         "format": "jms"
       },
       "duration": {
-        "format": "int"
+        "type": "int"
       }
     }
   },
@@ -137,7 +137,7 @@
   "@authenticateForAccount": {
     "placeholders": {
       "mxid": {
-        "format": "String"
+        "type": "String"
       }
     }
   },

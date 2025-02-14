@@ -85,7 +85,7 @@ dev_dependencies:
     sdk: flutter
 
 dependency_overrides:
-  collection: ">=0.19.0 <2.0.0"
+  # matrix and media_kit have incompatible constraints
   js: ">=0.7.0 <2.0.0"
   matrix:
     git:
@@ -101,8 +101,9 @@ dependency_overrides:
   media_kit_libs_linux:
     git:
       url: https://github.com/media-kit/media-kit.git
-      ref: 4d8c634c28d439384aab40b9d2edff83077f37c9
+      ref: 50cdb26aed2c7a56f6714277e4be471138123fb8
       path: libs/linux/media_kit_libs_linux
+  # major version incompatible
   screen_brightness: ^2.0.0
   # https://github.com/UnifiedPush/flutter-connector/pull/155
   unifiedpush:

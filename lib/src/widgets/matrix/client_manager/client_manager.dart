@@ -528,7 +528,6 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
   Future<DatabaseApi> _databaseBuilder(Client client) =>
       polyculeDatabaseBuilder(
         client,
-        AppLocalizations.of(context),
       );
 
   Future<void> _initializePushPlugin() async {

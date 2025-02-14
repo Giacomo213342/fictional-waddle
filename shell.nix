@@ -32,7 +32,7 @@ in mkShell {
   shellHook =
   ''
     # configure the dependency cache persistent
-    export FLUTTER_VERSION="3.27.4"
+    export FLUTTER_VERSION="3.29.0"
     export FLUTTER_HOME="$HOME/build/flutter-$FLUTTER_VERSION"
 
     export FLUTTER_GIT_URL="unknown source"
@@ -75,6 +75,13 @@ in mkShell {
 
     if [ ! -f "$FLUTTER_HOME/bin/flutter" ]; then
       git clone -b $FLUTTER_VERSION --depth 1 https://github.com/flutter/flutter.git $FLUTTER_HOME
+      {
+	pushd $FLUTTER_HOME
+	git branch origin/master
+	git switch -C stable
+	popd
+      }
+      flutter --suppress-analytics channel stable --no-cache-artifacts
       flutter --suppress-analytics precache --universal --ios --macos
     fi
 

@@ -7,20 +7,18 @@ import 'package:matrix/matrix.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import '../../../../l10n/generated/app_localizations.dart';
 import '../../runtime_suffix.dart';
 import 'cipher.dart';
-import 'idb/stub.dart' if (dart.library.html) 'idb/web.dart';
+import 'idb/stub.dart' if (dart.library.js_interop) 'idb/web.dart';
 
 import 'sqlcipher_stub.dart'
     if (dart.library.io) 'package:sqlcipher_flutter_libs/sqlcipher_flutter_libs.dart';
 
 Future<MatrixSdkDatabase> polyculeDatabaseBuilder(
   Client client,
-  AppLocalizations l10n,
 ) async {
   if (kIsWeb) {
-    unawaited(persistStorage(l10n));
+    unawaited(persistStorage());
     final factory = createIdbFactory();
     final db = MatrixSdkDatabase(
       client.clientName,
