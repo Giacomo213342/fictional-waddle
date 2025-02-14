@@ -1,6 +1,5 @@
 variables:
   FLUTTER_VERSION: 3.29.0
-  BUNDLETOOL_VERSION: 1.18.0
 
 include:
   - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.39.0
@@ -113,8 +112,6 @@ before_script:
   before_script:
     - *versioning-setup
     - *keystore-setup
-    - curl -L -O https://github.com/google/bundletool/releases/download/$BUNDLETOOL_VERSION/bundletool-all-$BUNDLETOOL_VERSION.jar
-    - export BUNDLETOOL="java -jar $(pwd)/bundletool-all-$BUNDLETOOL_VERSION.jar"
   after_script:
     - *versioning-setup
     - unzip polycule-*.apks universal.apk
@@ -330,7 +327,7 @@ build:apk:unsigned:
   needs:
     - build:bundle:unsigned
   script:
-    - $BUNDLETOOL build-apks --aapt2="$(which aapt2)" --mode=universal --bundle=polycule-$POLYCULE_VERSION-unsigned.aab --output=polycule-$POLYCULE_VERSION-unsigned.apks
+    - bundletool build-apks --aapt2="$(which aapt2)" --mode=universal --bundle=polycule-$POLYCULE_VERSION-unsigned.aab --output=polycule-$POLYCULE_VERSION-unsigned.apks
   <<: *unsigned
 
 scan:fdroid:
@@ -353,7 +350,7 @@ build:apk:
   needs:
     - build:bundle
   script:
-    - $BUNDLETOOL build-apks --aapt2="$(which aapt2)" --ks="android/app/keystore.jks" --ks-pass=file:"${KEYSTORE_PASS_FILE}" --ks-key-alias="${KEYSTORE_ALIAS}" --key-pass=file:"${KEYSTORE_KEY_FILE}" --mode=universal --bundle=polycule-$POLYCULE_VERSION.aab --output=polycule-$POLYCULE_VERSION.apks
+    - bundletool build-apks --aapt2="$(which aapt2)" --ks="android/app/keystore.jks" --ks-pass=file:"${KEYSTORE_PASS_FILE}" --ks-key-alias="${KEYSTORE_ALIAS}" --key-pass=file:"${KEYSTORE_KEY_FILE}" --mode=universal --bundle=polycule-$POLYCULE_VERSION.aab --output=polycule-$POLYCULE_VERSION.apks
   <<: *signed
   except:
     - schedules
