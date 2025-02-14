@@ -337,7 +337,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Last sync : {timestamp} ({duration} ms)'**
-  String lastSyncReceived(DateTime timestamp, Object duration);
+  String lastSyncReceived(DateTime timestamp, int duration);
 
   /// No description provided for @editedToday.
   ///
@@ -361,13 +361,13 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Please authenticate with your credentials for {mxid}.'**
-  String authenticateForAccount(Object mxid);
+  String authenticateForAccount(String mxid);
 
   /// No description provided for @replyUserSentDate.
   ///
   /// In en, this message translates to:
   /// **'{username} wrote {formattedDate} :'**
-  String replyUserSentDate(Object username, Object formattedDate);
+  String replyUserSentDate(String username, String formattedDate);
 
   /// No description provided for @view.
   ///

@@ -1,5 +1,5 @@
+// ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -146,7 +146,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get syncFunctional => 'நிலை ஆரோக்கியமாக ஒத்திசைக்கவும்';
 
   @override
-  String lastSyncReceived(DateTime timestamp, Object duration) {
+  String lastSyncReceived(DateTime timestamp, int duration) {
     final intl.DateFormat timestampDateFormat = intl.DateFormat.jms(localeName);
     final String timestampString = timestampDateFormat.format(timestamp);
 
@@ -170,12 +170,12 @@ class AppLocalizationsTa extends AppLocalizations {
   String get authenticationRequired => 'ஏற்பு தேவை';
 
   @override
-  String authenticateForAccount(Object mxid) {
+  String authenticateForAccount(String mxid) {
     return '$mxid க்கான உங்கள் சான்றுகளுடன் அங்கீகரிக்கவும்.';
   }
 
   @override
-  String replyUserSentDate(Object username, Object formattedDate) {
+  String replyUserSentDate(String username, String formattedDate) {
     return '$username எழுதியது $formattedDate:';
   }
 

@@ -155,7 +155,7 @@
         "format": "jms"
       },
       "duration": {
-        "format": "int"
+        "type": "int"
       }
     }
   },
@@ -182,10 +182,10 @@
   "@replyUserSentDate": {
     "placeholders": {
       "username": {
-        "format": "String"
+        "type": "String"
       },
       "formattedDate": {
-        "format": "String"
+        "type": "String"
       }
     }
   },
@@ -758,7 +758,7 @@
   "@authenticateForAccount": {
     "placeholders": {
       "mxid": {
-        "format": "String"
+        "type": "String"
       }
     }
   },
