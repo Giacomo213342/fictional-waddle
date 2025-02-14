@@ -8,9 +8,10 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../../widgets/matrix/scopes/room_scope.dart';
-import '../../room.dart';
 import '../event/quoted_event.dart';
+import 'compose_scope.dart';
 import 'msgtype_dropdown.dart';
+import 'send_file_scope.dart';
 import 'type_ahead_helper.dart';
 
 class MessageInput extends StatelessWidget {
@@ -18,14 +19,14 @@ class MessageInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = RoomController.of(context);
+    final compose = ComposeScope.of(context);
     final typeAheadHelper = TypeAheadHelper(
-      controller: controller.messageController,
+      controller: compose.messageController,
       room: RoomScope.of(context).room,
       l10n: AppLocalizations.of(context),
     );
 
-    final quotedEvent = controller.replyEvent ?? controller.editEvent;
+    final quotedEvent = compose.replyEvent ?? compose.editEvent;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Column(
@@ -37,7 +38,7 @@ class MessageInput extends StatelessWidget {
               child: Dismissible(
                 key: Key(quotedEvent?.eventId ?? 'empty'),
                 direction: DismissDirection.down,
-                onDismissed: (_) => controller.clearRelatedEvent(),
+                onDismissed: (_) => compose.clearRelatedEvent(),
                 child: SizedBox(
                   height: quotedEvent == null ? 0 : null,
                   child: Row(
@@ -52,7 +53,7 @@ class MessageInput extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: IconButton(
-                          onPressed: controller.clearRelatedEvent,
+                          onPressed: compose.clearRelatedEvent,
                           icon: const Icon(Icons.cancel),
                         ),
                       ),
@@ -63,9 +64,9 @@ class MessageInput extends StatelessWidget {
             ),
           ),
           TypeAheadField<TypeAheadOption>(
-            focusNode: controller.messageFocusNode,
-            controller: controller.messageController,
-            suggestionsController: controller.suggestionsController,
+            focusNode: compose.messageFocusNode,
+            controller: compose.messageController,
+            suggestionsController: compose.suggestionsController,
             builder: (context, textEditingController, focusNode) {
               return TextField(
                 controller: textEditingController,
@@ -76,7 +77,8 @@ class MessageInput extends StatelessWidget {
                         Platform.isMacOS),
                 autocorrect: true,
                 contentInsertionConfiguration: ContentInsertionConfiguration(
-                  onContentInserted: controller.sendKeyboardSticker,
+                  onContentInserted:
+                      SendFileScope.of(context).sendKeyboardSticker,
                   allowedMimeTypes: [
                     ...kDefaultContentInsertionMimeTypes,
                     'image/svg+xml',
@@ -89,7 +91,7 @@ class MessageInput extends StatelessWidget {
                   ],
                 ),
                 cursorWidth: 10,
-                onSubmitted: (_) => controller.sendMessage(),
+                onSubmitted: (_) => compose.sendMessage(),
                 textInputAction: TextInputAction.newline,
                 keyboardType: TextInputType.multiline,
                 minLines: 1,
@@ -105,7 +107,7 @@ class MessageInput extends StatelessWidget {
                     padding: const EdgeInsets.all(16.0),
                     tooltip: AppLocalizations.of(context).send,
                     icon: const Icon(Icons.send),
-                    onPressed: controller.sendMessage,
+                    onPressed: compose.sendMessage,
                   ),
                   alignLabelWithHint: false,
                   labelText: 'm.room.message',
