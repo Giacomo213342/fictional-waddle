@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'package:matrix/matrix.dart';
+
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../avatar_builder/mxc_avatar.dart';
 import '../../profile_builder.dart';
 import '../../scopes/client_scope.dart';
+import '../../scopes/matrix_scope.dart';
 import '../client_manager.dart';
 
 class ClientTab extends StatelessWidget {
@@ -17,8 +20,9 @@ class ClientTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final client = ClientScope.of(context).client;
     final userId = client.userID;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    final scope = MatrixScope.captureAll(context);
+    final body = MatrixScope(
+      scope: scope,
       child: ClipRRect(
         borderRadius: _radius,
         child: DecoratedBox(
@@ -100,6 +104,18 @@ class ClientTab extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: LongPressDraggable<Client>(
+        data: client,
+        feedback: Material(
+          color: Theme.of(context).colorScheme.surfaceContainer,
+          child: SizedBox(height: 38, child: body),
+        ),
+        childWhenDragging: body,
+        child: body,
       ),
     );
   }
