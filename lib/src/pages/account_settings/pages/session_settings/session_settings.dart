@@ -28,13 +28,15 @@ class _SessionSettingsPageState extends State<SessionSettingsPage> {
         title: Text(AppLocalizations.of(context).manageSessions),
         actions: OidcSessionsIdpLink.ifSupported(context),
       ),
-      body: StreamBuilder<SyncUpdate>(
-        stream:
-            client.onSync.stream.where((update) => update.deviceLists != null),
-        builder: (context, _) => FutureBuilder(
-          future: client.getDevices(),
-          builder: (context, snapshot) {
-            final devices = snapshot.data;
+      body: FutureBuilder<List<Device>?>(
+        future: client.getDevices(),
+        builder: (context, snapshot) => StreamBuilder<List<Device>?>(
+          initialData: snapshot.data,
+          stream: client.onSync.stream
+              .where((update) => update.deviceLists != null)
+              .asyncMap((_) => client.getDevices()),
+          builder: (context, s) {
+            final devices = s.data ?? snapshot.data;
             if (devices == null) {
               return const Center(
                 child: AsciiProgressIndicator(),

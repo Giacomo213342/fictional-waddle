@@ -8,13 +8,17 @@ class RoomDisplayNameText extends StatelessWidget {
   const RoomDisplayNameText({super.key});
 
   @override
-  Widget build(BuildContext context) => FutureBuilder(
-        future: RoomScope.of(context).room.loadHeroUsers(),
-        builder: (context, _) => Text(
-          RoomScope.of(context).room.getLocalizedDisplayname(
-                AppLocalizations.of(context).matrix,
-              ),
-          overflow: TextOverflow.ellipsis,
-        ),
-      );
+  Widget build(BuildContext context) {
+    final room = RoomScope.of(context).room;
+    return FutureBuilder(
+      future: room.name.isEmpty && room.canonicalAlias.isEmpty
+          // load the hero users if the room name is now known
+          ? room.loadHeroUsers()
+          : null,
+      builder: (context, _) => Text(
+        room.getLocalizedDisplayname(AppLocalizations.of(context).matrix),
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
 }
