@@ -43,13 +43,14 @@ class RoomAvatar extends StatelessWidget {
       size *= factor;
     }
 
-    final monogram = room.getLocalizedDisplayname();
-
     return FutureBuilder(
-      future: room.loadHeroUsers(),
+      future: room.avatar == null && room.directChatMatrixID != null
+          // load the hero users if avatar null and could be gathered
+          ? room.loadHeroUsers()
+          : null,
       builder: (context, _) => MxcAvatar(
         uri: room.avatar,
-        monogram: monogram,
+        monogram: room.getLocalizedDisplayname(),
         dimension: dimension,
         fit: fit,
       ),
