@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../scopes/client_scope.dart';
@@ -41,7 +42,7 @@ class ClientTabBar extends StatelessWidget implements PreferredSizeWidget {
               child: ClipRect(
                 child: Semantics(
                   hint: AppLocalizations.of(context).regionAccountSwitcher,
-                  child: ListView.builder(
+                  child: ListView.separated(
                     itemCount: ClientManager.activeClients.length + 3,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
@@ -87,6 +88,21 @@ class ClientTabBar extends StatelessWidget implements PreferredSizeWidget {
                             return ClientTab(manager);
                           },
                         ),
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      if (index > ClientManager.activeClients.length) {
+                        return const SizedBox();
+                      }
+                      return DragTarget<Client>(
+                        builder: (context, accepted, rejected) => SizedBox(
+                          width: index == 0 ||
+                                  index == ClientManager.activeClients.length
+                              ? 8
+                              : 16,
+                        ),
+                        onAcceptWithDetails: (details) =>
+                            manager.moveClient(details.data, index),
                       );
                     },
                   ),

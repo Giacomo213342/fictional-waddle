@@ -267,6 +267,47 @@ class ClientManager extends State<ClientManagerWidget> with RouteAware {
     return null;
   }
 
+  Future<void> moveClient(Client client, int index) async {
+    final future = storageLock?.future;
+    if (future != null) {
+      Logs().d(
+        'Storage locked. Waiting with moving clients.',
+      );
+      await future;
+    }
+    Logs().d(
+      'Acquiring storage lock for moving clients.',
+    );
+    storageLock = Completer<void>();
+
+    final identifier = client.clientName.clientIdentifier;
+
+    setState(() {
+      final oldIndex = activeClients.indexWhere(
+        (element) => element.clientName.clientIdentifier == identifier,
+      );
+      if (oldIndex <= index) {
+        index--;
+      }
+
+      activeClients.removeAt(oldIndex);
+      activeClients.insert(index, client);
+    });
+
+    final clientIdentifiers =
+        activeClients.map((e) => e.clientName.clientIdentifier);
+    await kPolyculeSecureStorage.write(
+      key: _clientNamesKey + suffix,
+      value: jsonEncode(clientIdentifiers.toList()),
+    );
+    storageLock?.complete();
+    storageLock = null;
+
+    Logs().d(
+      'Released storage lock for moving clients.',
+    );
+  }
+
   void addLoginClient() {
     final client = _buildNewClient();
     final identifier = client.clientName.clientIdentifier;
