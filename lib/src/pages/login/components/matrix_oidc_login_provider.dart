@@ -9,21 +9,19 @@ import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../l10n/matrix/polycule_matrix_localizations.dart';
 import '../../../utils/matrix/oidc_delegation_extension.dart';
 import '../../../widgets/ascii_progress_indicator.dart';
 import '../../../widgets/intent_manager.dart';
 import '../../../widgets/matrix/scopes/client_scope.dart';
 import '../../../widgets/polycule_highlight_view.dart';
-import '../login.dart';
 
 class MatrixOidcLoginProvider extends StatefulWidget {
-  const MatrixOidcLoginProvider(
-    this.controller, {
+  const MatrixOidcLoginProvider({
     super.key,
     this.discoveryInformation,
   });
 
-  final LoginController controller;
   final DiscoveryInformation? discoveryInformation;
 
   @override
@@ -115,6 +113,8 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
     try {
       final client = ClientScope.of(context).client;
 
+      final name = AppLocalizations.of(context).initialDeviceDisplayName;
+
       final oidcClientId = await client.oidcEnsureDynamicClientId(
         await PolyculeOidcDynamicClientRegistrationData.fromAppLocalizations(),
       );
@@ -134,7 +134,7 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
         launchOAuth2Uri: launchUrl,
         responseMode: kIsWeb ? 'fragment' : 'query',
         prompt: 'consent',
-        initialDeviceDisplayName: _generateDeviceDisplayName(),
+        initialDeviceDisplayName: name,
         enforceNewDeviceId: true,
       );
       IntentManager.oidcCallbackCompleter = null;
@@ -149,23 +149,6 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
     setState(() {
       _loading = false;
     });
-  }
-
-  String _generateDeviceDisplayName() {
-    if (kIsWeb) {
-      return AppLocalizations.of(context).clientDisplayName(
-        AppLocalizations.of(context).platformWeb,
-      );
-    }
-    if (Platform.isIOS || Platform.isAndroid) {
-      return AppLocalizations.of(context).clientDisplayName(
-        Platform.operatingSystem,
-      );
-    }
-    return AppLocalizations.of(context).clientDisplayNameHostname(
-      Platform.localHostname,
-      Platform.operatingSystem,
-    );
   }
 
   Uri _makePlatformRedirectUrl() => Uri.parse(

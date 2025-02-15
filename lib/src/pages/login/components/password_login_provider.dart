@@ -4,12 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../l10n/matrix/polycule_matrix_localizations.dart';
+import '../../../utils/password_cache_manager.dart';
+import '../../../widgets/ascii_progress_indicator.dart';
+import '../../../widgets/matrix/scopes/client_scope.dart';
 import '../login.dart';
 
 class PasswordLoginProvider extends StatefulWidget {
-  const PasswordLoginProvider(this.controller, {super.key});
-
-  final LoginController controller;
+  const PasswordLoginProvider({super.key});
 
   @override
   State<PasswordLoginProvider> createState() => _PasswordLoginProviderState();
@@ -25,6 +27,7 @@ class _PasswordLoginProviderState extends State<PasswordLoginProvider> {
   _LoginTypes? selectedAuthentication;
 
   bool _showPassword = false;
+  bool _loading = false;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -57,11 +60,13 @@ class _PasswordLoginProviderState extends State<PasswordLoginProvider> {
                   multiSelectionEnabled: false,
                   segments: [
                     ButtonSegment(
+                      enabled: !_loading,
                       value: _LoginTypes.username,
                       icon: const Icon(Icons.person),
                       label: Text(AppLocalizations.of(context).username),
                     ),
                     ButtonSegment(
+                      enabled: !_loading,
                       value: _LoginTypes.email,
                       icon: const Icon(Icons.alternate_email),
                       label: Text(AppLocalizations.of(context).email),
@@ -74,6 +79,7 @@ class _PasswordLoginProviderState extends State<PasswordLoginProvider> {
               const SizedBox(height: 16),
               if (selectedAuthentication == _LoginTypes.username)
                 TextFormField(
+                  enabled: !_loading,
                   controller: userController,
                   keyboardType: TextInputType.name,
                   autofocus: true,
@@ -92,12 +98,13 @@ class _PasswordLoginProviderState extends State<PasswordLoginProvider> {
                       borderRadius: BorderRadius.zero,
                     ),
                     prefixText: '@',
-                    suffixText: ':${widget.controller.homeserver.host}',
+                    suffixText: ':${LoginScope.of(context).homeserver.host}',
                   ),
                   textInputAction: TextInputAction.next,
                 ),
               if (selectedAuthentication == _LoginTypes.email)
                 TextFormField(
+                  enabled: !_loading,
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   autofocus: true,
@@ -121,6 +128,7 @@ class _PasswordLoginProviderState extends State<PasswordLoginProvider> {
               const SizedBox(height: 16),
               if (selectedAuthentication != null)
                 TextFormField(
+                  enabled: !_loading,
                   controller: passwordController,
                   keyboardType: TextInputType.visiblePassword,
                   obscureText: !_showPassword,
@@ -143,12 +151,70 @@ class _PasswordLoginProviderState extends State<PasswordLoginProvider> {
                   onFieldSubmitted: (_) => _submitForm(),
                   textInputAction: TextInputAction.send,
                 ),
+              const SizedBox(height: 16),
+              if (selectedAuthentication != null)
+                Align(
+                  alignment: Alignment.center,
+                  child: _loading
+                      ? const OutlinedButton(
+                          onPressed: null,
+                          child: SizedBox.square(
+                            dimension: 24,
+                            child: AsciiProgressIndicator(),
+                          ),
+                        )
+                      : OutlinedButton.icon(
+                          onPressed: _submitForm,
+                          icon: const Icon(Icons.rocket_launch),
+                          label: Text(AppLocalizations.of(context).submit),
+                        ),
+                ),
               const SizedBox(height: 8),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> passwordLogin(
+    AuthenticationIdentifier identifier,
+    String password,
+  ) async {
+    setState(() {
+      _loading = true;
+    });
+    try {
+      await ClientScope.of(context).client.login(
+            LoginType.mLoginPassword,
+            identifier: identifier,
+            initialDeviceDisplayName:
+                AppLocalizations.of(context).initialDeviceDisplayName,
+            password: password,
+          );
+    } on MatrixException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).loginErrorMessage(e.errorMessage),
+            ),
+          ),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context).loginError)),
+        );
+      }
+    }
+    PasswordCacheManager.cachedPassword = password;
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   void _setAuthentication(Set<_LoginTypes?> selection) =>
@@ -158,6 +224,9 @@ class _PasswordLoginProviderState extends State<PasswordLoginProvider> {
       setState(() => _showPassword = !_showPassword);
 
   Future<void> _submitForm() async {
+    if (_loading) {
+      return;
+    }
     final valid = _formKey.currentState?.validate();
     if (valid != true) {
       return;
@@ -171,7 +240,7 @@ class _PasswordLoginProviderState extends State<PasswordLoginProvider> {
           );
 
     final password = passwordController.text;
-    await widget.controller.passwordLogin(identifier, password);
+    await passwordLogin(identifier, password);
   }
 
   String? _mightBeMailValidator(String? value) {
