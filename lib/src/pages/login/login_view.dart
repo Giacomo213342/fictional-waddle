@@ -12,20 +12,17 @@ import 'components/password_login_provider.dart';
 import 'login.dart';
 
 class LoginView extends StatelessWidget {
-  const LoginView(this.controller, {super.key});
-
-  final LoginController controller;
+  const LoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final homeserver = LoginScope.of(context).homeserver;
     return Scaffold(
       appBar: AppBar(),
       body: Center(
         child: FutureBuilder<
             (DiscoveryInformation?, GetVersionsResponse, List<LoginFlow>)?>(
-          future: ClientScope.of(context)
-              .client
-              .checkHomeserver(controller.homeserver),
+          future: ClientScope.of(context).client.checkHomeserver(homeserver),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -33,7 +30,7 @@ class LoginView extends StatelessWidget {
                   SnackBar(
                     content: Text(
                       AppLocalizations.of(context).errorConnectingToHomeserver(
-                        controller.homeserver.toString(),
+                        homeserver.toString(),
                       ),
                     ),
                   ),
@@ -55,7 +52,7 @@ class LoginView extends StatelessWidget {
                     const SizedBox(height: 32),
                     Text(
                       AppLocalizations.of(context).connectingToHomeserver(
-                        controller.homeserver.toString(),
+                        homeserver.toString(),
                       ),
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
@@ -73,44 +70,36 @@ class LoginView extends StatelessWidget {
                   children: [
                     Text(
                       AppLocalizations.of(context)
-                          .welcomeToHomeserver(controller.homeserver.host),
+                          .welcomeToHomeserver(homeserver.host),
                       style: Theme.of(context).textTheme.headlineLarge,
                     ),
-                    if (!controller.loginLoading) ...[
-                      if (data.$3.any(
-                        (flow) =>
-                            flow.type == AuthenticationTypes.sso &&
-                            flow.delegatedOidcCompatibility,
-                      ))
-                        MatrixOidcLoginProvider(
-                          controller,
-                          discoveryInformation: data.$1,
-                        )
-                      else if (data.$3.any(
-                        (flow) => flow.type == LoginType.mLoginPassword,
-                      ))
-                        PasswordLoginProvider(controller),
-                      if (data.$3.any(
-                        (flow) =>
-                            flow.type == AuthenticationTypes.sso &&
-                            !flow.delegatedOidcCompatibility,
-                      ))
-                        const ListTile(
-                          leading: Icon(Icons.info_outline),
-                          title: Text(
-                            'Legacy SSO login is not implemented yet.',
-                          ),
+                    if (data.$3.any(
+                      (flow) =>
+                          flow.type == AuthenticationTypes.sso &&
+                          flow.delegatedOidcCompatibility,
+                    ))
+                      MatrixOidcLoginProvider(
+                        discoveryInformation: data.$1,
+                      )
+                    else if (data.$3.any(
+                      (flow) => flow.type == LoginType.mLoginPassword,
+                    ))
+                      const PasswordLoginProvider(),
+                    if (data.$3.any(
+                      (flow) =>
+                          flow.type == AuthenticationTypes.sso &&
+                          !flow.delegatedOidcCompatibility,
+                    ))
+                      const ListTile(
+                        leading: Icon(Icons.info_outline),
+                        title: Text(
+                          'Legacy SSO login is not implemented yet.',
                         ),
-                    ] else
-                      const Center(
-                        child: AsciiProgressIndicator(),
                       ),
                   ],
                 ),
               ),
             );
-
-            // errors are handled in the [controller]
           },
         ),
       ),

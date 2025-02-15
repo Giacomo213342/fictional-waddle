@@ -1,18 +1,9 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:matrix/matrix.dart';
-
-import '../../../l10n/generated/app_localizations.dart';
-import '../../utils/password_cache_manager.dart';
-import '../../widgets/matrix/scopes/client_scope.dart';
 import '../homeserver/homeserver.dart';
 import 'login_view.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key, required this.homeserver});
 
   static const routeName = '${HomeserverPage.routeName}/:$pathParameter';
@@ -32,70 +23,25 @@ class LoginPage extends StatefulWidget {
   final Uri homeserver;
 
   @override
-  State<LoginPage> createState() => LoginController();
+  Widget build(BuildContext context) => LoginScope(
+        homeserver: homeserver,
+        child: const LoginView(),
+      );
 }
 
-class LoginController extends State<LoginPage> {
-  bool loginLoading = false;
+class LoginScope extends InheritedWidget {
+  const LoginScope({
+    super.key,
+    required this.homeserver,
+    required super.child,
+  });
 
-  Uri get homeserver => widget.homeserver;
+  static LoginScope of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<LoginScope>()!;
+
+  final Uri homeserver;
 
   @override
-  Widget build(BuildContext context) => LoginView(this);
-
-  Future<void> passwordLogin(
-    AuthenticationIdentifier identifier,
-    String password,
-  ) async {
-    setState(() {
-      loginLoading = true;
-    });
-    try {
-      await ClientScope.of(context).client.login(
-            LoginType.mLoginPassword,
-            identifier: identifier,
-            initialDeviceDisplayName: _generateDeviceDisplayName(),
-            password: password,
-          );
-    } on MatrixException catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context).loginErrorMessage(e.errorMessage),
-            ),
-          ),
-        );
-      }
-    } catch (_) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).loginError)),
-        );
-      }
-    }
-    PasswordCacheManager.cachedPassword = password;
-    if (mounted) {
-      setState(() {
-        loginLoading = false;
-      });
-    }
-  }
-
-  String _generateDeviceDisplayName() {
-    if (kIsWeb) {
-      return AppLocalizations.of(context).clientDisplayName(
-        AppLocalizations.of(context).platformWeb,
-      );
-    }
-    if (Platform.isIOS || Platform.isAndroid) {
-      return AppLocalizations.of(context).clientDisplayName(
-        Platform.operatingSystem,
-      );
-    }
-    return AppLocalizations.of(context).clientDisplayNameHostname(
-      Platform.localHostname,
-      Platform.operatingSystem,
-    );
-  }
+  bool updateShouldNotify(covariant LoginScope oldWidget) =>
+      homeserver != oldWidget.homeserver;
 }
