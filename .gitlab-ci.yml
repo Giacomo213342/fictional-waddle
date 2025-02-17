@@ -60,8 +60,6 @@ before_script:
 
 .check:
   stage: check
-  tags:
-    - docker
   except:
     - schedules
     - tags
@@ -71,8 +69,6 @@ before_script:
 
 .test:
   stage: test
-  tags:
-    - docker
   except:
     - schedules
   before_script:
@@ -91,8 +87,6 @@ before_script:
   before_script:
     - apk add git
     - *versioning-setup
-  tags:
-    - docker
   except:
     - schedules
 
@@ -105,7 +99,6 @@ before_script:
     - *keystore-setup
   tags:
     - x86_64
-    - docker
 
 .bundletool:
   extends: .android
@@ -136,8 +129,6 @@ check:codestyle:
 
 check:flutter_version:
   extends: .check
-  tags:
-    - docker
   before_script:
     - cp flutter_version flutter_version.orig
     - cp .gitlab-ci.yml .gitlab-ci.yml.orig
@@ -161,8 +152,6 @@ check:flutter_version:commit:
   extends: .check
   dependencies:
     - check:flutter_version
-  tags:
-    - docker
   when: manual
   before_script: []
   script:
@@ -226,6 +215,36 @@ check:podfile:commit:
     paths:
       - podfile.diff
     when: always
+
+test:android:avd:
+  stage: test
+  extends: .android
+  variables:
+    EMULATOR_ANDROID_VERSION: 35
+  services:
+    - name: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:emulator-$EMULATOR_ANDROID_VERSION
+      alias: emulator
+  when: manual
+  before_script:
+    - adb start-server
+  script:
+    - flutter build apk --debug --target-platform android-x64
+    - adb connect emulator:5555
+    - adb shell settings put global sysui_demo_allowed 1
+    - adb shell am broadcast -a com.android.systemui.demo -e command enter
+    - scrcpy --no-audio --no-window -r recording.mkv &
+    - flutter test -d localhost:5555 $FLUTTER_ARGS
+  after_script:
+    - pkill scrcpy || true
+    - ffmpeg -i recording.mkv -c copy recording.mp4 || true
+  <<: *unsigned
+  tags:
+    - x86_64
+    - kvm
+  artifacts:
+    when: always
+    paths:
+      - recording.mp4
 
 build:macos:debug:
   extends: .build
@@ -343,7 +362,6 @@ scan:fdroid:
   <<: *unsigned
   tags:
     - x86_64
-    - docker
 
 build:apk:
   extends: .bundletool
@@ -399,7 +417,6 @@ build:linux:x86_64:
     - mv ./build/linux/x64/release/bundle polycule-$POLYCULE_VERSION-amd64
   tags:
     - x86_64
-    - docker
   artifacts:
     paths:
       - polycule-*-amd64
@@ -412,7 +429,6 @@ build:linux:aarch64:
     - mv ./build/linux/arm64/release/bundle polycule-$POLYCULE_VERSION-aarch64
   tags:
     - aarch64
-    - docker
   artifacts:
     paths:
       - polycule-*-aarch64
@@ -452,7 +468,6 @@ build:debian:x86_64:
     - mv ../polycule_*.deb .
   tags:
     - x86_64
-    - docker
   artifacts:
     paths:
       - polycule_*.deb
@@ -470,7 +485,6 @@ build:debian:aarch64:
     - mv ../polycule_*.deb .
   tags:
     - aarch64
-    - docker
   artifacts:
     paths:
       - polycule_*.deb
