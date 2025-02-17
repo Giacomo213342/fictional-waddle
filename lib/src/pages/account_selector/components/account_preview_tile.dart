@@ -5,21 +5,21 @@ import 'package:matrix/matrix.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/ascii_progress_indicator.dart';
 import '../../../widgets/matrix/avatar_builder/profile_avatar_builder.dart';
-import '../../../widgets/matrix/client_manager/client_manager.dart';
+import '../../../widgets/matrix/client_manager/client_store.dart';
+import '../../../widgets/matrix/scopes/client_scope.dart';
 import '../account_selector.dart';
 
 class AccountPreviewTile extends StatelessWidget {
   const AccountPreviewTile({
     super.key,
-    required this.client,
     required this.controller,
   });
 
-  final Client client;
   final AccountSelectorController controller;
 
   @override
   Widget build(BuildContext context) {
+    final client = ClientScope.of(context).client;
     return StreamBuilder<LoginState>(
       initialData: client.onLoginStateChanged.value,
       stream: client.onLoginStateChanged.stream,

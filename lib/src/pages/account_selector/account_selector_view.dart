@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../widgets/ascii_progress_indicator.dart';
 import '../../widgets/matrix/client_manager/client_manager.dart';
+import '../../widgets/matrix/scopes/client_scope.dart';
 import 'account_selector.dart';
 import 'components/account_preview_tile.dart';
 
@@ -19,7 +20,7 @@ class AccountSelectorView extends StatelessWidget {
       ),
       body: Center(
         child: FutureBuilder<void>(
-          future: ClientManager.waiForInitialization,
+          future: ClientManager.of(context).store.waiForInitialization,
           builder: (context, snapshot) {
             return SimpleDialog(
               title: Text(AppLocalizations.of(context).selectAccount),
@@ -27,12 +28,14 @@ class AccountSelectorView extends StatelessWidget {
                 if (!snapshot.hasData)
                   const Center(child: AsciiProgressIndicator())
                 else
-                  ...ClientManager.activeClients.map(
-                    (client) => AccountPreviewTile(
-                      client: client,
-                      controller: controller,
-                    ),
-                  ),
+                  ...ClientManager.of(context).store.activeClients.value.map(
+                        (client) => ClientScope(
+                          client: client,
+                          child: AccountPreviewTile(
+                            controller: controller,
+                          ),
+                        ),
+                      ),
               ],
             );
           },

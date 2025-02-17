@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:matrix/matrix.dart';
@@ -22,21 +22,53 @@ final pusherDataMessageFormat = kIsWeb
             : null;
 
 class PushManager {
-  PushManager(this.client, this.localizations) {
+  PushManager(this.client) {
     unawaited(_initialize());
+  }
+
+  static bool _notificationsInitialized = false;
+
+  static Future<void> initializeNotificationPlugin(
+    AppLocalizations l10n,
+  ) async {
+    if (_notificationsInitialized) {
+      return;
+    }
+    _notificationsInitialized = true;
+
+    final notificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    await notificationsPlugin.initialize(
+      InitializationSettings(
+        android: const AndroidInitializationSettings(
+          '@drawable/ic_launcher_foreground',
+        ),
+        linux: LinuxInitializationSettings(
+          defaultActionName: l10n.view,
+          defaultIcon: ThemeLinuxIcon('business.braid.polycule'),
+        ),
+        iOS: const DarwinInitializationSettings(),
+        macOS: const DarwinInitializationSettings(),
+      ),
+    );
   }
 
   final settings = const SettingsInterface();
   final Client client;
   final notificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  AppLocalizations localizations;
+  late AppLocalizations localizations;
 
   String get instance => client.clientName;
 
   String? endpoint;
 
   Future<void> _initialize() async {
+    final locale = WidgetsBinding.instance.platformDispatcher
+            .computePlatformResolvedLocale(AppLocalizations.supportedLocales) ??
+        const Locale('en');
+    localizations = await AppLocalizations.delegate.load(locale);
+    await initializeNotificationPlugin(localizations);
     try {
       await UnifiedPush.initialize(
         onNewEndpoint: onNewEndpoint,
@@ -106,20 +138,13 @@ class PushManager {
   }
 
   Future<void> onMessage(Uint8List message, String instance) async {
-    if (instance != this.instance) {
+    if (instance != client.clientName) {
       return;
     }
-    final content = utf8.decode(message);
-    final json = jsonDecode(content);
-    final data = Map<String, dynamic>.from(
-      json['notification'],
-    );
-    final notification = PushNotification.fromJson(data);
-
     await handlePushNotification(
       client: client,
-      notification: notification,
       l10n: localizations,
+      message: message,
     );
   }
 

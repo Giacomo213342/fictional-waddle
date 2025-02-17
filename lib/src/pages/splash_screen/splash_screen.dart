@@ -27,11 +27,11 @@ class SplashController extends State<SplashPage> {
   }
 
   Future<void> _checkLoginState() async {
-    await ClientManager.waiForInitialization;
+    await ClientManager.of(context).store.waiForInitialization;
     if (!mounted) {
       return;
     }
-    if (ClientManager.activeClients.isEmpty) {
+    if (ClientManager.of(context).store.activeClients.value.isEmpty) {
       return;
     }
     try {
@@ -46,39 +46,25 @@ class SplashController extends State<SplashPage> {
         );
       }
 
-      if (!client.isLogged()) {
+      if (!client.isLogged() && mounted) {
         _loginView();
       }
     } on TimeoutException {
-      _fatalError();
+      if (mounted) {
+        _fatalError();
+      }
     } catch (e) {
-      _loginView();
+      if (mounted) {
+        _loginView();
+      }
     }
   }
 
-  void _loginView() => WidgetsBinding.instance.addPostFrameCallback(
-        (_) {
-          if (mounted) {
-            context.goMultiClient(HomeserverPage.routeName);
-          }
-        },
-      );
+  void _loginView() => context.goMultiClient(HomeserverPage.routeName);
 
-  void _roomList() => WidgetsBinding.instance.addPostFrameCallback(
-        (_) {
-          if (mounted) {
-            context.goMultiClient(RoomListPage.routeName);
-          }
-        },
-      );
+  void _roomList() => context.goMultiClient(RoomListPage.routeName);
 
-  void _fatalError() => WidgetsBinding.instance.addPostFrameCallback(
-        (_) {
-          if (mounted) {
-            context.goMultiClient(FatalErrorPage.routeName);
-          }
-        },
-      );
+  void _fatalError() => context.goMultiClient(FatalErrorPage.routeName);
 
   @override
   Widget build(BuildContext context) => SplashPageView(this);

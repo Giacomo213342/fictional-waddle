@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../pages/room_list/room_list.dart';
 import '../../widgets/matrix/client_manager/client_manager.dart';
+import 'go_router_path_extension.dart';
 
 class SplashRoute extends GoRoute {
   SplashRoute({
@@ -20,11 +21,11 @@ class SplashRoute extends GoRoute {
     BuildContext context,
     GoRouterState state,
   ) {
-    final identifier = ClientManager.extractClientIdentifierFromRoute(state);
+    final identifier = state.clientIdentifier;
     if (identifier == null) {
       return null;
     }
-    final client = ClientManager.getClientByIdentifier(identifier);
+    final client = ClientManager.of(context).getClientByIdentifier(identifier);
     if (client != null && client.isLogged()) {
       return '/client/$identifier${RoomListPage.routeName}';
     }

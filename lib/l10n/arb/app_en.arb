@@ -599,5 +599,6 @@
   "ssssRecoveryKey": "SSSS recovery key",
   "ssssRecoveryKeyExplanation": "Carefully store your Secure Secret Storage and Sharing recovery key at a secure place. Without your recovery key, all past messages will be lost forever.",
   "confirmSSSSKeyStored": "Key stored",
-  "yourCurrentDevice": "Your current device"
+  "yourCurrentDevice": "Your current device",
+  "moveClientTooltip": "Move here"
 }

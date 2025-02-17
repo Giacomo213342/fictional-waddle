@@ -4,18 +4,15 @@ import 'package:go_router/go_router.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../theme/fonts.dart';
-import '../../widgets/ascii_progress_indicator.dart';
+import '../../utils/about_dialog.dart';
 import '../../widgets/polycule_overflow_bar.dart';
 import '../application_settings/application_settings.dart';
 import '../application_settings/pages/appearance.dart';
-import 'components/benchmark.dart';
 import 'components/homeserver_input.dart';
-import 'homeserver.dart';
+import 'components/homeserver_recommendation_card.dart';
 
 class HomeserverView extends StatelessWidget {
-  const HomeserverView(this.controller, {super.key});
-
-  final HomeserverController controller;
+  const HomeserverView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,34 +47,7 @@ class HomeserverView extends StatelessWidget {
                           const SizedBox(height: 64),
                           const HomeserverInput(),
                           const Divider(),
-                          ExpansionTile(
-                            title: Text(
-                              AppLocalizations.of(context).discoverHomeservers,
-                            ),
-                            subtitle: Text(
-                              AppLocalizations.of(context).newToMatrixLong,
-                            ),
-                            onExpansionChanged:
-                                controller.handleHomeserverListExpansion,
-                            children: [
-                              if (controller.recommendationsLoading)
-                                Focus(
-                                  autofocus: true,
-                                  child: Semantics(
-                                    hint: AppLocalizations.of(context)
-                                        .loadingHomeservers,
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Center(
-                                        child: AsciiProgressIndicator(),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ...controller.recommendations
-                                  .map((e) => BenchmarkWidget(e)),
-                            ],
-                          ),
+                          const HomeserverRecommendationCard(),
                         ],
                       ),
                     ),
@@ -103,7 +73,7 @@ class HomeserverView extends StatelessWidget {
                   ),
                 ),
                 OutlinedButton.icon(
-                  onPressed: controller.showAboutDialog,
+                  onPressed: () => showInfoDialog(context),
                   icon: const Icon(Icons.info),
                   label: Text(AppLocalizations.of(context).about),
                 ),
