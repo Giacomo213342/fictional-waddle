@@ -24,7 +24,10 @@ class RoomListView extends StatelessWidget {
         const CharacterActivator(':'): controller.search,
       },
       child: Scaffold(
-        appBar: AppBar(flexibleSpace: const RoomSearchBar()),
+        appBar: AppBar(
+          flexibleSpace: const RoomSearchBar(),
+          automaticallyImplyLeading: false,
+        ),
         body: Column(
           children: [
             const InitialSyncTile(),

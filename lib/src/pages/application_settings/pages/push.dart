@@ -67,15 +67,16 @@ class _PushSettingsPageState extends State<PushSettingsPage> {
   Future<void> _setPushDistributor(String? value) async {
     final oldValue = SettingsManager.of(context).pushDistributor.value;
     SettingsManager.of(context).pushDistributor.value = value;
+    final pushManagers = ClientManager.of(context).pushManagers;
     try {
       if (value == null) {
-        for (final pushManager in ClientManager.pushManagers.values) {
+        for (final pushManager in pushManagers.values) {
           await pushManager.unregister();
         }
         return;
       }
       await UnifiedPush.saveDistributor(value);
-      for (final pushManager in ClientManager.pushManagers.values) {
+      for (final pushManager in pushManagers.values) {
         await pushManager.register();
       }
     } catch (e, s) {

@@ -1155,4 +1155,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get yourCurrentDevice => 'Your current device';
+
+  @override
+  String get moveClientTooltip => 'Move here';
 }

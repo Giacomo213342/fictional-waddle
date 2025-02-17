@@ -24,44 +24,42 @@ class RoomSearchBar extends StatelessWidget {
     return SafeArea(
       child: SearchAnchor(
         searchController: controller.searchController,
-        builder: (context, searchController) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              // 16 - 1 px of border gap
-              horizontal: 15,
-              vertical: 4,
+        builder: (context, searchController) => Padding(
+          padding: const EdgeInsets.symmetric(
+            // 16 - 1 px of border gap
+            horizontal: 15,
+            vertical: 4,
+          ),
+          child: SearchBar(
+            controller: searchController,
+            focusNode: controller.searchFocus,
+            onTap: () {
+              searchController.openView();
+            },
+            onChanged: (_) {
+              searchController.openView();
+            },
+            onSubmitted: controller.searchSubmitted,
+            hintText: AppLocalizations.of(context).hajUser(
+              userId,
             ),
-            child: SearchBar(
-              controller: searchController,
-              focusNode: controller.searchFocus,
-              onTap: () {
-                searchController.openView();
-              },
-              onChanged: (_) {
-                searchController.openView();
-              },
-              onSubmitted: controller.searchSubmitted,
-              hintText: AppLocalizations.of(context).hajUser(
-                userId,
-              ),
-              leading: IconButton(
-                onPressed: searchController.openView,
-                tooltip: MaterialLocalizations.of(context).searchFieldLabel,
-                icon: const Icon(Icons.search),
-              ),
-              trailing: [
-                IconButton(
-                  onPressed: controller.accountSettings,
-                  tooltip: AppLocalizations.of(context).accountSettings,
-                  icon: ProfileAvatarBuilder(
-                    userId: userId ?? '',
-                    dimension: 32,
-                  ),
+            leading: IconButton(
+              onPressed: searchController.openView,
+              tooltip: MaterialLocalizations.of(context).searchFieldLabel,
+              icon: const Icon(Icons.search),
+            ),
+            trailing: [
+              IconButton(
+                onPressed: controller.accountSettings,
+                tooltip: AppLocalizations.of(context).accountSettings,
+                icon: ProfileAvatarBuilder(
+                  userId: userId ?? '',
+                  dimension: 32,
                 ),
-              ],
-            ),
-          );
-        },
+              ),
+            ],
+          ),
+        ),
         headerHeight: 56 - 1,
         suggestionsBuilder: (c, searchController) {
           final client = ClientScope.of(context).client;

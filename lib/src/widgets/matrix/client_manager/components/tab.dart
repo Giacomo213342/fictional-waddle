@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
 
+import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import '../../../../../l10n/generated/app_localizations.dart';
-import '../../avatar_builder/mxc_avatar.dart';
-import '../../profile_builder.dart';
-import '../../scopes/client_scope.dart';
+import '../../../../pages/splash_screen/splash_screen.dart';
+import '../../../../router/extensions/go_router_path_extension.dart';
 import '../../scopes/matrix_scope.dart';
-import '../client_manager.dart';
+import '../client_store.dart';
+import 'close_client_button.dart';
+import 'tab_profile_preview.dart';
 
 class ClientTab extends StatelessWidget {
-  const ClientTab(this.manager, {super.key});
+  const ClientTab({super.key});
 
   static final _radius = BorderRadius.circular(0);
 
-  final ClientManager manager;
-
   @override
   Widget build(BuildContext context) {
-    final client = ClientScope.of(context).client;
-    final userId = client.userID;
     final scope = MatrixScope.captureAll(context);
+    final client = scope.$1;
     final body = MatrixScope(
       scope: scope,
       child: ClipRRect(
@@ -28,7 +26,7 @@ class ClientTab extends StatelessWidget {
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: client.clientName.clientIdentifier ==
-                    manager.widget.activeClientIdentifier
+                    GoRouterState.of(context).clientIdentifier
                 ? Theme.of(context).colorScheme.primary.withValues(alpha: .25)
                 : null,
             border: Border.all(
@@ -38,67 +36,29 @@ class ClientTab extends StatelessWidget {
             borderRadius: _radius,
           ),
           child: InkWell(
-            onTap: () => manager.setActiveClient(client),
+            onTap: () => context.pushMultiClient(
+              '/client/${client.clientName.clientIdentifier}${SplashPage.routeName}',
+            ),
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 8,
                 vertical: 4,
               ),
               child: Center(
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: userId != null ? 224 : 224 - 32,
-                      child: userId == null
-                          ? Text(
-                              AppLocalizations.of(context).loggingInToClient,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            )
-                          : Tooltip(
-                              message: userId,
-                              child: ProfileBuilder(
-                                userId: userId,
-                                builder: (context, snapshot) {
-                                  final profile = snapshot.data;
-                                  return Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        WidgetSpan(
-                                          child: MxcAvatar(
-                                            uri: profile?.avatarUrl,
-                                            monogram:
-                                                profile?.displayName ?? userId,
-                                            dimension: 24,
-                                          ),
-                                          alignment:
-                                              PlaceholderAlignment.middle,
-                                        ),
-                                        const TextSpan(text: ' '),
-                                        TextSpan(
-                                          text: profile?.displayName ??
-                                              profile?.userId ??
-                                              client.userID!,
-                                        ),
-                                      ],
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  );
-                                },
-                              ),
-                            ),
-                    ),
-                    if (!client.isLogged())
+                child: StreamBuilder<LoginState>(
+                  initialData: client.onLoginStateChanged.value,
+                  stream: client.onLoginStateChanged.stream
+                      // strip out soft logout
+                      .where((s) => s != LoginState.softLoggedOut),
+                  builder: (context, snapshot) => Row(
+                    children: [
                       SizedBox(
-                        width: 32,
-                        child: IconButton(
-                          onPressed: () => manager.closeLoginClient(client),
-                          iconSize: 12,
-                          icon: const Icon(Icons.close),
-                        ),
+                        width: client.userID != null ? 224 : 224 - 32,
+                        child: const TabProfilePreview(),
                       ),
-                  ],
+                      if (!client.isLogged()) const CloseClientButton(),
+                    ],
+                  ),
                 ),
               ),
             ),

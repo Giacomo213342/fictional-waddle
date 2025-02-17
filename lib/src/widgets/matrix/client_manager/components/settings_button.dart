@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 
+import 'package:go_router/go_router.dart';
+
 import '../../../../../l10n/generated/app_localizations.dart';
-import '../client_manager.dart';
+import '../../../../pages/application_settings/application_settings.dart';
+import '../../../../router/extensions/go_router_path_extension.dart';
 
 class SettingsButton extends StatelessWidget {
-  const SettingsButton({super.key, required this.manager});
-
-  final ClientManager manager;
+  const SettingsButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isActive = manager.widget.activeClientIdentifier == null;
+    final isActive = GoRouterState.of(context).clientIdentifier == null;
     return SizedBox.square(
       dimension: 48,
       child: Padding(
@@ -38,7 +39,8 @@ class SettingsButton extends StatelessWidget {
               ),
               child: IconButton(
                 tooltip: AppLocalizations.of(context).settings,
-                onPressed: manager.openSettings,
+                onPressed: () =>
+                    context.push(ApplicationSettingsPage.routeName),
                 icon: const Icon(Icons.settings),
               ),
             ),

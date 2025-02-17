@@ -2097,6 +2097,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your current device'**
   String get yourCurrentDevice;
+
+  /// No description provided for @moveClientTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Move here'**
+  String get moveClientTooltip;
 }
 
 class _AppLocalizationsDelegate

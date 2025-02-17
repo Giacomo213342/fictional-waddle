@@ -45,11 +45,11 @@ class HomeserverUriRoute extends GoRoute {
     BuildContext context,
     GoRouterState state,
   ) {
-    final identifier = ClientManager.extractClientIdentifierFromRoute(state);
+    final identifier = state.clientIdentifier;
     if (identifier == null) {
       return context.clientifyLocation(SplashPage.routeName);
     }
-    final client = ClientManager.getClientByIdentifier(identifier);
+    final client = ClientManager.of(context).getClientByIdentifier(identifier);
     if (client == null || client.isLogged()) {
       return context.clientifyLocation(SplashPage.routeName);
     }

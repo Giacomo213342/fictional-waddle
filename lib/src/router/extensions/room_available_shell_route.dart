@@ -8,6 +8,7 @@ import '../../pages/room/room.dart';
 import '../../widgets/matrix/client_manager/client_manager.dart';
 import '../../widgets/matrix/scopes/room_scope.dart';
 import '../../widgets/responsive_sidebar_layout.dart';
+import 'go_router_path_extension.dart';
 
 typedef RoomUnavailableBuilder = Widget Function(
   BuildContext context,
@@ -46,13 +47,12 @@ class RoomAvailableShellRoute extends ShellRoute {
         BuildContext context,
         GoRouterState state,
       ) {
-        final identifier = ClientManager.extractClientIdentifierFromRoute(
-          state,
-        );
+        final identifier = state.clientIdentifier;
         if (identifier == null) {
           return const FatalErrorPage();
         }
-        final client = ClientManager.getClientByIdentifier(identifier);
+        final client =
+            ClientManager.of(context).getClientByIdentifier(identifier);
         if (client == null) {
           return const FatalErrorPage();
         }

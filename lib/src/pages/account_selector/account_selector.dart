@@ -105,7 +105,7 @@ class AccountSelectorController extends State<AccountSelectorPage> {
 
     final prefix = mxid.sigil;
 
-    final client = ClientManager.getClientByIdentifier(identifier);
+    final client = ClientManager.of(context).getClientByIdentifier(identifier);
     if (client == null) {
       Navigator.of(context).pop();
       return;
