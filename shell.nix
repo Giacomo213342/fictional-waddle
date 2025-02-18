@@ -31,11 +31,7 @@ in mkShell {
   buildInputs = inputs;
   shellHook =
   ''
-    # configure the dependency cache persistent
-    export FLUTTER_VERSION="3.29.0"
-    export FLUTTER_HOME="$HOME/build/flutter-$FLUTTER_VERSION"
-
-    export FLUTTER_GIT_URL="unknown source"
+    source scripts/prepare-macos.sh
 
     # ugly workaround to prevent use of nix-provided clang
     mkdir -p "$HOME/.bin"
@@ -46,12 +42,6 @@ in mkShell {
 
     # ensure we use the system xcrun
     ln -sf /usr/bin/xcrun "$HOME/.bin"
-
-    export LANG=en_US.UTF-8
-
-    # create a clean build environment for our Python toolchain
-    rm -rf .buildenv
-    python -m virtualenv .buildenv
 
     # export XCODE_HASH="hvqfks6vchhg3pzszqs064hy27cxws3q"
     # export XCODE_APP="/nix/store/$XCODE_HASH-Xcode.app"
@@ -71,28 +61,7 @@ in mkShell {
     # ensure we have the system linker and compile in first position of PATH
     export LD="/usr/bin/clang"
 
-    export PATH="$HOME/.bin:$DEVELOPER_DIR/usr/bin:$DEVELOPER_DIR/Toolchains/XcodeDefault.xctoolchain/usr/bin:$FLUTTER_HOME/bin:$PATH:/usr/sbin:/usr/bin"
-
-    if [ ! -f "$FLUTTER_HOME/bin/flutter" ]; then
-      git clone -b $FLUTTER_VERSION --depth 1 https://github.com/flutter/flutter.git $FLUTTER_HOME
-      {
-	pushd $FLUTTER_HOME
-	git branch origin/master
-	git switch -C stable
-	popd
-      }
-      flutter --suppress-analytics channel stable --no-cache-artifacts
-      flutter --suppress-analytics precache --universal --ios --macos
-    fi
-
-    flutter --disable-analytics
-    dart --disable-analytics
-
-    source .buildenv/bin/activate
-    pip install codemagic-cli-tools
-
-    gem install --update xcodeproj
-    pod repo update
+    export PATH="$HOME/.bin:$DEVELOPER_DIR/usr/bin:$DEVELOPER_DIR/Toolchains/XcodeDefault.xctoolchain/usr/bin:$PATH:/usr/sbin:/usr/bin"
 
     # ugly workaround for olm: copy it so that flutter finds it
     # basically finds the dylib of olm and copies it to current working directory

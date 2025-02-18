@@ -3,6 +3,13 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   exclude:
     - lib/l10n/generated/*.dart
+    - android/**
+    - build/**
+    - debian/**
+    - ios/**
+    - linux/**
+    - macos/**
+    - windows/**
 
 linter:
   # https://dart.dev/tools/linter-rules
