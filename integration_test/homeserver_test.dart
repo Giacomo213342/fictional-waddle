@@ -4,7 +4,7 @@ import 'package:polycule/l10n/generated/app_localizations_en.dart';
 import 'package:polycule/src/polycule.dart';
 
 void main() {
-  testWidgets('Welcome screen smoke test', (WidgetTester tester) async {
+  testWidgets('Welcome screen', (WidgetTester tester) async {
     final l10n = AppLocalizationsEn();
     await tester.pumpWidget(const PolyculeClient());
 

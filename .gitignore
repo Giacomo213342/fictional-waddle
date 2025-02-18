@@ -44,6 +44,7 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 l10n_errors.txt
+**/.cxx
 
 /polycule-*/
 .buildenv
@@ -55,3 +56,12 @@ l10n_errors.txt
 *.dylib
 export_options.plist
 android/.kotlin/
+
+# FVM Version Cache
+.fvm/
+.fvmrc
+
+# integration test results
+*.json
+*.mkv
+*.mp4

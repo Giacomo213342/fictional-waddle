@@ -83,8 +83,12 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
 
 dependency_overrides:
+  # collection is pinned in integration_test
+  collection: ">=1.0.0 <2.0.0"
   # matrix and media_kit have incompatible constraints
   js: ">=0.7.0 <2.0.0"
   matrix:

@@ -3,13 +3,18 @@ variables:
 
 include:
   - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.39.0
+    path: .gitlab-ci.yml
     inputs:
       gitlab_access_token: $dependabot_gitlab_access_token
       stage_name: scan
     rules:
       - if: $PACKAGE_MANAGER_SET
 
-image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-base
+image: registry.gitlab.com/polycule_client/flutter-dockerimages:$FLUTTER_VERSION-base
+
+cache:
+  paths:
+    - $CI_PROJECT_DIR/.pub-cache
 
 stages:
   - check
@@ -22,9 +27,13 @@ stages:
   - export PUBSPEC_VERSION=$(grep -m1 version pubspec.yaml | awk '{ print $2 }' | cut -f1 -d "+")
   - export POLYCULE_VERSION="$(git describe --always)"
   - export POLYCULE_IS_STABLE=$([ -n "$CI_COMMIT_TAG" ] && echo "true" || echo "false")
-  - export FLUTTER_ARGS="$($POLYCULE_IS_STABLE || echo "--build-number $CI_PIPELINE_ID") --no-pub --dart-define=POLYCULE_IS_STABLE=$POLYCULE_IS_STABLE --dart-define=POLYCULE_VERSION=$POLYCULE_VERSION --dart-define=no_default_http_client=true --dart-define=cronetHttpNoPlay=true"
+  - export FLUTTER_BASE_ARGS="--no-pub --dart-define=POLYCULE_IS_STABLE=$POLYCULE_IS_STABLE --dart-define=POLYCULE_VERSION=$POLYCULE_VERSION --dart-define=no_default_http_client=true --dart-define=cronetHttpNoPlay=true"
+  - export FLUTTER_ARGS="$($POLYCULE_IS_STABLE || echo "--build-number $CI_PIPELINE_ID") ${FLUTTER_BASE_ARGS}"
 
 .flutter-setup: &flutter-setup
+  - |
+    if [ "$(uname)" == "Darwin" ]; then source scripts/prepare-macos.sh; fi
+  - export PUB_CACHE=$CI_PROJECT_DIR/.pub-cache
   - flutter pub get --enforce-lockfile
   - flutter gen-l10n
 
@@ -64,6 +73,8 @@ before_script:
     - schedules
     - tags
     - main
+  tags:
+    - saas-linux-small-arm64
   before_script:
     - *flutter-setup
 
@@ -71,6 +82,8 @@ before_script:
   stage: test
   except:
     - schedules
+  tags:
+    - saas-linux-large-amd64
   before_script:
     - *flutter-setup
 
@@ -87,18 +100,20 @@ before_script:
   before_script:
     - apk add git
     - *versioning-setup
+  tags:
+    - saas-linux-small-arm64
   except:
     - schedules
 
 .android:
-  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-android
+  image: registry.gitlab.com/polycule_client/flutter-dockerimages:$FLUTTER_VERSION-android
   extends: .build
   before_script:
     - *versioning-setup
     - *flutter-setup
     - *keystore-setup
   tags:
-    - x86_64
+    - saas-linux-xlarge-amd64
 
 .bundletool:
   extends: .android
@@ -109,12 +124,14 @@ before_script:
     - *versioning-setup
     - unzip polycule-*.apks universal.apk
     - mv universal.apk polycule-$POLYCULE_VERSION.apk
+  tags:
+    - saas-linux-small-amd64
   artifacts:
     paths:
       - polycule-*.apk
 
 .linux:
-  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-linux
+  image: registry.gitlab.com/polycule_client/flutter-dockerimages:$FLUTTER_VERSION-linux
   extends: .build
   before_script:
     - *versioning-setup
@@ -133,24 +150,21 @@ check:flutter_version:
     - cp flutter_version flutter_version.orig
     - cp .gitlab-ci.yml .gitlab-ci.yml.orig
     - cp Dockerfile Dockerfile.orig
-    - cp shell.nix shell.nix.orig
   script:
     - ./flutter_version.sh
     - diff -u flutter_version.orig flutter_version > flutter_version.diff
     - diff -u .gitlab-ci.yml.orig .gitlab-ci.yml > .gitlab-ci.yml.diff
     - diff -u Dockerfile.orig Dockerfile > Dockerfile.diff
-    - diff -u shell.nix.orig shell.nix > shell.nix.diff
   artifacts:
     paths:
       - flutter_version.diff
       - .gitlab-ci.yml.diff
       - Dockerfile.diff
-      - shell.nix.diff
     when: on_failure
 
 check:flutter_version:commit:
   extends: .check
-  dependencies:
+  needs:
     - check:flutter_version
   when: manual
   before_script: []
@@ -159,7 +173,7 @@ check:flutter_version:commit:
     - git diff . > ../flutter_version.diff
     - git config --local user.name "< polycule > CI Pipeline"
     - git config --local user.email "gitlab@polycule.im"
-    - git add flutter_version .gitlab-ci.yml Dockerfile shell.nix
+    - git add flutter_version .gitlab-ci.yml Dockerfile
     - git commit -sm chore\(deps\)\:\ update\ flutter_version\ \(manual\)
     - git push https://git:$CI_PUSH_TOKEN@gitlab.com/$CI_PROJECT_PATH.git HEAD:$CI_COMMIT_REF_NAME
   artifacts:
@@ -169,74 +183,94 @@ check:flutter_version:commit:
 
 check:podfile:
   extends: .check
+  # our macOS runners are faster
   tags:
     - macos
     - nix-shell
-  parallel:
-    matrix:
-      - PLATFORM: [ ios, macos ]
   script:
-    - pushd $PLATFORM
-    - cp Podfile.lock ../Podfile.lock.orig
+    - pushd ios
     - pod install --deployment
     - pod update
-    - diff -u ../Podfile.lock.orig Podfile.lock > ../Podfile.lock.diff
-    - cp Podfile.lock ..
+    - git diff . > Podfile.lock.diff
+    - popd
+    - pushd macos
+    - pod install --deployment
+    - pod update
+    - git diff . > Podfile.lock.diff
     - popd
   artifacts:
     paths:
-      - Podfile.lock
-      - Podfile.lock.orig
-      - Podfile.lock.diff
+      - ios/Podfile.lock*
+      - macos/Podfile.lock*
     when: on_failure
 
 check:podfile:commit:
   extends: .check
-  dependencies:
+  needs:
     - check:podfile
+  # our macOS runners are faster
   tags:
     - macos
     - nix-shell
-  parallel:
-    matrix:
-      - PLATFORM: [ ios, macos ]
   when: manual
   script:
-    - pushd $PLATFORM
+    - pushd ios
     - pod update
-    - git diff . > ../podfile.diff
+    - git diff . > podfile.diff
+    - git add Podfile Podfile.lock
+    - popd
+    - pushd macos
+    - pod update
+    - git diff . > podfile.diff
+    - git add Podfile Podfile.lock
+    - popd
     - git config --local user.name "< polycule > CI Pipeline"
     - git config --local user.email "gitlab@polycule.im"
-    - git add Podfile Podfile.lock
     - git commit -sm chore\(deps\)\:\ update\ podfile\ \(manual\)
     - git push https://git:$CI_PUSH_TOKEN@gitlab.com/$CI_PROJECT_PATH.git HEAD:$CI_COMMIT_REF_NAME
-    - popd
   artifacts:
     paths:
-      - podfile.diff
+      - ios/podfile.diff
+      - macos/podfile.diff
     when: always
 
+# first build on a powerful machine
+test:android:avd:prepare:
+  stage: test
+  extends: .android
+  when: manual
+  script:
+    - flutter build apk --debug --target-platform android-x64 $FLUTTER_BASE_ARGS
+  <<: *unsigned
+  artifacts:
+    paths:
+      - build/app
+
+# then test on our KVM runner
 test:android:avd:
   stage: test
   extends: .android
+  needs:
+    - test:android:avd:prepare
   variables:
+    ANDROID_DEVICE: pixel_4_xl
     EMULATOR_ANDROID_VERSION: 35
   services:
-    - name: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:emulator-$EMULATOR_ANDROID_VERSION
+    - name: registry.gitlab.com/polycule_client/flutter-dockerimages:emulator-$EMULATOR_ANDROID_VERSION
       alias: emulator
-  when: manual
   before_script:
     - adb start-server
   script:
-    - flutter build apk --debug --target-platform android-x64
     - adb connect emulator:5555
+    - sleep 15
     - adb shell settings put global sysui_demo_allowed 1
     - adb shell am broadcast -a com.android.systemui.demo -e command enter
     - scrcpy --no-audio --no-window -r recording.mkv &
-    - flutter test -d localhost:5555 $FLUTTER_ARGS
+    - flutter test --file-reporter json:integration_android.json integration_test -d emulator:5555 $FLUTTER_BASE_ARGS
   after_script:
     - pkill scrcpy || true
-    - ffmpeg -i recording.mkv -c copy recording.mp4 || true
+    - sleep 15
+    - ffmpeg -i recording.mkv -c copy recording.mp4
   <<: *unsigned
   tags:
     - x86_64
@@ -244,19 +278,21 @@ test:android:avd:
   artifacts:
     when: always
     paths:
+      - integration_android.json
       - recording.mp4
 
 build:macos:debug:
   extends: .build
+  image: macos-15-xcode-16
+  tags:
+    - saas-macos-medium-m1
   script:
+    - brew install libolm
     - flutter build macos --debug $FLUTTER_ARGS
     - rm -rf polycule-$POLYCULE_VERSION-debug.app
     - mv build/macos/Build/Products/Debug/polycule.app polycule-$POLYCULE_VERSION-debug.app
-    - cp /nix/store/*-olm-*/lib/libolm.3.dylib polycule-$POLYCULE_VERSION-debug.app/Contents/Frameworks
+    - cp /usr/local/Cellar/libolm/*/lib/libolm.3.dylib polycule-$POLYCULE_VERSION-debug.app/Contents/Frameworks
   <<: *unsigned
-  tags:
-    - macos
-    - nix-shell
   allow_failure: true
   artifacts:
     paths:
@@ -264,17 +300,16 @@ build:macos:debug:
 
 build:macos:
   extends: .build
+  image: macos-15-xcode-16
+  tags:
+    - saas-macos-medium-m1
   script:
-    - export HOME="/Users/$USER"
+    - brew install libolm
     - flutter build macos $FLUTTER_ARGS
     - rm -rf polycule-$POLYCULE_VERSION.app
     - mv build/macos/Build/Products/Release/polycule.app polycule-$POLYCULE_VERSION.app
-    - cp /nix/store/*-olm-*/lib/libolm.3.dylib polycule-$POLYCULE_VERSION.app/Contents/Frameworks
+    - cp /usr/local/Cellar/libolm/*/lib/libolm.3.dylib polycule-$POLYCULE_VERSION.app/Contents/Frameworks
   <<: *signed
-  tags:
-    - macos
-    - nix-shell
-    - privileged
   allow_failure: true
   artifacts:
     paths:
@@ -282,14 +317,15 @@ build:macos:
 
 build:ios:debug:
   extends: .build
+  image: macos-15-xcode-16
+  tags:
+    - saas-macos-medium-m1
   script:
+    - brew install libolm
     - flutter build ipa --no-codesign --debug $FLUTTER_ARGS
     - rm -rf polycule-$POLYCULE_VERSION-debug.xcarchive || true
     - mv build/ios/archive/Runner.xcarchive polycule-$POLYCULE_VERSION-debug.xcarchive
   <<: *unsigned
-  tags:
-    - macos
-    - nix-shell
   allow_failure: true
   artifacts:
     paths:
@@ -298,9 +334,11 @@ build:ios:debug:
 
 build:ipa:
   extends: .build
+  image: macos-15-xcode-16
+  tags:
+    - saas-macos-medium-m1
   script:
-    - export HOME="/Users/$USER"
-    - gem install --update xcodeproj
+    - brew install libolm
     - keychain initialize
     - app-store-connect fetch-signing-files $(xcode-project detect-bundle-id --project ios/*.xcodeproj) --platform IOS --type IOS_APP_STORE --create
     - keychain add-certificates
@@ -312,10 +350,6 @@ build:ipa:
   after_script:
     - keychain use-login
   <<: *signed
-  tags:
-    - macos
-    - nix-shell
-    - privileged
   allow_failure: true
   artifacts:
     paths:
@@ -361,7 +395,7 @@ scan:fdroid:
     - fdroid scanner -v -e polycule-unsigned.apk
   <<: *unsigned
   tags:
-    - x86_64
+    - saas-linux-small-amd64
 
 build:apk:
   extends: .bundletool
@@ -397,7 +431,7 @@ build:apk:tag:
     - tags
 
 build:web:
-  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-web
+  image: registry.gitlab.com/polycule_client/flutter-dockerimages:$FLUTTER_VERSION-web
   extends: .build
   script:
     - ./scripts/download-olm.sh
@@ -416,7 +450,7 @@ build:linux:x86_64:
     - rm -rf polycule-$POLYCULE_VERSION-amd64
     - mv ./build/linux/x64/release/bundle polycule-$POLYCULE_VERSION-amd64
   tags:
-    - x86_64
+    - saas-linux-medium-amd64
   artifacts:
     paths:
       - polycule-*-amd64
@@ -428,7 +462,7 @@ build:linux:aarch64:
     - rm -rf polycule-$POLYCULE_VERSION-aarch64
     - mv ./build/linux/arm64/release/bundle polycule-$POLYCULE_VERSION-aarch64
   tags:
-    - aarch64
+    - saas-linux-medium-arm64
   artifacts:
     paths:
       - polycule-*-aarch64
@@ -457,7 +491,7 @@ build:fedora:aarch64:
     - *flutter-setup
 
 build:debian:x86_64:
-  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-debian
+  image: registry.gitlab.com/polycule_client/flutter-dockerimages:$FLUTTER_VERSION-debian
   extends: .linux
   script:
     - rm -R build
@@ -467,13 +501,13 @@ build:debian:x86_64:
     - dpkg-buildpackage
     - mv ../polycule_*.deb .
   tags:
-    - x86_64
+    - saas-linux-medium-amd64
   artifacts:
     paths:
       - polycule_*.deb
 
 build:debian:aarch64:
-  image: registry.gitlab.com/theonewiththebraid/flutter-dockerimages:$FLUTTER_VERSION-debian
+  image: registry.gitlab.com/polycule_client/flutter-dockerimages:$FLUTTER_VERSION-debian
   extends: .linux
   script:
     - rm -R build
@@ -484,14 +518,14 @@ build:debian:aarch64:
     - dpkg-buildpackage
     - mv ../polycule_*.deb .
   tags:
-    - aarch64
+    - saas-linux-medium-arm64
   artifacts:
     paths:
       - polycule_*.deb
 
 pages:
   extends: .deploy
-  dependencies:
+  needs:
     - build:web
   image: alpine:latest
   script:
