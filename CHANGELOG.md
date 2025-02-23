@@ -1,3 +1,22 @@
+## v0.2.1
+
+- chore: bump Flutter to 3.29.0 (lauren n. liberda)
+- chore(deps): bump com.android.application in /android (The one with the braid)
+- chore: refactor ClientManager (The one with the braid)
+- feat: add Android AVD CI (The one with the braid)
+- feat: implement proper session management (The one with the braid)
+- feat: implement re-ordering tabs (The one with the braid)
+- feat: migrate to SAAS runners (The one with the braid)
+- feat: split send logic and room state logic (The one with the braid)
+- feat: use bundletool from docker images (The one with the braid)
+- fix: actually show UIA and SAS dialogs (The one with the braid)
+- fix: better combine Stream and Future builders (The one with the braid)
+- fix: better handle redirect on splash route (The one with the braid)
+- fix: handle null in device list order (The one with the braid)
+- fix: migrate deprecated package (The one with the braid)
+- fix: use own runners (The one with the braid)
+- refactor: login screen (The one with the braid)
+
 ## v0.2.0
 
 - chore: bump Flutter (The one with the braid)
