@@ -74,7 +74,7 @@ before_script:
     - tags
     - main
   tags:
-    - saas-linux-small-arm64
+    - aarch64
   before_script:
     - *flutter-setup
 
@@ -83,7 +83,7 @@ before_script:
   except:
     - schedules
   tags:
-    - saas-linux-large-amd64
+    - x86_64
   before_script:
     - *flutter-setup
 
@@ -101,7 +101,7 @@ before_script:
     - apk add git
     - *versioning-setup
   tags:
-    - saas-linux-small-arm64
+    - aarch64
   except:
     - schedules
 
@@ -113,7 +113,7 @@ before_script:
     - *flutter-setup
     - *keystore-setup
   tags:
-    - saas-linux-xlarge-amd64
+    - x86_64
 
 .bundletool:
   extends: .android
@@ -125,7 +125,7 @@ before_script:
     - unzip polycule-*.apks universal.apk
     - mv universal.apk polycule-$POLYCULE_VERSION.apk
   tags:
-    - saas-linux-small-amd64
+    - x86_64
   artifacts:
     paths:
       - polycule-*.apk
@@ -181,7 +181,7 @@ check:flutter_version:commit:
       - flutter_version.diff
     when: always
 
-check:podfile:
+.check:podfile:
   extends: .check
   # our macOS runners are faster
   tags:
@@ -204,7 +204,7 @@ check:podfile:
       - macos/Podfile.lock*
     when: on_failure
 
-check:podfile:commit:
+.check:podfile:commit:
   extends: .check
   needs:
     - check:podfile
@@ -281,11 +281,12 @@ test:android:avd:
       - integration_android.json
       - recording.mp4
 
-build:macos:debug:
+.build:macos:debug:
   extends: .build
   image: macos-15-xcode-16
   tags:
-    - saas-macos-medium-m1
+    - nix-shell
+    - macos
   script:
     - brew install libolm
     - flutter build macos --debug $FLUTTER_ARGS
@@ -298,11 +299,13 @@ build:macos:debug:
     paths:
       - polycule-*.app
 
-build:macos:
+.build:macos:
   extends: .build
   image: macos-15-xcode-16
   tags:
-    - saas-macos-medium-m1
+    - nix-shell
+    - macos
+    - privileged
   script:
     - brew install libolm
     - flutter build macos $FLUTTER_ARGS
@@ -315,11 +318,12 @@ build:macos:
     paths:
       - polycule-*.app
 
-build:ios:debug:
+.build:ios:debug:
   extends: .build
   image: macos-15-xcode-16
   tags:
-    - saas-macos-medium-m1
+    - nix-shell
+    - macos
   script:
     - brew install libolm
     - flutter build ipa --no-codesign --debug $FLUTTER_ARGS
@@ -332,11 +336,13 @@ build:ios:debug:
       - polycule-*.xcarchive
       - polycule-*.ipa
 
-build:ipa:
+.build:ipa:
   extends: .build
   image: macos-15-xcode-16
   tags:
-    - saas-macos-medium-m1
+    - nix-shell
+    - macos
+    - privileged
   script:
     - brew install libolm
     - keychain initialize
@@ -395,7 +401,7 @@ scan:fdroid:
     - fdroid scanner -v -e polycule-unsigned.apk
   <<: *unsigned
   tags:
-    - saas-linux-small-amd64
+    - x86_64
 
 build:apk:
   extends: .bundletool
@@ -450,7 +456,7 @@ build:linux:x86_64:
     - rm -rf polycule-$POLYCULE_VERSION-amd64
     - mv ./build/linux/x64/release/bundle polycule-$POLYCULE_VERSION-amd64
   tags:
-    - saas-linux-medium-amd64
+    - x86_64
   artifacts:
     paths:
       - polycule-*-amd64
@@ -462,7 +468,7 @@ build:linux:aarch64:
     - rm -rf polycule-$POLYCULE_VERSION-aarch64
     - mv ./build/linux/arm64/release/bundle polycule-$POLYCULE_VERSION-aarch64
   tags:
-    - saas-linux-medium-arm64
+    - aarch64
   artifacts:
     paths:
       - polycule-*-aarch64
@@ -501,7 +507,7 @@ build:debian:x86_64:
     - dpkg-buildpackage
     - mv ../polycule_*.deb .
   tags:
-    - saas-linux-medium-amd64
+    - x86_64
   artifacts:
     paths:
       - polycule_*.deb
@@ -518,7 +524,7 @@ build:debian:aarch64:
     - dpkg-buildpackage
     - mv ../polycule_*.deb .
   tags:
-    - saas-linux-medium-arm64
+    - aarch64
   artifacts:
     paths:
       - polycule_*.deb

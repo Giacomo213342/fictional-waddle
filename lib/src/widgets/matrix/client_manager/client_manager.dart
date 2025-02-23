@@ -3,19 +3,14 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../utils/matrix/client_util.dart';
 import '../../../utils/matrix/polycule_command_extension.dart';
 import '../../../utils/matrix/push_manager.dart';
-import '../../../utils/matrix/uia_helper.dart';
 import '../../../utils/polycule_http_client/polycule_http_client.dart';
 import '../../error_dialog_scope.dart';
 import '../../intent_manager.dart';
-import '../key_verification/key_verification_request_widget.dart';
-import '../uia/uia_oidc_account_management_dialog.dart';
-import '../uia/uia_password_dialog.dart';
 import 'client_store.dart';
 
 typedef GetClientCallback = Client Function();
@@ -71,11 +66,6 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
 
   final Map<int, StreamSubscription<LoginState>?> _loginStateListener = {};
 
-  final Map<int, StreamSubscription<UiaRequest>?> _uiaListener = {};
-
-  final Map<int, StreamSubscription<KeyVerification>?>
-      _sasVerificationListener = {};
-
   final Map<int, PushManager> pushManagers = {};
 
   StreamSubscription<ClientCallback>? _httpClientListener;
@@ -94,12 +84,6 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
   @override
   void dispose() {
     for (final subscription in _loginStateListener.values) {
-      subscription?.cancel();
-    }
-    for (final subscription in _uiaListener.values) {
-      subscription?.cancel();
-    }
-    for (final subscription in _sasVerificationListener.values) {
       subscription?.cancel();
     }
     _httpClientListener?.cancel();
@@ -139,54 +123,18 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
         ClientUtil.clientConstructor(_makeClientName(identifier), httpClient);
 
     client.registerPolyculeCommands();
+
     _loginStateListener[identifier]?.cancel();
     _loginStateListener[identifier] = client.onLoginStateChanged.stream.listen(
       (loginState) => _handleLoginStateChange(client, loginState),
     );
-    _uiaListener[identifier]?.cancel();
-    _uiaListener[identifier] = client.onUiaRequest.stream.listen(
-      (request) => _handleUiaRequest(client, request),
-    );
-    _sasVerificationListener[identifier]?.cancel();
-    _sasVerificationListener[identifier] = client
-        .onKeyVerificationRequest.stream
-        .listen((request) => _handleSasVerificationRequest(client, request));
+
     pushManagers[identifier] = PushManager(client);
 
     client.init(
       waitForFirstSync: false,
     );
     return client;
-  }
-
-  Future<void> _handleUiaRequest(Client client, UiaRequest request) async {
-    final handler = UiaHelper(
-      client: client,
-      request: request,
-      authenticationOidcAccountManagementCallback: (request, action) =>
-          UiaOidcAccountManagementDialog(
-        request: request,
-        client: client,
-        action: action,
-      ).show(context),
-      authenticationPasswordCallback: (request) => UiaPasswordDialog(
-        request: request,
-        client: client,
-      ).show(context),
-    );
-    await handler.respond();
-  }
-
-  Future<void> _handleSasVerificationRequest(
-    Client client,
-    KeyVerification request,
-  ) async {
-    Logs().d('Incoming key verification request');
-    return KeyVerificationRequestWidget.showDialog(
-      request,
-      context: context,
-      client: client,
-    );
   }
 
   Future<void> _handleLoginStateChange(Client client, LoginState state) async {
