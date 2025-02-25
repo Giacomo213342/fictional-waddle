@@ -43,15 +43,14 @@ stages:
 
 .reproducible-before: &reproducible-before
   - export BUILD_DIR="$(pwd)"
-  - cd ..
-  - mv "$BUILD_DIR" /tmp/build
+  - cp -pr . /tmp/build
   - pushd /tmp/build
   - export PUB_CACHE=$(pwd)/.pub-cache
 
 .reproducible-after: &reproducible-after
+  - mkdir -p "$BUILD_DIR/build/app"
+  - cp -pr /tmp/build/build/app/outputs "$BUILD_DIR/build/app/outputs"
   - popd
-  - mv /tmp/build "$BUILD_DIR"
-  - cd "$BUILD_DIR"
 
 .signed: &signed
   only:
@@ -424,12 +423,12 @@ build:apk:tag:
     - *flutter-setup
     - sed -i -e '1a add_link_options("LINKER:--build-id=none")' $PUB_CACHE/hosted/pub.dev/{flutter_zxing,flutter_olm}-*/*/CMakeLists.txt
     - flutter build apk $FLUTTER_ARGS --release --split-per-abi
+    - *reproducible-after
     - |
       for abi in "armeabi-v7a" "arm64-v8a" "x86_64"; do
         zipalign -p 4 build/app/outputs/flutter-apk/app-$abi-release.apk polycule-$abi-$POLYCULE_VERSION.apk
         apksigner sign --ks="android/app/keystore.jks" --ks-pass=file:"${KEYSTORE_PASS_FILE}" --ks-key-alias="${KEYSTORE_ALIAS}" --key-pass=file:"${KEYSTORE_KEY_FILE}" polycule-$abi-$POLYCULE_VERSION.apk
       done
-    - *reproducible-after
   artifacts:
     paths:
       - polycule-*.apk
