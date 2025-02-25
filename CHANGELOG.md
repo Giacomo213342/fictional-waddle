@@ -1,3 +1,7 @@
+## v0.2.2
+
+- fix: migrate to reproducible MediaKit Android libs (The one with the braid)
+
 ## v0.2.1
 
 - chore: bump Flutter to 3.29.0 (lauren n. liberda)
