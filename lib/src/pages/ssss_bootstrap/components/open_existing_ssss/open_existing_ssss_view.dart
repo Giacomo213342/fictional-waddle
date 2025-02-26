@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
+import '../../../../widgets/ascii_progress_indicator.dart';
 import '../../../../widgets/center_card.dart';
+import '../../../../widgets/future_callback_builder.dart';
 import '../../../../widgets/labeled_divider.dart';
 import 'open_existing_ssss.dart';
 
@@ -41,11 +43,17 @@ class OpenExistingSsssView extends StatelessWidget {
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: FloatingActionButton.extended(
-                  onPressed: controller.verifyWithDevice,
-                  icon: const Icon(Icons.phonelink),
-                  label: Text(
-                    AppLocalizations.of(context).verifyWithOtherDevice,
+                child: FutureCallbackBuilder(
+                  callback: controller.verifyWithDevice,
+                  builder: (context, callback, loading) =>
+                      FloatingActionButton.extended(
+                    onPressed: callback,
+                    icon: loading
+                        ? const AsciiProgressIndicator()
+                        : const Icon(Icons.phonelink),
+                    label: Text(
+                      AppLocalizations.of(context).verifyWithOtherDevice,
+                    ),
                   ),
                 ),
               ),

@@ -4,6 +4,8 @@ import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
+import '../../../../../widgets/ascii_progress_indicator.dart';
+import '../../../../../widgets/future_callback_builder.dart';
 import '../../../../../widgets/matrix/scopes/client_scope.dart';
 import '../../../../../widgets/matrix/scopes/device_scope.dart';
 
@@ -12,8 +14,8 @@ class DeleteDeviceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () {
+    return FutureCallbackBuilder(
+      callback: () async {
         final device = DeviceScope.of(context).device;
         final client = ClientScope.of(context).client;
         final oidcUri = client.getOidcAccountManagementUri(
@@ -21,9 +23,9 @@ class DeleteDeviceButton extends StatelessWidget {
           deviceId: device.deviceId,
         );
         if (oidcUri != null) {
-          launchUrl(oidcUri);
+          await launchUrl(oidcUri);
         } else {
-          client.uiaRequestBackground(
+          await client.uiaRequestBackground(
             (auth) => client.deleteDevice(
               device.deviceId,
               auth: auth,
@@ -31,10 +33,15 @@ class DeleteDeviceButton extends StatelessWidget {
           );
         }
       },
-      style: TextButton.styleFrom(
-        foregroundColor: Theme.of(context).colorScheme.error,
-      ),
-      child: Text(AppLocalizations.of(context).delete),
+      builder: (context, callback, loading) => loading
+          ? const AsciiProgressIndicator()
+          : TextButton(
+              onPressed: callback,
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.error,
+              ),
+              child: Text(AppLocalizations.of(context).delete),
+            ),
     );
   }
 }

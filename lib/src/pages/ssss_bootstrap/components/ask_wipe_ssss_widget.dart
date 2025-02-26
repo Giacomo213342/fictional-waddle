@@ -12,7 +12,7 @@ class AskWipeSsssWidget extends StatelessWidget {
   static Future<bool?> show(BuildContext context) {
     final scope = MatrixScope.captureAll(context);
     // UIA for OIDC is pretty buggy, let's settle preconditions in advance
-    final oidcAction = scope.$1.getOidcAccountManagementUri(
+    final oidcAction = scope.client.getOidcAccountManagementUri(
       action: OidcAccountManagementActions.crossSigningReset,
     );
     if (oidcAction != null) {

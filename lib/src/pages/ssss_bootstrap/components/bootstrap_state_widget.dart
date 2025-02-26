@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/encryption/utils/bootstrap.dart';
 
-import '../../../widgets/center_card.dart';
 import '../ssss_bootstrap.dart';
-import 'key_verification_container.dart';
 import 'loading.dart';
 import 'open_existing_ssss/open_existing_ssss.dart';
 
@@ -17,15 +15,6 @@ class BootstrapStateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (controller.bootstrap?.state) {
       case BootstrapState.openExistingSsss:
-        final request = controller.keyVerificationRequest;
-        if (request != null) {
-          return CenterCard(
-            child: KeyVerificationContainer(
-              controller: controller,
-              request: request,
-            ),
-          );
-        }
         return OpenExistingSsssWidget(
           controller,
         );

@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
-import '../key_verification_request_widget.dart';
+import '../../scopes/sas_scope.dart';
+import 'sas_verification_bottom_bar.dart';
 
-class VerificationSuccessfulWidget extends StatelessWidget {
-  const VerificationSuccessfulWidget({
+class VerificationRequestErrorWidget extends StatelessWidget {
+  const VerificationRequestErrorWidget({
     super.key,
-    this.onClose,
-    required this.buttonBarBuilder,
   });
-
-  final VoidCallback? onClose;
-  final ButtonBarBuilder buttonBarBuilder;
 
   @override
   Widget build(BuildContext context) {
+    final verification = SasScope.of(context).verification;
+    String message;
+    // TODO: handle request.cancelCode and request.cancelReason
+    switch (verification.canceledCode) {
+      case 'm.user':
+        message = AppLocalizations.of(context).keyVerificationErrorUser;
+        break;
+      default:
+        message = AppLocalizations.of(context).keyVerificationErrorGeneric;
+        break;
+    }
     return SafeArea(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -26,23 +33,22 @@ class VerificationSuccessfulWidget extends StatelessWidget {
               children: [
                 ListTile(
                   leading: Icon(
-                    Icons.check_circle,
+                    Icons.cancel,
+                    color: Theme.of(context).colorScheme.error,
                     size: 32,
-                    color: Theme.of(context).primaryColor,
                   ),
                   title: Text(
-                    AppLocalizations.of(context).verificationSuccessful,
+                    message,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ),
               ],
             ),
           ),
-          buttonBarBuilder.call(
-            context,
-            [
-              ElevatedButton(
-                onPressed: onClose?.call,
+          SasVerificationBottomBar(
+            children: [
+              FilledButton.tonal(
+                onPressed: Navigator.of(context).pop,
                 child: Text(AppLocalizations.of(context).close),
               ),
             ],

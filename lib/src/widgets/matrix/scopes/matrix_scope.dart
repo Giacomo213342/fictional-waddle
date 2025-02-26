@@ -1,28 +1,53 @@
 import 'package:flutter/material.dart';
 
+import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 
 import 'client_scope.dart';
 import 'device_scope.dart';
 import 'event_scope.dart';
 import 'room_scope.dart';
+import 'sas_scope.dart';
 import 'timeline_scope.dart';
+
+class ScopeCapture {
+  const ScopeCapture({
+    required this.client,
+    this.room,
+    this.device,
+    this.timeline,
+    this.event,
+    this.verification,
+  });
+
+  final Client client;
+  final Room? room;
+  final Device? device;
+  final TimelineScope? timeline;
+  final EventScope? event;
+  final KeyVerification? verification;
+}
 
 class MatrixScope extends StatelessWidget {
   const MatrixScope({super.key, required this.scope, required this.child});
 
-  static (Client, Room?, Device?, TimelineScope?, EventScope?) captureAll(
+  static ScopeCapture captureAll(
     BuildContext context,
   ) =>
-      (
-        context.dependOnInheritedWidgetOfExactType<ClientScope>()!.client,
-        context.dependOnInheritedWidgetOfExactType<RoomScope>()?.room,
-        context.dependOnInheritedWidgetOfExactType<DeviceScope>()?.device,
-        context.dependOnInheritedWidgetOfExactType<TimelineScope>(),
-        context.dependOnInheritedWidgetOfExactType<EventScope>(),
+      ScopeCapture(
+        client:
+            context.dependOnInheritedWidgetOfExactType<ClientScope>()!.client,
+        room: context.dependOnInheritedWidgetOfExactType<RoomScope>()?.room,
+        device:
+            context.dependOnInheritedWidgetOfExactType<DeviceScope>()?.device,
+        timeline: context.dependOnInheritedWidgetOfExactType<TimelineScope>(),
+        event: context.dependOnInheritedWidgetOfExactType<EventScope>(),
+        verification: context
+            .dependOnInheritedWidgetOfExactType<SasScope>()
+            ?.verification,
       );
 
-  final (Client, Room?, Device?, TimelineScope?, EventScope?) scope;
+  final ScopeCapture scope;
   final Widget child;
 
   @override
@@ -30,17 +55,17 @@ class MatrixScope extends StatelessWidget {
     Widget child = this.child;
     final scope = this.scope;
 
-    final event = scope.$5?.event;
+    final event = scope.event;
     if (event != null) {
       child = EventScope(
-        event: event,
-        /*previousEvent: scope.$4?.previousEvent,
-        nextEvent: scope.$4?.nextEvent,*/
+        event: event.event,
+        /*previousEvent: event.previousEvent,
+        nextEvent: event.nextEvent,*/
         child: child,
       );
     }
 
-    final timeline = scope.$4;
+    final timeline = scope.timeline;
     if (timeline != null) {
       child = TimelineScope(
         timeline: timeline.timeline,
@@ -49,7 +74,15 @@ class MatrixScope extends StatelessWidget {
       );
     }
 
-    final device = scope.$3;
+    final verification = scope.verification;
+    if (verification != null) {
+      child = SasScope(
+        verification: verification,
+        child: child,
+      );
+    }
+
+    final device = scope.device;
     if (device != null) {
       child = DeviceScope(
         device: device,
@@ -57,7 +90,7 @@ class MatrixScope extends StatelessWidget {
       );
     }
 
-    final room = scope.$2;
+    final room = scope.room;
     if (room != null) {
       child = RoomScope(
         room: room,
@@ -65,7 +98,7 @@ class MatrixScope extends StatelessWidget {
       );
     }
 
-    final client = scope.$1;
+    final client = scope.client;
     return ClientScope(
       client: client,
       child: child,

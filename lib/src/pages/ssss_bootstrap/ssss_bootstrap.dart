@@ -9,6 +9,7 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
 import '../../utils/runtime_suffix.dart';
 import '../../utils/secure_storage.dart';
+import '../../widgets/matrix/sas_verification/sas_verification_request_widget.dart';
 import '../../widgets/matrix/scopes/client_scope.dart';
 import '../../widgets/matrix/scopes/matrix_scope.dart';
 import '../fatal_error/fatal_error_page.dart';
@@ -137,8 +138,17 @@ class SsssBootstrapController extends State<SsssBootstrapPage> {
     final client = ClientScope.of(context).client;
     final user = client.userID!;
 
-    keyVerificationRequest =
+    final verification = keyVerificationRequest =
         await client.userDeviceKeys[user]?.startVerification();
+    if (verification == null || !mounted) {
+      return;
+    }
+    await SasVerificationRequestWidget.showDialog(
+      verification,
+      context: context,
+      client: client,
+    );
+    await client.oneShotSync();
     setState(() {});
   }
 
@@ -163,13 +173,6 @@ class SsssBootstrapController extends State<SsssBootstrapPage> {
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.goMultiClient(RoomListPage.routeName);
-    });
-  }
-
-  void cancelSasVerification() {
-    keyVerificationRequest?.cancel();
-    setState(() {
-      keyVerificationRequest = null;
     });
   }
 

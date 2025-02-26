@@ -54,8 +54,8 @@ class OpenExistingSsssController extends State<OpenExistingSsssWidget> {
     return null;
   }
 
-  void verifyWithDevice() {
-    widget.controller.interactiveSasVerification();
+  Future<void> verifyWithDevice() {
+    return widget.controller.interactiveSasVerification();
   }
 
   void submit() {

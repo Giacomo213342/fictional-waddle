@@ -217,11 +217,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get deviceNotAvailable => 'I don\'t have my device available.';
 
   @override
-  String get compareSasNumbers => 'Compare security numbers';
+  String get compareSasNumbers => 'Compare SAS security numbers';
+
+  @override
+  String get compareSasEmojis => 'Compare SAS security emojis';
 
   @override
   String get compareSasExplanation =>
-      'Check if the numbers on your device are identical with the numbers on the other device requesting the verification.';
+      'Check if the SAS on your device are identical with the SAS on the other device requesting the verification.';
 
   @override
   String get incomingVerificationRequest => 'Incoming verification request';
