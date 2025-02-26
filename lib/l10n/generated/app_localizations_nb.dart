@@ -221,6 +221,9 @@ class AppLocalizationsNb extends AppLocalizations {
   String get compareSasNumbers => 'Sammenlign sikkerhetsnummer';
 
   @override
+  String get compareSasEmojis => 'Compare SAS security emojis';
+
+  @override
   String get compareSasExplanation =>
       'Sjekk at nummerne på enheten din samsvarer med dem på enheten som forespør bekreftelse.';
 

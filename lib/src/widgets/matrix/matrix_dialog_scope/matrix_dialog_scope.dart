@@ -8,7 +8,7 @@ import 'package:matrix/matrix.dart';
 import '../../../utils/matrix/uia_helper.dart';
 import '../client_manager/client_manager.dart';
 import '../client_manager/client_store.dart';
-import '../key_verification/key_verification_request_widget.dart';
+import '../sas_verification/sas_verification_request_widget.dart';
 import '../uia/uia_oidc_account_management_dialog.dart';
 import '../uia/uia_password_dialog.dart';
 
@@ -76,7 +76,7 @@ class _MatrixDialogScopeState extends State<MatrixDialogScope> {
     KeyVerification request,
   ) async {
     Logs().d('Incoming key verification request');
-    return KeyVerificationRequestWidget.showDialog(
+    return SasVerificationRequestWidget.showDialog(
       request,
       context: context,
       client: client,

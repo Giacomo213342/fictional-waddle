@@ -136,6 +136,7 @@ flutter:
     - assets/logo/logo-circle.png
     - assets/icons/matrix.svg
     - assets/icons/rosahaj/base/Rosahaj_Peek.png
+    - assets/matrix/sas-emoji.json
     - packages/dart_animated_emoji/generated/noto-animated.lottie
 
   fonts:

@@ -450,13 +450,19 @@ abstract class AppLocalizations {
   /// No description provided for @compareSasNumbers.
   ///
   /// In en, this message translates to:
-  /// **'Compare security numbers'**
+  /// **'Compare SAS security numbers'**
   String get compareSasNumbers;
+
+  /// No description provided for @compareSasEmojis.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare SAS security emojis'**
+  String get compareSasEmojis;
 
   /// No description provided for @compareSasExplanation.
   ///
   /// In en, this message translates to:
-  /// **'Check if the numbers on your device are identical with the numbers on the other device requesting the verification.'**
+  /// **'Check if the SAS on your device are identical with the SAS on the other device requesting the verification.'**
   String get compareSasExplanation;
 
   /// No description provided for @incomingVerificationRequest.

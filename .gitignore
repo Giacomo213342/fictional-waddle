@@ -62,6 +62,6 @@ android/.kotlin/
 .fvmrc
 
 # integration test results
-*.json
+/*.json
 *.mkv
 *.mp4

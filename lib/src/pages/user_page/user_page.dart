@@ -4,7 +4,7 @@ import 'package:matrix/encryption.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
-import '../../widgets/matrix/key_verification/key_verification_request_widget.dart';
+import '../../widgets/matrix/sas_verification/sas_verification_request_widget.dart';
 import '../../widgets/matrix/scopes/client_scope.dart';
 import '../room/room.dart';
 import 'user_view.dart';
@@ -103,7 +103,7 @@ class UserController extends State<UserPage> {
       loading = true;
     });
 
-    KeyVerificationRequestWidget.showDialog(
+    SasVerificationRequestWidget.showDialog(
       request,
       context: context,
       client: client,

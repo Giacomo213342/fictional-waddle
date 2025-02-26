@@ -1,28 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'package:matrix/encryption.dart';
-import 'package:matrix/matrix.dart';
-
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../ascii_progress_indicator.dart';
-import '../../avatar_builder/mxc_avatar.dart';
-import '../key_verification_request_widget.dart';
+import '../../../future_callback_builder.dart';
+import '../../scopes/sas_scope.dart';
+import 'sas_profile.dart';
+import 'sas_verification_bottom_bar.dart';
 
 class SsssRecoveryInput extends StatefulWidget {
-  const SsssRecoveryInput(
-    this.request, {
+  const SsssRecoveryInput({
     super.key,
-    required this.onSubmit,
-    required this.buttonBarBuilder,
-    this.profile,
-    this.client,
   });
-
-  final KeyVerification request;
-  final Profile? profile;
-  final Client? client;
-  final ButtonBarBuilder buttonBarBuilder;
-  final ValueChanged<String> onSubmit;
 
   @override
   State<SsssRecoveryInput> createState() => _SsssRecoveryInputState();
@@ -33,8 +21,6 @@ class _SsssRecoveryInputState extends State<SsssRecoveryInput> {
 
   @override
   Widget build(BuildContext context) {
-    final profile = widget.profile;
-    final client = widget.client;
     return SafeArea(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -43,14 +29,7 @@ class _SsssRecoveryInputState extends State<SsssRecoveryInput> {
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             child: Column(
               children: [
-                const SizedBox(height: 16),
-                if (profile != null && client != null)
-                  MxcAvatar(
-                    uri: profile.avatarUrl,
-                    monogram: profile.displayName ?? profile.userId,
-                    dimension: 64,
-                  ),
-                const SizedBox(height: 16),
+                const SasProfile(),
                 const AsciiProgressIndicator(),
                 const SizedBox(height: 16),
                 ListTile(
@@ -79,16 +58,26 @@ class _SsssRecoveryInputState extends State<SsssRecoveryInput> {
               ],
             ),
           ),
-          widget.buttonBarBuilder.call(
-            context,
-            [
-              ElevatedButton(
-                onPressed: null,
-                child: Text(AppLocalizations.of(context).previous),
+          SasVerificationBottomBar(
+            children: [
+              FutureCallbackBuilder(
+                callback: () =>
+                    SasScope.of(context).verification.cancel('m.user'),
+                builder: (context, callback, loading) => loading
+                    ? const AsciiProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: callback,
+                        child: Text(AppLocalizations.of(context).cancel),
+                      ),
               ),
-              ElevatedButton(
-                onPressed: _submit,
-                child: Text(AppLocalizations.of(context).next),
+              FutureCallbackBuilder(
+                callback: _submit,
+                builder: (context, callback, loading) => loading
+                    ? const AsciiProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: callback,
+                        child: Text(AppLocalizations.of(context).next),
+                      ),
               ),
             ],
           ),
@@ -103,10 +92,10 @@ class _SsssRecoveryInputState extends State<SsssRecoveryInput> {
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     final key = controller.text.replaceAll(RegExp(r'\s'), '');
     if (key.isEmpty) {
-      widget.onSubmit.call(key);
+      await SasScope.of(context).verification.openSSSS(keyOrPassphrase: key);
     }
   }
 }

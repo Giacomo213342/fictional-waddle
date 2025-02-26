@@ -42,6 +42,7 @@ class UiaHelper {
             accountAction,
           );
           if (response != true) {
+            request.cancel();
             return;
           }
           // ensure we got a valid refresh token
@@ -59,6 +60,7 @@ class UiaHelper {
           final password = cachedPassword ??
               await authenticationPasswordCallback.call(request);
           if (password == null) {
+            request.cancel();
             return;
           }
           final auth = AuthenticationPassword(

@@ -145,32 +145,35 @@ check:codestyle:
 
 check:flutter_version:
   extends: .check
-  before_script:
+  script:
     - cp flutter_version flutter_version.orig
     - cp .gitlab-ci.yml .gitlab-ci.yml.orig
     - cp Dockerfile Dockerfile.orig
-  script:
+    - cp assets/matrix/sas-emoji.json assets/matrix/sas-emoji.json.orig
     - ./flutter_version.sh
+    - ./scripts/download-sas-emoji-data.sh
     - diff -u flutter_version.orig flutter_version > flutter_version.diff
     - diff -u .gitlab-ci.yml.orig .gitlab-ci.yml > .gitlab-ci.yml.diff
     - diff -u Dockerfile.orig Dockerfile > Dockerfile.diff
+    - diff -u assets/matrix/sas-emoji.json.orig assets/matrix/sas-emoji.json > sas-emoji.json.diff
   artifacts:
     paths:
       - flutter_version.diff
       - .gitlab-ci.yml.diff
       - Dockerfile.diff
+      - sas-emoji.json.diff
     when: on_failure
 
 check:flutter_version:commit:
   extends: .check
   when: manual
-  before_script: []
   script:
     - ./flutter_version.sh
+    - ./scripts/download-sas-emoji-data.sh
     - git diff . > ../flutter_version.diff
     - git config --local user.name "< polycule > CI Pipeline"
     - git config --local user.email "gitlab@polycule.im"
-    - git add flutter_version .gitlab-ci.yml Dockerfile
+    - git add flutter_version .gitlab-ci.yml Dockerfile assets/matrix/sas-emoji.json
     - git commit -sm chore\(deps\)\:\ update\ flutter_version\ \(manual\)
     - git push https://git:$CI_PUSH_TOKEN@gitlab.com/$CI_PROJECT_PATH.git HEAD:$CI_COMMIT_REF_NAME
   artifacts:

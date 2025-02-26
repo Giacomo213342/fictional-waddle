@@ -223,6 +223,9 @@ class AppLocalizationsTa extends AppLocalizations {
   String get compareSasNumbers => 'பாதுகாப்பு எண்களை ஒப்பிடுக';
 
   @override
+  String get compareSasEmojis => 'Compare SAS security emojis';
+
+  @override
   String get compareSasExplanation =>
       'உங்கள் சாதனத்தில் உள்ள எண்கள் சரிபார்ப்பைக் கோரும் மற்ற சாதனத்தின் எண்களுடன் ஒத்ததா என்று சரிபார்க்கவும்.';
 

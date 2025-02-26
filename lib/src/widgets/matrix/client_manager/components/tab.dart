@@ -18,7 +18,7 @@ class ClientTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scope = MatrixScope.captureAll(context);
-    final client = scope.$1;
+    final client = scope.client;
     final body = MatrixScope(
       scope: scope,
       child: ClipRRect(
