@@ -12,6 +12,10 @@ ClientCallback getHttpClientPlatformCallback() {
 
 BaseClient _buildFetchClient() {
   return FetchClient(
+    mode: RequestMode.cors,
+    credentials: RequestCredentials.omit,
+    cache: RequestCache.noStore,
+    referrerPolicy: RequestReferrerPolicy.strictOriginWhenCrossOrigin,
     streamRequests: true,
   );
 }
