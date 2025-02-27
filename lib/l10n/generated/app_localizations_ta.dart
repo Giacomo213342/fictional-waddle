@@ -1177,4 +1177,16 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get moveClientTooltip => 'Move here';
+
+  @override
+  String get displayName => 'Display name';
+
+  @override
+  String get yourDisplayName => 'Your display name';
+
+  @override
+  String get displayNameHint => 'This is shown on your public profile.';
+
+  @override
+  String get changeDisplayName => 'Change display name';
 }
