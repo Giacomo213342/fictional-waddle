@@ -2,27 +2,21 @@
 
 set -e
 
-OLM_DEST="web/js/olm"
+OUTPUT="web/js/olm"
 
-if [ -d "$OLM_DEST" ]; then
-  rm -r "$OLM_DEST"
+if [ -d "${OUTPUT}" ]; then
+  rm -r "${OUTPUT}"
 fi
 
 OLM_VERSION=$(yq -r .packages.flutter_olm.version < pubspec.lock)
+URL="https://github.com/famedly/olm/releases/download/v$OLM_VERSION/olm.zip"
 
-echo "Downloading OLM version $OLM_VERSION."
+echo "OLM for web version $OLM_VERSION."
+echo "Downloading ${URL} ..."
 
-DOWNLOAD_PATH="https://github.com/famedly/olm/releases/download/v$OLM_VERSION/olm.zip"
+curl -Lso "olm-${OLM_VERSION}.zip" "${URL}"
+unzip -qquod web/js "olm-${OLM_VERSION}.zip" "javascript/*"
+mv web/js/javascript "${OUTPUT}"
+rm "olm-${OLM_VERSION}.zip"
 
-TMP_DIR="$(mktemp -d)"
-
-pushd "$TMP_DIR"
-
-curl -L -o olm.zip "$DOWNLOAD_PATH"
-unzip olm.zip
-rm olm.zip
-popd
-
-mv "$TMP_DIR/javascript" "$OLM_DEST"
-
-rm -rf "$TMP_DIR"
+echo "Stored in : ${OUTPUT}"
