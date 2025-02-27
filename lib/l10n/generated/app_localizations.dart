@@ -2109,6 +2109,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Move here'**
   String get moveClientTooltip;
+
+  /// No description provided for @displayName.
+  ///
+  /// In en, this message translates to:
+  /// **'Display name'**
+  String get displayName;
+
+  /// No description provided for @yourDisplayName.
+  ///
+  /// In en, this message translates to:
+  /// **'Your display name'**
+  String get yourDisplayName;
+
+  /// No description provided for @displayNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This is shown on your public profile.'**
+  String get displayNameHint;
+
+  /// No description provided for @changeDisplayName.
+  ///
+  /// In en, this message translates to:
+  /// **'Change display name'**
+  String get changeDisplayName;
 }
 
 class _AppLocalizationsDelegate

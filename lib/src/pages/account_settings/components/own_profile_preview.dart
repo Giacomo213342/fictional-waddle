@@ -8,6 +8,7 @@ import '../../../utils/file_selector.dart';
 import '../../../widgets/matrix/avatar_builder/profile_avatar_builder.dart';
 import '../../../widgets/matrix/profile_builder.dart';
 import '../../../widgets/matrix/scopes/client_scope.dart';
+import 'display_name_editor.dart';
 
 class OwnProfilePreview extends StatefulWidget {
   const OwnProfilePreview({super.key});
@@ -59,8 +60,6 @@ class _OwnProfilePreviewState extends State<OwnProfilePreview> {
             child: ProfileBuilder(
               userId: userId,
               builder: (context, snapshot) {
-                final displayName =
-                    snapshot.data?.displayName ?? userId.localpart ?? userId;
                 return ConstrainedBox(
                   constraints:
                       const BoxConstraints(maxHeight: 192, minHeight: 96),
@@ -69,12 +68,7 @@ class _OwnProfilePreviewState extends State<OwnProfilePreview> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        displayName,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 3,
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
+                      const DisplayNameEditor(),
                       TextButton.icon(
                         icon: const Icon(Icons.copy),
                         label: Text(
