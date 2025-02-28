@@ -8,8 +8,8 @@ import 'package:media_kit_video/media_kit_video.dart';
 
 import '../widgets/placeholder.dart';
 import '../widgets/settings_manager.dart';
+import 'colors/poly_pride.dart';
 import 'fonts.dart';
-import 'poly_colors.dart';
 import 'theme_modes.dart';
 
 typedef PolyculeThemeCallback = Widget Function(

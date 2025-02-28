@@ -8,8 +8,8 @@ import 'package:html/parser.dart' hide HtmlParser;
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../theme/colors/poly_pride.dart';
 import '../../../theme/fonts.dart';
-import '../../../theme/poly_colors.dart';
 import '../../../utils/linkify_node.dart';
 import '../../../utils/matrix/matrix_html_tags.dart';
 import 'components/animated_emoji_extension.dart';

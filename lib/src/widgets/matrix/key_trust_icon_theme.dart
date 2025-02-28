@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../theme/poly_colors.dart';
+import '../../theme/colors/poly_pride.dart';
 import 'scopes/client_scope.dart';
 import 'scopes/device_scope.dart';
 
