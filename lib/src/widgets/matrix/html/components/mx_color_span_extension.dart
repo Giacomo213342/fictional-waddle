@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_html/flutter_html.dart';
 
-import '../../../../theme/poly_colors.dart';
+import '../../../../theme/colors/polycule.dart';
 
 const _kMxColorAttribute = 'data-mx-color';
 
@@ -28,7 +28,7 @@ class MxColorSpanExtension extends HtmlExtension {
       return TextSpan(text: context.innerHtml);
     }
 
-    final color = PolyColors.parseCss(colorAttribute);
+    final color = PolyculeColors.parseCss(colorAttribute);
 
     final style = DefaultTextStyle.of(buildContext);
 
