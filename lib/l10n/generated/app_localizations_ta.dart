@@ -1189,4 +1189,20 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get changeDisplayName => 'Change display name';
+
+  @override
+  String get scanQrCode => 'Scan QR code';
+
+  @override
+  String get compareSas => 'Compare SAS secret';
+
+  @override
+  String get confirmQrScanned => 'QR code successfully scanned.';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get scanQrWithOtherDevice =>
+      'Scan this QR code with your other device.';
 }

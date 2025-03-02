@@ -528,7 +528,7 @@ abstract class AppLocalizations {
   /// No description provided for @keyVerificationErrorUser.
   ///
   /// In en, this message translates to:
-  /// **'The verification was rejected.'**
+  /// **'The verification was canceled.'**
   String get keyVerificationErrorUser;
 
   /// No description provided for @close.
@@ -2133,6 +2133,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change display name'**
   String get changeDisplayName;
+
+  /// No description provided for @scanQrCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR code'**
+  String get scanQrCode;
+
+  /// No description provided for @compareSas.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare SAS secret'**
+  String get compareSas;
+
+  /// No description provided for @confirmQrScanned.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code successfully scanned.'**
+  String get confirmQrScanned;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @scanQrWithOtherDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan this QR code with your other device.'**
+  String get scanQrWithOtherDevice;
 }
 
 class _AppLocalizationsDelegate

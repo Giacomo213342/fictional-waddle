@@ -187,7 +187,7 @@
   "proceed": "Proceed",
   "enterRecoveryPhrase": "Enter recovery phrase",
   "keyVerificationErrorGeneric": "There was an error verifying your device.",
-  "keyVerificationErrorUser": "The verification was rejected.",
+  "keyVerificationErrorUser": "The verification was canceled.",
   "close": "Close",
   "verificationSuccessful": "Key verification successful",
   "verifyLogin": "Verify your key material",
@@ -605,5 +605,10 @@
   "displayName": "Display name",
   "yourDisplayName": "Your display name",
   "displayNameHint": "This is shown on your public profile.",
-  "changeDisplayName": "Change display name"
+  "changeDisplayName": "Change display name",
+  "scanQrCode": "Scan QR code",
+  "compareSas": "Compare SAS secret",
+  "confirmQrScanned": "QR code successfully scanned.",
+  "confirm": "Confirm",
+  "scanQrWithOtherDevice": "Scan this QR code with your other device."
 }

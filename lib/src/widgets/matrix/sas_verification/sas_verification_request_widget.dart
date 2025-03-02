@@ -5,17 +5,14 @@ import 'package:matrix/matrix.dart';
 
 import '../scopes/matrix_scope.dart';
 import '../scopes/sas_scope.dart';
+import 'components/ask_sas_choice_widget.dart';
 import 'components/compare_sas_widget.dart';
+import 'components/confirm_qr_success.dart';
 import 'components/incoming_verification_request_widget.dart';
 import 'components/ssss_recovery_input.dart';
 import 'components/verification_request_error_widget.dart';
 import 'components/verification_successful_widget.dart';
 import 'components/waiting_peer_widget.dart';
-
-typedef ButtonBarBuilder = Widget Function(
-  BuildContext context,
-  List<Widget> children,
-);
 
 class SasVerificationRequestWidget extends StatefulWidget {
   const SasVerificationRequestWidget({super.key});
@@ -59,8 +56,12 @@ class _SasVerificationRequestWidgetState
           canPop: false,
           child: SsssRecoveryInput(),
         );
-      loading:
       case KeyVerificationState.askChoice:
+        return const PopScope(
+          canPop: false,
+          child: AskSASChoiceWidget(),
+        );
+      loading:
       case KeyVerificationState.waitingAccept:
         return const PopScope(
           canPop: false,
@@ -71,12 +72,8 @@ class _SasVerificationRequestWidgetState
           canPop: false,
           child: CompareSasWidget(),
         );
-      case KeyVerificationState.showQRSuccess:
       case KeyVerificationState.confirmQRScan:
-        throw UnimplementedError(
-          'QR verification is not supported by this client.',
-        );
-
+        return const ConfirmQrSuccess();
       case KeyVerificationState.error:
         if (verification.canceledCode == 'm.accepted' ||
             verification.canceledReason == 'm.accepted') {
@@ -86,6 +83,7 @@ class _SasVerificationRequestWidgetState
           canPop: false,
           child: VerificationRequestErrorWidget(),
         );
+      case KeyVerificationState.showQRSuccess:
       case KeyVerificationState.waitingSas:
       case KeyVerificationState.done:
         return const VerificationSuccessfulWidget();

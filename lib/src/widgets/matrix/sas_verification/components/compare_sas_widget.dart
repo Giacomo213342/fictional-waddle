@@ -26,27 +26,31 @@ class CompareSasWidget extends StatelessWidget {
       child = const CompareSasDecimal();
     }
     return SafeArea(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: ListView(
+        shrinkWrap: true,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-            child: Column(
-              children: [
-                Focus(
-                  autofocus: true,
-                  child: Text(
-                    headline,
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                child,
-                const SizedBox(height: 8),
-                Text(AppLocalizations.of(context).compareSasExplanation),
-              ],
+          const SizedBox(height: 16),
+          Focus(
+            autofocus: true,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Text(
+                headline,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
             ),
           ),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: child,
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Text(AppLocalizations.of(context).compareSasExplanation),
+          ),
+          const SizedBox(height: 16),
           SasVerificationBottomBar(
             children: [
               FutureCallbackBuilder(

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 
 import 'package:http/http.dart' hide Client;
@@ -18,10 +20,10 @@ abstract class ClientUtil {
       verificationMethods: {
         KeyVerificationMethod.numbers,
         KeyVerificationMethod.emoji,
-        /* KeyVerificationMethod.qrShow,
+        KeyVerificationMethod.qrShow,
         if (!kIsWeb && (Platform.isAndroid || Platform.isIOS))
           KeyVerificationMethod.qrScan,
-        KeyVerificationMethod.reciprocate, */
+        KeyVerificationMethod.reciprocate,
       },
       nativeImplementations: nativeImplementations,
       supportedLoginTypes: {
