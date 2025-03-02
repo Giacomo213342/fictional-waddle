@@ -414,6 +414,7 @@ build:apk:tag:
     - *reproducible-before
     - *flutter-setup
     - sed -i -e '1a add_link_options("LINKER:--build-id=none")' $PUB_CACHE/hosted/pub.dev/{flutter_zxing,flutter_olm}-*/*/CMakeLists.txt
+    - sed -i -e "1a add_compile_options(\"-ffile-prefix-map=$CI_PROJECT_DIR=/tmp/build\")" $PUB_CACHE/hosted/pub.dev/{flutter_zxing,flutter_olm}-*/*/CMakeLists.txt
     - flutter build apk $FLUTTER_ARGS --release --split-per-abi
     - *reproducible-after
     - |
