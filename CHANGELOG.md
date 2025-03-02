@@ -1,3 +1,22 @@
+## v0.2.3
+
+- chore(deps): bump com.android.application in /android (The one with the braid)
+- chore(deps): bump com.android.tools:desugar_jdk_libs in /android (The one with the braid)
+- chore(deps): bump go_router from 14.8.0 to 14.8.1 (The one with the braid)
+- chore(deps): bump web from 1.1.0 to 1.1.1 (The one with the braid)
+- chore(deps): update podfile (manual) (polycule  CI Pipeline)
+- chore: refactor OLM for web script (The one with the braid)
+- feat: allow changing legacy display name (The one with the braid)
+- feat: refactor SAS (The one with the braid)
+- feat: support QR verification (The one with the braid)
+- fix: add F-Droid compile options (The one with the braid)
+- fix: do not propagate QR support (The one with the braid)
+- fix: permit CORS in web (The one with the braid)
+- fix: prevent overflow of SAS emojis (The one with the braid)
+- fix: properly name APKs (The one with the braid)
+- refactor: color utilities (The one with the braid)
+- Revert "fix: use own runners" (The one with the braid)
+
 ## v0.2.2
 
 - fix: migrate to reproducible MediaKit Android libs (The one with the braid)
