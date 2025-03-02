@@ -149,7 +149,16 @@ class SsssBootstrapController extends State<SsssBootstrapPage> {
       client: client,
     );
     await client.oneShotSync();
-    setState(() {});
+
+    if (!client.isUnknownSession &&
+        await client.encryption?.crossSigning.isCached() == true &&
+        await client.encryption?.keyManager.isCached() == true &&
+        mounted) {
+      context.goMultiClient(RoomListPage.routeName);
+    }
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> askWipeSsss() async {
