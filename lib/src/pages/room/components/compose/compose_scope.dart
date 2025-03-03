@@ -7,9 +7,11 @@ import 'package:async/async.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:matrix/matrix.dart';
 
+import '../../../../utils/matrix/database_drafts.dart';
 import '../../../../widgets/intent_manager.dart';
 import '../../../../widgets/matrix/dialogs/command_error_dialog.dart';
 import '../../../../widgets/matrix/dialogs/command_helper_dialog.dart';
+import '../../../../widgets/matrix/scopes/client_scope.dart';
 import '../../../../widgets/matrix/scopes/room_scope.dart';
 import 'send_file_scope.dart';
 import 'type_ahead_helper.dart';
@@ -67,12 +69,16 @@ class ComposeScope extends State<ComposeScopeWidget> {
     );
 
     messageController.addListener(_adjustMessageType);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadDraft();
+    });
     super.initState();
   }
 
   @override
   void dispose() {
     messageController.removeListener(_adjustMessageType);
+    messageController.removeListener(_storeDraft);
     super.dispose();
   }
 
@@ -269,5 +275,27 @@ class ComposeScope extends State<ComposeScopeWidget> {
     } else {
       return KeyEventResult.ignored;
     }
+  }
+
+  Future<void> _loadDraft() async {
+    final room = RoomScope.of(context).room;
+    final client = ClientScope.of(context).client;
+    final draft = await client.database?.getRoomDraft(room.id);
+    if (draft != null) {
+      messageController.value = TextEditingValue(
+        text: draft,
+        composing: TextRange.collapsed(draft.length),
+      );
+    }
+
+    messageController.addListener(_storeDraft);
+  }
+
+  Future<void> _storeDraft() async {
+    final room = RoomScope.of(context).room;
+    final client = ClientScope.of(context).client;
+
+    final draft = messageController.text;
+    await client.database?.storeRoomDraft(room.id, draft);
   }
 }
