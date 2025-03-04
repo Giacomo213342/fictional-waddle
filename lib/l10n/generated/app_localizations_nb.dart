@@ -79,6 +79,9 @@ class AppLocalizationsNb extends AppLocalizations {
   String get loginPassword => 'Logg inn med passord';
 
   @override
+  String get loginLegacySso => 'Login using legacy SSO';
+
+  @override
   String get username => 'brukernavn';
 
   @override

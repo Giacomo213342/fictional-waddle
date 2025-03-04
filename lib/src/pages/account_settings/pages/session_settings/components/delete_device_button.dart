@@ -33,7 +33,7 @@ class DeleteDeviceButton extends StatelessWidget {
           );
         }
       },
-      builder: (context, callback, loading) => loading
+      builder: (context, callback, loading, _) => loading
           ? const AsciiProgressIndicator()
           : TextButton(
               onPressed: callback,

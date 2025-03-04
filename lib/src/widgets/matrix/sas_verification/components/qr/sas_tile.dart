@@ -17,7 +17,7 @@ class SasTile extends StatelessWidget {
             callback: () => SasScope.of(context)
                 .verification
                 .continueVerification(EventTypes.Sas),
-            builder: (context, callback, _) => FilledButton.icon(
+            builder: (context, callback, _, __) => FilledButton.icon(
               onPressed: callback,
               icon: const Icon(Icons.password),
               label: Text(AppLocalizations.of(context).compareSas),

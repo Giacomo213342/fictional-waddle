@@ -63,7 +63,7 @@ class _SsssRecoveryInputState extends State<SsssRecoveryInput> {
               FutureCallbackBuilder(
                 callback: () =>
                     SasScope.of(context).verification.cancel('m.user'),
-                builder: (context, callback, loading) => loading
+                builder: (context, callback, loading, _) => loading
                     ? const AsciiProgressIndicator()
                     : ElevatedButton(
                         onPressed: callback,
@@ -72,7 +72,7 @@ class _SsssRecoveryInputState extends State<SsssRecoveryInput> {
               ),
               FutureCallbackBuilder(
                 callback: _submit,
-                builder: (context, callback, loading) => loading
+                builder: (context, callback, loading, _) => loading
                     ? const AsciiProgressIndicator()
                     : ElevatedButton(
                         onPressed: callback,

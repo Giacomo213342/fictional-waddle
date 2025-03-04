@@ -13,7 +13,7 @@ class QrScanTile extends StatelessWidget {
         child: Center(
           child: FutureCallbackBuilder(
             callback: () => const QrDialog().show(context),
-            builder: (context, callback, _) => FilledButton.icon(
+            builder: (context, callback, _, __) => FilledButton.icon(
               onPressed: callback,
               icon: const Icon(Icons.qr_code_scanner),
               label: Text(AppLocalizations.of(context).scanQrCode),

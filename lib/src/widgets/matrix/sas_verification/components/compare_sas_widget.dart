@@ -55,7 +55,7 @@ class CompareSasWidget extends StatelessWidget {
             children: [
               FutureCallbackBuilder(
                 callback: verification.rejectSas,
-                builder: (context, callback, loading) => loading
+                builder: (context, callback, loading, _) => loading
                     ? const AsciiProgressIndicator()
                     : FilledButton.tonal(
                         onPressed: callback,
@@ -64,7 +64,7 @@ class CompareSasWidget extends StatelessWidget {
               ),
               FutureCallbackBuilder(
                 callback: verification.acceptSas,
-                builder: (context, callback, loading) => loading
+                builder: (context, callback, loading, _) => loading
                     ? const AsciiProgressIndicator()
                     : FilledButton.tonal(
                         onPressed: callback,

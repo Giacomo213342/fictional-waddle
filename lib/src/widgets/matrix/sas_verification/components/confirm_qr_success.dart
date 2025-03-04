@@ -37,7 +37,7 @@ class ConfirmQrSuccess extends StatelessWidget {
             children: [
               FutureCallbackBuilder(
                 callback: () => verification.cancel('m.user'),
-                builder: (context, callback, loading) => loading
+                builder: (context, callback, loading, _) => loading
                     ? const AsciiProgressIndicator()
                     : FilledButton.tonal(
                         onPressed: callback,
@@ -46,7 +46,7 @@ class ConfirmQrSuccess extends StatelessWidget {
               ),
               FutureCallbackBuilder(
                 callback: verification.acceptQRScanConfirmation,
-                builder: (context, callback, loading) => loading
+                builder: (context, callback, loading, _) => loading
                     ? const AsciiProgressIndicator()
                     : FilledButton.tonal(
                         onPressed: callback,

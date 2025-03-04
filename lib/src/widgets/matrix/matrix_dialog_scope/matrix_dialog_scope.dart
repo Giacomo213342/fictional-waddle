@@ -9,6 +9,7 @@ import '../../../utils/matrix/uia_helper.dart';
 import '../client_manager/client_manager.dart';
 import '../client_manager/client_store.dart';
 import '../sas_verification/sas_verification_request_widget.dart';
+import '../uia/uia_legacy_sso_dialog.dart';
 import '../uia/uia_oidc_account_management_dialog.dart';
 import '../uia/uia_password_dialog.dart';
 
@@ -62,6 +63,10 @@ class _MatrixDialogScopeState extends State<MatrixDialogScope> {
         request: request,
         client: client,
         action: action,
+      ).show(context),
+      authenticationLegacySSOCallback: (request) => UiaLegacySSODialog(
+        request: request,
+        client: client,
       ).show(context),
       authenticationPasswordCallback: (request) => UiaPasswordDialog(
         request: request,

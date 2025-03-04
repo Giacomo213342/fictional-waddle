@@ -7,6 +7,7 @@ import '../../router/extensions/go_router_path_extension.dart';
 import '../../widgets/ascii_progress_indicator.dart';
 import '../../widgets/matrix/scopes/client_scope.dart';
 import '../homeserver/homeserver.dart';
+import 'components/legacy_sso_login_provider.dart';
 import 'components/matrix_oidc_login_provider.dart';
 import 'components/password_login_provider.dart';
 import 'login.dart';
@@ -61,6 +62,19 @@ class LoginView extends StatelessWidget {
               );
             }
 
+            final oidcFlows = data.$3.where(
+              (flow) =>
+                  flow.type == AuthenticationTypes.sso &&
+                  flow.delegatedOidcCompatibility,
+            );
+            final legacySsoFlows = data.$3.where(
+              (flow) =>
+                  flow.type == AuthenticationTypes.sso &&
+                  !flow.delegatedOidcCompatibility,
+            );
+            final legacyPasswordFlows = data.$3.where(
+              (flow) => flow.type == LoginType.mLoginPassword,
+            );
             return Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 786),
@@ -73,29 +87,24 @@ class LoginView extends StatelessWidget {
                           .welcomeToHomeserver(homeserver.host),
                       style: Theme.of(context).textTheme.headlineLarge,
                     ),
-                    if (data.$3.any(
-                      (flow) =>
-                          flow.type == AuthenticationTypes.sso &&
-                          flow.delegatedOidcCompatibility,
-                    ))
+                    // only show OIDC if available
+                    if (oidcFlows.isNotEmpty)
                       MatrixOidcLoginProvider(
                         discoveryInformation: data.$1,
                       )
-                    else if (data.$3.any(
-                      (flow) => flow.type == LoginType.mLoginPassword,
-                    ))
-                      const PasswordLoginProvider(),
-                    if (data.$3.any(
-                      (flow) =>
-                          flow.type == AuthenticationTypes.sso &&
-                          !flow.delegatedOidcCompatibility,
-                    ))
-                      const ListTile(
-                        leading: Icon(Icons.info_outline),
-                        title: Text(
-                          'Legacy SSO login is not implemented yet.',
+                    // otherwise show all other possible flows
+                    else ...[
+                      // by spec this list will only have a single entry but
+                      // I don't trust any homeserver
+                      ...legacySsoFlows.map(
+                        (flow) => LegacySSOProviderScope(
+                          ssoFlow: flow,
+                          child: const LegacySSOLoginProvider(),
                         ),
                       ),
+                      if (legacyPasswordFlows.isNotEmpty)
+                        const PasswordLoginProvider(),
+                    ],
                   ],
                 ),
               ),

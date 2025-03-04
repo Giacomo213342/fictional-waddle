@@ -81,6 +81,9 @@ class AppLocalizationsTa extends AppLocalizations {
   String get loginPassword => 'கடவுச்சொல்லைப் பயன்படுத்தி உள்நுழைக';
 
   @override
+  String get loginLegacySso => 'Login using legacy SSO';
+
+  @override
   String get username => 'பயனர்பெயர்';
 
   @override

@@ -50,6 +50,7 @@
   },
   "howWouldYouLikeToConnect": "How would you like to connect ?",
   "loginPassword": "Login using password",
+  "loginLegacySso": "Login using legacy SSO",
   "username": "username",
   "email": "email",
   "password": "password",

@@ -45,7 +45,7 @@ class OpenExistingSsssView extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: FutureCallbackBuilder(
                   callback: controller.verifyWithDevice,
-                  builder: (context, callback, loading) =>
+                  builder: (context, callback, loading, _) =>
                       FloatingActionButton.extended(
                     onPressed: callback,
                     icon: loading

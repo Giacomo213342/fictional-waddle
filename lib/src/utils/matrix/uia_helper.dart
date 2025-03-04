@@ -3,6 +3,7 @@ import 'package:matrix/matrix.dart';
 import '../password_cache_manager.dart';
 
 typedef UiaTokenCallback = Future<String?> Function(UiaRequest request);
+typedef UiaLegacySSOCallback = Future<bool?> Function(UiaRequest request);
 typedef UiaOidcAccountManagementCallback = Future<bool?> Function(
   UiaRequest request,
   OidcAccountManagementActions action,
@@ -13,6 +14,7 @@ class UiaHelper {
     required this.client,
     required this.request,
     required this.authenticationOidcAccountManagementCallback,
+    required this.authenticationLegacySSOCallback,
     required this.authenticationPasswordCallback,
   });
 
@@ -20,6 +22,7 @@ class UiaHelper {
   final UiaRequest request;
   final UiaOidcAccountManagementCallback
       authenticationOidcAccountManagementCallback;
+  final UiaLegacySSOCallback authenticationLegacySSOCallback;
   final UiaTokenCallback authenticationPasswordCallback;
 
   Future<void> respond() async {
@@ -47,6 +50,21 @@ class UiaHelper {
           }
           // ensure we got a valid refresh token
           await Future.delayed(const Duration(seconds: 15));
+
+          final auth = AuthenticationData(
+            session: request.session,
+          );
+          await request.completeStage(auth);
+
+          return;
+        } else if (request.nextStages.contains(AuthenticationTypes.sso)) {
+          final response = await authenticationLegacySSOCallback.call(
+            request,
+          );
+          if (response != true) {
+            request.cancel();
+            return;
+          }
 
           final auth = AuthenticationData(
             session: request.session,
