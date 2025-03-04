@@ -59,14 +59,14 @@ PODS:
   - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
-  - SQLCipher (4.5.7):
-    - SQLCipher/standard (= 4.5.7)
-  - SQLCipher/common (4.5.7)
-  - SQLCipher/standard (4.5.7):
+  - SQLCipher (4.6.1):
+    - SQLCipher/standard (= 4.6.1)
+  - SQLCipher/common (4.6.1)
+  - SQLCipher/standard (4.6.1):
     - SQLCipher/common
   - sqlcipher_flutter_libs (0.0.1):
     - Flutter
-    - SQLCipher (~> 4.5.7)
+    - SQLCipher (~> 4.6.1)
   - url_launcher_ios (0.0.1):
     - Flutter
   - volume_controller (0.0.1):
@@ -205,8 +205,8 @@ SPEC CHECKSUMS:
   screen_brightness_ios: 7437207a2a9bc56553aa10f782afecf830b4c4e2
   share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
   sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
-  SQLCipher: 5e6bfb47323635c8b657b1b27d25c5f1baf63bf5
-  sqlcipher_flutter_libs: d91da342e453eb02ed9d17f06f43aeaf82f61058
+  SQLCipher: 77fbe633cd84db04b07876dd50766b4924b57d61
+  sqlcipher_flutter_libs: 275df798e09dcaed07bfc12dc046d26acb9c727a
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
   volume_controller: 531ddf792994285c9b17f9d8a7e4dcdd29b3eae9
   wakelock_plus: 373cfe59b235a6dd5837d0fb88791d2f13a90d56
