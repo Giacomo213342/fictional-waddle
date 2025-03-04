@@ -225,6 +225,12 @@ abstract class AppLocalizations {
   /// **'Login using password'**
   String get loginPassword;
 
+  /// No description provided for @loginLegacySso.
+  ///
+  /// In en, this message translates to:
+  /// **'Login using legacy SSO'**
+  String get loginLegacySso;
+
   /// No description provided for @username.
   ///
   /// In en, this message translates to:

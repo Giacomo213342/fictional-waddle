@@ -41,7 +41,7 @@ class DisplayNameEditor extends StatelessWidget {
               await client.setDisplayName(mxid, displayName);
             }
           },
-          builder: (context, callback, _) => Tooltip(
+          builder: (context, callback, _, __) => Tooltip(
             message: AppLocalizations.of(context).changeDisplayName,
             child: TextButton(
               onPressed: callback,

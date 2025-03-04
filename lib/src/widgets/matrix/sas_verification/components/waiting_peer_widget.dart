@@ -39,7 +39,7 @@ class WaitingPeerWidget extends StatelessWidget {
               FutureCallbackBuilder(
                 callback: () =>
                     SasScope.of(context).verification.cancel('m.user'),
-                builder: (context, callback, loading) => loading
+                builder: (context, callback, loading, _) => loading
                     ? const AsciiProgressIndicator()
                     : FilledButton.tonal(
                         onPressed: callback,

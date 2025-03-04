@@ -79,6 +79,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginPassword => 'Login using password';
 
   @override
+  String get loginLegacySso => 'Login using legacy SSO';
+
+  @override
   String get username => 'username';
 
   @override

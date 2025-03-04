@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'package:async/async.dart';
+
 typedef FutureCallback = Future<void> Function();
 typedef FutureCallbackHandlerBuilder = Widget Function(
   BuildContext context,
   FutureCallback? callback,
   bool loading,
+  VoidCallback? cancel,
 );
 
 class FutureCallbackBuilder extends StatefulWidget {
@@ -22,25 +25,34 @@ class FutureCallbackBuilder extends StatefulWidget {
 }
 
 class _FutureCallbackBuilderState extends State<FutureCallbackBuilder> {
-  bool loading = false;
+  CancelableOperation<void>? operation;
 
   @override
   Widget build(BuildContext context) => widget.builder(
         context,
-        loading || widget.callback == null ? null : callback,
-        loading,
+        operation != null || widget.callback == null ? null : _callback,
+        operation != null,
+        operation?.cancel,
       );
 
-  Future<void> callback() async {
+  CancelableOperation<void>? _operation() {
+    final callback = widget.callback;
+    if (callback == null) {
+      return null;
+    }
+    return CancelableOperation.fromFuture(callback.call());
+  }
+
+  Future<void> _callback() async {
     setState(() {
-      loading = true;
+      operation = _operation();
     });
     try {
-      await widget.callback?.call();
+      await operation?.valueOrCancellation();
     } finally {
       if (mounted) {
         setState(() {
-          loading = false;
+          operation = null;
         });
       }
     }

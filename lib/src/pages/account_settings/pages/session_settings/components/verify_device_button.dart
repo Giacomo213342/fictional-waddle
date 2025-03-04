@@ -23,7 +23,7 @@ class _VerifyDeviceButtonState extends State<VerifyDeviceButton> {
         client.userDeviceKeys[client.userID]?.deviceKeys[device.deviceId];
     return FutureCallbackBuilder(
       callback: deviceKeys == null ? null : _verifyKeys,
-      builder: (context, callback, loading) => loading
+      builder: (context, callback, loading, _) => loading
           ? const AsciiProgressIndicator()
           : TextButton(
               onPressed: callback,

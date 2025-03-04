@@ -27,7 +27,7 @@ class RenameDeviceButton extends StatelessWidget {
           displayName: updatedName.isEmpty ? device.deviceId : updatedName,
         );
       },
-      builder: (context, callback, loading) => loading
+      builder: (context, callback, loading, _) => loading
           ? const AsciiProgressIndicator()
           : TextButton(
               onPressed: callback,

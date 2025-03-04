@@ -77,7 +77,7 @@ class IncomingVerificationRequestWidget extends StatelessWidget {
             children: [
               FutureCallbackBuilder(
                 callback: verification.rejectVerification,
-                builder: (context, callback, loading) => loading
+                builder: (context, callback, loading, _) => loading
                     ? const AsciiProgressIndicator()
                     : FilledButton.tonal(
                         onPressed: callback,
@@ -86,7 +86,7 @@ class IncomingVerificationRequestWidget extends StatelessWidget {
               ),
               FutureCallbackBuilder(
                 callback: verification.acceptVerification,
-                builder: (context, callback, loading) => loading
+                builder: (context, callback, loading, _) => loading
                     ? const AsciiProgressIndicator()
                     : FilledButton.tonal(
                         onPressed: callback,

@@ -39,6 +39,7 @@ class IntentManager extends State<IntentManagerWidget> {
   static final sharedFilesListener = ValueNotifier<List<XFile>?>(null);
 
   static Completer<OidcCallbackResponse>? oidcCallbackCompleter;
+  static Completer<String>? legacySsoCallbackCompleter;
 
   @override
   void initState() {
@@ -98,13 +99,19 @@ class IntentManager extends State<IntentManagerWidget> {
         segments.first == 'oauth2redirect';
 
     if (isWebOAuth2Redirect || isNativeOAuth2Redirect) {
-      oidcCallbackCompleter ??= Completer<OidcCallbackResponse>();
-      oidcCallbackCompleter?.complete(
-        OidcCallbackResponse.parse(
-          uri.toString(),
-          kIsWeb ? 'fragment' : 'query',
-        ),
-      );
+      // ensure it's not legacy SSO
+      if (!uri.queryParameters.containsKey('loginToken')) {
+        oidcCallbackCompleter ??= Completer<OidcCallbackResponse>();
+        oidcCallbackCompleter?.complete(
+          OidcCallbackResponse.parse(
+            uri.toString(),
+            kIsWeb ? 'fragment' : 'query',
+          ),
+        );
+      } else {
+        legacySsoCallbackCompleter ??= Completer<String>();
+        legacySsoCallbackCompleter?.complete(uri.queryParameters['loginToken']);
+      }
       return;
     }
 
