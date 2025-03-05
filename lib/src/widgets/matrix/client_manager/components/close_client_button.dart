@@ -14,8 +14,8 @@ class CloseClientButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final client = ClientScope.of(context).client;
-    return SizedBox(
-      width: 32,
+    return SizedBox.square(
+      dimension: 32,
       child: IconButton(
         onPressed: () {
           if (client.clientName.clientIdentifier ==

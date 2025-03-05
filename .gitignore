@@ -56,6 +56,7 @@ l10n_errors.txt
 *.dylib
 export_options.plist
 android/.kotlin/
+android/build/
 
 # FVM Version Cache
 .fvm/

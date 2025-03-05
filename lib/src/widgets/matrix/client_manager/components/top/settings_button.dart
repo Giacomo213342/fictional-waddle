@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 
-import '../../../../../l10n/generated/app_localizations.dart';
-import '../../../../pages/application_settings/application_settings.dart';
-import '../../../../router/extensions/go_router_path_extension.dart';
+import '../../../../../../l10n/generated/app_localizations.dart';
+import '../../../../../pages/application_settings/application_settings.dart';
+import '../../../../../router/extensions/go_router_path_extension.dart';
 
 class SettingsButton extends StatelessWidget {
   const SettingsButton({super.key});
