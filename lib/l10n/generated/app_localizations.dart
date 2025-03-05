@@ -2169,6 +2169,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scan this QR code with your other device.'**
   String get scanQrWithOtherDevice;
+
+  /// No description provided for @clientSwitcher.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch account'**
+  String get clientSwitcher;
 }
 
 class _AppLocalizationsDelegate

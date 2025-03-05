@@ -1192,4 +1192,7 @@ class AppLocalizationsEt extends AppLocalizations {
   @override
   String get scanQrWithOtherDevice =>
       'Scan this QR code with your other device.';
+
+  @override
+  String get clientSwitcher => 'Switch account';
 }

@@ -17,9 +17,8 @@ import '../../../pages/ssss_bootstrap/ssss_bootstrap.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
 import '../scopes/client_scope.dart';
 import 'client_store.dart';
-import 'client_tab_bar.dart';
-
-final _tabBarGlobalKey = GlobalKey();
+import 'components/bottom_tab_bar_view.dart';
+import 'components/top_tab_bar_view.dart';
 
 class ClientTabView extends StatefulWidget {
   const ClientTabView({super.key, required this.child});
@@ -60,26 +59,10 @@ class _ClientTabViewState extends State<ClientTabView> {
   Widget build(BuildContext context) {
     _loginStateSubscription ??= _subscribeListener(context);
     return LayoutBuilder(
-      builder: (context, constraints) {
-        final tabBarOnTop =
-            constraints.maxWidth > 764 || (!kIsWeb && Platform.isIOS);
-        return Material(
-          child: Column(
-            children: [
-              if (tabBarOnTop)
-                ClientTabBar(
-                  key: _tabBarGlobalKey,
-                  position: VerticalDirection.up,
-                ),
-              Expanded(child: widget.child),
-              if (!tabBarOnTop)
-                ClientTabBar(
-                  key: _tabBarGlobalKey,
-                ),
-            ],
-          ),
-        );
-      },
+      builder: (context, constraints) =>
+          constraints.maxWidth > 764 || (!kIsWeb && Platform.isIOS)
+              ? TopTabBarView(child: widget.child)
+              : BottomTabBarView(child: widget.child),
     );
   }
 

@@ -10,10 +10,6 @@ A geeky and efficient \[matrix\] client for power users.
 
 ## About
 
-**Is it usable yet ? - Maybe, I daily drive it.**
-
-See [Roadmap](#Roadmap) for feature details.
-
 Beep boop and I had too much time during boring work meetings. Using this client as
 a small piece to practice some matrix related stuff.
 
@@ -29,6 +25,8 @@ Flutter Linux-native integrations.
 - fast and efficient
 - terminal style design
 - cross-platform
+
+See [Roadmap](#Roadmap) for feature parity details.
 
 ## Get < polycule >
 
@@ -64,31 +62,32 @@ might be quite similar in both clients - they both have a similar code base we k
 
 ## Roadmap
 
-| Feature                   |           Supported            |
-|---------------------------|:------------------------------:|
-| Homeserver selection      |       :white_check_mark:       |
-| Homeserver proposals      |       :white_check_mark:       |
-| HTTP/3 with QUIC          |       :white_check_mark:       |
-| TLS hardening             |       :white_check_mark:       |
-| Login                     |                                |
-| ... native OIDC ready     |       :white_check_mark:       |
-| ... password              |       :white_check_mark:       |
-| ... SSO                   |              :x:               |
-| Multi account             |                                |
-| ... routing               |       :white_check_mark:       |
-| ... login                 |       :white_check_mark:       |
-| ... incoming URI handling |       :white_check_mark:       |
-| Room list                 |       :white_check_mark:       |
-| Room timeline             |       :white_check_mark:       |
-| Sliding sync              |              :x:               |
-| Sending files             |       :white_check_mark:       |
-| HTML renderer             |       :white_check_mark:       |
-| User profiles             |       :white_check_mark:       |
-| Room details              |              :x:               |
-| Account settings          | :white_check_mark: (OIDC only) |
-| \[matrix\] widgets        |              :x:               |
-| VoIP signaling            |              :x:               |
-| Emoji picker              |       :white_check_mark:       |
+| Feature                   |     Supported      |
+|---------------------------|:------------------:|
+| Homeserver selection      | :white_check_mark: |
+| Homeserver proposals      | :white_check_mark: |
+| HTTP/3 with QUIC          | :white_check_mark: |
+| TLS hardening             | :white_check_mark: |
+| Login                     |                    |
+| ... native OIDC ready     | :white_check_mark: |
+| ... password              | :white_check_mark: |
+| ... SSO                   | :white_check_mark: |
+| Multi account             |                    |
+| ... routing               | :white_check_mark: |
+| ... login                 | :white_check_mark: |
+| ... incoming URI handling | :white_check_mark: |
+| Room list                 | :white_check_mark: |
+| Room timeline             | :white_check_mark: |
+| Sliding sync              |        :x:         |
+| Sending files             | :white_check_mark: |
+| HTML renderer             | :white_check_mark: |
+| User profiles             | :white_check_mark: |
+| Room details              |        :x:         |
+| Room settings             |        :x:         |
+| Account settings          | :white_check_mark: |
+| \[matrix\] widgets        |        :x:         |
+| VoIP signaling            |        :x:         |
+| Emoji picker              | :white_check_mark: |
 
 ## License
 

@@ -7,8 +7,7 @@ class ClientBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.square(
-      dimension: 48,
+    return Center(
       child: BackButton(
         onPressed: () {
           if (Navigator.of(context).canPop()) {

@@ -22,13 +22,16 @@ class InitialSyncTile extends StatelessWidget {
         return AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           height: hide ? 0 : 48,
-          child: ListTile(
-            leading: AsciiProgressIndicator(
-              progress: hide ? 1 : syncStatus?.progress,
-            ),
-            title: Text(
-              syncStatus?.toLocalizedString(context) ??
-                  AppLocalizations.of(context).initialSync,
+          child: ClipRect(
+            clipBehavior: Clip.hardEdge,
+            child: ListTile(
+              leading: AsciiProgressIndicator(
+                progress: hide ? 1 : syncStatus?.progress,
+              ),
+              title: Text(
+                syncStatus?.toLocalizedString(context) ??
+                    AppLocalizations.of(context).initialSync,
+              ),
             ),
           ),
         );
