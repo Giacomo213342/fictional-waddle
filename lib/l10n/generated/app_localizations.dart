@@ -102,7 +102,7 @@ abstract class AppLocalizations {
     Locale('et'),
     Locale('nb'),
     Locale('nl'),
-    Locale('ta')
+    Locale('ta'),
   ];
 
   /// No description provided for @appName.
@@ -2193,7 +2193,7 @@ class _AppLocalizationsDelegate
         'et',
         'nb',
         'nl',
-        'ta'
+        'ta',
       ].contains(locale.languageCode);
 
   @override
@@ -2204,34 +2204,35 @@ Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'de':
-      return app_localizations_de
-          .loadLibrary()
-          .then((dynamic _) => app_localizations_de.AppLocalizationsDe());
+      return app_localizations_de.loadLibrary().then(
+            (dynamic _) => app_localizations_de.AppLocalizationsDe(),
+          );
     case 'en':
-      return app_localizations_en
-          .loadLibrary()
-          .then((dynamic _) => app_localizations_en.AppLocalizationsEn());
+      return app_localizations_en.loadLibrary().then(
+            (dynamic _) => app_localizations_en.AppLocalizationsEn(),
+          );
     case 'et':
-      return app_localizations_et
-          .loadLibrary()
-          .then((dynamic _) => app_localizations_et.AppLocalizationsEt());
+      return app_localizations_et.loadLibrary().then(
+            (dynamic _) => app_localizations_et.AppLocalizationsEt(),
+          );
     case 'nb':
-      return app_localizations_nb
-          .loadLibrary()
-          .then((dynamic _) => app_localizations_nb.AppLocalizationsNb());
+      return app_localizations_nb.loadLibrary().then(
+            (dynamic _) => app_localizations_nb.AppLocalizationsNb(),
+          );
     case 'nl':
-      return app_localizations_nl
-          .loadLibrary()
-          .then((dynamic _) => app_localizations_nl.AppLocalizationsNl());
+      return app_localizations_nl.loadLibrary().then(
+            (dynamic _) => app_localizations_nl.AppLocalizationsNl(),
+          );
     case 'ta':
-      return app_localizations_ta
-          .loadLibrary()
-          .then((dynamic _) => app_localizations_ta.AppLocalizationsTa());
+      return app_localizations_ta.loadLibrary().then(
+            (dynamic _) => app_localizations_ta.AppLocalizationsTa(),
+          );
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
 }

@@ -9,8 +9,8 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../l10n/matrix/polycule_matrix_localizations.dart';
 import '../../../utils/matrix/legacy_idp_extension.dart';
 import '../../../utils/matrix/oauth2_redirect_uri_extension.dart';
-import '../../../widgets/device_pixel_ratio_builder.dart';
 import '../../../widgets/intent_manager.dart';
+import '../../../widgets/matrix/mxc_uri_image.dart';
 import '../../../widgets/matrix/scopes/client_scope.dart';
 
 class LegacyIdpButton extends StatefulWidget {
@@ -27,7 +27,6 @@ class _LegacyIdpButtonState extends State<LegacyIdpButton> {
 
   @override
   Widget build(BuildContext context) {
-    final client = ClientScope.of(context).client;
     final label = widget.idp.name;
     final icon = widget.idp.icon;
 
@@ -55,23 +54,11 @@ class _LegacyIdpButtonState extends State<LegacyIdpButton> {
             : FilledButton.icon(
                 onPressed: _login,
                 style: theme,
-                icon: DevicePixelRatioBuilder(
-                  builder: (context, ratio) {
-                    final dimension = 24 * ratio;
-                    return Image.network(
-                      icon
-                          // not logged in yet so no authenticated media
-                          // ignore: deprecated_member_use
-                          .getThumbnail(
-                            client,
-                            width: dimension,
-                            height: dimension,
-                          )
-                          .toString(),
-                      width: 24,
-                      height: 24,
-                    );
-                  },
+                icon: MxcUriImageBuilder.dpiRespective(
+                  uri: icon,
+                  width: 24,
+                  height: 24,
+                  supportAuthenticatedMedia: false,
                 ),
                 label: Text(label),
               );

@@ -8,14 +8,14 @@ import 'package:flutter/rendering.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../l10n/generated/app_localizations.dart';
-import '../../../../l10n/matrix/polycule_matrix_localizations.dart';
-import '../../../utils/matrix/oauth2_redirect_uri_extension.dart';
-import '../../../utils/matrix/oidc_delegation_extension.dart';
-import '../../../widgets/ascii_progress_indicator.dart';
-import '../../../widgets/intent_manager.dart';
-import '../../../widgets/matrix/scopes/client_scope.dart';
-import 'linux_oauth2_hint.dart';
+import '../../../../../l10n/generated/app_localizations.dart';
+import '../../../../../l10n/matrix/polycule_matrix_localizations.dart';
+import '../../../../utils/matrix/oauth2_redirect_uri_extension.dart';
+import '../../../../utils/matrix/oidc_delegation_extension.dart';
+import '../../../../widgets/ascii_progress_indicator.dart';
+import '../../../../widgets/intent_manager.dart';
+import '../../../../widgets/matrix/scopes/client_scope.dart';
+import '../linux_oauth2_hint.dart';
 
 class MatrixOidcLoginProvider extends StatefulWidget {
   const MatrixOidcLoginProvider({

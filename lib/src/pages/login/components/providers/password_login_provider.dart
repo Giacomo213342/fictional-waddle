@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../../../../l10n/generated/app_localizations.dart';
-import '../../../../l10n/matrix/polycule_matrix_localizations.dart';
-import '../../../utils/password_cache_manager.dart';
-import '../../../widgets/ascii_progress_indicator.dart';
-import '../../../widgets/matrix/scopes/client_scope.dart';
-import '../login.dart';
+import '../../../../../l10n/generated/app_localizations.dart';
+import '../../../../../l10n/matrix/polycule_matrix_localizations.dart';
+import '../../../../utils/password_cache_manager.dart';
+import '../../../../widgets/ascii_progress_indicator.dart';
+import '../../../../widgets/matrix/scopes/client_scope.dart';
+import '../../login.dart';
 
 class PasswordLoginProvider extends StatefulWidget {
   const PasswordLoginProvider({super.key});
