@@ -1,3 +1,13 @@
+## v0.2.4
+
+- chore(deps): bump com.android.application in /android (The one with the braid)
+- chore(deps): bump sqlcipher_flutter_libs from 0.6.4 to 0.6.5 (The one with the braid)
+- chore(deps): update podfile (manual) (polycule  CI Pipeline)
+- feat: refactor client manager view (The one with the braid)
+- feat: store draft messages (The one with the braid)
+- feat: support legacy SSO login (The one with the braid)
+- fix: wait for Client login before handling authenticated media (The one with the braid)
+
 ## v0.2.3
 
 - chore(deps): bump com.android.application in /android (The one with the braid)

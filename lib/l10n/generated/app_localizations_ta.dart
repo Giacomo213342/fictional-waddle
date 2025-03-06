@@ -862,9 +862,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String fontScaleLabel(double scale) {
     final intl.NumberFormat scaleNumberFormat =
         intl.NumberFormat.decimalPercentPattern(
-      locale: localeName,
-      decimalDigits: 1,
-    );
+            locale: localeName, decimalDigits: 1);
     final String scaleString = scaleNumberFormat.format(scale);
 
     return '$scaleString';
