@@ -12,10 +12,6 @@ include:
 
 image: registry.gitlab.com/polycule_client/flutter-dockerimages:$FLUTTER_VERSION-base
 
-cache:
-  paths:
-    - $CI_PROJECT_DIR/.pub-cache
-
 stages:
   - check
   - test

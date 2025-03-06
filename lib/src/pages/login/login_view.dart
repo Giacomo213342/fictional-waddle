@@ -7,9 +7,9 @@ import '../../router/extensions/go_router_path_extension.dart';
 import '../../widgets/ascii_progress_indicator.dart';
 import '../../widgets/matrix/scopes/client_scope.dart';
 import '../homeserver/homeserver.dart';
-import 'components/legacy_sso_login_provider.dart';
-import 'components/matrix_oidc_login_provider.dart';
-import 'components/password_login_provider.dart';
+import 'components/providers/legacy_sso_login_provider.dart';
+import 'components/providers/matrix_oidc_login_provider.dart';
+import 'components/providers/password_login_provider.dart';
 import 'login.dart';
 
 class LoginView extends StatelessWidget {

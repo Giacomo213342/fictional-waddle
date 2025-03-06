@@ -25,6 +25,7 @@ class MxcUriImageBuilder extends StatefulWidget {
     this.height,
     this.ratio = 1,
     this.fit,
+    this.supportAuthenticatedMedia = true,
   });
 
   static Widget dpiRespective({
@@ -34,6 +35,7 @@ class MxcUriImageBuilder extends StatefulWidget {
     double? width,
     double? height,
     BoxFit? fit,
+    bool supportAuthenticatedMedia = true,
   }) =>
       DevicePixelRatioBuilder(
         builder: (context, ratio) => MxcUriImageBuilder(
@@ -44,6 +46,7 @@ class MxcUriImageBuilder extends StatefulWidget {
           height: height,
           ratio: ratio,
           fit: fit,
+          supportAuthenticatedMedia: supportAuthenticatedMedia,
         ),
       );
 
@@ -62,6 +65,7 @@ class MxcUriImageBuilder extends StatefulWidget {
   final double? height;
   final double ratio;
   final BoxFit? fit;
+  final bool supportAuthenticatedMedia;
 
   @override
   State<MxcUriImageBuilder> createState() => _MxcUriImageBuilderState();
@@ -107,18 +111,34 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
     super.initState();
   }
 
-  Future<Uri>? getDownloadUri() {
+  Future<Uri?> getDownloadUri() async {
     final client = ClientScope.of(context).client;
     final width = widget.width;
     final height = widget.height;
-    if (width == null && height == null) {
-      return widget.uri?.getDownloadUri(client);
+    // if we should handle authenticated media, wait for login
+    if (widget.supportAuthenticatedMedia &&
+        client.onLoginStateChanged.value != LoginState.loggedIn) {
+      await client.onLoginStateChanged.stream
+          .firstWhere((s) => s == LoginState.loggedIn);
     }
-    return widget.uri?.getThumbnailUri(
-      client,
-      width: width == null ? null : width * widget.ratio,
-      height: height == null ? null : height * widget.ratio,
-    );
+    if (width == null && height == null) {
+      return widget.supportAuthenticatedMedia
+          ? await widget.uri?.getDownloadUri(client)
+          // ignore: deprecated_member_use
+          : widget.uri?.getDownloadLink(client);
+    }
+    return widget.supportAuthenticatedMedia
+        ? await widget.uri?.getThumbnailUri(
+            client,
+            width: width == null ? null : width * widget.ratio,
+            height: height == null ? null : height * widget.ratio,
+          )
+        // ignore: deprecated_member_use
+        : widget.uri?.getThumbnail(
+            client,
+            width: width == null ? null : width * widget.ratio,
+            height: height == null ? null : height * widget.ratio,
+          );
   }
 
   @override

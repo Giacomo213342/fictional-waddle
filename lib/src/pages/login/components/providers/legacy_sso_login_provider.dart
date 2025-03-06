@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import '../../../../l10n/generated/app_localizations.dart';
-import '../../../utils/matrix/legacy_idp_extension.dart';
-import 'legacy_idp_button.dart';
+import '../../../../../l10n/generated/app_localizations.dart';
+import '../../../../utils/matrix/legacy_idp_extension.dart';
+import '../legacy_idp_button.dart';
 
 class LegacySSOProviderScope extends InheritedWidget {
   const LegacySSOProviderScope({
