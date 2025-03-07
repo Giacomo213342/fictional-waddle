@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
+set -e
+
 if [ -n "${FLUTTER_VERSION}" ]; then
   FLUTTER_VERSION="$(cat flutter_version)"
 fi
+
+export FLUTTER_VERSION
 
 export FLUTTER_HOME="$HOME/build/flutter-${FLUTTER_VERSION}"
 export FLUTTER_GIT_URL="unknown source"

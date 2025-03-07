@@ -2,8 +2,7 @@ variables:
   FLUTTER_VERSION: 3.29.0
 
 include:
-  - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.39.0
-    path: .gitlab-ci.yml
+  - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.43.1
     inputs:
       gitlab_access_token: $dependabot_gitlab_access_token
       stage_name: scan
@@ -30,6 +29,7 @@ stages:
   - |
     if [ "$(uname)" == "Darwin" ]; then source scripts/prepare-macos.sh; fi
   - export PUB_CACHE=$CI_PROJECT_DIR/.pub-cache
+  - export CP_HOME_DIR=$CI_PROJECT_DIR/.pod-cache
   - flutter pub get --enforce-lockfile
   - flutter gen-l10n
 
@@ -364,6 +364,7 @@ build:bundle:
   script:
     - flutter build appbundle $FLUTTER_ARGS
     - mv build/app/outputs/bundle/release/app-release.aab polycule-$PUBSPEC_VERSION.aab
+    - jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore "android/app/keystore.jks" -storepass "$(cat "$KEYSTORE_PASS_FILE")" -keypass "$(cat "$KEYSTORE_KEY_FILE")" polycule-$PUBSPEC_VERSION.aab "${KEYSTORE_ALIAS}"
   <<: *signed
   artifacts:
     paths:
