@@ -1,5 +1,4 @@
-<em> Features </em>
-
+<b> Features </b>
 <ul>
     <li> keyboard optimized </li>
     <li> accessibility focussed development </li>
@@ -7,5 +6,4 @@
     <li> fast and efficient </li>
     <li> terminal style design </li>
     <li> cross-platform </li>
-
 </ul>

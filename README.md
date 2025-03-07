@@ -1,10 +1,10 @@
 # ![polycule logo](assets/logo/logo-circle.svg) < polycule >
 
+![< polycule > - a geeky and efficient \[matrix\] client for power users](assets/artwork/feature-graphic.svg)
+
 [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/polycule_client%2Fpolycule?style=for-the-badge&logo=gitlab)](https://gitlab.com/polycule_client/polycule/-/pipelines)
 [![Weblate project translated](https://img.shields.io/weblate/progress/polycule?style=for-the-badge&logo=weblate)](https://hosted.weblate.org/projects/polycule/)
 [![GitLab Tag](https://img.shields.io/gitlab/v/tag/polycule_client%2Fpolycule?style=for-the-badge&logo=gitlab)](https://gitlab.com/polycule_client/polycule/-/tags)
-
-A geeky and efficient \[matrix\] client for power users.
 
 **Supports Open ID Connect :white_check_mark: !**
 

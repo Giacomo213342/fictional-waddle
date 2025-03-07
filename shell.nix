@@ -16,7 +16,6 @@ let
     sqlite
     sqlcipher
     coreutils
-    colima
     docker
     ideviceinstaller
     # olm
@@ -31,8 +30,6 @@ in mkShell {
   buildInputs = inputs;
   shellHook =
   ''
-    source scripts/prepare-macos.sh
-
     # ugly workaround to prevent use of nix-provided clang
     mkdir -p "$HOME/.bin"
     ln -sf /usr/bin/clang "$HOME/.bin"
@@ -72,10 +69,6 @@ in mkShell {
     # find $(echo $NIX_LDFLAGS | sed 's/-L//g' | uniq) -name "libolm.3.dylib" -print -quit | xargs -I{} cp -f {} $(pwd)
     cp -f /usr/local/Cellar/libolm/*/lib/libolm.3.dylib $(pwd)
     find $(echo $NIX_LDFLAGS | sed 's/-L//g' | uniq) -name "libcrypto.3.dylib" -print -quit | xargs -I{} cp -f {} $(pwd)
-
-    # https://github.com/abiosoft/colima/issues/1036
-    # export LIMA_HOME=~/.colima_lima
-    # colima start
 
   '';
 }

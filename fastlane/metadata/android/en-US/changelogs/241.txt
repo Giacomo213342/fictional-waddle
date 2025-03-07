@@ -1,0 +1,4 @@
+- feat: refactor client manager view (The one with the braid)
+- feat: store draft messages (The one with the braid)
+- feat: support legacy SSO login (The one with the braid)
+- fix: wait for Client login before handling authenticated media (The one with the braid)
