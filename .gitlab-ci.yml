@@ -373,6 +373,7 @@ test:screenshots:commit:
     - git add assets/screenshots
     - git commit -sm feat\:\ update\ screenshots\ \(manual\)
     - git push https://git:$CI_PUSH_TOKEN@gitlab.com/$CI_PROJECT_PATH.git HEAD:$CI_COMMIT_REF_NAME
+  <<: *unsigned
 
 build:macos:debug:
   extends: .build
