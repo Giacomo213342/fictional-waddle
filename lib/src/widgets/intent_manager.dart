@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -156,6 +157,9 @@ class IntentManager extends State<IntentManagerWidget> {
       return;
     }
     try {
+      if (!Platform.isIOS && !Platform.isAndroid) {
+        return;
+      }
       _shareIntentSubscription = ReceiveSharingIntent.instance
           .getMediaStream()
           .listen(_handleShareIntent);
@@ -205,6 +209,9 @@ class IntentManager extends State<IntentManagerWidget> {
     sharedTextListener.value = null;
     sharedFilesListener.value = null;
 
+    if (kIsWeb || (!Platform.isIOS && !Platform.isAndroid)) {
+      return;
+    }
     await ReceiveSharingIntent.instance.reset();
   }
 

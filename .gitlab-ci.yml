@@ -64,6 +64,7 @@ before_script:
 
 .check:
   stage: check
+  needs: [ ]
   except:
     - schedules
     - tags
@@ -75,6 +76,7 @@ before_script:
 
 .test:
   stage: test
+  needs: [ ]
   except:
     - schedules
   tags:
@@ -84,6 +86,7 @@ before_script:
 
 .build:
   stage: build
+  needs: [ ]
   before_script:
     - *versioning-setup
     - *flutter-setup
@@ -137,7 +140,7 @@ check:codestyle:
   script:
     - dart analyze --fatal-infos
     - dart format . --set-exit-if-changed
-    - dart run import_sorter:main --no-comments --exit-if-changed
+    - dart run import_sorter:main --exit-if-changed
 
 check:flutter_version:
   extends: .check
@@ -163,6 +166,7 @@ check:flutter_version:
 check:flutter_version:commit:
   extends: .check
   when: manual
+  before_script: [ ]
   script:
     - ./flutter_version.sh
     - ./scripts/download-sas-emoji-data.sh
@@ -233,47 +237,141 @@ test:android:avd:prepare:
   stage: test
   extends: .android
   when: manual
+  needs: [ ]
   script:
-    - flutter build apk --debug --target-platform android-x64 $FLUTTER_BASE_ARGS
+    - flutter build apk --profile --target-platform android-x64 -t integration_test/integration.dart $FLUTTER_BASE_ARGS
   <<: *unsigned
   artifacts:
     paths:
-      - build/app
+      - build/app/outputs/flutter-apk/app-profile.apk
 
 # then test on our KVM runner
-test:android:avd:
+.test:android:avd:
   stage: test
   extends: .android
+  timeout: 10m
   needs:
     - test:android:avd:prepare
-  variables:
-    ANDROID_DEVICE: pixel_4_xl
-    EMULATOR_ANDROID_VERSION: 35
+  parallel:
+    matrix:
+      - THEME_MODE: [ "dark", "light" ]
   services:
     - name: registry.gitlab.com/polycule_client/flutter-dockerimages:emulator-$EMULATOR_ANDROID_VERSION
       alias: emulator
-  before_script:
-    - adb start-server
+    - name: matrixconduit/matrix-conduit:latest
+      alias: homeserver
+      variables:
+        CONDUIT_SERVER_NAME: "homeserver"
+        CONDUIT_PORT: 80
+        CONDUIT_ADDRESS: "::"
+        CONDUIT_DATABASE_BACKEND: "rocksdb"
+        CONDUIT_DATABASE_PATH: "/rocksdb"
+        CONDUIT_ALLOW_REGISTRATION: true
+        CONDUIT_CONFIG: "/etc/conduit.toml"
+  variables:
+    HOMESERVER: "http://homeserver"
   script:
-    - adb connect emulator:5555
+    - adb start-server
     - sleep 15
-    - adb shell settings put global sysui_demo_allowed 1
-    - adb shell am broadcast -a com.android.systemui.demo -e command enter
+    - adb connect emulator:5555
     - scrcpy --no-audio --no-window -r recording.mkv &
-    - flutter test --file-reporter json:integration_android.json integration_test -d emulator:5555 $FLUTTER_BASE_ARGS
+    - ./scripts/emulator-android.sh
+    # - dart integration_test/server/prepare_legacy.dart
+    - flutter drive --profile --driver test_driver/integration_test.dart --target integration_test/integration.dart -d emulator:5555 --use-application-binary build/app/outputs/flutter-apk/app-profile.apk $FLUTTER_BASE_ARGS
   after_script:
     - pkill scrcpy || true
     - sleep 15
     - ffmpeg -i recording.mkv -c copy recording.mp4
-  <<: *unsigned
+    - zip screenshots-android-${FORMFACTOR}-${THEME_MODE}.zip $(git ls-files --modified --others --exclude-standard)
   tags:
     - x86_64
     - kvm
   artifacts:
     when: always
     paths:
-      - integration_android.json
       - recording.mp4
+      - screenshots-*.zip
+
+test:android:avd:phone:
+  extends: .test:android:avd
+  variables:
+    FORMFACTOR: phone
+    ANDROID_DEVICE: pixel_7_pro
+    EMULATOR_ANDROID_VERSION: 35
+    HOMESERVER: "http://homeserver"
+
+test:android:avd:tablet:
+  extends: .test:android:avd
+  variables:
+    FORMFACTOR: tablet
+    ANDROID_DEVICE: pixel_c
+    EMULATOR_ANDROID_VERSION: 27
+    HOMESERVER: "http://homeserver"
+
+test:android:avd:desktop:
+  extends: .test:android:avd
+  variables:
+    FORMFACTOR: desktop
+    ANDROID_DEVICE: desktop_small
+    EMULATOR_ANDROID_VERSION: 35
+    HOMESERVER: "http://homeserver"
+
+.test:linux:
+  stage: test
+  extends: .linux
+  needs: [ ]
+  parallel:
+    matrix:
+      - COLOR_SCHEME: [ "prefer-dark", "prefer-light" ]
+  variables:
+    HOMESERVER: "http://conduit"
+  services:
+    - name: matrixconduit/matrix-conduit:latest
+      alias: conduit
+      variables:
+        CONDUIT_SERVER_NAME: "conduit"
+        CONDUIT_PORT: 80
+        CONDUIT_DATABASE_BACKEND: "rocksdb"
+        CONDUIT_DATABASE_PATH: "/rocksdb"
+        CONDUIT_ALLOW_REGISTRATION: true
+        CONDUIT_CONFIG: "/etc/conduit.toml"
+
+  before_script:
+    - apt update && apt install --no-install-recommends -y dbus-daemon gnome-keyring
+  script:
+    # gsettings set org.gnome.desktop.interface color-scheme $COLOR_SCHEME
+    - |
+      dbus-run-session bash -c " \
+        echo "supersecret" | eval gnome-keyring-daemon --unlock && \
+        dbus-update-activation-environment --all && \
+        xvfb-run --auto-servernum -s -screen\ 0\ 1920x1080x8 \
+        flutter drive --profile --driver test_driver/integration_test.dart --target integration_test/integration.dart \
+        -d linux --dart-define=HOMESERVER=$HOMESERVER $FLUTTER_BASE_ARGS"
+  tags:
+    - saas-linux-medium-arm64
+  artifacts:
+    when: always
+    paths:
+      - assets/screenshots
+
+test:screenshots:commit:
+  stage: test
+  needs:
+    # - test:linux
+    - test:android:avd:phone
+    - test:android:avd:tablet
+    - test:android:avd:desktop
+  when: manual
+  script:
+    - |
+      for file in screenshots-*.zip; do
+        unzip $file
+      done
+    - git config --local user.name "< polycule > CI Pipeline"
+    - git config --local user.email "gitlab@polycule.im"
+    - git add assets/screenshots
+    - git commit -sm feat\:\ update\ screenshots\ \(manual\)
+    - git push https://git:$CI_PUSH_TOKEN@gitlab.com/$CI_PROJECT_PATH.git HEAD:$CI_COMMIT_REF_NAME
 
 build:macos:debug:
   extends: .build
@@ -281,7 +379,6 @@ build:macos:debug:
   tags:
     - saas-macos-medium-m1
   script:
-    - brew install libolm
     - flutter build macos --debug $FLUTTER_ARGS
     - rm -rf polycule-$POLYCULE_VERSION-debug.app
     - mv build/macos/Build/Products/Debug/polycule.app polycule-$POLYCULE_VERSION-debug.app
@@ -298,7 +395,6 @@ build:macos:
   tags:
     - saas-macos-medium-m1
   script:
-    - brew install libolm
     - flutter build macos $FLUTTER_ARGS
     - rm -rf polycule-$POLYCULE_VERSION.app
     - mv build/macos/Build/Products/Release/polycule.app polycule-$POLYCULE_VERSION.app
@@ -315,7 +411,6 @@ build:ios:debug:
   tags:
     - saas-macos-medium-m1
   script:
-    - brew install libolm
     - flutter build ipa --no-codesign --debug $FLUTTER_ARGS
     - rm -rf polycule-$POLYCULE_VERSION-debug.xcarchive || true
     - mv build/ios/archive/Runner.xcarchive polycule-$POLYCULE_VERSION-debug.xcarchive
@@ -332,7 +427,6 @@ build:ipa:
   tags:
     - saas-macos-medium-m1
   script:
-    - brew install libolm
     - keychain initialize
     - app-store-connect fetch-signing-files $(xcode-project detect-bundle-id --project ios/*.xcodeproj) --platform IOS --type IOS_APP_STORE --create
     - keychain add-certificates
