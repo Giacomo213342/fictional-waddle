@@ -283,6 +283,7 @@ test:android:avd:prepare:
     - sleep 15
     - ffmpeg -i recording.mkv -c copy recording.mp4
     - zip screenshots-android-${FORMFACTOR}-${THEME_MODE}.zip $(git ls-files --modified --others --exclude-standard)
+  <<: *unsigned
   tags:
     - x86_64
     - kvm
