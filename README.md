@@ -45,11 +45,12 @@ specific project status.
 
 ## Screenshots
 
-|                                                              |                                                              |                                                              |                                                              |
-|--------------------------------------------------------------|--------------------------------------------------------------|--------------------------------------------------------------|--------------------------------------------------------------|
-| ![Screenshot 1](assets/screenshots/mobile/linux/dark/01.png) | ![Screenshot 2](assets/screenshots/mobile/linux/dark/02.png) | ![Screenshot 3](assets/screenshots/mobile/linux/dark/03.png) | ![Screenshot 4](assets/screenshots/mobile/linux/dark/04.png) |
-| ![Screenshot 5](assets/screenshots/mobile/linux/dark/05.png) | ![Screenshot 6](assets/screenshots/mobile/linux/dark/06.png) | ![Screenshot 7](assets/screenshots/mobile/linux/dark/07.png) | ![Screenshot 8](assets/screenshots/mobile/linux/dark/08.png) |
-| ![Screenshot 9](assets/screenshots/mobile/linux/dark/09.png) | ![Screenshot 6](assets/screenshots/mobile/linux/dark/10.png) |                                                              |                                                              |
+|                                                                             |                                                                              |                                                                                        |                                                                                         |
+|-----------------------------------------------------------------------------|------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
+| ![Screenshot 1](assets/screenshots/linux/mobile/dark/01.png)                | ![Screenshot 2](assets/screenshots/linux/mobile/dark/02.png)                 | ![Screenshot 3](assets/screenshots/linux/mobile/dark/03.png)                           | ![Screenshot 4](assets/screenshots/linux/mobile/dark/04.png)                            |
+| ![Screenshot 5](assets/screenshots/linux/mobile/dark/05.png)                | ![Screenshot 6](assets/screenshots/linux/mobile/dark/06.png)                 | ![Screenshot 7](assets/screenshots/linux/mobile/dark/07.png)                           | ![Screenshot 8](assets/screenshots/linux/mobile/dark/08.png)                            |
+| ![Screenshot 9](assets/screenshots/linux/mobile/dark/09.png)                | ![Screenshot 10](assets/screenshots/linux/mobile/dark/10.png)                | ![Screenshot 11](assets/screenshots/android/tablet/light/01-homeserver.png)            | ![Screenshot 12](assets/screenshots/android/tablet/light/06-accessibility-settings.png) |
+| ![Screenshot 13](assets/screenshots/android/desktop/dark/01-homeserver.png) | ![Screenshot 14](assets/screenshots/android/desktop/light/01-homeserver.png) | ![Screenshot 15](assets/screenshots/android/tablet/dark/06-accessibility-settings.png) | ![Screenshot 16](assets/screenshots/android/tablet/light/06-accessibility-settings.png) |
 
 ## Thanks
 

@@ -10,7 +10,7 @@ import 'package:media_kit/media_kit.dart';
 import 'src/polycule.dart';
 import 'src/utils/error_logger.dart';
 
-void main(List<String>? args) {
+void main([List<String>? args]) {
   FlutterError.onError = (details) {
     ErrorLogger().captureStackTrace(details.exception, details.stack, false);
   };
@@ -25,6 +25,7 @@ void main(List<String>? args) {
       WidgetsFlutterBinding.ensureInitialized();
       MediaKit.ensureInitialized();
       JustAudioMediaKit.ensureInitialized();
+
       runApp(const PolyculeClient());
     },
     (e, s) {

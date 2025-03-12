@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
@@ -55,7 +58,10 @@ class _HomeserverInputState extends State<HomeserverInput> {
       key: formKey,
       child: TextFormField(
         controller: controller,
-        autofocus: true,
+        autofocus: kIsWeb ||
+            Platform.isLinux ||
+            Platform.isMacOS ||
+            Platform.isWindows,
         autocorrect: false,
         keyboardType: TextInputType.url,
         textInputAction: TextInputAction.go,
