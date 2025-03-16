@@ -1,5 +1,5 @@
 variables:
-  FLUTTER_VERSION: 3.29.2
+  FLUTTER_VERSION: 3.29.0
 
 include:
   - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.43.1
@@ -166,7 +166,6 @@ check:flutter_version:
 check:flutter_version:commit:
   extends: .check
   when: manual
-  before_script: [ ]
   script:
     - ./flutter_version.sh
     - ./scripts/download-sas-emoji-data.sh
