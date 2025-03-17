@@ -50,6 +50,7 @@ class ToneButton extends StatelessWidget {
                   filePicker:
                       AnimatedEmoji.fromGlyph(_glyph)?.archiveFilePicker,
                 ),
+                animate: !const bool.fromEnvironment('INTEGRATION_TEST'),
                 width: _size,
                 height: _size,
               ),

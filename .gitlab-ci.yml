@@ -238,7 +238,7 @@ test:android:avd:prepare:
   when: manual
   needs: [ ]
   script:
-    - flutter build apk --profile --target-platform android-x64 -t integration_test/integration.dart $FLUTTER_BASE_ARGS
+    - flutter build apk --profile --target-platform android-x64 -t integration_test/integration.dart --dart-define=INTEGRATION_TEST=true $FLUTTER_BASE_ARGS
   <<: *unsigned
   artifacts:
     paths:
@@ -249,6 +249,7 @@ test:android:avd:prepare:
   stage: test
   extends: .android
   timeout: 10m
+  retry: 2
   needs:
     - test:android:avd:prepare
   parallel:
@@ -266,7 +267,10 @@ test:android:avd:prepare:
         CONDUIT_DATABASE_BACKEND: "rocksdb"
         CONDUIT_DATABASE_PATH: "/rocksdb"
         CONDUIT_ALLOW_REGISTRATION: true
-        CONDUIT_CONFIG: "/etc/conduit.toml"
+        CONDUIT_REGISTRATION_SECRET: "SomeSecret"
+        CONDUIT_LOG: "info,rocket=off,_=off,sled=off"
+        CONDUIT_WELL_KNOWN_CLIENT: "http://homeserver"
+        CONDUIT_CONFIG: ""
   variables:
     HOMESERVER: "http://homeserver"
   script:
@@ -275,13 +279,13 @@ test:android:avd:prepare:
     - adb connect emulator:5555
     - scrcpy --no-audio --no-window -r recording.mkv &
     - ./scripts/emulator-android.sh
-    # - dart integration_test/server/prepare_legacy.dart
+    - dart integration_test/server/prepare_legacy.dart
     - flutter drive --profile --driver test_driver/integration_test.dart --target integration_test/integration.dart -d emulator:5555 --use-application-binary build/app/outputs/flutter-apk/app-profile.apk $FLUTTER_BASE_ARGS
   after_script:
     - pkill scrcpy || true
     - sleep 15
-    - ffmpeg -i recording.mkv -c copy recording.mp4
-    - zip screenshots-android-${FORMFACTOR}-${THEME_MODE}.zip $(git ls-files --modified --others --exclude-standard)
+    - ffmpeg -i recording.mkv -c copy recording.mp4 || true
+    - zip screenshots-android-${FORMFACTOR}-${THEME_MODE}.zip $(git ls-files --modified --others --exclude-standard assets/screenshots)
   <<: *unsigned
   tags:
     - x86_64
@@ -346,7 +350,7 @@ test:android:avd:desktop:
         dbus-update-activation-environment --all && \
         xvfb-run --auto-servernum -s -screen\ 0\ 1920x1080x8 \
         flutter drive --profile --driver test_driver/integration_test.dart --target integration_test/integration.dart \
-        -d linux --dart-define=HOMESERVER=$HOMESERVER $FLUTTER_BASE_ARGS"
+        -d linux --dart-define=HOMESERVER=$HOMESERVER --dart-define=INTEGRATION_TEST=true $FLUTTER_BASE_ARGS"
   tags:
     - saas-linux-medium-arm64
   artifacts:
@@ -363,6 +367,7 @@ test:screenshots:commit:
     - test:android:avd:desktop
   when: manual
   script:
+    - rm -R assets/screenshots/{android}
     - |
       for file in screenshots-*.zip; do
         unzip $file
@@ -372,6 +377,13 @@ test:screenshots:commit:
     - git add assets/screenshots
     - git commit -sm feat\:\ update\ screenshots\ \(manual\)
     - git push https://git:$CI_PUSH_TOKEN@gitlab.com/$CI_PROJECT_PATH.git HEAD:$CI_COMMIT_REF_NAME
+  <<: *unsigned
+
+check:screenshots:symlinks:
+  stage: check
+  script:
+    - |
+      if [ -n "$(find . -xtype l)" ]; then exit 1; fi
   <<: *unsigned
 
 build:macos:debug:

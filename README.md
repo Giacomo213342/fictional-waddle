@@ -45,16 +45,24 @@ specific project status.
 
 ## Screenshots
 
+### Linux mobile
+
 |                                                              |                                                               |                                                              |                                                              |
 |--------------------------------------------------------------|---------------------------------------------------------------|--------------------------------------------------------------|--------------------------------------------------------------|
 | ![Screenshot 1](assets/screenshots/linux/mobile/dark/01.png) | ![Screenshot 2](assets/screenshots/linux/mobile/dark/02.png)  | ![Screenshot 3](assets/screenshots/linux/mobile/dark/03.png) | ![Screenshot 4](assets/screenshots/linux/mobile/dark/04.png) |
 | ![Screenshot 5](assets/screenshots/linux/mobile/dark/05.png) | ![Screenshot 6](assets/screenshots/linux/mobile/dark/06.png)  | ![Screenshot 7](assets/screenshots/linux/mobile/dark/07.png) | ![Screenshot 8](assets/screenshots/linux/mobile/dark/08.png) |
 | ![Screenshot 9](assets/screenshots/linux/mobile/dark/09.png) | ![Screenshot 10](assets/screenshots/linux/mobile/dark/10.png) |                                                              |                                                              |
 
-|                                                                                        |                                                                                       |                                                                                        |                                                                                         |
-|----------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
-| ![Screenshot 1](assets/screenshots/android/tablet/light/01-homeserver.png)             | ![Screenshot 2](assets/screenshots/android/tablet/dark/01-homeserver.png)             | ![Screenshot 3](assets/screenshots/android/desktop/dark/01-homeserver.png)             | ![Screenshot 4](assets/screenshots/android/desktop/light/01-homeserver.png)             |
-| ![Screenshot 5](assets/screenshots/android/tablet/light/06-accessibility-settings.png) | ![Screenshot 6](assets/screenshots/android/tablet/dark/06-accessibility-settings.png) | ![Screenshot 7](assets/screenshots/android/desktop/dark/06-accessibility-settings.png) | ![Screenshot 8](assets/screenshots/android/desktop/light/06-accessibility-settings.png) |
+### Android
+
+| Dark terminal theme (tablet)                                                                    | Light rose theme (tablet)                                                                        |
+|-------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| ![Welcome screen](assets/screenshots/android/tablet/dark/01-homeserver.png)                     | ![Welcome screen](assets/screenshots/android/tablet/light/01-homeserver.png)                     |
+| ![Legacy login](assets/screenshots/android/tablet/dark/10-login-legacy.png)                     | ![Legacy login](assets/screenshots/android/tablet/light/10-login-legacy.png)                     |
+| ![Commands](assets/screenshots/android/tablet/dark/15-commands.png)                             | ![Commands](assets/screenshots/android/tablet/light/15-commands.png)                             |
+| ![Room](assets/screenshots/android/tablet/dark/16-emojis.png)                                   | ![Room](assets/screenshots/android/tablet/light/16-emojis.png)                                   |
+| ![Account settings](assets/screenshots/android/tablet/dark/13-emoji-settings.png)               | ![Account settings](assets/screenshots/android/tablet/light/13-emoji-settings.png)               |
+| ![Accessibility settings](assets/screenshots/android/tablet/dark/04-accessibility-settings.png) | ![Accessibility settings](assets/screenshots/android/tablet/light/04-accessibility-settings.png) |
 
 ## Thanks
 

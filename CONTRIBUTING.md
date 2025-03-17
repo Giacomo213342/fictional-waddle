@@ -110,6 +110,58 @@ dart format .
 dart run import_sorter:main --no-comments
 ```
 
+### Integration tests
+
+For testing < polycule >, you will need an Android emulator and Docker. Linux desktop and mobile integration tests are
+under development but so far hard to run in CI. All tests work on Linux but since they won't be verified in the
+< polycule > GitLab CI, It's not recommended to rely on them.
+
+For simplicity, it's recommended to use the < polycule > CI Android emulator OCI images since they provide a
+reproducible test environment.
+
+Please
+check [the OCI emulator docs](https://gitlab.com/polycule_client/flutter-dockerimages/#using-the-android-emulator) for
+further details.
+
+#### Prepare
+
+```shell
+# start a homeserver listening on your Docker network IP
+HOMESERVER=10.10.0.1 ./integration_test/server/conduit.sh
+
+# register alice and bob at our Conduit
+HOMESERVER=http://10.10.0.1 dart integration_test/server/prepare_legacy.dart
+
+# prepare your Android emulator
+./scripts/emulator-android.sh
+```
+
+#### Debug integration tests
+
+```shell
+# check which device ID to run on
+flutter devices
+HOMESERVER=http://10.10.0.1 flutter test -d your_device \
+    integration_test/integration.dart \
+    --dart-define=HOMESERVER=$HOMESERVER \
+    --dart-define=INTEGRATION_TEST=true
+```
+
+### Run profile integration tests
+
+Integration tests in profile mode use a separate driver to store screenshots of each testes page. The screenshots will
+be locally accessible in `assets/screenshots/*/mobile`.
+
+```shell
+# check which device ID to run on
+flutter devices
+HOMESERVER=http://10.10.0.1 flutter drive -d your_device --profile \
+    --driver test_driver/integration_test.dart \
+    --target integration_test/integration.dart \
+    --dart-define=HOMESERVER=$HOMESERVER \
+    --dart-define=INTEGRATION_TEST=true
+```
+
 ## Building < polycule >
 
 ### Web worker for web

@@ -55,6 +55,9 @@ class SsssBootstrapController extends State<SsssBootstrapPage> {
     final client = ClientScope.of(context).client;
     // ensure we know all our sessions
     await client.oneShotSync();
+    if (!mounted) {
+      return;
+    }
     setState(() {
       _nextStage(
         () => client.encryption?.bootstrap(onUpdate: _handleBootstrapStage),
