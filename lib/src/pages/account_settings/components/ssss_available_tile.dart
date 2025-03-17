@@ -53,12 +53,16 @@ class _SSSSAvailableTileState extends State<SSSSAvailableTile> {
 
     if (ssssState == null) {
       await const DisplaySSSSKeyDialog().show(context);
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
       return;
     }
 
     await context.pushMultiClient('${SsssBootstrapPage.routeName}?disableSas');
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
     return;
   }
 }

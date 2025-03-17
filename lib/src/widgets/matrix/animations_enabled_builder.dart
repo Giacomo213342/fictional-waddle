@@ -32,8 +32,8 @@ class AnimationEnabledBuilderState extends State<AnimationEnabledBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    final autoplay =
-        ClientScope.of(context).client.autoplayAnimatedContent ?? true;
+    final autoplay = ClientScope.of(context).client.autoplayAnimatedContent ??
+        !const bool.fromEnvironment('INTEGRATION_TEST');
 
     final box = widget.builder.call(context, autoplay || animating);
 

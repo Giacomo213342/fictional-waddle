@@ -14,6 +14,9 @@ extension MaybeScreenshot on IntegrationTestWidgetsFlutterBinding {
     String screenshotName, [
     Map<String, Object?>? args,
   ]) async {
+    if (!kProfileMode) {
+      return null;
+    }
     if (!kIsWeb && Platform.isAndroid || Platform.isIOS) {
       if (nativeScreenshots && Platform.isAndroid) {
         print('[android] Grabbing screenshot using screengrep ...');
@@ -30,4 +33,19 @@ extension MaybeScreenshot on IntegrationTestWidgetsFlutterBinding {
     }
     return null;
   }
+}
+
+String _twoCharString(int index) {
+  final full = '0$index';
+  return full.substring(full.length - 2);
+}
+
+int _index = 0;
+
+String screenshotName(String name) {
+  _index++;
+  return '${Platform.operatingSystem.toLowerCase()}/'
+      '${PlatformDispatcher.instance.platformBrightness.name}/'
+      '${_twoCharString(_index)}-'
+      '$name';
 }

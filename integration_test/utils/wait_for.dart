@@ -14,7 +14,9 @@ extension WaitForExtension on WidgetTester {
         throw Exception('Timed out waiting for $finder');
       }
 
-      if (!skipPumpAndSettle) {
+      if (skipPumpAndSettle) {
+        await pump();
+      } else {
         await pumpAndSettle();
       }
       await Future.delayed(const Duration(milliseconds: 100));
