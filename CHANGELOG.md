@@ -1,3 +1,15 @@
+## v0.2.5
+
+- chore(deps): bump polycule_client/flutter-dockerimages (The one with the braid)
+- chore(deps): update flutter_version (manual) (polycule  CI Pipeline)
+- feat: add automated screenshots (The one with the braid)
+- feat: add script for automated CHANGELOG updates (The one with the braid)
+- feat: rearrange screenshots (The one with the braid)
+- feat: register integration test users (The one with the braid)
+- feat: signed fastlane builds (The one with the braid)
+- fix: SAS emoji script (The one with the braid)
+- fix: unsigned job (The one with the braid)
+
 ## v0.2.4
 
 - chore(deps): bump com.android.application in /android (The one with the braid)

@@ -32,6 +32,6 @@ done
 echo -e "Updated CHANGELOG.md, fastlane/metadata/android/en-US/changelogs/${BUILD}{1,2,4}.txt\n"
 
 # shellcheck disable=SC1078
-COMMAND="git tag -f v${RELEASE} -m \"\$(git log \"\$(git describe --tags --always --abbrev=0)..HEAD^1\" --pretty=format:'- %s %C(bold blue)(%an)%Creset' --no-merges --no-decorate | sort -uk2)\"'"
+COMMAND="git tag -f v${RELEASE} -m \"\$(git log \"\$(git describe --tags --always --abbrev=0)..HEAD^1\" --pretty=format:'- %s %C(bold blue)(%an)%Creset' --no-merges --no-decorate | sort -uk2)\""
 
 echo -e "Run the following command to tag a release :\n\n\t${COMMAND}\n"
