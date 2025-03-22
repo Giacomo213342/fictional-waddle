@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../theme/colors/poly_pride.dart';
 import '../../../utils/matrix/room_security_level_extension.dart';
 import '../../../widgets/matrix/avatar_builder/room_builder.dart';
 import '../../../widgets/matrix/scopes/room_scope.dart';
+import '../../user_sessions/user_sessions_page.dart';
 
 class RoomEncryptionIndicator extends StatelessWidget {
   const RoomEncryptionIndicator({
@@ -26,7 +28,7 @@ class RoomEncryptionIndicator extends StatelessWidget {
             future: securityState,
             builder: (context, snapshot) {
               if (!room.encrypted) {
-                return const RoomSecurityIcon(state: RoomSecurityState.wtf);
+                return const RoomSecurityIcon(state: RoomSecurityState.open);
               }
               return RoomSecurityIcon(
                 state: snapshot.data ?? RoomSecurityState.encrypted,
@@ -46,60 +48,66 @@ class RoomSecurityIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final room = RoomScope.of(context).room;
+    final user = room.directChatMatrixID;
+    final callback = user == null
+        ? () {}
+        : () => context
+            .pushMultiClient(UserSessionsPage.makeRouteName(room.id, user));
     switch (state) {
       case RoomSecurityState.wtf:
         return IconButton(
           icon: const Icon(Icons.question_mark),
-          onPressed: () {},
+          onPressed: callback,
           tooltip: AppLocalizations.of(context).roomStateWtf,
         );
       case RoomSecurityState.public:
         return IconButton(
           icon: const Icon(Icons.public),
-          onPressed: () {},
+          onPressed: callback,
           tooltip: AppLocalizations.of(context).roomStatePublic,
         );
       case RoomSecurityState.publicKnock:
         return IconButton(
           icon: const Icon(Icons.public),
-          onPressed: () {},
+          onPressed: callback,
           tooltip: AppLocalizations.of(context).roomStatePublicKnock,
         );
       case RoomSecurityState.open:
         return IconButton(
           icon: const Icon(Icons.lock_open),
-          onPressed: () {},
+          onPressed: callback,
           tooltip: AppLocalizations.of(context).roomStateOpen,
         );
       case RoomSecurityState.knock:
         return IconButton(
           icon: const Icon(Icons.lock_open),
-          onPressed: () {},
+          onPressed: callback,
           tooltip: AppLocalizations.of(context).roomStateKnock,
         );
       case RoomSecurityState.space:
         return IconButton(
           icon: const Icon(Icons.workspaces),
-          onPressed: () {},
+          onPressed: callback,
           tooltip: AppLocalizations.of(context).roomStateSpace,
         );
       case RoomSecurityState.unpublic:
         return IconButton(
           icon: const Icon(Icons.no_encryption),
-          onPressed: () {},
+          onPressed: callback,
           tooltip: AppLocalizations.of(context).roomStateUnpublic,
         );
       case RoomSecurityState.encrypted:
         return IconButton(
           icon: const Icon(Icons.lock),
-          onPressed: () {},
+          onPressed: callback,
           tooltip: AppLocalizations.of(context).roomStateEncrypted,
         );
       case RoomSecurityState.verifiedEncrypted:
         return IconButton(
           icon: const Icon(Icons.enhanced_encryption),
           color: PolyColors.cyan,
-          onPressed: () {},
+          onPressed: callback,
           tooltip: AppLocalizations.of(context).roomStateVerifiedEncrypted,
         );
     }

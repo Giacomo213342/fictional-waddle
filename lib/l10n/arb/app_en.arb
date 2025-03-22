@@ -612,5 +612,8 @@
   "confirmQrScanned": "QR code successfully scanned.",
   "confirm": "Confirm",
   "scanQrWithOtherDevice": "Scan this QR code with your other device.",
-  "clientSwitcher": "Switch account"
+  "clientSwitcher": "Switch account",
+  "block": "Block",
+  "unblock": "Unblock",
+  "sessions": "Sessions"
 }

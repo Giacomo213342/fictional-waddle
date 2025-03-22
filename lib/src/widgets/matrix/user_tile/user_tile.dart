@@ -4,6 +4,8 @@ import 'package:matrix/matrix.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../pages/user_sessions/user_sessions_page.dart';
+import '../../../router/extensions/go_router_path_extension.dart';
 import '../../../utils/matrix_to_extension.dart';
 import '../../ascii_progress_indicator.dart';
 import '../../polycule_overflow_bar.dart';
@@ -11,6 +13,7 @@ import '../../share_origin_builder.dart';
 import '../avatar_builder/fullscreen_dialog_avatar.dart';
 import '../avatar_builder/mxc_avatar.dart';
 import '../scopes/client_scope.dart';
+import '../scopes/room_scope.dart';
 
 class UserTile extends StatelessWidget {
   const UserTile({
@@ -36,6 +39,7 @@ class UserTile extends StatelessWidget {
     final name = profile.displayName ?? profile.userId;
     final subtitle = profile.displayName != null ? profile.userId : null;
 
+    final room = RoomScope.maybeOf(context)?.room;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -81,6 +85,15 @@ class UserTile extends StatelessWidget {
                   onPressed: onVerification,
                   child: Text(
                     AppLocalizations.of(context).startVerification,
+                  ),
+                ),
+              if (room != null && client.userDeviceKeys[profile.userId] != null)
+                ElevatedButton(
+                  onPressed: () => context.pushMultiClient(
+                    UserSessionsPage.makeRouteName(room.id, profile.userId),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context).sessions,
                   ),
                 ),
               ShareOriginBuilder(

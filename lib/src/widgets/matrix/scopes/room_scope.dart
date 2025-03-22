@@ -9,10 +9,11 @@ class RoomScope extends InheritedWidget {
     required super.child,
   });
 
-  static RoomScope of(BuildContext context) {
-    final scope = context.dependOnInheritedWidgetOfExactType<RoomScope>()!;
-    return scope;
-  }
+  factory RoomScope.of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<RoomScope>()!;
+
+  static RoomScope? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<RoomScope>();
 
   final Room room;
 

@@ -22,6 +22,8 @@ import '../pages/room_list/room_list.dart';
 import '../pages/splash_screen/splash_screen.dart';
 import '../pages/ssss_bootstrap/ssss_bootstrap.dart';
 import '../pages/user_page/user_page.dart';
+import '../pages/user_sessions/user_sessions_page.dart';
+import '../widgets/matrix/scopes/matrix_identifier_scope.dart';
 import '../widgets/placeholder.dart';
 import 'extensions/go_router_path_extension.dart';
 import 'extensions/homeserver_uri_route.dart';
@@ -166,6 +168,22 @@ class PolyculeRouter extends GoRouter {
                                   builder: (context, state) =>
                                       const RoomDetailsPage(),
                                 ),
+                                RoomAvailableRoute(
+                                  path: UserPage.roomPath,
+                                  builder: (context, state) =>
+                                      MatrixIdentifierScope.fromGoRouterState(
+                                    state: state,
+                                    child: const UserPage(),
+                                  ),
+                                ),
+                                RoomAvailableRoute(
+                                  path: UserSessionsPage.path,
+                                  builder: (context, state) =>
+                                      MatrixIdentifierScope.fromGoRouterState(
+                                    state: state,
+                                    child: const UserSessionsPage(),
+                                  ),
+                                ),
                               ],
                             ),
                           ],
@@ -177,10 +195,10 @@ class PolyculeRouter extends GoRouter {
                         ),
                         RequiresLoginRoute(
                           path: UserPage.makeRouteName().asMultiClientRoute(),
-                          builder: (context, state) => UserPage(
-                            mxid: Uri.decodeComponent(
-                              state.pathParameters[UserPage.pathParameter]!,
-                            ),
+                          builder: (context, state) =>
+                              MatrixIdentifierScope.fromGoRouterState(
+                            state: state,
+                            child: const UserPage(),
                           ),
                         ),
                       ],

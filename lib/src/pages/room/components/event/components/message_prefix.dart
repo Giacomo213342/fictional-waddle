@@ -50,7 +50,7 @@ class MessagePrefix extends StatelessWidget {
       prefix = MessageUserAvatar(
         event: event,
         onTap: () => context.pushMultiClient(
-          UserPage.makeRouteName(event.senderId),
+          UserPage.makeRoomRouteName(event.room.id, event.senderId),
         ),
       );
       if (event.messageType == MessageTypes.Notice) {

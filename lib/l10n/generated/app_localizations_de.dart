@@ -1195,4 +1195,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get clientSwitcher => 'Switch account';
+
+  @override
+  String get block => 'Block';
+
+  @override
+  String get unblock => 'Unblock';
+
+  @override
+  String get sessions => 'Sessions';
 }
