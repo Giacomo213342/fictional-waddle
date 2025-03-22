@@ -6,8 +6,10 @@ import 'package:matrix/matrix.dart';
 import 'client_scope.dart';
 import 'device_scope.dart';
 import 'event_scope.dart';
+import 'matrix_identifier_scope.dart';
 import 'room_scope.dart';
 import 'sas_scope.dart';
+import 'session_scope.dart';
 import 'timeline_scope.dart';
 
 class ScopeCapture {
@@ -15,17 +17,21 @@ class ScopeCapture {
     required this.client,
     this.room,
     this.device,
+    this.session,
     this.timeline,
     this.event,
     this.verification,
+    this.identifier,
   });
 
   final Client client;
   final Room? room;
   final Device? device;
+  final DeviceKeys? session;
   final TimelineScope? timeline;
   final EventScope? event;
   final KeyVerification? verification;
+  final MatrixIdentifierStringExtensionResults? identifier;
 }
 
 class MatrixScope extends StatelessWidget {
@@ -45,6 +51,9 @@ class MatrixScope extends StatelessWidget {
         verification: context
             .dependOnInheritedWidgetOfExactType<SasScope>()
             ?.verification,
+        identifier: context
+            .dependOnInheritedWidgetOfExactType<MatrixIdentifierScope>()
+            ?.identifier,
       );
 
   final ScopeCapture scope;
@@ -82,10 +91,26 @@ class MatrixScope extends StatelessWidget {
       );
     }
 
+    final identifier = scope.identifier;
+    if (identifier != null) {
+      child = MatrixIdentifierScope(
+        identifier: identifier,
+        child: child,
+      );
+    }
+
     final device = scope.device;
     if (device != null) {
       child = DeviceScope(
         device: device,
+        child: child,
+      );
+    }
+
+    final session = scope.session;
+    if (session != null) {
+      child = SessionScope(
+        session: session,
         child: child,
       );
     }

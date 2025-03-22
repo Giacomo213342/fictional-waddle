@@ -39,7 +39,10 @@ class RoomView extends StatelessWidget {
             return TextButton(
               onPressed: () => context.pushMultiClient(
                 room.isDirectChat
-                    ? UserPage.makeRouteName(room.directChatMatrixID)
+                    ? UserPage.makeRoomRouteName(
+                        room.id,
+                        room.directChatMatrixID!,
+                      )
                     : RoomDetailsPage.makeRouteName(room.id),
               ),
               child: DefaultTextStyle(

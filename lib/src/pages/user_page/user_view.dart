@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../widgets/ascii_progress_indicator.dart';
 import '../../widgets/matrix/profile_builder.dart';
+import '../../widgets/matrix/scopes/matrix_identifier_scope.dart';
 import '../../widgets/matrix/user_tile/user_tile.dart';
 import 'user_page.dart';
 
@@ -12,11 +13,12 @@ class UserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mxid = MatrixIdentifierScope.of(context).identifier.primaryIdentifier;
     return Scaffold(
       appBar: AppBar(),
       body: Center(
         child: ProfileBuilder(
-          userId: controller.widget.mxid,
+          userId: mxid,
           builder: (context, snapshot) {
             final profile = snapshot.data;
             if (profile == null) {

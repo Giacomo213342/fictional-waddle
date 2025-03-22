@@ -6,12 +6,13 @@ import '../../../../../widgets/human_date.dart';
 import '../../../../../widgets/matrix/key_trust_icon_theme.dart';
 import '../../../../../widgets/matrix/scopes/client_scope.dart';
 import '../../../../../widgets/matrix/scopes/device_scope.dart';
+import '../../../../../widgets/matrix/scopes/session_scope.dart';
+import '../../../../../widgets/matrix/verify_device_button.dart';
 import '../../../../../widgets/polycule_overflow_bar.dart';
 import 'delete_device_button.dart';
 import 'idp_device_link_button.dart';
 import 'key_trust_tile.dart';
 import 'rename_device_button.dart';
-import 'verify_device_button.dart';
 
 class SessionTile extends StatelessWidget {
   const SessionTile({super.key});
@@ -25,6 +26,8 @@ class SessionTile extends StatelessWidget {
 
     final idpLinkButton = IdpDeviceLinkButton.ifSupported(context);
 
+    final deviceKeys =
+        client.userDeviceKeys[client.userID]?.deviceKeys[device.deviceId];
     return ExpansionTile(
       leading: const KeyTrustIconTheme(child: Icon(Icons.devices)),
       title: Text(device.displayName ?? device.deviceId),
@@ -68,7 +71,11 @@ class SessionTile extends StatelessWidget {
             children: [
               if (idpLinkButton != null) idpLinkButton,
               const RenameDeviceButton(),
-              const VerifyDeviceButton(),
+              if (deviceKeys != null)
+                SessionScope(
+                  session: deviceKeys,
+                  child: const VerifyDeviceButton(),
+                ),
               const DeleteDeviceButton(),
             ],
           ),

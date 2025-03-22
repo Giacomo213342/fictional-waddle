@@ -6,17 +6,20 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
 import '../../widgets/matrix/sas_verification/sas_verification_request_widget.dart';
 import '../../widgets/matrix/scopes/client_scope.dart';
+import '../../widgets/matrix/scopes/matrix_identifier_scope.dart';
 import '../room/room.dart';
 import 'user_view.dart';
 
 class UserPage extends StatefulWidget {
-  const UserPage({super.key, required this.mxid});
+  const UserPage({super.key});
 
-  final String mxid;
+  static String makeRouteName([String? mxid, String? secondary]) =>
+      '/user/${mxid != null ? Uri.encodeComponent(mxid) : r':' + MatrixIdentifierScope.pathParameter}${secondary == null ? '' : '/$secondary'}';
 
-  static String makeRouteName([String? mxid]) =>
-      '/user/${mxid != null ? Uri.encodeComponent(mxid) : r':' + pathParameter}';
-  static const pathParameter = 'mxid';
+  static String makeRoomRouteName(String roomId, String mxid) =>
+      '${RoomPage.makeRouteName(roomId)}/user/${Uri.encodeComponent(mxid)}';
+  static final roomPath =
+      '${RoomPage.pathParameter.asGoRouterPath()}/user/:${MatrixIdentifierScope.pathParameter}';
 
   @override
   State<UserPage> createState() => UserController();
@@ -32,8 +35,9 @@ class UserController extends State<UserPage> {
     setState(() {
       loading = true;
     });
+    final mxid = MatrixIdentifierScope.of(context).identifier.primaryIdentifier;
     final roomId = await ClientScope.of(context).client.startDirectChat(
-          widget.mxid,
+          mxid,
           enableEncryption: true,
         );
     if (!mounted) {
@@ -50,13 +54,14 @@ class UserController extends State<UserPage> {
     setState(() {
       loading = true;
     });
+    final mxid = MatrixIdentifierScope.of(context).identifier.primaryIdentifier;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(AppLocalizations.of(context).ignoreToggleWaiting)),
     );
-    if (client.ignoredUsers.contains(widget.mxid)) {
-      await client.unignoreUser(widget.mxid);
+    if (client.ignoredUsers.contains(mxid)) {
+      await client.unignoreUser(mxid);
     } else {
-      await client.ignoreUser(widget.mxid);
+      await client.ignoreUser(mxid);
     }
     await client.oneShotSync();
     if (!mounted) {
@@ -70,7 +75,8 @@ class UserController extends State<UserPage> {
   Future<void> startVerification() async {
     final client = ClientScope.of(context).client;
     final encryption = client.encryption;
-    final roomId = client.getDirectChatFromUserId(widget.mxid);
+    final mxid = MatrixIdentifierScope.of(context).identifier.primaryIdentifier;
+    final roomId = client.getDirectChatFromUserId(mxid);
     if (roomId == null || encryption == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -93,7 +99,7 @@ class UserController extends State<UserPage> {
 
     final request = KeyVerification(
       encryption: encryption,
-      userId: widget.mxid,
+      userId: mxid,
       room: room,
     );
 

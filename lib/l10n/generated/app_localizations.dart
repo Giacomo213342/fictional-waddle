@@ -2175,6 +2175,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Switch account'**
   String get clientSwitcher;
+
+  /// No description provided for @block.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get block;
+
+  /// No description provided for @unblock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get unblock;
+
+  /// No description provided for @sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get sessions;
 }
 
 class _AppLocalizationsDelegate
