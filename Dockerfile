@@ -28,7 +28,7 @@ RUN flutter build web --no-pub --native-null-assertions --no-web-resources-cdn -
     --dart-define=cronetHttpNoPlay=true \
     --dart-define=no_default_http_client=false
 
-FROM nginx:1.27.4-alpine-slim
+FROM nginx:1.27.5-alpine-slim
 
 LABEL org.opencontainers.image.source=https://gitlab.com/polycule_client/polycule.git
 
