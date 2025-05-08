@@ -34,5 +34,29 @@
   "username": "Nutzer*innenname",
   "@username": {},
   "password": "Passwort",
-  "@password": {}
+  "@password": {},
+  "connectToHomeserver": "Verbinde dich mit deinem Homeserver",
+  "@connectToHomeserver": {},
+  "newToMatrixLong": "Finde geeignete Heimserver aus dem [matrix] -Universum. Dies wird eine Verbindung herstellen zu joinmatrix.org .",
+  "@newToMatrixLong": {},
+  "pleaseProvideHomeserver": "Dies ist keine gültige Homeserver-Eingabe.",
+  "@pleaseProvideHomeserver": {},
+  "author": "Autor: {author}",
+  "@author": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
+  "appSlogan": "Ein geekiger und effizienter [matrix] -Client für Power-User.",
+  "@appSlogan": {},
+  "releaseNotes": "Versionshinweise",
+  "@releaseNotes": {},
+  "homeserverNotValid": "Dies ist keine gültige Home-Server-Eingabe.",
+  "@homeserverNotValid": {},
+  "homeserverHeadline": "Hallo ! Willkommen bei < polycule>",
+  "@homeserverHeadline": {
+    "description": "Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'."
+  }
 }
