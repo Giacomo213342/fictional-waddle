@@ -1,0 +1,4 @@
+- 新功能：重构客户端管理视图（The one with the braid）
+- 新功能：存储草稿消息（The one with the braid）
+- 新功能：支持传统 SSO 登录（The one with the braid）
+- 修复：在处理已认证媒体前等待客户端登录（The one with the braid）

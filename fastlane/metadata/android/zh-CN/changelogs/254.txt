@@ -1,0 +1,9 @@
+- 维护（依赖）：升级 polycule_client/flutter-dockerimages（The one with the braid）
+- 维护（依赖）：更新 flutter_version（手动）（polycule  CI Pipeline）
+- 新功能：添加自动化截图（The one with the braid）
+- 新功能：添加自动更新 CHANGELOG 的脚本（The one with the braid）
+- 新功能：重新排列截图（The one with the braid）
+- 新功能：注册集成测试用户（The one with the braid）
+- 新功能：签名 fastlane 构建（The one with the braid）
+- 修复：SAS 表情脚本（The one with the braid）
+- 修复：未签名任务（The one with the braid）
