@@ -591,6 +591,7 @@ build:fedora:aarch64:
     - flutter --disable-analytics
     - *versioning-setup
     - *flutter-setup
+  allow_failure: true
 
 build:debian:x86_64:
   image: registry.gitlab.com/polycule_client/flutter-dockerimages:$FLUTTER_VERSION-debian

@@ -10,6 +10,7 @@
                 android:name=".MainActivity"
                 android:exported="true"
                 android:launchMode="singleTask"
+                android:taskAffinity=""
                 android:theme="@style/LaunchTheme"
                 android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
                 android:hardwareAccelerated="true"
@@ -108,12 +109,12 @@
                 <action android:name="org.unifiedpush.android.distributor.UNREGISTER"/>
             </intent-filter>
         </receiver>
-        <receiver android:exported="false"  android:enabled="true"  android:name=".UnifiedPushReceiver">
+        <receiver android:exported="false" android:enabled="true" android:name=".UnifiedPushReceiver">
             <intent-filter>
                 <action android:name="org.unifiedpush.flutter.connector.MESSAGE"/>
                 <action android:name="org.unifiedpush.flutter.connector.UNREGISTERED"/>
                 <action android:name="org.unifiedpush.flutter.connector.NEW_ENDPOINT"/>
-                <action android:name="org.unifiedpush.flutter.connector.REGISTRATION_FAILED" />
+                <action android:name="org.unifiedpush.flutter.connector.REGISTRATION_FAILED"/>
             </intent-filter>
         </receiver>
 
@@ -124,4 +125,15 @@
                 android:name="flutterEmbedding"
                 android:value="2"/>
     </application>
+    <!-- Required to query activities that can process text, see:
+         https://developer.android.com/training/package-visibility and
+         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+
+         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
 </manifest>

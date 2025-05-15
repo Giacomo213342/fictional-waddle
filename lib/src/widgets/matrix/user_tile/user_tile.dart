@@ -133,12 +133,19 @@ class UserTile extends StatelessWidget {
       return;
     }
     try {
-      await Share.shareUri(uri, sharePositionOrigin: sharePositionOrigin);
+      await SharePlus.instance.share(
+        ShareParams(
+          uri: uri,
+          sharePositionOrigin: sharePositionOrigin,
+        ),
+      );
     } on UnimplementedError {
-      await Share.share(
-        link,
-        subject: subject,
-        sharePositionOrigin: sharePositionOrigin,
+      await SharePlus.instance.share(
+        ShareParams(
+          text: link,
+          subject: subject,
+          sharePositionOrigin: sharePositionOrigin,
+        ),
       );
     }
   }

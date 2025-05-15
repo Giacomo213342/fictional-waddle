@@ -61,12 +61,15 @@ class PublicRoomAddressTile extends StatelessWidget {
       return;
     }
     try {
-      await Share.shareUri(uri, sharePositionOrigin: rect);
+      await SharePlus.instance
+          .share(ShareParams(uri: uri, sharePositionOrigin: rect));
     } on UnimplementedError {
-      await Share.share(
-        link,
-        subject: subject,
-        sharePositionOrigin: rect,
+      await SharePlus.instance.share(
+        ShareParams(
+          text: link,
+          subject: subject,
+          sharePositionOrigin: rect,
+        ),
       );
     }
   }
