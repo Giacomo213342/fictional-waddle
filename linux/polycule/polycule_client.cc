@@ -17,13 +17,6 @@ G_DEFINE_TYPE(PolyculeClient, polycule_client, GTK_TYPE_APPLICATION)
 // Implements GApplication::activate.
 static void polycule_client_activate(GApplication* application) {
   PolyculeClient* self = POLYCULE_CLIENT(application);
-
-  GList* windows = gtk_application_get_windows(GTK_APPLICATION(application));
-  if (windows) {
-    gtk_window_present(GTK_WINDOW(windows->data));
-    return;
-  }
-
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
 
@@ -69,23 +62,41 @@ static void polycule_client_activate(GApplication* application) {
   gtk_widget_grab_focus(GTK_WIDGET(view));
 }
 
-// Implements GApplication::command_line.
-static gint polycule_client_command_line(GApplication* application, GApplicationCommandLine* command_line) {
+// Implements GApplication::local_command_line.
+static gboolean polycule_client_local_command_line(GApplication* application, gchar*** arguments, int* exit_status) {
   PolyculeClient* self = POLYCULE_CLIENT(application);
-
-  gchar **arguments = g_application_command_line_get_arguments(command_line, nullptr);
   // Strip out the first argument as it is the binary name.
-  self->dart_entrypoint_arguments = g_strdupv(arguments + 1);
+  self->dart_entrypoint_arguments = g_strdupv(*arguments + 1);
 
   g_autoptr(GError) error = nullptr;
   if (!g_application_register(application, nullptr, &error)) {
      g_warning("Failed to register: %s", error->message);
-     return 1;
+     *exit_status = 1;
+     return TRUE;
   }
 
   g_application_activate(application);
+  *exit_status = 0;
 
-  return 0;
+  return TRUE;
+}
+
+// Implements GApplication::startup.
+static void polycule_client_startup(GApplication* application) {
+  //PolyculeClient* self = POLYCULE_CLIENT(object);
+
+  // Perform any actions required at application startup.
+
+  G_APPLICATION_CLASS(polycule_client_parent_class)->startup(application);
+}
+
+// Implements GApplication::shutdown.
+static void polycule_client_shutdown(GApplication* application) {
+  //PolyculeClient* self = POLYCULE_CLIENT(object);
+
+  // Perform any actions required at application shutdown.
+
+  G_APPLICATION_CLASS(polycule_client_parent_class)->shutdown(application);
 }
 
 // Implements GObject::dispose.
@@ -97,15 +108,23 @@ static void polycule_client_dispose(GObject* object) {
 
 static void polycule_client_class_init(PolyculeClientClass* klass) {
   G_APPLICATION_CLASS(klass)->activate = polycule_client_activate;
-  G_APPLICATION_CLASS(klass)->command_line = polycule_client_command_line;
+  G_APPLICATION_CLASS(klass)->local_command_line = polycule_client_local_command_line;
+  G_APPLICATION_CLASS(klass)->startup = polycule_client_startup;
+  G_APPLICATION_CLASS(klass)->shutdown = polycule_client_shutdown;
   G_OBJECT_CLASS(klass)->dispose = polycule_client_dispose;
 }
 
 static void polycule_client_init(PolyculeClient* self) {}
 
 PolyculeClient* polycule_client_new() {
+  // Set the program name to the application ID, which helps various systems
+  // like GTK and desktop environments map this running application to its
+  // corresponding .desktop file. This ensures better integration by allowing
+  // the application to be recognized beyond its binary name.
+  g_set_prgname(APPLICATION_ID);
+
   return POLYCULE_CLIENT(g_object_new(polycule_client_get_type(),
                                      "application-id", APPLICATION_ID,
-                                     "flags", G_APPLICATION_HANDLES_COMMAND_LINE | G_APPLICATION_HANDLES_OPEN,
+                                     "flags", G_APPLICATION_NON_UNIQUE,
                                      nullptr));
 }

@@ -43,7 +43,7 @@ class ClientTab extends StatelessWidget implements PreferredSizeWidget {
         ),
         clipBehavior: Clip.hardEdge,
         child: InkWell(
-          onTap: () => context.pushMultiClient(
+          onTap: () => context.push(
             '/client/${client.clientName.clientIdentifier}${SplashPage.routeName}',
           ),
           child: Padding(

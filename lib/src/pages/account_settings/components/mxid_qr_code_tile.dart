@@ -29,15 +29,19 @@ class MxidQRCodeTile extends StatelessWidget {
             return Card(
               child: InkWell(
                 onTap: () => !kIsWeb && (Platform.isAndroid || Platform.isIOS)
-                    ? Share.shareUri(
-                        Uri.parse(link),
-                        sharePositionOrigin: rect,
+                    ? SharePlus.instance.share(
+                        ShareParams(
+                          uri: Uri.parse(link),
+                          sharePositionOrigin: rect,
+                        ),
                       )
-                    : Share.share(
-                        link,
-                        subject: AppLocalizations.of(context)
-                            .matrixUserShareSubject(userId),
-                        sharePositionOrigin: rect,
+                    : SharePlus.instance.share(
+                        ShareParams(
+                          text: link,
+                          subject: AppLocalizations.of(context)
+                              .matrixUserShareSubject(userId),
+                          sharePositionOrigin: rect,
+                        ),
                       ),
                 child: BarcodeWidget(
                   padding: const EdgeInsets.all(8),

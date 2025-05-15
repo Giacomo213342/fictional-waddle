@@ -158,10 +158,12 @@ class FullScreenAvatar extends StatelessWidget {
     );
 
     if (kIsWeb || Platform.isIOS) {
-      await Share.shareXFiles(
-        [file],
-        text: title,
-        sharePositionOrigin: rect,
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [file],
+          text: title,
+          sharePositionOrigin: rect,
+        ),
       );
       return;
     }

@@ -133,9 +133,11 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
       final mxFile = await event.downloadAndDecryptAttachment();
       final xfile = _buildXFile(event, mxFile);
 
-      Share.shareXFiles(
-        [xfile],
-        sharePositionOrigin: rect,
+      SharePlus.instance.share(
+        ShareParams(
+          files: [xfile],
+          sharePositionOrigin: rect,
+        ),
       );
     } catch (e, s) {
       _handleAttachmentError(e, s);
