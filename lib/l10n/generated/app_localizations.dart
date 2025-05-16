@@ -107,8 +107,7 @@ abstract class AppLocalizations {
     Locale('pt'),
     Locale('pt', 'BR'),
     Locale('ta'),
-    Locale('zh'),
-    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans')
+    Locale('zh')
   ];
 
   /// No description provided for @appName.
@@ -2227,19 +2226,6 @@ class _AppLocalizationsDelegate
 }
 
 Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
-  // Lookup logic when language+script codes are specified.
-  switch (locale.languageCode) {
-    case 'zh':
-      {
-        switch (locale.scriptCode) {
-          case 'Hans':
-            return app_localizations_zh.loadLibrary().then(
-                (dynamic _) => app_localizations_zh.AppLocalizationsZhHans());
-        }
-        break;
-      }
-  }
-
   // Lookup logic when language+country codes are specified.
   switch (locale.languageCode) {
     case 'pt':
