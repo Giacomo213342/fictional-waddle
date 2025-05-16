@@ -81,7 +81,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get loginPassword => 'கடவுச்சொல்லைப் பயன்படுத்தி உள்நுழைக';
 
   @override
-  String get loginLegacySso => 'Login using legacy SSO';
+  String get loginLegacySso => 'மரபு ஒருகைஉள் ஐப் பயன்படுத்தி உள்நுழைக';
 
   @override
   String get username => 'பயனர்பெயர்';
@@ -116,7 +116,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String clientDisplayNameHostname(String hostname, String platform) {
-    return '< polycule > on $hostname ($platform)';
+    return '<பாலிகுல்> மீது $hostname$platform';
   }
 
   @override
@@ -223,14 +223,14 @@ class AppLocalizationsTa extends AppLocalizations {
   String get deviceNotAvailable => 'எனது சாதனம் கிடைக்கவில்லை.';
 
   @override
-  String get compareSasNumbers => 'பாதுகாப்பு எண்களை ஒப்பிடுக';
+  String get compareSasNumbers => 'சாச் பாதுகாப்பு எண்களை ஒப்பிடுக';
 
   @override
-  String get compareSasEmojis => 'Compare SAS security emojis';
+  String get compareSasEmojis => 'சாச் பாதுகாப்பு ஈமோசிகளை ஒப்பிடுக';
 
   @override
   String get compareSasExplanation =>
-      'உங்கள் சாதனத்தில் உள்ள எண்கள் சரிபார்ப்பைக் கோரும் மற்ற சாதனத்தின் எண்களுடன் ஒத்ததா என்று சரிபார்க்கவும்.';
+      'உங்கள் சாதனத்தில் உள்ள சாச் சரிபார்ப்பைக் கோரும் மற்ற சாதனத்தின் சாச்சுடன் ஒத்ததா என்று சரிபார்க்கவும்.';
 
   @override
   String get incomingVerificationRequest => 'உள்வரும் சரிபார்ப்பு கோரிக்கை';
@@ -269,7 +269,7 @@ class AppLocalizationsTa extends AppLocalizations {
       'உங்கள் சாதனத்தை சரிபார்க்க பிழை ஏற்பட்டது.';
 
   @override
-  String get keyVerificationErrorUser => 'சரிபார்ப்பு நிராகரிக்கப்பட்டது.';
+  String get keyVerificationErrorUser => 'சரிபார்ப்பு நீக்கப்பட்டது.';
 
   @override
   String get close => 'மூடு';
@@ -278,7 +278,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get verificationSuccessful => 'முக்கிய சரிபார்ப்பு வெற்றிகரமாக';
 
   @override
-  String get verifyLogin => 'உங்கள் புதிய உள்நுழைவை சரிபார்க்கவும்';
+  String get verifyLogin => 'உங்கள் முதன்மை பொருளைச் சரிபார்';
 
   @override
   String get finish => 'முடிக்க';
@@ -425,7 +425,7 @@ class AppLocalizationsTa extends AppLocalizations {
       one: 'ஒரு கோப்பு',
       zero: 'அனுப்ப கோப்பு இல்லை.',
     );
-    return '$_temp0 அனுப்புதல்...';
+    return '$_temp0 அனுப்புதல் ...';
   }
 
   @override
@@ -1056,44 +1056,44 @@ class AppLocalizationsTa extends AppLocalizations {
   String get errorSendingSticker => 'தனிப்பயன் ச்டிக்கரை அனுப்புவதில் பிழை.';
 
   @override
-  String get viewSourceCode => 'View source code';
+  String get viewSourceCode => 'மூல குறியீடு பார்';
 
   @override
-  String get eventSourceCode => 'Event source code';
+  String get eventSourceCode => 'நிகழ்வு மூல குறியீடு';
 
   @override
-  String get eventSourceContent => 'Event content';
+  String get eventSourceContent => 'நிகழ்வு உள்ளடக்கம்';
 
   @override
-  String get eventSourceJson => 'Full JSON';
+  String get eventSourceJson => 'முழு சாதொபொகு';
 
   @override
-  String get eventSourceOriginal => 'Original event';
+  String get eventSourceOriginal => 'அசல் நிகழ்வு';
 
   @override
-  String get eventSourceBodyRaw => 'Event body (raw)';
+  String get eventSourceBodyRaw => 'நிகழ்வு உடல் (பச்சையாக)';
 
   @override
-  String get eventSourceBodyHtml => 'Event body (HTML)';
+  String get eventSourceBodyHtml => 'நிகழ்வு உடல் (உஉகுமொ)';
 
   @override
-  String get eventSourceUnsigned => 'Unsigned content';
+  String get eventSourceUnsigned => 'கையொப்பமிடாத உள்ளடக்கம்';
 
   @override
-  String get eventRendered => 'Rendered event';
+  String get eventRendered => 'வழங்கப்பட்ட நிகழ்வு';
 
   @override
-  String get eventQuoted => 'Quoted event';
+  String get eventQuoted => 'மேற்கோள் நிகழ்வு';
 
   @override
-  String get eventPreview => 'Event preview';
+  String get eventPreview => 'நிகழ்வு முன்னோட்டம்';
 
   @override
-  String get blurHash => 'Blur hash';
+  String get blurHash => 'மங்கலான கொத்து';
 
   @override
   String get linuxOidcWorkaround =>
-      'In case your web browser won\'t prompt you to open < polycule > after logging in, please ensure you granted to handle OAuth2.0 redirects in < polycule > by launching the following command in a terminal emulator :';
+      'உள்நுழைந்த பிறகு <பாலிகுல்> ஐ திறக்க உங்கள் வலை உலாவி உங்களைத் தூண்டாது என்றால், ஒரு முனைய முன்மாதிரியில் பின்வரும் கட்டளையைத் தொடங்குவதன் மூலம் <பாலிகுல்> இல் OAuth2.0 ஐக் கையாள உங்களுக்கு வழங்கப்பட்டுள்ளீர்கள் என்பதை உறுதிப்படுத்தவும்:';
 
   @override
   String get linuxOidcWorkaroundSnippet =>
@@ -1101,123 +1101,124 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get setupSSSSLoading =>
-      'Encryption setup running. This might take a while.';
+      'குறியாக்க அமைப்பு இயங்கும். இதற்கு சிறிது நேரம் ஆகலாம்.';
 
   @override
-  String get sessionId => 'Session ID';
+  String get sessionId => 'அமர்வு அடையாளம்';
 
   @override
-  String get sessionIpAddress => 'Last IP address';
+  String get sessionIpAddress => 'கடைசி ஐபி முகவரி';
 
   @override
-  String get sessionLastSeen => 'Last seen';
+  String get sessionLastSeen => 'கடைசியாக பார்த்தேன்';
 
   @override
-  String get delete => 'Delete';
+  String get delete => 'நீக்கு';
 
   @override
-  String get verify => 'Verify';
+  String get verify => 'சரிபார்';
 
   @override
-  String get verifyAgain => 'Verify again';
+  String get verifyAgain => 'மீண்டும் சரிபார்';
 
   @override
-  String get rename => 'Rename';
+  String get rename => 'மறுபெயரிடு';
 
   @override
-  String get renameDevice => 'Rename device';
+  String get renameDevice => 'சாதனம் மறுபெயரிடு';
 
   @override
-  String get deviceName => 'Device display name';
+  String get deviceName => 'சாதன காட்சி பெயர்';
 
   @override
-  String get renameDeviceHint => 'Leave blank to remove display name';
+  String get renameDeviceHint => 'காட்சி பெயரை அகற்ற காலியாக விடவும்';
 
   @override
-  String get openInIDP => 'Open in identity provider';
+  String get openInIDP => 'அடையாள வழங்குநரில் திற';
 
   @override
-  String get deviceNoEncryption => 'Does not support encryption';
+  String get deviceNoEncryption => 'குறியாக்கத்தை ஆதரிக்காது';
 
   @override
-  String get deviceVerified => 'Keys verified';
+  String get deviceVerified => 'விசைகள் சரிபார்க்கப்பட்டன';
 
   @override
-  String get deviceUnverified => 'Keys unverified';
+  String get deviceUnverified => 'விசைகள் சரிபார்க்கப்படாதவை';
 
   @override
-  String get deviceBlocked => 'Device blocked';
+  String get deviceBlocked => 'சாதனம் தடுக்கப்பட்டது';
 
   @override
-  String get logout => 'Logout';
+  String get logout => 'வெளியேற்றம்';
 
   @override
-  String get logoutWarning => 'Confirm logout';
+  String get logoutWarning => 'வெளியேறுவதை உறுதிப்படுத்தவும்';
 
   @override
   String get logoutWarningLong =>
-      'When you log out and neither have any other session nor your recovery phrase, you will lose access to all you [matrix] messages.';
+      'நீங்கள் வெளியேறும்போது, வேறு எந்த அமர்வோ அல்லது உங்கள் மீட்பு சொற்றொடரோ இல்லாதபோது, நீங்கள் [மேட்ரிக்ச்] செய்திகளுக்கான அணுகலை இழப்பீர்கள்.';
 
   @override
-  String get keyBackupAvailable => 'SSSS backup';
+  String get keyBackupAvailable => 'எச்எச்எச்எச் காப்புப்பிரதி';
 
   @override
   String get keyBackupExplanation =>
-      'Use Secure Secret Storage and Sharing to securely backup message keys for all your devices.';
+      'உங்கள் எல்லா சாதனங்களுக்கும் செய்தி விசைகளைப் பாதுகாப்பாகக் காப்புப் பிரதி எடுக்கப் பாதுகாப்பான ரகசிய சேமிப்பு மற்றும் பகிர்வைப் பயன்படுத்தவும்.';
 
   @override
-  String get ssssRecoveryKey => 'SSSS recovery key';
+  String get ssssRecoveryKey => 'எச்எச்எச்எச் மீட்பு விசை';
 
   @override
   String get ssssRecoveryKeyExplanation =>
-      'Carefully store your Secure Secret Storage and Sharing recovery key at a secure place. Without your recovery key, all past messages will be lost forever.';
+      'உங்கள் பாதுகாப்பான ரகசிய சேமிப்பு மற்றும் மீட்பு விசையை ஒரு பாதுகாப்பான இடத்தில் கவனமாகச் சேமி. உங்கள் மீட்பு விசை இல்லாமல், கடந்த கால செய்திகளும் என்றென்றும் இழக்கப்படும்.';
 
   @override
-  String get confirmSSSSKeyStored => 'Key stored';
+  String get confirmSSSSKeyStored => 'விசை சேமிக்கப்பட்டது';
 
   @override
-  String get yourCurrentDevice => 'Your current device';
+  String get yourCurrentDevice => 'உங்கள் தற்போதைய சாதனம்';
 
   @override
-  String get moveClientTooltip => 'Move here';
+  String get moveClientTooltip => 'இங்கே செல்';
 
   @override
-  String get displayName => 'Display name';
+  String get displayName => 'காட்சி பெயர்';
 
   @override
-  String get yourDisplayName => 'Your display name';
+  String get yourDisplayName => 'உங்கள் காட்சி பெயர்';
 
   @override
-  String get displayNameHint => 'This is shown on your public profile.';
+  String get displayNameHint =>
+      'இது உங்கள் பொது தன்விவரத்தில் காட்டப்பட்டுள்ளது.';
 
   @override
-  String get changeDisplayName => 'Change display name';
+  String get changeDisplayName => 'காட்சி பெயரை மாற்று';
 
   @override
-  String get scanQrCode => 'Scan QR code';
+  String get scanQrCode => 'விப குறியீட்டை வருடு';
 
   @override
-  String get compareSas => 'Compare SAS secret';
+  String get compareSas => 'SAS ரகசியத்தை ஒப்பிடுக';
 
   @override
-  String get confirmQrScanned => 'QR code successfully scanned.';
+  String get confirmQrScanned => 'விப குறியீடு வெற்றிகரமாக வருடப்பட்டது.';
 
   @override
-  String get confirm => 'Confirm';
+  String get confirm => 'உறுதிப்படுத்து';
 
   @override
   String get scanQrWithOtherDevice =>
-      'Scan this QR code with your other device.';
+      'இந்த QR குறியீட்டை உங்கள் பிற சாதனத்துடன் வருடு.';
 
   @override
-  String get clientSwitcher => 'Switch account';
+  String get clientSwitcher => 'கணக்கை மாற்று';
 
   @override
-  String get block => 'Block';
+  String get block => 'தடை';
 
   @override
-  String get unblock => 'Unblock';
+  String get unblock => 'தடைநீக்கு';
 
   @override
-  String get sessions => 'Sessions';
+  String get sessions => 'அமர்வுகள்';
 }

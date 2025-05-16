@@ -779,7 +779,7 @@
   "@about": {},
   "msgTypeNone": "未发送消息。",
   "@msgTypeNone": {},
-  "sendingFiles": "{files, plural, =0{未发送文件。} =1{1 个文件} other{{files} 个文件} 正在发送...}",
+  "sendingFiles": "{files, plural, =0{未发送文件。} =1{1 个文件} other{{files} 个文件}} 正在发送...}",
   "@sendingFiles": {
     "placeholders": {
       "files": {

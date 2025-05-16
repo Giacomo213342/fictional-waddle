@@ -4,60 +4,58 @@ import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
 
-/// The translations for German (`de`).
-class AppLocalizationsDe extends AppLocalizations {
-  AppLocalizationsDe([String locale = 'de']) : super(locale);
+/// The translations for Portuguese (`pt`).
+class AppLocalizationsPt extends AppLocalizations {
+  AppLocalizationsPt([String locale = 'pt']) : super(locale);
 
   @override
-  String get appName => '< polykül >';
+  String get appName => '< polycule >';
 
   @override
-  String get about => 'Info';
+  String get about => 'About';
 
   @override
   String author(String author) {
-    return 'Autor: $author';
+    return 'Author: $author';
   }
 
   @override
   String get appSlogan =>
-      'Ein geekiger und effizienter [matrix] -Client für Power-User.';
+      'A geeky and efficient [matrix] client for power users.';
 
   @override
-  String get repoLabel => 'Quellcode (GitLab)';
+  String get repoLabel => 'Source code (GitLab)';
 
   @override
-  String get releaseNotes => 'Versionshinweise';
+  String get releaseNotes => 'Release notes';
 
   @override
   String get buyMeACoffee => 'Buy me a coffee';
 
   @override
-  String get homeserverHeadline => 'Hallo ! Willkommen bei < polycule>';
+  String get homeserverHeadline => 'Haj ! Welcome to < polycule >';
 
   @override
-  String get aMatrixClient => '- noch irgendein [matrix] client';
+  String get aMatrixClient => '- yet another [matrix] client';
 
   @override
-  String get connectToHomeserver => 'Verbinde dich mit deinem Homeserver';
+  String get connectToHomeserver => 'Connect to your homeserver';
 
   @override
-  String get discoverHomeservers => 'Neue Homeserver entdecken';
+  String get discoverHomeservers => 'Discover new homeservers';
 
   @override
   String get newToMatrixLong =>
-      'Finde geeignete Heimserver aus dem [matrix] -Universum. Dies wird eine Verbindung herstellen zu joinmatrix.org .';
+      'Find eligible homeservers from the [matrix] universe. This will connect to joinmatrix.org.';
 
   @override
-  String get connect => 'Verbinden';
+  String get connect => 'Connect';
 
   @override
-  String get homeserverNotValid =>
-      'Dies ist keine gültige Home-Server-Eingabe.';
+  String get homeserverNotValid => 'This is no valid homeserver input.';
 
   @override
-  String get pleaseProvideHomeserver =>
-      'Dies ist keine gültige Homeserver-Eingabe.';
+  String get pleaseProvideHomeserver => 'Please provide a homeserver.';
 
   @override
   String errorConnectingToHomeserver(String homeserver) {
@@ -66,7 +64,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String connectingToHomeserver(String homeserver) {
-    return 'Verbindung zu $homeserver wird hergestellt …';
+    return 'Connecting to $homeserver …';
   }
 
   @override
@@ -84,13 +82,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get loginLegacySso => 'Login using legacy SSO';
 
   @override
-  String get username => 'Nutzer*innenname';
+  String get username => 'username';
 
   @override
   String get email => 'email';
 
   @override
-  String get password => 'Passwort';
+  String get password => 'password';
 
   @override
   String get pleaseProvideEmail => 'Please provide your email.';
@@ -111,7 +109,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String clientDisplayName(String platform) {
-    return '< polycule > auf $platform';
+    return '< polycule > on $platform';
   }
 
   @override
@@ -136,7 +134,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get syncInProgress => 'Synchronisation im Gange';
+  String get syncInProgress => 'Sync in progress';
 
   @override
   String get initialSync => 'Initial sync in progress';
@@ -1206,4 +1204,491 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get sessions => 'Sessions';
+}
+
+/// The translations for Portuguese, as used in Brazil (`pt_BR`).
+class AppLocalizationsPtBr extends AppLocalizationsPt {
+  AppLocalizationsPtBr() : super('pt_BR');
+
+  @override
+  String get appName => '< polícula >';
+
+  @override
+  String get about => 'Sobre';
+
+  @override
+  String author(String author) {
+    return 'Autor: $author';
+  }
+
+  @override
+  String get appSlogan =>
+      'Um cliente [matrix] geek e eficiente para usuários avançados.';
+
+  @override
+  String get repoLabel => 'Código fonte (GitLab)';
+
+  @override
+  String get releaseNotes => 'Notas de lançamento';
+
+  @override
+  String get buyMeACoffee => 'Compre-me um café';
+
+  @override
+  String get homeserverHeadline => 'Hoi! Bem-vindo à < polícula >';
+
+  @override
+  String get aMatrixClient => '- mais um cliente [matrix]';
+
+  @override
+  String get homeserverNotValid => 'Isso não é uma entrada válida de servidor.';
+
+  @override
+  String get pleaseProvideHomeserver => 'Por favor forneça um servidor.';
+
+  @override
+  String errorConnectingToHomeserver(String homeserver) {
+    return 'Não foi possível se conectar a $homeserver. Por favor verifique sua seleção.';
+  }
+
+  @override
+  String connectingToHomeserver(String homeserver) {
+    return 'Conectando-se a $homeserver…';
+  }
+
+  @override
+  String welcomeToHomeserver(String homeserver) {
+    return 'Bem-vindo a $homeserver!';
+  }
+
+  @override
+  String get howWouldYouLikeToConnect => 'Como gostaria de conectar?';
+
+  @override
+  String get loginPassword => 'Entrar usando senha';
+
+  @override
+  String get loginLegacySso => 'Entrar usando antigo SSO';
+
+  @override
+  String get username => 'nome de usuário';
+
+  @override
+  String get email => 'e-mail';
+
+  @override
+  String get password => 'senha';
+
+  @override
+  String get pleaseProvideEmail => 'Por favor forneça seu e-mail.';
+
+  @override
+  String get pleaseProvidePassword => 'Por favor insira sua senha.';
+
+  @override
+  String get pleaseProvideUsername => 'Por favor insira seu nome de usuário.';
+
+  @override
+  String get emailMinimals =>
+      'Seu e-mail deve conter pelo menos o símbolo @, uma parte local e seu domínio.';
+
+  @override
+  String get mxidSyntax =>
+      'Caracteres permitidos: a-z, 0-9 também como os símbolos ., _, =, -, /, e +.';
+
+  @override
+  String clientDisplayName(String platform) {
+    return '< polícula > no $platform';
+  }
+
+  @override
+  String clientDisplayNameHostname(String hostname, String platform) {
+    return '< polícula > em $hostname ($platform)';
+  }
+
+  @override
+  String get platformWeb => 'navegador';
+
+  @override
+  String get loginError =>
+      'Não foi possível entrar; por favor verifique suas credenciais.';
+
+  @override
+  String loginErrorMessage(String message) {
+    return 'Não foi possível entrar: $message';
+  }
+
+  @override
+  String hajUser(String? localpart) {
+    return 'Hoi $localpart!';
+  }
+
+  @override
+  String get syncInProgress => 'Sincronização em progresso';
+
+  @override
+  String get initialSync => 'Sincronização inicial em progresso';
+
+  @override
+  String get syncOffline => 'Sincronização interrompida';
+
+  @override
+  String get syncFunctional => 'Estado de sincronização saudável';
+
+  @override
+  String lastSyncReceived(DateTime timestamp, int duration) {
+    final intl.DateFormat timestampDateFormat = intl.DateFormat.jms(localeName);
+    final String timestampString = timestampDateFormat.format(timestamp);
+
+    return 'Última sincronização: $timestampString ${duration}ms)';
+  }
+
+  @override
+  String editedToday(DateTime timestamp) {
+    final intl.DateFormat timestampDateFormat = intl.DateFormat.jm(localeName);
+    final String timestampString = timestampDateFormat.format(timestamp);
+
+    return 'Editado: $timestampString';
+  }
+
+  @override
+  String editedAt(String timestamp) {
+    return 'Editado: $timestamp';
+  }
+
+  @override
+  String get authenticationRequired => 'Autenticação necessária';
+
+  @override
+  String authenticateForAccount(String mxid) {
+    return 'Por favor autentique-se com suas credenciais para $mxid.';
+  }
+
+  @override
+  String replyUserSentDate(String username, String formattedDate) {
+    return '$username escreveu $formattedDate:';
+  }
+
+  @override
+  String get passphraseNotEmpty => 'A frase-passe não pode ser vazia';
+
+  @override
+  String get wipeAccount => 'Limpar conta';
+
+  @override
+  String get wipeAccountWarning =>
+      'Se perdeu seu dispositivo, pode limpar e reiniciar sua conta. Todas as mensagens e conversas serão perdidas.';
+
+  @override
+  String get previous => 'Anterior';
+
+  @override
+  String get connectPreviousDeviceLong =>
+      'Por favor verifique dispositivo existente.';
+
+  @override
+  String get deviceNotAvailable => 'Não tenho meu dispositivo disponível.';
+
+  @override
+  String get waitingForVerification => 'Esperando por verificação';
+
+  @override
+  String get waitingForVerificationFallback =>
+      'Por favor verifique usando seu segundo dispositivo ou insira sua frase de recuperação.';
+
+  @override
+  String incomingVerificationRequestUser(String? user) {
+    return '$user quer verificar';
+  }
+
+  @override
+  String get enterRecoveryPhrase => 'Insira frase de recuperação';
+
+  @override
+  String get keyVerificationErrorGeneric =>
+      'Ocorreu um erro ao verificar seu dispositivo.';
+
+  @override
+  String get keyVerificationErrorUser => 'A verificação foi cancelada.';
+
+  @override
+  String get or => 'ou';
+
+  @override
+  String get verifyMethodsNotAvailable =>
+      'Não tem um método de verificação disponível?';
+
+  @override
+  String get resetAccountWarning =>
+      'Você usará todas suas mensagens passadas. Isso não pode ser desfeito.';
+
+  @override
+  String get passphraseNoWhitespace =>
+      'A frase-passe não pode conter espaços em branco!';
+
+  @override
+  String get errorTryAgain => 'Ocorreu um erro. Por favor tente novamente.';
+
+  @override
+  String get togglePassword => 'Alternar visibilidade da senha';
+
+  @override
+  String get pendingInvite => 'Convite pendente';
+
+  @override
+  String inviteLongRoom(String roomname) {
+    return 'Você é convidado para entrar na sala: « $roomname ».';
+  }
+
+  @override
+  String inviteLongDM(Object displayname) {
+    return 'Você é convidado para discutir com « $displayname ».';
+  }
+
+  @override
+  String roomParticipants(int participants) {
+    String _temp0 = intl.Intl.pluralLogic(
+      participants,
+      locale: localeName,
+      other: '$participants participantes',
+      one: '1 participante',
+      zero: 'Nenhum participante',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get youCannotJoinThisRoom => 'Você não pode entrar nessa sala.';
+
+  @override
+  String get regionAccountSwitcher => 'Região da tela: Alternador de contas.';
+
+  @override
+  String get regionChatContents => 'Região da tela: Conteúdo da conversa.';
+
+  @override
+  String get loadingHomeservers =>
+      'Carregando servidores. Progresso desconhecido. Favor esperar.';
+
+  @override
+  String get typeGroupImages => 'Imagens';
+
+  @override
+  String get typeGroupVideos => 'Vídeos';
+
+  @override
+  String get typeGroupFiles => 'Todos arquivos';
+
+  @override
+  String sendingFiles(int files) {
+    String _temp0 = intl.Intl.pluralLogic(
+      files,
+      locale: localeName,
+      other: 'Enviando $files',
+      one: 'Um arquivo',
+      zero: 'Enviando nenhum arquivo.',
+    );
+    return '$_temp0 arquivos...';
+  }
+
+  @override
+  String get noFilesSelected => 'Nenhum arquivo selecionado.';
+
+  @override
+  String get yesterday => 'Ontem';
+
+  @override
+  String get thisMonth => 'Esse mês';
+
+  @override
+  String get lastMonth => 'Mês passado';
+
+  @override
+  String get settings => 'Configurações';
+
+  @override
+  String get errorDownloadingAttachment => 'Erro ao baixar anexo da mensagem.';
+
+  @override
+  String get searchPromptLabel => 'Comando, usuário, nome da sala ou MXID';
+
+  @override
+  String get appearanceAccessibilitySettings => 'Aparência e acessibilidade';
+
+  @override
+  String get systemLanguage => 'Idioma do dispositivo';
+
+  @override
+  String get language => 'Idioma';
+
+  @override
+  String get theme => 'Tema';
+
+  @override
+  String get dark => 'Terminal escuro';
+
+  @override
+  String get systemTheme => 'Tema do sistema';
+
+  @override
+  String get inclusiveSans => 'Fonte com legibilidade aumentada';
+
+  @override
+  String get openDyslexic => 'Fonte com assistência a dislexia';
+
+  @override
+  String get serif => 'Fonte serifada';
+
+  @override
+  String get defaultFont => 'Fonte padrão';
+
+  @override
+  String get color => 'Configurações de cor';
+
+  @override
+  String get systemColor => 'Cor do sistema';
+
+  @override
+  String get defaultColor => 'Cor padrão do tema';
+
+  @override
+  String get customColor => 'Cor personalizada';
+
+  @override
+  String get highContrast => 'Alto contraste';
+
+  @override
+  String get aboutPolycule => 'Sobre < polícula >';
+
+  @override
+  String contentNotice(String notice) {
+    return 'AC: « $notice »';
+  }
+
+  @override
+  String get contentNoticeFallback => 'Aviso de conteúdo';
+
+  @override
+  String get webUriHandlerTitle => 'Cliente [matrix] < polícula >';
+
+  @override
+  String sharingFiles(int files) {
+    String _temp0 = intl.Intl.pluralLogic(
+      files,
+      locale: localeName,
+      other: '$files arquivos',
+      one: 'um arquivo',
+    );
+    return 'Enviando $_temp0.';
+  }
+
+  @override
+  String get checkingTotalSendSize => 'Verificando tamanho total do envio...';
+
+  @override
+  String get unifiedPushLink => 'https://unifiedpush.org/users/intro/';
+
+  @override
+  String get availableCommands => 'Comandos disponíveis';
+
+  @override
+  String get errorReportingLong =>
+      'Você pode ativar relatos de erros para ajudar a encontrar erros na < polícula >.';
+
+  @override
+  String get errorReportingPrivacy =>
+      'Isso irá conectar com GitLab.com, o hóspede do código fonte da < polícula > e anonimamente compartilhar erros ocorridos e suas causas. Isso não irá compartilhar nenhum dado pessoal para o desenvolvedor.';
+
+  @override
+  String get roomStatePublic => 'Essa sala é publicamente visível para todos';
+
+  @override
+  String get roomStatePublicKnock =>
+      'Essa sala é visível publicamente para todos, mas eles devem bater antes de entrar.';
+
+  @override
+  String get roomStateOpen =>
+      'Essa sala é aberta para todos que conhecem seu endereço.';
+
+  @override
+  String get roomStateKnock =>
+      'Usuários devem bater antes de entrar nessa sala.';
+
+  @override
+  String get roomStateSpace =>
+      'Essa sala é aberta somente para membros do espaço.';
+
+  @override
+  String get roomStateUnpublic => 'Essa sala é privada mas não criptografada.';
+
+  @override
+  String get roomStateEncrypted =>
+      'Essa sala é privada mas alguns membros não são verificados.';
+
+  @override
+  String get oidcAppName => '< polícula >';
+
+  @override
+  String get oidcContact => 'info@braid.business';
+
+  @override
+  String get oidcAppUrl => 'https://polycule.im/web';
+
+  @override
+  String get oidcLogoUrl =>
+      'https://polycule.im/web/assets/assets/logo/logo-circle.png';
+
+  @override
+  String get oidcTosUrl => 'https://polycule.im/web/tos.html';
+
+  @override
+  String get oicPolicyUri => 'https://polycule.im/web/policy.html';
+
+  @override
+  String get networkSettings => 'Configurações de rede';
+
+  @override
+  String get tls12 => 'TLS 1.2';
+
+  @override
+  String get tls13 => 'TLS 1.3';
+
+  @override
+  String get emojiSettings => 'Configurações de emoji';
+
+  @override
+  String get roomDetails => 'Detalhes da sala';
+
+  @override
+  String get errorSendingSticker => 'Erro ao enviar figurinha personalizada.';
+
+  @override
+  String get eventSourceCode => 'Código fonte do evento';
+
+  @override
+  String get eventSourceContent => 'Conteúdo do evento';
+
+  @override
+  String get eventSourceJson => 'JSON completo';
+
+  @override
+  String get eventSourceOriginal => 'Evento original';
+
+  @override
+  String get eventSourceBodyHtml => 'Corpo do evento (HTML)';
+
+  @override
+  String get sessionIpAddress => 'Último endereço IP';
+
+  @override
+  String get deviceNoEncryption => 'Não suporta criptografia';
+
+  @override
+  String get deviceBlocked => 'Dispositivo bloqueado';
+
+  @override
+  String get yourCurrentDevice => 'Seu dispositivo atual';
+
+  @override
+  String get sessions => 'Sessões';
 }

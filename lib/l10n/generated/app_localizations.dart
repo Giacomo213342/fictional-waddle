@@ -9,7 +9,9 @@ import 'app_localizations_en.dart' deferred as app_localizations_en;
 import 'app_localizations_et.dart' deferred as app_localizations_et;
 import 'app_localizations_nb.dart' deferred as app_localizations_nb;
 import 'app_localizations_nl.dart' deferred as app_localizations_nl;
+import 'app_localizations_pt.dart' deferred as app_localizations_pt;
 import 'app_localizations_ta.dart' deferred as app_localizations_ta;
+import 'app_localizations_zh.dart' deferred as app_localizations_zh;
 
 // ignore_for_file: type=lint
 
@@ -102,7 +104,11 @@ abstract class AppLocalizations {
     Locale('et'),
     Locale('nb'),
     Locale('nl'),
-    Locale('ta')
+    Locale('pt'),
+    Locale('pt', 'BR'),
+    Locale('ta'),
+    Locale('zh'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans')
   ];
 
   /// No description provided for @appName.
@@ -2211,7 +2217,9 @@ class _AppLocalizationsDelegate
         'et',
         'nb',
         'nl',
-        'ta'
+        'pt',
+        'ta',
+        'zh'
       ].contains(locale.languageCode);
 
   @override
@@ -2219,6 +2227,32 @@ class _AppLocalizationsDelegate
 }
 
 Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
+  // Lookup logic when language+script codes are specified.
+  switch (locale.languageCode) {
+    case 'zh':
+      {
+        switch (locale.scriptCode) {
+          case 'Hans':
+            return app_localizations_zh.loadLibrary().then(
+                (dynamic _) => app_localizations_zh.AppLocalizationsZhHans());
+        }
+        break;
+      }
+  }
+
+  // Lookup logic when language+country codes are specified.
+  switch (locale.languageCode) {
+    case 'pt':
+      {
+        switch (locale.countryCode) {
+          case 'BR':
+            return app_localizations_pt.loadLibrary().then(
+                (dynamic _) => app_localizations_pt.AppLocalizationsPtBr());
+        }
+        break;
+      }
+  }
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'de':
@@ -2241,10 +2275,18 @@ Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
       return app_localizations_nl
           .loadLibrary()
           .then((dynamic _) => app_localizations_nl.AppLocalizationsNl());
+    case 'pt':
+      return app_localizations_pt
+          .loadLibrary()
+          .then((dynamic _) => app_localizations_pt.AppLocalizationsPt());
     case 'ta':
       return app_localizations_ta
           .loadLibrary()
           .then((dynamic _) => app_localizations_ta.AppLocalizationsTa());
+    case 'zh':
+      return app_localizations_zh
+          .loadLibrary()
+          .then((dynamic _) => app_localizations_zh.AppLocalizationsZh());
   }
 
   throw FlutterError(
