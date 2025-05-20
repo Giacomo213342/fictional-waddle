@@ -16,7 +16,10 @@ final homeserver = Platform.environment['HOMESERVER'] ??
 Future<void> main([List<String>? args]) async {
   Logs().level = Level.debug;
   print('Registering ${Users.all.length} users at $homeserver ...');
-  final client = Client('integration_setup');
+  final client = Client(
+    'integration_setup',
+    database: await MatrixSdkDatabase.init('integration_setup'),
+  );
   client.homeserver = Uri.parse(homeserver);
   client.onUiaRequest.stream.listen((request) {
     if (request.nextStages.contains(

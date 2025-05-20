@@ -13,10 +13,13 @@ import 'matrix_refresh_token_client.dart';
 abstract class ClientUtil {
   const ClientUtil._();
 
-  static Client clientConstructor(String name, BaseClient httpClient) {
+  static Future<Client> clientConstructor(
+    String name,
+    BaseClient httpClient,
+  ) async {
     final client = Client(
       name,
-      databaseBuilder: polyculeDatabaseBuilder,
+      database: await polyculeDatabaseBuilder(name),
       verificationMethods: {
         KeyVerificationMethod.numbers,
         KeyVerificationMethod.emoji,

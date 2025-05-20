@@ -172,7 +172,7 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
     }
 
     final database = client.database;
-    final stored = await database?.getFile(mxcUri);
+    final stored = await database.getFile(mxcUri);
     if (stored is Uint8List) {
       return stored;
     }
@@ -187,14 +187,12 @@ class _MxcUriImageBuilderState extends State<MxcUriImageBuilder> {
     }
 
     final bytes = response.bodyBytes;
-    if (bytes.length < (database?.maxFileSize ?? 5 * 1024 * 1024)) {
-      if (database != null) {
-        await database.storeFile(
-          mxcUri,
-          bytes,
-          DateTime.now().millisecondsSinceEpoch,
-        );
-      }
+    if (bytes.length < (database.maxFileSize)) {
+      await database.storeFile(
+        mxcUri,
+        bytes,
+        DateTime.now().millisecondsSinceEpoch,
+      );
     }
     return bytes;
   }

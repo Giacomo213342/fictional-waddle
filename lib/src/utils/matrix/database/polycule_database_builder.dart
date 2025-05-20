@@ -15,17 +15,15 @@ import 'sqlcipher_stub.dart'
     if (dart.library.io) 'package:sqlcipher_flutter_libs/sqlcipher_flutter_libs.dart';
 
 Future<MatrixSdkDatabase> polyculeDatabaseBuilder(
-  Client client,
+  String clientName,
 ) async {
   if (kIsWeb) {
     unawaited(persistStorage());
     final factory = createIdbFactory();
-    final db = MatrixSdkDatabase(
-      client.clientName,
+    return MatrixSdkDatabase.init(
+      clientName,
       idbFactory: factory,
     );
-    await db.open();
-    return db;
   }
 
   final cipher = await getDatabaseCipher();
@@ -34,7 +32,7 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(
 
   final applicationCacheDirectory = await getApplicationCacheDirectory();
   final cacheDirectory = Directory(
-    '${applicationCacheDirectory.path}$suffix/${client.clientName}',
+    '${applicationCacheDirectory.path}$suffix/$clientName',
   );
   if (!await cacheDirectory.exists()) {
     await cacheDirectory.create(recursive: true);
@@ -44,7 +42,7 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(
   final persistentAppDataDirectory = await getApplicationSupportDirectory();
 
   final databasePath =
-      '${persistentAppDataDirectory.path}$suffix/${client.clientName}.sqlite';
+      '${persistentAppDataDirectory.path}$suffix/$clientName.sqlite';
 
   // fix dlopen for old Android
   await applyWorkaroundToOpenSqlCipherOnOldAndroidVersions();
@@ -87,13 +85,11 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(
     rethrow;
   }
 
-  final db = MatrixSdkDatabase(
-    client.clientName,
+  return MatrixSdkDatabase.init(
+    clientName,
     database: database,
     maxFileSize: 1024 * 1024 * 10,
     fileStorageLocation: fileStorageLocation,
     deleteFilesAfterDuration: const Duration(days: 30),
   );
-  await db.open();
-  return db;
 }
