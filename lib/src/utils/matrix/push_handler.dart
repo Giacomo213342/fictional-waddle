@@ -32,7 +32,8 @@ Future<void> handleBackgroundNotification(
   final httpCallback =
       await PolyculeHttpClientManager.httpClientCallbackStream.first;
 
-  final client = ClientUtil.clientConstructor(instance, httpCallback.call());
+  final client =
+      await ClientUtil.clientConstructor(instance, httpCallback.call());
 
   final locale = WidgetsBinding.instance.platformDispatcher
           .computePlatformResolvedLocale(AppLocalizations.supportedLocales) ??
@@ -202,7 +203,7 @@ PushNotification decodeMessage(Uint8List message) {
 
 extension GetAndroidIcon on Uri {
   Future<ByteArrayAndroidIcon?> downloadAndroidIcon(Client client) async {
-    final bytes = await client.database?.getFile(this);
+    final bytes = await client.database.getFile(this);
     if (bytes == null) {
       return null;
     }

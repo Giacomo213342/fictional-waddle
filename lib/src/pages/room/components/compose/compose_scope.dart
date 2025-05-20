@@ -280,7 +280,7 @@ class ComposeScope extends State<ComposeScopeWidget> {
   Future<void> _loadDraft() async {
     final room = RoomScope.of(context).room;
     final client = ClientScope.of(context).client;
-    final draft = await client.database?.getRoomDraft(room.id);
+    final draft = await client.database.getRoomDraft(room.id);
     if (draft != null) {
       messageController.value = TextEditingValue(
         text: draft,
@@ -296,6 +296,6 @@ class ComposeScope extends State<ComposeScopeWidget> {
     final client = ClientScope.of(context).client;
 
     final draft = messageController.text;
-    await client.database?.storeRoomDraft(room.id, draft);
+    await client.database.storeRoomDraft(room.id, draft);
   }
 }

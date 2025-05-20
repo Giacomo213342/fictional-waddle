@@ -11,7 +11,7 @@ import '../../../utils/error_logger.dart';
 import '../../../utils/runtime_suffix.dart';
 import '../../../utils/secure_storage.dart';
 
-typedef BuildClientCallback = Client Function(int index);
+typedef BuildClientCallback = Future<Client> Function(int index);
 
 class ClientStore {
   ClientStore({required this.buildClient});
@@ -66,12 +66,12 @@ class ClientStore {
         if (!activeClients.any(
           (client) => client.clientName.clientIdentifier == identifier,
         )) {
-          activeClients.add(buildClient(identifier));
+          activeClients.add(await buildClient(identifier));
         }
       }
     }
     if (activeClients.isEmpty) {
-      activeClients.add(buildClient(1));
+      activeClients.add(await buildClient(1));
     }
     this.activeClients.value = activeClients;
     storageLock?.complete();
@@ -146,7 +146,7 @@ class ClientStore {
 
     final identifier = client.clientName.clientIdentifier;
 
-    await client.database?.delete();
+    await client.database.delete();
 
     await client.dispose();
 
@@ -216,14 +216,14 @@ class ClientStore {
     );
   }
 
-  Client buildNewClient() {
+  Future<Client> buildNewClient() async {
     final activeClients = List<Client>.from(this.activeClients.value);
     final identifiers = activeClients
         .map((e) => e.clientName.clientIdentifier)
         .toList()
       ..sort();
     final identifier = identifiers.isEmpty ? 1 : identifiers.last + 1;
-    final client = buildClient(identifier);
+    final client = await buildClient(identifier);
     activeClients.add(client);
     this.activeClients.value = activeClients;
     return client;

@@ -104,8 +104,8 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
     await store.moveClient(client, index);
   }
 
-  int addLoginClient() {
-    final client = store.buildNewClient();
+  Future<int> addLoginClient() async {
+    final client = await store.buildNewClient();
     final identifier = client.clientName.clientIdentifier;
     _loginClients.add(identifier);
     return identifier;
@@ -117,10 +117,12 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
     await _removeFromClientList(client);
   }
 
-  Client _buildClient(int identifier) {
+  Future<Client> _buildClient(int identifier) async {
     final httpClient = _httpClient!.call();
-    final client =
-        ClientUtil.clientConstructor(_makeClientName(identifier), httpClient);
+    final client = await ClientUtil.clientConstructor(
+      _makeClientName(identifier),
+      httpClient,
+    );
 
     client.registerPolyculeCommands();
 
