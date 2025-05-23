@@ -20,8 +20,9 @@ PODS:
   - flutter_openssl_crypto (0.0.1):
     - Flutter
     - OpenSSL-Universal
-  - flutter_secure_storage (6.0.0):
+  - flutter_secure_storage_darwin (10.0.0):
     - Flutter
+    - FlutterMacOS
   - flutter_zxing (0.0.1):
     - Flutter
   - image_picker_ios (0.0.1):
@@ -49,8 +50,6 @@ PODS:
   - pointer_interceptor_ios (0.0.1):
     - Flutter
   - receive_sharing_intent (1.8.1):
-    - Flutter
-  - screen_brightness_ios (0.1.0):
     - Flutter
   - share_plus (0.0.1):
     - Flutter
@@ -83,7 +82,7 @@ DEPENDENCIES:
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_olm (from `.symlinks/plugins/flutter_olm/ios`)
   - flutter_openssl_crypto (from `.symlinks/plugins/flutter_openssl_crypto/ios`)
-  - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
+  - flutter_secure_storage_darwin (from `.symlinks/plugins/flutter_secure_storage_darwin/darwin`)
   - flutter_zxing (from `.symlinks/plugins/flutter_zxing/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
@@ -96,7 +95,6 @@ DEPENDENCIES:
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - pointer_interceptor_ios (from `.symlinks/plugins/pointer_interceptor_ios/ios`)
   - receive_sharing_intent (from `.symlinks/plugins/receive_sharing_intent/ios`)
-  - screen_brightness_ios (from `.symlinks/plugins/screen_brightness_ios/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - sqlcipher_flutter_libs (from `.symlinks/plugins/sqlcipher_flutter_libs/ios`)
@@ -130,8 +128,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_olm/ios"
   flutter_openssl_crypto:
     :path: ".symlinks/plugins/flutter_openssl_crypto/ios"
-  flutter_secure_storage:
-    :path: ".symlinks/plugins/flutter_secure_storage/ios"
+  flutter_secure_storage_darwin:
+    :path: ".symlinks/plugins/flutter_secure_storage_darwin/darwin"
   flutter_zxing:
     :path: ".symlinks/plugins/flutter_zxing/ios"
   image_picker_ios:
@@ -156,8 +154,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/pointer_interceptor_ios/ios"
   receive_sharing_intent:
     :path: ".symlinks/plugins/receive_sharing_intent/ios"
-  screen_brightness_ios:
-    :path: ".symlinks/plugins/screen_brightness_ios/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
   sqflite_darwin:
@@ -182,7 +178,7 @@ SPEC CHECKSUMS:
   flutter_local_notifications: ff50f8405aaa0ccdc7dcfb9022ca192e8ad9688f
   flutter_olm: b5e343c93a22c07f939ad277adf6275c8337d062
   flutter_openssl_crypto: 636ad25f56fbe0f45b9e13b8589540b341a486a1
-  flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
+  flutter_secure_storage_darwin: 12d2375c690785d97a4e586f15f11be5ae35d5b0
   flutter_zxing: d527c3ff9c7f3606dd29a7ec8c4055f7daa088c5
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
@@ -196,7 +192,6 @@ SPEC CHECKSUMS:
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   pointer_interceptor_ios: 508241697ff0947f853c061945a8b822463947c1
   receive_sharing_intent: 79c848f5b045674ad60b9fea3bafea59962ad2c1
-  screen_brightness_ios: 7437207a2a9bc56553aa10f782afecf830b4c4e2
   share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
   sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
   SQLCipher: 908f846ca79d74be4e1776b3b86c6ad9e6c0b04f

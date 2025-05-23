@@ -1,5 +1,5 @@
 variables:
-  FLUTTER_VERSION: 3.29.2
+  FLUTTER_VERSION: 3.32.0
 
 include:
   - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.43.1
@@ -22,7 +22,9 @@ stages:
   - export PUBSPEC_VERSION=$(grep -m1 version pubspec.yaml | awk '{ print $2 }' | cut -f1 -d "+")
   - export POLYCULE_VERSION="$(git describe --always)"
   - export POLYCULE_IS_STABLE=$([ -n "$CI_COMMIT_TAG" ] && echo "true" || echo "false")
-  - export FLUTTER_BASE_ARGS="--no-pub --dart-define=POLYCULE_IS_STABLE=$POLYCULE_IS_STABLE --dart-define=POLYCULE_VERSION=$POLYCULE_VERSION --dart-define=no_default_http_client=true --dart-define=cronetHttpNoPlay=true"
+  # https://github.com/flutter/flutter/issues/169336
+  # --no-pub
+  - export FLUTTER_BASE_ARGS="--dart-define=POLYCULE_IS_STABLE=$POLYCULE_IS_STABLE --dart-define=POLYCULE_VERSION=$POLYCULE_VERSION --dart-define=no_default_http_client=true --dart-define=cronetHttpNoPlay=true"
   - export FLUTTER_ARGS="$($POLYCULE_IS_STABLE || echo "--build-number $CI_PIPELINE_ID") ${FLUTTER_BASE_ARGS}"
 
 .flutter-setup: &flutter-setup

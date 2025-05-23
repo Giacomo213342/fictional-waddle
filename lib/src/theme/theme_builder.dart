@@ -145,7 +145,7 @@ class PolyculeThemeBuilder extends StatelessWidget {
         PolyculeFonts.notoSans.name,
       ],
       colorScheme: colorScheme,
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         margin: const EdgeInsets.all(16),
         shape: defaultBorder,
       ),
