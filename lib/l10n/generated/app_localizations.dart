@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_ar.dart' deferred as app_localizations_ar;
 import 'app_localizations_de.dart' deferred as app_localizations_de;
 import 'app_localizations_en.dart' deferred as app_localizations_en;
 import 'app_localizations_et.dart' deferred as app_localizations_et;
@@ -99,6 +100,7 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
     Locale('de'),
     Locale('en'),
     Locale('et'),
@@ -2211,6 +2213,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) => <String>[
+        'ar',
         'de',
         'en',
         'et',
@@ -2241,6 +2244,10 @@ Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ar':
+      return app_localizations_ar
+          .loadLibrary()
+          .then((dynamic _) => app_localizations_ar.AppLocalizationsAr());
     case 'de':
       return app_localizations_de
           .loadLibrary()
