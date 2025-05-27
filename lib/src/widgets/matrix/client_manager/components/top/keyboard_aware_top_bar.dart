@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 import '../client_back_button.dart';
+import 'add_client_button.dart';
 import 'client_tab_bar.dart';
+import 'settings_button.dart';
 
 class KeyboardAwareTopBar extends StatelessWidget {
   const KeyboardAwareTopBar({super.key});
@@ -27,6 +29,10 @@ class KeyboardAwareTopBar extends StatelessWidget {
                     ClientBackButton(),
                     SizedBox(width: 8),
                     Expanded(child: ClientTabBar()),
+                    SizedBox(width: 8),
+                    AddClientButton(),
+                    SizedBox(width: 8),
+                    SettingsButton(),
                   ],
                 ),
               ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:animations/animations.dart';
+import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 
 import 'placeholder.dart';
 
@@ -22,68 +22,51 @@ class ResponsiveLayout extends StatelessWidget {
   final Widget placeholder;
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth > 764) {
-            return Scaffold(
-              key: const ValueKey(ScaffoldMessenger),
-              body: Row(
-                children: [
-                  SizedBox(
-                    width: 256 + 192,
-                    child: main,
-                  ),
-                  Expanded(
-                    child: _buildAnimation(context, secondary ?? placeholder),
-                  ),
-                ],
+  Widget build(BuildContext context) {
+    Widget child;
+    final segments =
+        uri?.path.replaceFirst(RegExp(r'/client/\d+'), '').split('/');
+    if (segments == null) {
+      child = main;
+    } else {
+      segments.removeWhere((element) => element.isEmpty);
+      if (segments.length < 2) {
+        child = main;
+      } else {
+        child = secondary ?? main;
+      }
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return AdaptiveLayout(
+          body: SlotLayout(
+            config: {
+              Breakpoints.smallAndUp: SlotLayout.from(
+                key: const Key('main-body-small'),
+                builder: (context) => child,
               ),
-            );
-          } else {
-            Widget? child;
-            bool reverse = false;
-            final segments =
-                uri?.path.replaceFirst(RegExp(r'/client/\d+'), '').split('/');
-            if (segments == null) {
-              child = main;
-            } else {
-              segments.removeWhere((element) => element.isEmpty);
-              if (segments.length < 2) {
-                child = main;
-                reverse = true;
-              }
-            }
-            child ??= secondary ?? main;
-
-            return _buildAnimation(context, child, reverse);
-          }
-        },
-      );
-
-  Widget _buildAnimation(
-    BuildContext context,
-    Widget child, [
-    bool reverse = false,
-  ]) {
-    return PageTransitionSwitcher(
-      reverse: reverse,
-      transitionBuilder: (
-        Widget child,
-        Animation<double> primaryAnimation,
-        Animation<double> secondaryAnimation,
-      ) {
-        return SharedAxisTransition(
-          animation: primaryAnimation,
-          secondaryAnimation: secondaryAnimation,
-          transitionType: SharedAxisTransitionType.scaled,
-          fillColor: Theme.of(context).colorScheme.surface,
-          child: child,
+              Breakpoints.mediumLargeAndUp: SlotLayout.from(
+                key: const Key('main-body'),
+                builder: (context) => main,
+              ),
+            },
+          ),
+          secondaryBody: SlotLayout(
+            config: {
+              Breakpoints.mediumLargeAndUp: SlotLayout.from(
+                key: const Key('secondary-body'),
+                builder: (context) => secondary ?? placeholder,
+              ),
+            },
+          ),
+          bodyRatio: constraints.maxWidth < 1200
+              ? .5
+              : constraints.maxWidth < 1900
+                  ? .35
+                  : .25,
         );
       },
-      child: Container(
-        key: ValueKey(uri?.toString()),
-        child: child,
-      ),
     );
   }
 }

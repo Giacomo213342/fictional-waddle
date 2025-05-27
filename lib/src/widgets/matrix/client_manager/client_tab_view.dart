@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:olm/olm.dart' as olm;
@@ -17,8 +16,8 @@ import '../../../pages/ssss_bootstrap/ssss_bootstrap.dart';
 import '../../../router/extensions/go_router_path_extension.dart';
 import '../scopes/client_scope.dart';
 import 'client_store.dart';
-import 'components/bottom_tab_bar_view.dart';
-import 'components/top_tab_bar_view.dart';
+import 'components/bottom/polycule_bottom_app_bar.dart';
+import 'components/top/keyboard_aware_top_bar.dart';
 
 class ClientTabView extends StatefulWidget {
   const ClientTabView({super.key, required this.child});
@@ -58,11 +57,44 @@ class _ClientTabViewState extends State<ClientTabView> {
   @override
   Widget build(BuildContext context) {
     _loginStateSubscription ??= _subscribeListener(context);
-    return LayoutBuilder(
-      builder: (context, constraints) =>
-          constraints.maxWidth > 764 || (!kIsWeb && Platform.isIOS)
-              ? TopTabBarView(child: widget.child)
-              : BottomTabBarView(child: widget.child),
+    return Scaffold(
+      body: AdaptiveLayout(
+        transitionDuration: const Duration(milliseconds: 300),
+        body: SlotLayout(
+          config: {
+            Breakpoints.smallAndUp: SlotLayout.from(
+              key: const Key('body'),
+              builder: (context) => widget.child,
+            ),
+          },
+        ),
+        topNavigation: SlotLayout(
+          config: {
+            Breakpoints.mediumLargeAndUp: SlotLayout.from(
+              key: const Key('top-app-bar'),
+              builder: (context) {
+                return const KeyboardAwareTopBar();
+              },
+            ),
+          },
+        ),
+        bottomNavigation: SlotLayout(
+          config: {
+            Breakpoints.small: SlotLayout.from(
+              key: const Key('bottom-app-bar'),
+              builder: (context) {
+                return const PolyculeBottomAppBar();
+              },
+            ),
+            Breakpoints.medium: SlotLayout.from(
+              key: const Key('bottom-app-bar'),
+              builder: (context) {
+                return const PolyculeBottomAppBar();
+              },
+            ),
+          },
+        ),
+      ),
     );
   }
 

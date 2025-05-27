@@ -71,7 +71,7 @@ class AccountSelectorController extends State<AccountSelectorPage> {
       path = path.replaceFirst('/', '');
     }
     context.pushReplacement(
-      '/client/$identifier/$path}',
+      '/client/$identifier/$path',
     );
   }
 
