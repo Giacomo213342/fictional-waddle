@@ -70,23 +70,26 @@ class PushManager {
     localizations = await AppLocalizations.delegate.load(locale);
     await initializeNotificationPlugin(localizations);
     try {
-      await UnifiedPush.initialize(
+      final registered = await UnifiedPush.initialize(
         onNewEndpoint: onNewEndpoint,
         onRegistrationFailed: onRegistrationFailed,
         onUnregistered: onUnregistered,
         onMessage: onMessage,
       );
+      if (registered || await UnifiedPush.tryUseCurrentOrDefaultDistributor()) {
+        await register();
+      }
     } on UnimplementedError catch (_) {}
   }
 
-  Future<void> onNewEndpoint(String endpoint, String instance) async {
+  Future<void> onNewEndpoint(PushEndpoint endpoint, String instance) async {
     if (instance != this.instance) {
       return;
     }
     // You should send the endpoint to your application server
     // and sync for missing notifications.
-    final uri = await client.checkPushGateway(endpoint);
-    final pushKey = endpoint;
+    final uri = await client.checkPushGateway(endpoint.url);
+    final pushKey = endpoint.url;
     final pushId = pushKey.split('/').last;
 
     final pusher = Pusher(
@@ -110,7 +113,7 @@ class PushManager {
     await settings.storePushKey(client.clientName, pushKey);
   }
 
-  void onRegistrationFailed(String instance) {
+  void onRegistrationFailed(FailedReason reason, String instance) {
     if (instance != this.instance) {
       return;
     }
@@ -137,14 +140,14 @@ class PushManager {
     );
   }
 
-  Future<void> onMessage(Uint8List message, String instance) async {
+  Future<void> onMessage(PushMessage message, String instance) async {
     if (instance != client.clientName) {
       return;
     }
     await handlePushNotification(
       client: client,
       l10n: localizations,
-      message: message,
+      message: message.content,
     );
   }
 
@@ -158,6 +161,6 @@ class PushManager {
     if (permission == null) {
       return;
     }
-    await UnifiedPush.registerApp(instance);
+    await UnifiedPush.register(instance: instance);
   }
 }

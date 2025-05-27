@@ -69,21 +69,24 @@ static void polycule_client_activate(GApplication* application) {
   gtk_widget_grab_focus(GTK_WIDGET(view));
 }
 
-// Implements GApplication::local_command_line.
-static gboolean polycule_client_local_command_line(GApplication* application, gchar*** arguments, int* exit_status) {
+// Implements GApplication::command_line.
+//
+// See: https://wiki.gnome.org/HowDoI/DBusApplicationLaunching
+// Source: https://github.com/canonical/firmware-updater
+static gboolean polycule_client_command_line(GApplication *application, GApplicationCommandLine *command_line) {
   PolyculeClient* self = POLYCULE_CLIENT(application);
+
+  gchar **arguments = g_application_command_line_get_arguments(command_line, nullptr);
   // Strip out the first argument as it is the binary name.
-  self->dart_entrypoint_arguments = g_strdupv(*arguments + 1);
+  self->dart_entrypoint_arguments = g_strdupv(arguments + 1);
 
   g_autoptr(GError) error = nullptr;
   if (!g_application_register(application, nullptr, &error)) {
      g_warning("Failed to register: %s", error->message);
-     *exit_status = 1;
      return TRUE;
   }
 
   g_application_activate(application);
-  *exit_status = 0;
 
   return FALSE;
 }
@@ -115,7 +118,7 @@ static void polycule_client_dispose(GObject* object) {
 
 static void polycule_client_class_init(PolyculeClientClass* klass) {
   G_APPLICATION_CLASS(klass)->activate = polycule_client_activate;
-  G_APPLICATION_CLASS(klass)->local_command_line = polycule_client_local_command_line;
+  G_APPLICATION_CLASS(klass)->command_line = polycule_client_command_line;
   G_APPLICATION_CLASS(klass)->startup = polycule_client_startup;
   G_APPLICATION_CLASS(klass)->shutdown = polycule_client_shutdown;
   G_OBJECT_CLASS(klass)->dispose = polycule_client_dispose;

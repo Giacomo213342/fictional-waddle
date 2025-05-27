@@ -5,7 +5,10 @@
             android:label="@string/app_name"
             android:name="${applicationName}"
             android:icon="@mipmap/ic_launcher"
-            android:usesCleartextTraffic="true">
+            android:usesCleartextTraffic="true"
+            android:allowBackup="false"
+            android:fullBackupContent="false">
+        <!-- ^-> https://github.com/juliansteenbakker/flutter_secure_storage/issues/43#issuecomment-471642126 -->
         <activity
                 android:name=".MainActivity"
                 android:exported="true"
@@ -29,7 +32,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
-            <intent-filter android:autoVerify="true" android:label="@string/app_name" tools:targetApi="m">
+            <intent-filter android:autoVerify="true" android:label="@string/app_name">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
@@ -37,7 +40,7 @@
                 <data android:scheme="https"
                       android:host="polycule.im"/>
             </intent-filter>
-            <intent-filter android:label="@string/app_name">
+            <intent-filter android:autoVerify="false" android:label="@string/app_name">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
@@ -98,10 +101,6 @@
 
         </activity>
 
-        <receiver android:name="org.unifiedpush.flutter.connector.UnifiedPushReceiver"
-                  tools:replace="android:enabled"
-                  android:enabled="false">
-        </receiver>
         <receiver android:enabled="true" android:name=".EmbeddedDistributor" android:exported="false">
             <intent-filter>
                 <action android:name="org.unifiedpush.android.distributor.feature.BYTES_MESSAGE"/>
@@ -109,14 +108,22 @@
                 <action android:name="org.unifiedpush.android.distributor.UNREGISTER"/>
             </intent-filter>
         </receiver>
-        <receiver android:exported="false" android:enabled="true" android:name=".UnifiedPushReceiver">
+
+        <!-- disable the default UnifiedPushService in order to load a custom Dart entrypoint -->
+        <service android:name="org.unifiedpush.flutter.connector.UnifiedPushService"
+                  tools:replace="android:enabled"
+                  android:enabled="false">
+        </service>
+        <!-- https://codeberg.org/UnifiedPush/android-connector/src/branch/main/connector/src/main/AndroidManifest.xml -->
+        <service android:exported="false" android:enabled="true" android:name=".UnifiedPushService">
+            <!-- https://unifiedpush.org/developers/spec/android/#messaging-broadcast-receiver -->
             <intent-filter>
                 <action android:name="org.unifiedpush.flutter.connector.MESSAGE"/>
                 <action android:name="org.unifiedpush.flutter.connector.UNREGISTERED"/>
                 <action android:name="org.unifiedpush.flutter.connector.NEW_ENDPOINT"/>
                 <action android:name="org.unifiedpush.flutter.connector.REGISTRATION_FAILED"/>
             </intent-filter>
-        </receiver>
+        </service>
 
 
         <!-- Don't delete the meta-data below.

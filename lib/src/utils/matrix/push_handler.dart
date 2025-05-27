@@ -23,7 +23,7 @@ Future<void> pushEntrypoint() async {
 }
 
 Future<void> handleBackgroundNotification(
-  Uint8List message,
+  PushMessage message,
   String instance,
 ) async {
   // first load our network settings from storage
@@ -39,7 +39,7 @@ Future<void> handleBackgroundNotification(
           .computePlatformResolvedLocale(AppLocalizations.supportedLocales) ??
       const Locale('en');
   final l10n = await AppLocalizations.delegate.load(locale);
-  handlePushNotification(client: client, l10n: l10n, message: message);
+  handlePushNotification(client: client, l10n: l10n, message: message.content);
 }
 
 Future<void> handlePushNotification({

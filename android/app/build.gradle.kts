@@ -7,6 +7,18 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+configurations.all {
+    // https://codeberg.org/UnifiedPush/flutter-connector/issues/21
+    // https://central.sonatype.com/artifact/com.google.crypto.tink/tink-android
+    val tink = "com.google.crypto.tink:tink-android:1.17.0"
+    resolutionStrategy {
+        force(tink)
+        dependencySubstitution {
+            substitute(module("com.google.crypto.tink:tink")).using(module(tink))
+        }
+    }
+}
+
 android {
     namespace = "business.braid.polycule"
     compileSdk = flutter.compileSdkVersion
@@ -44,7 +56,8 @@ android {
 }
 
 dependencies {
-    implementation("org.unifiedpush.android:foss-embedded-fcm-distributor:1.0.0")
+    implementation("org.unifiedpush.android:connector:3.0.9")
+    implementation("org.unifiedpush.android:embedded-fcm-distributor:3.0.0")
 
     // https://developer.android.com/studio/write/java8-support.html#library-desugaring
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
