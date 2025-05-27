@@ -19,6 +19,7 @@ class KeyboardAwareTopBar extends StatelessWidget {
         curve: Curves.easeInOut,
         child: SafeArea(
           top: !visible,
+          bottom: false,
           child: SizedBox(
             height: visible ? 0 : 48,
             child: const ClipRect(
