@@ -72,7 +72,7 @@ dependencies:
   sqflite: ^2.4.0
   sqflite_common_ffi: ^2.3.4
   sqlcipher_flutter_libs: ^0.6.5
-  unifiedpush: ^6.0.1
+  unifiedpush: ^6.0.2
   # https://codeberg.org/UnifiedPush/flutter-connector/issues/22
   # unifiedpush_linux: ^0.1.0
   unorm_dart: ^0.2.0

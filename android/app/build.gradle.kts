@@ -56,7 +56,6 @@ android {
 }
 
 dependencies {
-    implementation("org.unifiedpush.android:connector:3.0.9")
     implementation("org.unifiedpush.android:embedded-fcm-distributor:3.0.0")
 
     // https://developer.android.com/studio/write/java8-support.html#library-desugaring
