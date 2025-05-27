@@ -31,6 +31,8 @@ class _SyncUpdateStatusRowState extends State<SyncUpdateStatusRow> {
         color: DefaultTextStyle.of(context).style.color,
       ),
       child: SafeArea(
+        top: false,
+        bottom: false,
         child: Row(
           children: widget.syncUpdate == null
               ? [

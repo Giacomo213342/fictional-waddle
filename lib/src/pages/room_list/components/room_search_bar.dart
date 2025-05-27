@@ -22,6 +22,7 @@ class RoomSearchBar extends StatelessWidget {
         CommandLocalizationHelper(AppLocalizations.of(context));
     final controller = RoomListController.of(context);
     return SafeArea(
+      bottom: false,
       child: SearchAnchor(
         searchController: controller.searchController,
         builder: (context, searchController) => Padding(
