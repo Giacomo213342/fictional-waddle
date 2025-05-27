@@ -4,12 +4,14 @@ import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.embedding.engine.loader.FlutterLoader
-import org.unifiedpush.flutter.connector.UnifiedPushReceiver
-
-class UnifiedPushReceiver : UnifiedPushReceiver() {
+import org.unifiedpush.flutter.connector.UnifiedPushService
+class UnifiedPushService : UnifiedPushService() {
     override fun getEngine(context: Context): FlutterEngine {
+        // acquire the Flutter engine from the main activity when running in foreground
         var engine = MainActivity.engine
         if (engine == null) {
+            // if there's no Flutter engine running in foreground, create a new one with
+            // a custom VM entrypoint
             engine = MainActivity.provideEngine(context)
             engine.localizationPlugin.sendLocalesToFlutter(
                 context.resources.configuration
@@ -23,6 +25,7 @@ class UnifiedPushReceiver : UnifiedPushReceiver() {
                 )
             }
 
+            // use the custom push handler entrypoint to avoid calling `runApp` in background
             val entrypoint = DartExecutor.DartEntrypoint(
                 flutterLoader.findAppBundlePath(),
                 "lib/src/utils/matrix/push_handler.dart",

@@ -10,6 +10,7 @@ import 'package:media_kit/media_kit.dart';
 import 'src/polycule.dart';
 import 'src/utils/error_logger.dart';
 
+@pragma('vm:entry-point')
 void main([List<String>? args]) {
   FlutterError.onError = (details) {
     ErrorLogger().captureStackTrace(details.exception, details.stack, false);
