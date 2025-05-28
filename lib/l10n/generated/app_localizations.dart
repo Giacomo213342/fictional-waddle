@@ -2200,6 +2200,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sessions'**
   String get sessions;
+
+  /// No description provided for @notificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification rules'**
+  String get notificationSettings;
+
+  /// No description provided for @notificationsGlobal.
+  ///
+  /// In en, this message translates to:
+  /// **'Generic'**
+  String get notificationsGlobal;
+
+  /// No description provided for @notificationsOverride.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get notificationsOverride;
+
+  /// No description provided for @notificationsRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms'**
+  String get notificationsRoom;
+
+  /// No description provided for @notificationsSender.
+  ///
+  /// In en, this message translates to:
+  /// **'Senders'**
+  String get notificationsSender;
+
+  /// No description provided for @notificationsUnderride.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get notificationsUnderride;
+
+  /// No description provided for @noPushRules.
+  ///
+  /// In en, this message translates to:
+  /// **'No push rules available.'**
+  String get noPushRules;
+
+  /// No description provided for @defaultPushRule.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a default push rule.'**
+  String get defaultPushRule;
+
+  /// No description provided for @pushRuleEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable push rule'**
+  String get pushRuleEnabled;
+
+  /// No description provided for @eventContentMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Event content matches this pattern'**
+  String get eventContentMatches;
+
+  /// No description provided for @unknownAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown action : {action}'**
+  String unknownAction(Object action);
+
+  /// No description provided for @actionNotify.
+  ///
+  /// In en, this message translates to:
+  /// **'Send notification'**
+  String get actionNotify;
+
+  /// No description provided for @actionDontNotify.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not notify'**
+  String get actionDontNotify;
+
+  /// No description provided for @notificationTweakSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get notificationTweakSound;
+
+  /// No description provided for @notificationTweakHighlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Highlight'**
+  String get notificationTweakHighlight;
+
+  /// No description provided for @unknownNotificationTweak.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown tweak : {tweak}'**
+  String unknownNotificationTweak(Object tweak);
+
+  /// No description provided for @pushConditionSenderNotificationPermission.
+  ///
+  /// In en, this message translates to:
+  /// **'Sender can notify : {key}'**
+  String pushConditionSenderNotificationPermission(Object key);
+
+  /// No description provided for @tweakEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get tweakEnabled;
+
+  /// No description provided for @tweakDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get tweakDisabled;
+
+  /// No description provided for @tweakDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification default'**
+  String get tweakDefault;
+
+  /// No description provided for @pushConditionContainsDisplayName.
+  ///
+  /// In en, this message translates to:
+  /// **'Contains my display name'**
+  String get pushConditionContainsDisplayName;
+
+  /// No description provided for @pushRulesGlobal.
+  ///
+  /// In en, this message translates to:
+  /// **'Account wide'**
+  String get pushRulesGlobal;
+
+  /// No description provided for @pushRulesDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'This device'**
+  String get pushRulesDevice;
 }
 
 class _AppLocalizationsDelegate

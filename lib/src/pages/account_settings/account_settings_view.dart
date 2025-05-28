@@ -9,6 +9,7 @@ import 'components/emoji_settings_tile.dart';
 import 'components/logout_tile.dart';
 import 'components/manage_sessions_tile.dart';
 import 'components/mxid_qr_code_tile.dart';
+import 'components/notification_settings_tile.dart';
 import 'components/oidc_account_settings.dart';
 import 'components/own_profile_preview.dart';
 import 'components/ssss_available_tile.dart';
@@ -29,6 +30,7 @@ class AccountSettingsView extends StatelessWidget {
           const MxidQRCodeTile(),
           const SSSSAvailableTile(),
           const EmojiSettingsTile(),
+          const NotificationSettingsTile(),
           if (client.getOidcAccountManagementUri() != null)
             const OidcAccountSettingsTile(),
           const ManageSessionsTile(),

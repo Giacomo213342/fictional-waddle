@@ -615,5 +615,49 @@
   "clientSwitcher": "Switch account",
   "block": "Block",
   "unblock": "Unblock",
-  "sessions": "Sessions"
+  "sessions": "Sessions",
+  "notificationSettings": "Notification rules",
+  "notificationsGlobal": "Generic",
+  "notificationsOverride": "High",
+  "notificationsRoom": "Rooms",
+  "notificationsSender": "Senders",
+  "notificationsUnderride": "Low",
+  "noPushRules": "No push rules available.",
+  "defaultPushRule": "This is a default push rule.",
+  "pushRuleEnabled": "Enable push rule",
+  "eventContentMatches": "Event content matches this pattern",
+  "unknownAction": "Unknown action : {action}",
+  "@unknownAction": {
+    "placeholders": {
+      "action": {
+        "format": "String"
+      }
+    }
+  },
+  "actionNotify": "Send notification",
+  "actionDontNotify": "Do not notify",
+  "notificationTweakSound": "Sound",
+  "notificationTweakHighlight": "Highlight",
+  "unknownNotificationTweak": "Unknown tweak : {tweak}",
+  "@unknownNotificationTweak": {
+    "placeholders": {
+      "tweak": {
+        "format": "String"
+      }
+    }
+  },
+  "pushConditionSenderNotificationPermission": "Sender can notify : {key}",
+  "@pushConditionSenderNotificationPermission": {
+    "placeholders": {
+      "key": {
+        "format": "String"
+      }
+    }
+  },
+  "tweakEnabled": "Enabled",
+  "tweakDisabled": "Disabled",
+  "tweakDefault": "Notification default",
+  "pushConditionContainsDisplayName": "Contains my display name",
+  "pushRulesGlobal": "Account wide",
+  "pushRulesDevice": "This device"
 }

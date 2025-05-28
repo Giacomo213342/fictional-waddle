@@ -1168,4 +1168,79 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get sessions => '会话';
+
+  @override
+  String get notificationSettings => 'Notification rules';
+
+  @override
+  String get notificationsGlobal => 'Generic';
+
+  @override
+  String get notificationsOverride => 'High';
+
+  @override
+  String get notificationsRoom => 'Rooms';
+
+  @override
+  String get notificationsSender => 'Senders';
+
+  @override
+  String get notificationsUnderride => 'Low';
+
+  @override
+  String get noPushRules => 'No push rules available.';
+
+  @override
+  String get defaultPushRule => 'This is a default push rule.';
+
+  @override
+  String get pushRuleEnabled => 'Enable push rule';
+
+  @override
+  String get eventContentMatches => 'Event content matches this pattern';
+
+  @override
+  String unknownAction(Object action) {
+    return 'Unknown action : $action';
+  }
+
+  @override
+  String get actionNotify => 'Send notification';
+
+  @override
+  String get actionDontNotify => 'Do not notify';
+
+  @override
+  String get notificationTweakSound => 'Sound';
+
+  @override
+  String get notificationTweakHighlight => 'Highlight';
+
+  @override
+  String unknownNotificationTweak(Object tweak) {
+    return 'Unknown tweak : $tweak';
+  }
+
+  @override
+  String pushConditionSenderNotificationPermission(Object key) {
+    return 'Sender can notify : $key';
+  }
+
+  @override
+  String get tweakEnabled => 'Enabled';
+
+  @override
+  String get tweakDisabled => 'Disabled';
+
+  @override
+  String get tweakDefault => 'Notification default';
+
+  @override
+  String get pushConditionContainsDisplayName => 'Contains my display name';
+
+  @override
+  String get pushRulesGlobal => 'Account wide';
+
+  @override
+  String get pushRulesDevice => 'This device';
 }
