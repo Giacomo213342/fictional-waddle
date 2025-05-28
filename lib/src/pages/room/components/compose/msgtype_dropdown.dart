@@ -102,7 +102,7 @@ class MsgtypeDropdown extends StatelessWidget {
     return index != -1 ? index : null;
   }
 
-  void _onMsgTypeSelected(context, String? msgType) {
+  void _onMsgTypeSelected(BuildContext context, String? msgType) {
     switch (msgType) {
       case MessageTypes.Text:
       case MessageTypes.Notice:
