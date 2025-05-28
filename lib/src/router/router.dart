@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../pages/account_selector/account_selector.dart';
 import '../pages/account_settings/account_settings.dart';
 import '../pages/account_settings/pages/emoji_settings/emoji_settings.dart';
+import '../pages/account_settings/pages/notification_settings/notification_settings.dart';
 import '../pages/account_settings/pages/session_settings/session_settings.dart';
 import '../pages/application_settings/application_settings.dart';
 import '../pages/application_settings/pages/appearance.dart';
@@ -213,7 +214,7 @@ class PolyculeRouter extends GoRouter {
             ],
           ),
           ResponsiveShellRoute(
-            navigatorKey: PolyculeRouter._tabNavigatorKey,
+            // navigatorKey: PolyculeRouter._tabNavigatorKey,
             builder: (context, state) => const AccountSettings(),
             routes: [
               RequiresLoginRoute(
@@ -227,6 +228,11 @@ class PolyculeRouter extends GoRouter {
                   RequiresLoginRoute(
                     path: SessionSettingsPage.routeName,
                     builder: (context, state) => const SessionSettingsPage(),
+                  ),
+                  RequiresLoginRoute(
+                    path: NotificationSettingsPage.routeName,
+                    builder: (context, state) =>
+                        const NotificationSettingsPage(),
                   ),
                 ],
               ),
