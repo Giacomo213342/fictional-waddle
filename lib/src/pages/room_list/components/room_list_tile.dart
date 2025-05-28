@@ -117,7 +117,8 @@ class RoomListTile extends StatelessWidget {
     ];
   }
 
-  Future<void> _toggleFavorite(room) => room.setFavourite(!room.isFavourite);
+  Future<void> _toggleFavorite(Room room) =>
+      room.setFavourite(!room.isFavourite);
 
   Future<void> _toggleUnread(Room room) => room.markUnread(!room.isUnread);
 
