@@ -48,8 +48,7 @@ abstract class PolyculeOidcDynamicClientRegistrationData {
 
   static String _oidcLocaleName(Locale locale) => locale.countryCode == null
       ? locale.languageCode.toLowerCase()
-      : r'#' +
-          locale.languageCode.toLowerCase() +
+      : locale.languageCode.toLowerCase() +
           r'-' +
           locale.countryCode!.toUpperCase();
 }
