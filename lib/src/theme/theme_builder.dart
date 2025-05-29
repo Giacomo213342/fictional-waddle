@@ -12,14 +12,33 @@ import 'colors/poly_pride.dart';
 import 'fonts.dart';
 import 'theme_modes.dart';
 
-typedef PolyculeThemeCallback = Widget Function(
-  ThemeMode mode,
-  ThemeData dark,
-  ThemeData light,
-  ThemeData highContrastDark,
-  ThemeData highContrastLight,
-  bool preferHighContrast,
+typedef PolyculeThemeConfigCallback = Widget Function(
+  BuildContext context,
+  PolyculeThemeConfig themeConfig,
 );
+
+class PolyculeThemeConfig {
+  const PolyculeThemeConfig({
+    required this.themeMode,
+    required this.dark,
+    required this.light,
+    required this.preferHighContrast,
+  });
+
+  final ThemeMode themeMode;
+
+  final PolyculeThemeMode dark;
+  final PolyculeThemeMode light;
+
+  final bool preferHighContrast;
+}
+
+class PolyculeThemeMode {
+  const PolyculeThemeMode({required this.main, required this.highContrast});
+
+  final ThemeData main;
+  final ThemeData highContrast;
+}
 
 class PolyculeThemeBuilder extends StatelessWidget {
   const PolyculeThemeBuilder({super.key, required this.builder});
@@ -63,7 +82,7 @@ class PolyculeThemeBuilder extends StatelessWidget {
     );
   }
 
-  final PolyculeThemeCallback builder;
+  final PolyculeThemeConfigCallback builder;
 
   @override
   Widget build(BuildContext context) {
@@ -95,37 +114,36 @@ class PolyculeThemeBuilder extends StatelessWidget {
                   ? lightDynamic ?? lightFallback
                   : lightFallback;
 
-          final dark = buildPolyculeTheme(
-            colorScheme: darkColorScheme,
-            brightness: Brightness.dark,
-            themeState: themeState,
-          );
-          final light = buildPolyculeTheme(
-            colorScheme: lightColorScheme,
-            brightness: Brightness.light,
-            themeState: themeState,
-          );
-          final highContrastDark = buildPolyculeTheme(
-            colorScheme: const ColorScheme.highContrastDark(),
-            brightness: Brightness.dark,
-            themeState: themeState,
-          );
-          final highContrastLight = buildPolyculeTheme(
-            colorScheme: const ColorScheme.highContrastLight(),
-            brightness: Brightness.light,
-            themeState: themeState,
+          final config = PolyculeThemeConfig(
+            themeMode: themeState.themeMode.toThemeMode(),
+            dark: PolyculeThemeMode(
+              main: buildPolyculeTheme(
+                colorScheme: darkColorScheme,
+                brightness: Brightness.dark,
+                themeState: themeState,
+              ),
+              highContrast: buildPolyculeTheme(
+                colorScheme: const ColorScheme.highContrastDark(),
+                brightness: Brightness.dark,
+                themeState: themeState,
+              ),
+            ),
+            light: PolyculeThemeMode(
+              main: buildPolyculeTheme(
+                colorScheme: lightColorScheme,
+                brightness: Brightness.light,
+                themeState: themeState,
+              ),
+              highContrast: buildPolyculeTheme(
+                colorScheme: const ColorScheme.highContrastLight(),
+                brightness: Brightness.light,
+                themeState: themeState,
+              ),
+            ),
+            preferHighContrast: preferHighContrast,
           );
 
-          final mode = themeState.themeMode.toThemeMode();
-
-          return builder.call(
-            mode,
-            dark,
-            light,
-            highContrastDark,
-            highContrastLight,
-            preferHighContrast,
-          );
+          return builder.call(context, config);
         },
       ),
     );

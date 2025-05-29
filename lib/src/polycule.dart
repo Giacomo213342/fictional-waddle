@@ -12,39 +12,31 @@ class PolyculeClient extends StatelessWidget {
   static final _router = PolyculeRouter();
 
   @override
-  Widget build(BuildContext context) {
-    return ClientManagerRoot(
-      child: SettingsBuilder(
-        builder: (context) => PolyculeThemeBuilder(
-          builder: (
-            mode,
-            dark,
-            light,
-            highContrastDark,
-            highContrastLight,
-            preferHighContrast,
-          ) =>
-              ValueListenableBuilder<Locale?>(
-            valueListenable: SettingsManager.of(context).locale,
-            builder: (context, locale, _) {
-              return MaterialApp.router(
+  Widget build(BuildContext context) => ClientManagerRoot(
+        child: SettingsBuilder(
+          builder: (context) => PolyculeThemeBuilder(
+            builder: (context, config) => ValueListenableBuilder<Locale?>(
+              valueListenable: SettingsManager.of(context).locale,
+              builder: (context, locale, _) => MaterialApp.router(
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
                 supportedLocales: AppLocalizations.supportedLocales,
                 onGenerateTitle: (context) =>
                     AppLocalizations.of(context).appName,
                 locale: locale,
-                theme: preferHighContrast ? highContrastLight : light,
-                darkTheme: preferHighContrast ? highContrastDark : dark,
-                highContrastDarkTheme: highContrastDark,
-                highContrastTheme: highContrastLight,
-                themeMode: mode,
+                theme: config.preferHighContrast
+                    ? config.light.highContrast
+                    : config.light.main,
+                darkTheme: config.preferHighContrast
+                    ? config.dark.highContrast
+                    : config.dark.main,
+                highContrastDarkTheme: config.dark.highContrast,
+                highContrastTheme: config.light.highContrast,
+                themeMode: config.themeMode,
                 routerConfig: _router,
                 builder: PolyculeThemeBuilder.injectInheritedThemes,
-              );
-            },
+              ),
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
 }
