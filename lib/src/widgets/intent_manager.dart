@@ -92,8 +92,11 @@ class IntentManager extends State<IntentManagerWidget> {
     final segments = uri.pathSegments;
 
     // handle oauth2redirect
-    final isWebOAuth2Redirect =
-        kIsWeb && uri.queryParameters['action'] == 'oauth2redirect';
+    final isWebOAuth2Redirect = kIsWeb &&
+        // native OIDC
+        (uri.fragment.startsWith('state=') ||
+            // legacy SSO
+            uri.queryParameters.containsKey('loginToken'));
     final isNativeOAuth2Redirect = !kIsWeb &&
         uri.scheme == 'im.polycule' &&
         segments.isNotEmpty &&

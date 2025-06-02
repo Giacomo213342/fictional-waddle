@@ -7,6 +7,7 @@ import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 
 import '../../widgets/settings_manager.dart';
+import '../assets.dart';
 import 'polycule_http_client.dart';
 
 URLSessionConfiguration _cupertinoConfig =
@@ -28,7 +29,7 @@ Future<void> updateHttpClientSettings(NetworkState settings) async {
     try {
       // Let's Encrypt on Android 6
       // Certificate details: https://crt.sh/?id=9314791
-      final isrgX1 = await rootBundle.load('assets/ca/isrgrootx1.pem');
+      final isrgX1 = await rootBundle.load(Assets.isrgX1.name);
       _ioContext.setTrustedCertificatesBytes(Uint8List.sublistView(isrgX1));
     } on TlsException catch (e) {
       if (e.osError != null &&

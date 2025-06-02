@@ -23,7 +23,6 @@ class ApplicationSettingsView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).polyculeSettings),
-        automaticallyImplyLeading: false,
       ),
       body: ListView(
         children: [

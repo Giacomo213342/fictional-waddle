@@ -18,7 +18,6 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(
   String clientName,
 ) async {
   if (kIsWeb) {
-    unawaited(persistStorage());
     final factory = createIdbFactory();
     return MatrixSdkDatabase.init(
       clientName,

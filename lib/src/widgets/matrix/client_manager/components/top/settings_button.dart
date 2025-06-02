@@ -4,14 +4,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../pages/application_settings/application_settings.dart';
-import '../../../../../router/extensions/go_router_path_extension.dart';
 
 class SettingsButton extends StatelessWidget {
   const SettingsButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isActive = GoRouterState.of(context).clientIdentifier == null;
+    final isActive =
+        GoRouterState.of(context).pathParameters.containsKey('client');
     return SizedBox.square(
       dimension: 48,
       child: Padding(

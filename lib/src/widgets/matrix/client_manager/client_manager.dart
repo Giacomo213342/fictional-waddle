@@ -13,6 +13,9 @@ import '../../error_dialog_scope.dart';
 import '../../intent_manager.dart';
 import 'client_store.dart';
 
+import '../../../utils/matrix/database/idb/stub.dart'
+    if (dart.library.js_interop) '../../../utils/matrix/database/idb/web.dart';
+
 typedef GetClientCallback = Client Function();
 
 class ClientManagerRoot extends StatefulWidget {
@@ -147,6 +150,7 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
         if (_loginClients.contains(client.clientName.clientIdentifier)) {
           _ensureClientInDb(client);
         }
+        unawaited(persistStorage());
 
         break;
       case LoginState.loggedOut:

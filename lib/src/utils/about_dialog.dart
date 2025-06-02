@@ -6,13 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/link.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import 'assets.dart';
+import 'dart_environment.dart';
 import 'version.dart';
 
 void showInfoDialog(BuildContext context) => showAboutDialog(
       context: context,
-      applicationVersion: Version.version,
+      applicationVersion: DartEnvironment.polyculeVersion,
       applicationIcon: Image.asset(
-        'assets/logo/logo-circle.png',
+        Assets.logoCircle.name,
         width: 64,
         height: 64,
       ),
@@ -30,7 +32,7 @@ void showInfoDialog(BuildContext context) => showAboutDialog(
           },
         ),
         Link(
-          uri: Version.isStable
+          uri: DartEnvironment.isStable
               ? Uri.parse(Version.stableChangeLog)
               : Uri.parse(Version.commitList),
           builder: (context, followLink) {

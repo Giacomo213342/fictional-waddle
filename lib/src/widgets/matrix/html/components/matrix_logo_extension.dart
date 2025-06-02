@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../utils/assets.dart';
 import '../../../../utils/parent_font_size_extension.dart';
 
 class MatrixLogoExtension extends HtmlExtension {
@@ -25,7 +26,7 @@ class MatrixLogoExtension extends HtmlExtension {
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: fontSize / 12),
             child: SvgPicture.asset(
-              'assets/icons/matrix.svg',
+              Assets.matrixLogo.name,
               height: fontSize,
               colorFilter: color == null
                   ? null

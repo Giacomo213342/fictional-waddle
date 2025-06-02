@@ -926,17 +926,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get oidcContact => 'info@braid.business';
 
   @override
-  String get oidcAppUrl => 'https://polycule.im/web';
+  String get oidcLogoPath => 'assets/assets/logo/logo-circle.png';
 
   @override
-  String get oidcLogoUrl =>
-      'https://polycule.im/web/assets/assets/logo/logo-circle.png';
+  String get oidcTosPath => 'tos.html';
 
   @override
-  String get oidcTosUrl => 'https://polycule.im/web/tos.html';
-
-  @override
-  String get oicPolicyUri => 'https://polycule.im/web/policy.html';
+  String get oidcPolicyPath => 'policy.html';
 
   @override
   String get loginOidc => 'OpenID இணைப்பைப் பயன்படுத்தி உள்நுழைக';

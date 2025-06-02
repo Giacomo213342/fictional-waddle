@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/widgets.dart';
 
 import 'package:go_router/go_router.dart';
@@ -8,7 +6,7 @@ import '../../pages/fatal_error/fatal_error_page.dart';
 import '../../pages/homeserver/homeserver.dart';
 import '../../pages/login/login.dart';
 import '../../pages/splash_screen/splash_screen.dart';
-import '../../widgets/matrix/client_manager/client_manager.dart';
+import 'client_route.dart';
 import 'go_router_path_extension.dart';
 
 typedef HomeserverUriBuilder = Widget Function(
@@ -17,8 +15,9 @@ typedef HomeserverUriBuilder = Widget Function(
   Uri uri,
 );
 
-class HomeserverUriRoute extends GoRoute {
+class HomeserverUriRoute extends ClientRoute {
   HomeserverUriRoute({
+    required super.client,
     required super.path,
     super.name,
     HomeserverUriBuilder? builder,
@@ -27,7 +26,25 @@ class HomeserverUriRoute extends GoRoute {
     super.onExit,
     super.routes = const <RouteBase>[],
   }) : super(
-          redirect: _uriParseRedirect,
+          redirect: (context, state) {
+            if (client.isLogged()) {
+              return context.clientifyLocation(SplashPage.routeName);
+            }
+
+            final hostParameter = state.pathParameters[LoginPage.pathParameter];
+            if (hostParameter == null) {
+              return context.clientifyLocation(HomeserverPage.routeName);
+            }
+            Uri? uri;
+            try {
+              uri = _decodeUriFragment(hostParameter);
+            } catch (_) {}
+            if (uri == null) {
+              return context.clientifyLocation(HomeserverPage.routeName);
+            }
+
+            return null;
+          },
           builder: builder == null ? null : _roomInjectedBuilder(builder),
         );
 
@@ -39,34 +56,6 @@ class HomeserverUriRoute extends GoRoute {
     } else {
       return Uri.https(decoded);
     }
-  }
-
-  static FutureOr<String?> _uriParseRedirect(
-    BuildContext context,
-    GoRouterState state,
-  ) {
-    final identifier = state.clientIdentifier;
-    if (identifier == null) {
-      return context.clientifyLocation(SplashPage.routeName);
-    }
-    final client = ClientManager.of(context).getClientByIdentifier(identifier);
-    if (client == null || client.isLogged()) {
-      return context.clientifyLocation(SplashPage.routeName);
-    }
-
-    final hostParameter = state.pathParameters[LoginPage.pathParameter];
-    if (hostParameter == null) {
-      return context.clientifyLocation(HomeserverPage.routeName);
-    }
-    Uri? uri;
-    try {
-      uri = _decodeUriFragment(hostParameter);
-    } catch (_) {}
-    if (uri == null) {
-      return context.clientifyLocation(HomeserverPage.routeName);
-    }
-
-    return null;
   }
 
   static GoRouterWidgetBuilder _roomInjectedBuilder(

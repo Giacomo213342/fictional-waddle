@@ -1637,29 +1637,23 @@ abstract class AppLocalizations {
   /// **'info@braid.business'**
   String get oidcContact;
 
-  /// No description provided for @oidcAppUrl.
+  /// No description provided for @oidcLogoPath.
   ///
   /// In en, this message translates to:
-  /// **'https://polycule.im/web'**
-  String get oidcAppUrl;
+  /// **'assets/assets/logo/logo-circle.png'**
+  String get oidcLogoPath;
 
-  /// No description provided for @oidcLogoUrl.
+  /// No description provided for @oidcTosPath.
   ///
   /// In en, this message translates to:
-  /// **'https://polycule.im/web/assets/assets/logo/logo-circle.png'**
-  String get oidcLogoUrl;
+  /// **'tos.html'**
+  String get oidcTosPath;
 
-  /// No description provided for @oidcTosUrl.
+  /// No description provided for @oidcPolicyPath.
   ///
   /// In en, this message translates to:
-  /// **'https://polycule.im/web/tos.html'**
-  String get oidcTosUrl;
-
-  /// No description provided for @oicPolicyUri.
-  ///
-  /// In en, this message translates to:
-  /// **'https://polycule.im/web/policy.html'**
-  String get oicPolicyUri;
+  /// **'policy.html'**
+  String get oidcPolicyPath;
 
   /// No description provided for @loginOidc.
   ///

@@ -9,11 +9,12 @@ import '../generated/app_localizations.dart';
 extension PolyculeMatrixLocalizationsExtension on AppLocalizations {
   PolyculeMatrixLocalizations get matrix => PolyculeMatrixLocalizations(this);
 
-  LocalizedOidcClientMetadata get oidc => LocalizedOidcClientMetadata(
+  LocalizedOidcClientMetadata oidcClientMetadata(Uri origin) =>
+      LocalizedOidcClientMetadata(
         clientName: oidcAppName,
-        logo: Uri.parse(oidcLogoUrl),
-        tos: Uri.parse(oidcTosUrl),
-        policy: Uri.parse(oicPolicyUri),
+        logo: origin.resolve(oidcLogoPath),
+        tos: origin.resolve(oidcTosPath),
+        policy: origin.resolve(oidcPolicyPath),
       );
 
   String get initialDeviceDisplayName {

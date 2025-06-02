@@ -45,6 +45,7 @@ class _ClientSwitcherButtonState extends State<ClientSwitcherButton>
     if (result == null || !mounted) {
       return;
     }
+
     context.push(result);
   }
 }

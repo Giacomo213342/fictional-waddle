@@ -240,7 +240,7 @@ test:android:avd:prepare:
   when: manual
   needs: [ ]
   script:
-    - flutter build apk --profile --target-platform android-x64 -t integration_test/integration.dart --dart-define=INTEGRATION_TEST=true $FLUTTER_BASE_ARGS
+    - flutter build apk --profile --target-platform android-x64 -t integration_test/integration.dart --dart-define=POLYCULE_IS_INTEGRATION_TEST=true $FLUTTER_BASE_ARGS
   <<: *unsigned
   artifacts:
     paths:
@@ -352,7 +352,7 @@ test:android:avd:desktop:
         dbus-update-activation-environment --all && \
         xvfb-run --auto-servernum -s -screen\ 0\ 1920x1080x8 \
         flutter drive --profile --driver test_driver/integration_test.dart --target integration_test/integration.dart \
-        -d linux --dart-define=HOMESERVER=$HOMESERVER --dart-define=INTEGRATION_TEST=true $FLUTTER_BASE_ARGS"
+        -d linux --dart-define=HOMESERVER=$HOMESERVER --dart-define=POLYCULE_IS_INTEGRATION_TEST=true $FLUTTER_BASE_ARGS"
   tags:
     - saas-linux-medium-arm64
   artifacts:

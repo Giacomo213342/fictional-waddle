@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
+import '../../../../../utils/assets.dart';
 import '../../../../../utils/matrix/sas_localization.dart';
 import '../../../../ascii_progress_indicator.dart';
 import '../../../scopes/sas_scope.dart';
@@ -12,13 +13,11 @@ class CompareSasEmoji extends StatelessWidget {
     super.key,
   });
 
-  static const sasEmojiAsset = 'assets/matrix/sas-emoji.json';
-
   @override
   Widget build(BuildContext context) {
     final verification = SasScope.of(context).verification;
     return FutureBuilder<String>(
-      future: DefaultAssetBundle.of(context).loadString(sasEmojiAsset),
+      future: DefaultAssetBundle.of(context).loadString(Assets.sasEmoji.name),
       builder: (context, snapshot) {
         final asset = snapshot.data;
         if (asset == null) {

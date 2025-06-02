@@ -1,28 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <base href="$FLUTTER_BASE_HREF">
+    <base href="$FLUTTER_BASE_HREF">
 
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A geeky and efficient [matrix] client for power users.">
+    <meta charset="UTF-8">
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+    <meta name="description" content="A geeky and efficient [matrix] client for power users.">
 
-  <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="< polycule >">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+    <!-- iOS meta tags & icons -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="< polycule >">
+    <link rel="apple-touch-icon" href="icons/Icon-192.png"/>
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>< polycule ></title>
-  <link rel="manifest" href="manifest.json">
+    <title>< polycule ></title>
+    <link rel="manifest" href="manifest.json"/>
 
-  <!-- This script initializes and starts the flutter app -->
-  <script src="flutter_bootstrap.js" async></script>
-  <!-- Include the OLM JS code -->
-  <script src="js/olm/olm.js"></script>
+    <link rel="stylesheet" href="styles.css"/>
+
+    <!-- This script initializes and starts the flutter app -->
+    <script src="flutter_bootstrap.js" async></script>
+    <!-- Include the OLM JS code -->
+    <script src="js/olm/olm.js"></script>
 </head>
-<body></body>
+<body>
+<section id="splash">
+    <img id="logo" alt="< polycule > logo" src="assets/assets/logo/logo-circle.png"/>
+    <h2>&lt; polycule &gt;</h2>
+    <p id="status-text"></p>
+</section>
+</body>
 </html>

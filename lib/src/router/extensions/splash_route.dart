@@ -25,6 +25,9 @@ class SplashRoute extends GoRoute {
     if (identifier == null) {
       return null;
     }
+    if (state.path != '/client/$identifier/') {
+      return null;
+    }
     final client = ClientManager.of(context).getClientByIdentifier(identifier);
     if (client != null && client.isLogged()) {
       return '/client/$identifier${RoomListPage.routeName}';
