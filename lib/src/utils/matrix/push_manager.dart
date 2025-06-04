@@ -86,14 +86,13 @@ class PushManager {
     if (instance != this.instance) {
       return;
     }
-    // You should send the endpoint to your application server
-    // and sync for missing notifications.
+    // fallback on https://matrix.gateway.unifiedpush.org/_matrix/push/v1/notify
     final uri = await client.checkPushGateway(endpoint.url);
     final pushKey = endpoint.url;
     final pushId = pushKey.split('/').last;
 
     final pusher = Pusher(
-      appId: 'business.braid.polycule',
+      appId: 'business.braid.polycule.${client.deviceID}',
       pushkey: pushKey,
       appDisplayName: localizations.appName,
       data: PusherData(
@@ -134,7 +133,7 @@ class PushManager {
 
     await client.deletePusher(
       PusherId(
-        appId: 'business.braid.polycule',
+        appId: 'business.braid.polycule.${client.deviceID}',
         pushkey: pushKey,
       ),
     );

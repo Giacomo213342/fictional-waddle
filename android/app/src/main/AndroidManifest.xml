@@ -109,23 +109,6 @@
             </intent-filter>
         </receiver>
 
-        <!-- disable the default UnifiedPushService in order to load a custom Dart entrypoint -->
-        <service android:name="org.unifiedpush.flutter.connector.UnifiedPushService"
-                  tools:replace="android:enabled"
-                  android:enabled="false">
-        </service>
-        <!-- https://codeberg.org/UnifiedPush/android-connector/src/branch/main/connector/src/main/AndroidManifest.xml -->
-        <service android:exported="false" android:enabled="true" android:name=".UnifiedPushService">
-            <!-- https://unifiedpush.org/developers/spec/android/#messaging-broadcast-receiver -->
-            <intent-filter>
-                <action android:name="org.unifiedpush.flutter.connector.MESSAGE"/>
-                <action android:name="org.unifiedpush.flutter.connector.UNREGISTERED"/>
-                <action android:name="org.unifiedpush.flutter.connector.NEW_ENDPOINT"/>
-                <action android:name="org.unifiedpush.flutter.connector.REGISTRATION_FAILED"/>
-            </intent-filter>
-        </service>
-
-
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

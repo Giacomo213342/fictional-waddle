@@ -23,6 +23,7 @@ void main([List<String>? args]) {
   runZonedGuarded(
     () async {
       Logs().level = Level.verbose;
+      Logs().v('Called main() with arguments: $args');
       WidgetsFlutterBinding.ensureInitialized();
       MediaKit.ensureInitialized();
       JustAudioMediaKit.ensureInitialized();
