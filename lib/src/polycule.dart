@@ -9,39 +9,44 @@ import 'widgets/settings_manager.dart';
 class PolyculeClient extends StatelessWidget {
   const PolyculeClient({super.key});
 
-  static final _router = PolyculeRouter();
+  @override
+  Widget build(BuildContext context) => ClientManagerRoot(
+        child: SettingsBuilder(
+          builder: (context) => const PolyculeRouterClientProvider(),
+        ),
+      );
+}
+
+/// injects the currently active [ClientStore.activeClients] into the router
+/// to create a [StatefulShellRoute]
+class PolyculeRouterClientProvider extends StatelessWidget {
+  const PolyculeRouterClientProvider({super.key});
+
+  static PolyculeRouter? router;
 
   @override
   Widget build(BuildContext context) {
-    return ClientManagerRoot(
-      child: SettingsBuilder(
-        builder: (context) => PolyculeThemeBuilder(
-          builder: (
-            mode,
-            dark,
-            light,
-            highContrastDark,
-            highContrastLight,
-            preferHighContrast,
-          ) =>
-              ValueListenableBuilder<Locale?>(
-            valueListenable: SettingsManager.of(context).locale,
-            builder: (context, locale, _) {
-              return MaterialApp.router(
-                localizationsDelegates: AppLocalizations.localizationsDelegates,
-                supportedLocales: AppLocalizations.supportedLocales,
-                onGenerateTitle: (context) =>
-                    AppLocalizations.of(context).appName,
-                locale: locale,
-                theme: preferHighContrast ? highContrastLight : light,
-                darkTheme: preferHighContrast ? highContrastDark : dark,
-                highContrastDarkTheme: highContrastDark,
-                highContrastTheme: highContrastLight,
-                themeMode: mode,
-                routerConfig: _router,
-                builder: PolyculeThemeBuilder.injectInheritedThemes,
-              );
-            },
+    router ??= PolyculeRouter(ClientManager.of(context).store.activeClients);
+    return SettingsBuilder(
+      builder: (context) => PolyculeThemeBuilder(
+        builder: (context, config) => ValueListenableBuilder<Locale?>(
+          valueListenable: SettingsManager.of(context).locale,
+          builder: (context, locale, _) => MaterialApp.router(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            onGenerateTitle: (context) => AppLocalizations.of(context).appName,
+            locale: locale,
+            theme: config.preferHighContrast
+                ? config.light.highContrast
+                : config.light.main,
+            darkTheme: config.preferHighContrast
+                ? config.dark.highContrast
+                : config.dark.main,
+            highContrastDarkTheme: config.dark.highContrast,
+            highContrastTheme: config.light.highContrast,
+            themeMode: config.themeMode,
+            routerConfig: router,
+            builder: PolyculeThemeBuilder.injectInheritedThemes,
           ),
         ),
       ),

@@ -144,7 +144,7 @@ flutter devices
 HOMESERVER=http://10.10.0.1 flutter test -d your_device \
     integration_test/integration.dart \
     --dart-define=HOMESERVER=$HOMESERVER \
-    --dart-define=INTEGRATION_TEST=true
+    --dart-define=POLYCULE_IS_INTEGRATION_TEST=true
 ```
 
 ### Run profile integration tests
@@ -159,7 +159,7 @@ HOMESERVER=http://10.10.0.1 flutter drive -d your_device --profile \
     --driver test_driver/integration_test.dart \
     --target integration_test/integration.dart \
     --dart-define=HOMESERVER=$HOMESERVER \
-    --dart-define=INTEGRATION_TEST=true
+    --dart-define=POLYCULE_IS_INTEGRATION_TEST=true
 ```
 
 ## Building < polycule >

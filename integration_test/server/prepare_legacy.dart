@@ -3,15 +3,13 @@
 import 'dart:io';
 
 import 'package:matrix/matrix.dart';
+import 'package:polycule/src/utils/dart_environment.dart';
 import 'package:polycule/src/utils/matrix/msc_3231_registration_token.dart';
 
 import '../users.dart';
 
-final homeserver = Platform.environment['HOMESERVER'] ??
-    const String.fromEnvironment(
-      'HOMESERVER',
-      defaultValue: 'http://homeserver',
-    );
+final homeserver =
+    Platform.environment['HOMESERVER'] ?? DartEnvironment.homeserver;
 
 Future<void> main([List<String>? args]) async {
   Logs().level = Level.debug;

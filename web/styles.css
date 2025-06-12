@@ -1,0 +1,47 @@
+@font-face {
+    font-family: "Overpass Mono";
+    src: url("assets/assets/fonts/overpassmono/OverpassMono-VariableFont.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Marck Script";
+    src: url("assets/assets/fonts/marckscript/MarckScript-Regular.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --font: "Overpass Mono";
+        --surface: black;
+        --foreground: white;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --font: "Marck Script";
+        font-size: 1.25em;
+        --surface: white;
+        --foreground: black;
+    }
+}
+
+:root {
+    background: var(--surface);
+    color: var(--foreground);
+    font-family: var(--font);
+}
+
+#logo {
+    display: block;
+    width: 12rem;
+    height: 12rem;
+    margin: auto;
+}
+
+#splash {
+    text-align: center;
+    margin-top: 50%;
+}

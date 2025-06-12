@@ -4,21 +4,13 @@ import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../widgets/matrix/scopes/client_scope.dart';
+import '../../widgets/matrix/scopes/matrix_identifier_scope.dart';
 import 'public_room_view.dart';
 
 class PublicRoomPage extends StatefulWidget {
   const PublicRoomPage({
     super.key,
-    required this.filter,
-    required this.via,
-    this.action,
-    this.eventId,
   });
-
-  final PublicRoomQueryFilter filter;
-  final Set<String> via;
-  final String? action;
-  final String? eventId;
 
   @override
   State<PublicRoomPage> createState() => PublicRoomController();
@@ -29,15 +21,6 @@ class PublicRoomController extends State<PublicRoomPage> {
 
   bool loading = false;
 
-  String? get eventId {
-    String? eventId = widget.eventId;
-    if (eventId == null) {
-      return null;
-    }
-    // yeah, a component can be twice URI encoded WTF
-    return Uri.decodeComponent(eventId);
-  }
-
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) => _getRoomPreview());
@@ -45,12 +28,16 @@ class PublicRoomController extends State<PublicRoomPage> {
   }
 
   @override
-  Widget build(BuildContext context) => PublicRoomView(controller: this);
+  Widget build(BuildContext context) {
+    context.dependOnInheritedWidgetOfExactType<MatrixIdentifierScope>();
+    return PublicRoomView(controller: this);
+  }
 
   Future<void> _getRoomPreview() async {
+    final identifier = MatrixIdentifierScope.of(context).identifier;
     final via = {
-      ...widget.via,
-      widget.filter.genericSearchTerm?.domain,
+      ...identifier.via,
+      identifier.primaryIdentifier.domain,
       null,
     };
 
@@ -59,7 +46,9 @@ class PublicRoomController extends State<PublicRoomPage> {
     for (final server in via) {
       final response = await client.queryPublicRooms(
         server: server,
-        filter: widget.filter,
+        filter: PublicRoomQueryFilter(
+          genericSearchTerm: identifier.primaryIdentifier,
+        ),
       );
       final room = response.chunk.firstOrNull;
       if (room == null) {

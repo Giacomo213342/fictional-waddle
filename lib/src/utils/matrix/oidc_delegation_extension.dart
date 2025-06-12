@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'dart:ui' hide window;
 
 import 'package:flutter/foundation.dart';
 
@@ -6,15 +6,28 @@ import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../l10n/matrix/polycule_matrix_localizations.dart';
+import '../dart_environment.dart';
+import '../oauth2_web/oauth2.dart';
 
 abstract class PolyculeOidcDynamicClientRegistrationData {
   const PolyculeOidcDynamicClientRegistrationData._();
+
+  static Uri get oidcClientOrigin {
+    // when on web and on a production deployment, use the current web app uri,
+    // otherwise use the provided hosted polycule uri
+    return isWebHostedOrigin
+        ? webHostedOrigin
+        : Uri.parse(DartEnvironment.appOrigin);
+  }
 
   static Future<OidcDynamicRegistrationData> fromAppLocalizations() async {
     // we use English as fallback locale
     final defaultLocale =
         await AppLocalizations.delegate.load(const Locale('en'));
-    final defaultOidcLocale = defaultLocale.oidc;
+
+    final origin = oidcClientOrigin;
+
+    final defaultOidcLocale = defaultLocale.oidcClientMetadata(origin);
 
     final localizations = Map.fromEntries(
       await Future.wait(
@@ -22,7 +35,7 @@ abstract class PolyculeOidcDynamicClientRegistrationData {
           (locale) => AppLocalizations.delegate.load(locale).then(
                 (localizations) => MapEntry(
                   _oidcLocaleName(locale),
-                  localizations.oidc,
+                  localizations.oidcClientMetadata(origin),
                 ),
               ),
         ),
@@ -31,11 +44,11 @@ abstract class PolyculeOidcDynamicClientRegistrationData {
 
     return OidcDynamicRegistrationData.localized(
       contacts: {defaultLocale.oidcContact},
-      url: Uri.parse(defaultLocale.oidcAppUrl),
+      url: origin,
       defaultLocale: defaultOidcLocale,
       localizations: localizations,
       redirect: kIsWeb
-          ? {Uri.parse('https://polycule.im/web/?action=oauth2redirect')}
+          ? {origin}
           : {
               // not my fault *grumble*
               // https://github.com/element-hq/matrix-authentication-service/blob/main/crates/handlers/src/oauth2/registration.rs#L179

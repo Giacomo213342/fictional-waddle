@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../scopes/client_scope.dart';
-import '../../../scopes/matrix_scope.dart';
 import '../../client_manager.dart';
 import 'add_account_tile.dart';
 import 'client_tile.dart';
@@ -11,11 +10,11 @@ class TabBottomSheet extends StatelessWidget {
   const TabBottomSheet({super.key});
 
   Future<String?> show(BuildContext context) async {
-    final scope = MatrixScope.captureAll(context);
     return showModalBottomSheet<String>(
       context: context,
+      // we need the [ClientManager] in the Widget tree
       useRootNavigator: false,
-      builder: (context) => MatrixScope(scope: scope, child: this),
+      builder: (context) => this,
     );
   }
 

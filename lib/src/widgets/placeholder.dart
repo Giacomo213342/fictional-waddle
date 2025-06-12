@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import '../utils/assets.dart';
 
 class PolyculePlaceholder extends StatelessWidget {
   const PolyculePlaceholder({super.key});
@@ -20,7 +21,7 @@ class PolyculePlaceholder extends StatelessWidget {
                   SizedBox.square(
                     dimension: 128,
                     child: Image.asset(
-                      'assets/icons/rosahaj/base/Rosahaj_Peek.png',
+                      Assets.rosahajPeek.name,
                     ),
                   ),
                   Padding(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../utils/about_dialog.dart';
-import '../../widgets/matrix/scopes/matrix_scope.dart';
 import '../../widgets/settings_manager.dart';
 import 'application_settings_view.dart';
 import 'components/language_dialog.dart';
@@ -25,13 +24,9 @@ class ApplicationSettingsController extends State<ApplicationSettingsPage> {
       ApplicationSettingsView(controller: this);
 
   Future<void> showLanguageDialog() async {
-    final scope = MatrixScope.captureAll(context);
     final result = await showAdaptiveDialog<LocaleResponse>(
       context: context,
-      builder: (context) => MatrixScope(
-        scope: scope,
-        child: const LanguageDialog(),
-      ),
+      builder: (context) => const LanguageDialog(),
     );
     if (result == null || !mounted) {
       return;

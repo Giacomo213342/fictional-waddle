@@ -500,20 +500,16 @@
   "@oidcContact": {
     "translatable": false
   },
-  "oidcAppUrl": "https://polycule.im/web",
-  "@oidcAppUrl": {
+  "oidcLogoPath": "assets/assets/logo/logo-circle.png",
+  "@oidcLogoPath": {
     "translatable": false
   },
-  "oidcLogoUrl": "https://polycule.im/web/assets/assets/logo/logo-circle.png",
-  "@oidcLogoUrl": {
+  "oidcTosPath": "tos.html",
+  "@oidcTosPath": {
     "translatable": false
   },
-  "oidcTosUrl": "https://polycule.im/web/tos.html",
-  "@oidcTosUrl": {
-    "translatable": false
-  },
-  "oicPolicyUri": "https://polycule.im/web/policy.html",
-  "@oidcPolicyUri": {
+  "oidcPolicyPath": "policy.html",
+  "@oidcPolicyPath": {
     "translatable": false
   },
   "loginOidc": "Login using OpenID Connect",

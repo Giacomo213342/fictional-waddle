@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../../../l10n/generated/app_localizations.dart';
+import '../../../../../utils/dart_environment.dart';
 import '../../../../../utils/matrix/default_emoji_tone.dart';
 import '../../../../../widgets/matrix/scopes/client_scope.dart';
 
@@ -50,7 +51,7 @@ class ToneButton extends StatelessWidget {
                   filePicker:
                       AnimatedEmoji.fromGlyph(_glyph)?.archiveFilePicker,
                 ),
-                animate: !const bool.fromEnvironment('INTEGRATION_TEST'),
+                animate: !DartEnvironment.isIntegrationTest,
                 width: _size,
                 height: _size,
               ),

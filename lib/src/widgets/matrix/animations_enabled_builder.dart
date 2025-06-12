@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/dart_environment.dart';
 import '../../utils/matrix/autoplay_animated_content_extension.dart';
 import 'scopes/client_scope.dart';
 
@@ -33,7 +34,7 @@ class AnimationEnabledBuilderState extends State<AnimationEnabledBuilder> {
   @override
   Widget build(BuildContext context) {
     final autoplay = ClientScope.of(context).client.autoplayAnimatedContent ??
-        !const bool.fromEnvironment('INTEGRATION_TEST');
+        !DartEnvironment.isIntegrationTest;
 
     final box = widget.builder.call(context, autoplay || animating);
 

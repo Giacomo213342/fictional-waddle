@@ -1,9 +1,8 @@
 import 'dart:io';
 
-final homeserver = Platform.environment['HOMESERVER'] ??
-    const String.fromEnvironment(
-      'HOMESERVER',
-      defaultValue: 'http://homeserver',
-    );
+import 'package:polycule/src/utils/dart_environment.dart';
+
+final homeserver =
+    Platform.environment['HOMESERVER'] ?? DartEnvironment.homeserver;
 
 String? ssss;

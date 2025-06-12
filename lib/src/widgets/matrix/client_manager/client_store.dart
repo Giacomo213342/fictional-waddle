@@ -140,15 +140,7 @@ class ClientStore {
     );
     storageLock = Completer<void>();
 
-    await kPolyculeSecureStorage.delete(
-      key: SsssBootstrapController.ssssKeyStorage(client),
-    );
-
     final identifier = client.clientName.clientIdentifier;
-
-    await client.database.delete();
-
-    await client.dispose();
 
     final activeClients = List<Client>.from(this.activeClients.value);
 
@@ -166,6 +158,14 @@ class ClientStore {
     storageLock = null;
 
     this.activeClients.value = activeClients;
+
+    await kPolyculeSecureStorage.delete(
+      key: SsssBootstrapController.ssssKeyStorage(client),
+    );
+
+    await client.database.delete();
+
+    await client.dispose();
 
     Logs().d(
       'Released storage lock for client deletion.',

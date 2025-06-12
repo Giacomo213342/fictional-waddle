@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:polycule/src/utils/dart_environment.dart';
+
 final class Users {
   const Users._({
     required this.username,
@@ -21,11 +23,9 @@ final class Users {
 
   static const all = [alice, bob];
 
-  static final registrationToken = Platform.environment['REGISTRATION_TOKEN'] ??
-      const String.fromEnvironment(
-        'REGISTRATION_TOKEN',
-        defaultValue: 'SomeSecret',
-      );
+  static final registrationToken =
+      Platform.environment['MATRIX_REGISTRATION_TOKEN'] ??
+          DartEnvironment.matrixRegistrationToken;
 
   final String username;
   final String password;
