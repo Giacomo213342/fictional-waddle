@@ -353,14 +353,6 @@
   "@oidcAppName": {
     "translatable": false
   },
-  "oidcAppUrl": "https://polycule.im/web",
-  "@oidcAppUrl": {
-    "translatable": false
-  },
-  "oidcLogoUrl": "https://polycule.im/web/assets/assets/logo/logo-circle.png",
-  "@oidcLogoUrl": {
-    "translatable": false
-  },
   "networkSettings": "Configurações de rede",
   "@networkSettings": {},
   "tls12": "TLS 1.2",
@@ -397,12 +389,6 @@
   "@oidcContact": {
     "translatable": false
   },
-  "oidcTosUrl": "https://polycule.im/web/tos.html",
-  "@oidcTosUrl": {
-    "translatable": false
-  },
-  "oicPolicyUri": "https://polycule.im/web/policy.html",
-  "@oicPolicyUri": {},
   "errorReportingPrivacy": "Isso irá conectar com GitLab.com, o hóspede do código fonte da < polícula > e anonimamente compartilhar erros ocorridos e suas causas. Isso não irá compartilhar nenhum dado pessoal para o desenvolvedor.",
   "@errorReportingPrivacy": {},
   "availableCommands": "Comandos disponíveis",

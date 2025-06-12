@@ -654,20 +654,6 @@
   "@oidcContact": {
     "translatable": false
   },
-  "oidcAppUrl": "https://polycule.im/web",
-  "@oidcAppUrl": {
-    "translatable": false
-  },
-  "oidcLogoUrl": "https://polycule.im/web/assets/assets/logo/logo-circle.png",
-  "@oidcLogoUrl": {
-    "translatable": false
-  },
-  "oidcTosUrl": "https://polycule.im/web/tos.html",
-  "@oidcTosUrl": {
-    "translatable": false
-  },
-  "oicPolicyUri": "https://polycule.im/web/policy.html",
-  "@oicPolicyUri": {},
   "loginOidc": "OpenID இணைப்பைப் பயன்படுத்தி உள்நுழைக",
   "@loginOidc": {},
   "oidcConfirm": "உறுதிப்படுத்தவும்",
