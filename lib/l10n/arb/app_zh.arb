@@ -914,5 +914,69 @@
   "renameDevice": "重命名设备",
   "@renameDevice": {},
   "deviceName": "设备显示名称",
-  "@deviceName": {}
+  "@deviceName": {},
+  "pushRulesDevice": "此设备",
+  "@pushRulesDevice": {},
+  "notificationSettings": "通知规则",
+  "@notificationSettings": {},
+  "notificationsGlobal": "通用",
+  "@notificationsGlobal": {},
+  "notificationsOverride": "高",
+  "@notificationsOverride": {},
+  "notificationsRoom": "房间",
+  "@notificationsRoom": {},
+  "notificationsSender": "发送者",
+  "@notificationsSender": {},
+  "notificationsUnderride": "低",
+  "@notificationsUnderride": {},
+  "noPushRules": "没有可用的推送规则。",
+  "@noPushRules": {},
+  "defaultPushRule": "这是一个默认的推送规则。",
+  "@defaultPushRule": {},
+  "pushRuleEnabled": "启用推送规则",
+  "@pushRuleEnabled": {},
+  "eventContentMatches": "事件内容匹配此模式",
+  "@eventContentMatches": {},
+  "unknownAction": "未知操作 : {action}",
+  "@unknownAction": {
+    "placeholders": {
+      "action": {
+        "format": "String"
+      }
+    }
+  },
+  "actionNotify": "发送通知",
+  "@actionNotify": {},
+  "actionDontNotify": "不通知",
+  "@actionDontNotify": {},
+  "notificationTweakSound": "声音",
+  "@notificationTweakSound": {},
+  "notificationTweakHighlight": "高亮",
+  "@notificationTweakHighlight": {},
+  "unknownNotificationTweak": "未知调整 : {tweak}",
+  "@unknownNotificationTweak": {
+    "placeholders": {
+      "tweak": {
+        "format": "String"
+      }
+    }
+  },
+  "pushConditionSenderNotificationPermission": "发件人可以通知 : {key}",
+  "@pushConditionSenderNotificationPermission": {
+    "placeholders": {
+      "key": {
+        "format": "String"
+      }
+    }
+  },
+  "tweakEnabled": "已启用",
+  "@tweakEnabled": {},
+  "tweakDisabled": "已禁用",
+  "@tweakDisabled": {},
+  "tweakDefault": "通知默认",
+  "@tweakDefault": {},
+  "pushConditionContainsDisplayName": "包含我的显示名称",
+  "@pushConditionContainsDisplayName": {},
+  "pushRulesGlobal": "账号范围",
+  "@pushRulesGlobal": {}
 }

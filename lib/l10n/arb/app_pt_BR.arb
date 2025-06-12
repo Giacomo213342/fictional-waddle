@@ -408,5 +408,43 @@
   "availableCommands": "Comandos disponíveis",
   "@availableCommands": {},
   "roomStatePublicKnock": "Essa sala é visível publicamente para todos, mas eles devem bater antes de entrar.",
-  "@roomStatePublicKnock": {}
+  "@roomStatePublicKnock": {},
+  "notificationsSender": "Remetentes",
+  "@notificationsSender": {},
+  "pushRulesDevice": "Esse dispositivo",
+  "@pushRulesDevice": {},
+  "unknownAction": "Ação desconhecida: {action}",
+  "@unknownAction": {
+    "placeholders": {
+      "action": {
+        "format": "String"
+      }
+    }
+  },
+  "eventContentMatches": "Conteúdo do evento corresponde a esse padrão",
+  "@eventContentMatches": {},
+  "notificationsRoom": "Salas",
+  "@notificationsRoom": {},
+  "notificationSettings": "Regras de notificações",
+  "@notificationSettings": {},
+  "actionNotify": "Enviar notificação",
+  "@actionNotify": {},
+  "notificationTweakSound": "Som",
+  "@notificationTweakSound": {},
+  "pushConditionSenderNotificationPermission": "Remetente pode notificar: {key}",
+  "@pushConditionSenderNotificationPermission": {
+    "placeholders": {
+      "key": {
+        "format": "String"
+      }
+    }
+  },
+  "unknownNotificationTweak": "Ajuste desconhecido: {tweak}",
+  "@unknownNotificationTweak": {
+    "placeholders": {
+      "tweak": {
+        "format": "String"
+      }
+    }
+  }
 }
