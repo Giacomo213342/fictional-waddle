@@ -1749,4 +1749,41 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get sessions => 'Sessões';
+
+  @override
+  String get notificationSettings => 'Regras de notificações';
+
+  @override
+  String get notificationsRoom => 'Salas';
+
+  @override
+  String get notificationsSender => 'Remetentes';
+
+  @override
+  String get eventContentMatches =>
+      'Conteúdo do evento corresponde a esse padrão';
+
+  @override
+  String unknownAction(Object action) {
+    return 'Ação desconhecida: $action';
+  }
+
+  @override
+  String get actionNotify => 'Enviar notificação';
+
+  @override
+  String get notificationTweakSound => 'Som';
+
+  @override
+  String unknownNotificationTweak(Object tweak) {
+    return 'Ajuste desconhecido: $tweak';
+  }
+
+  @override
+  String pushConditionSenderNotificationPermission(Object key) {
+    return 'Remetente pode notificar: $key';
+  }
+
+  @override
+  String get pushRulesDevice => 'Esse dispositivo';
 }

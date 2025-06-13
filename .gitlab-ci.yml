@@ -397,7 +397,6 @@ build:macos:debug:
     - flutter build macos --debug $FLUTTER_ARGS
     - rm -rf polycule-$POLYCULE_VERSION-debug.app
     - mv build/macos/Build/Products/Debug/polycule.app polycule-$POLYCULE_VERSION-debug.app
-    - cp /usr/local/Cellar/libolm/*/lib/libolm.3.dylib polycule-$POLYCULE_VERSION-debug.app/Contents/Frameworks
   <<: *unsigned
   allow_failure: true
   artifacts:
@@ -413,7 +412,6 @@ build:macos:
     - flutter build macos $FLUTTER_ARGS
     - rm -rf polycule-$POLYCULE_VERSION.app
     - mv build/macos/Build/Products/Release/polycule.app polycule-$POLYCULE_VERSION.app
-    - cp /usr/local/Cellar/libolm/*/lib/libolm.3.dylib polycule-$POLYCULE_VERSION.app/Contents/Frameworks
   <<: *signed
   allow_failure: true
   artifacts:
@@ -519,8 +517,8 @@ build:apk:tag:
   script:
     - *reproducible-before
     - *flutter-setup
-    - sed -i -e '1a add_link_options("LINKER:--build-id=none")' $PUB_CACHE/hosted/pub.dev/{flutter_zxing,flutter_olm}-*/*/CMakeLists.txt
-    - sed -i -e "1a add_compile_options(\"-ffile-prefix-map=$CI_PROJECT_DIR=/tmp/build\")" $PUB_CACHE/hosted/pub.dev/{flutter_zxing,flutter_olm}-*/*/CMakeLists.txt
+    - sed -i -e '1a add_link_options("LINKER:--build-id=none")' $PUB_CACHE/hosted/pub.dev/{flutter_zxing,flutter_vodozemac}-*/*/CMakeLists.txt
+    - sed -i -e "1a add_compile_options(\"-ffile-prefix-map=$CI_PROJECT_DIR=/tmp/build\")" $PUB_CACHE/hosted/pub.dev/{flutter_zxing,flutter_vodozemac}-*/*/CMakeLists.txt
     - flutter build apk $FLUTTER_ARGS --release --split-per-abi
     - *reproducible-after
     - |
@@ -538,8 +536,8 @@ build:web:
   image: registry.gitlab.com/polycule_client/flutter-dockerimages:$FLUTTER_VERSION-web
   extends: .build
   script:
-    - ./scripts/download-olm.sh
-    - dart compile js web/web_worker.dart -m -o web/web_worker.dart.js
+    - ./scripts/compile-vodozemac-wasm.sh
+    - dart compile js web/web_worker.dart -m -o web/pkg/web_worker.dart.js
     - flutter build web --native-null-assertions --no-web-resources-cdn --base-href "/web/" --source-maps $FLUTTER_ARGS --dart-define=no_default_http_client=false
     - rm -rf polycule-web-$PUBSPEC_VERSION
     - mv build/web polycule-web-$PUBSPEC_VERSION
@@ -582,9 +580,9 @@ build:fedora:aarch64:
     # Flutter desktop dependencies
     - dnf install -y clang cmake git ninja-build pkg-config gtk3-devel xz-devel libstdc++-devel
     # < polycule > development dependencies
-    - dnf install -y openssl-devel libsecret-devel mimalloc-devel mpv-devel
+    - dnf install -y openssl-devel libsecret-devel mimalloc-devel mpv-devel rustup
     # < polycule > runtime dependencies
-    - dnf install -y xdg-user-dirs dbus mpv mimalloc libnotify libolm
+    - dnf install -y xdg-user-dirs dbus mpv mimalloc libnotify
     - curl -O https://storage.googleapis.com/dart-archive/channels/stable/release/latest/sdk/dartsdk-linux-arm64-release.zip && unzip dartsdk-linux-arm64-release.zip && rm -f dartsdk-linux-arm64-release.zip
     - export PATH="$PATH":"$HOME/.pub-cache/bin:$(pwd)/.fvm/flutter_sdk/bin:$(pwd)/dart-sdk/bin"
     - dart --disable-analytics
@@ -593,6 +591,9 @@ build:fedora:aarch64:
     - flutter --disable-analytics
     - *versioning-setup
     - *flutter-setup
+    # rustup setup
+    - rustup-init -y --default-toolchain none --profile minimal
+    - . "$HOME/.cargo/env"
   allow_failure: true
 
 build:debian:x86_64:

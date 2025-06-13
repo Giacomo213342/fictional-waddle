@@ -16,7 +16,6 @@ Additionally, you will need the following Linux runtime dependencies :
 - [xdg-user-dirs](https://www.freedesktop.org/wiki/Software/xdg-user-dirs/) (command `xdg-user-dirs`)
 - [libnotify](https://gitlab.gnome.org/GNOME/libnotify) (command `notify-send`)
 - [dbus](https://www.freedesktop.org/wiki/Software/dbus/) (`libdbus-1.so.3`)
-- [Olm](https://gitlab.matrix.org/matrix-org/olm/) (`libolm.so.3`)
 
 ### Flutter
 
@@ -28,20 +27,24 @@ other distributions or operating systems, please check [docs.flutter.dev](https:
 In case you don't know Flutter, how about contributing to the translations
 on [Weblate](https://hosted.weblate.org/projects/polycule/) ?
 
-### Olm
+### Vodozemac
 
-Olm is used for the matrix related cryptography. You will only need to install it when deeloping for Desktops.
+Vodozemac is used for the matrix related cryptography.
 
-Olm is packaged on pretty any package manager on Linux, Windows and macOS.
-
-**Important** : For building or running the web version, you will need to download the JS/WASM version of OLM. Use the
-following script to download the matching version.
+Vodozemac is automatically bundled on all platforms except for web. Use the following steps to build it for web :
 
 ```shell
+# ensure the command `rustup` is installed on your system
+which rustup
+cargo install flutter_rust_bridge_codegen
+cargo install wasm-pack
+
+flutter pub get
+
 # ensure the command `yq` is installed on your system
 which yq
-# download OLM for web
-./scripts/download-olm.sh
+# compile vodozemac for web
+./scripts/compile-vodozemac-wasm.sh
 ```
 
 ### OpenSSL
@@ -66,11 +69,11 @@ distribution and required as runtime shared object.
 ## Linux desktop TL;DR
 
 - For Arch Linux, install :
-  `pacman -S gtk3 openssl libsecret mimalloc mpv && pacman -S xdg-user-dirs dbus mpv mimalloc libnotify libolm`
+  `pacman -S gtk3 openssl libsecret mimalloc mpv && pacman -S xdg-user-dirs dbus mpv mimalloc libnotify`
 - For Fedora, install :
-  `dnf install gtk3-devel openssl-devel libsecret-devel mimalloc-devel mpv-devel && dnf install xdg-user-dirs dbus mpv mimalloc libnotify libolm`
+  `dnf install gtk3-devel openssl-devel libsecret-devel mimalloc-devel mpv-devel && dnf install xdg-user-dirs dbus mpv mimalloc libnotify`
 - For Debian/Ubuntu, install :
-  `apt install libgtk-3-dev libssl-dev libsecret-1-dev libmimalloc-dev libmpv-dev && apt install xdg-user-dirs dbus mpv libmimalloc2.0 libnotify-bin libolm`
+  `apt install libgtk-3-dev libssl-dev libsecret-1-dev libmimalloc-dev libmpv-dev && apt install xdg-user-dirs dbus mpv libmimalloc2.0 libnotify-bin`
 - Development on musl-based distributions is currently not possible
 
 ## Setting up your development environment
@@ -169,7 +172,7 @@ HOMESERVER=http://10.10.0.1 flutter drive -d your_device --profile \
 If you want to run < polycule > for web, ensure you build the web worker first.
 
 ```shell
-dart compile js -o web/web_worker.dart.js -m web/web_worker.dart
+dart compile js web/web_worker.dart -m -o web/pkg/web_worker.dart.js
 ```
 
 ### Running in debug mode

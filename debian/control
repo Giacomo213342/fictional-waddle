@@ -8,5 +8,5 @@ Homepage: https://gitlab.com/polycule_client/polycule
 
 Package: polycule
 Architecture: amd64 arm64
-Depends: ${shlibs:Depends}, ${misc:Depends}, dbus, xdg-user-dirs, libolm3, mpv, libmimalloc2.0, libnotify-bin
+Depends: ${shlibs:Depends}, ${misc:Depends}, dbus, xdg-user-dirs, mpv, libmimalloc2.0, libnotify-bin
 Description: A simple and beautiful matrix client written in Flutter.

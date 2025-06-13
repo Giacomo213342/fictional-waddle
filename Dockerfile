@@ -16,10 +16,10 @@ COPY pubspec.lock /app
 
 WORKDIR /app
 
-RUN ./scripts/download-olm.sh
 RUN flutter pub get --enforce-lockfile
+RUN ./scripts/compile-vodozemac-wasm.sh
+RUN dart compile js web/web_worker.dart -m -o web/pkg/web_worker.dart.js
 RUN flutter gen-l10n
-RUN dart compile js web/web_worker.dart -m -o web/web_worker.dart.js
 RUN flutter build web --no-pub --native-null-assertions --no-web-resources-cdn --base-href "$BASE_HREF" --source-maps \
     $($POLYCULE_IS_STABLE || echo "--build-number $BUILD_NUMBER") \
     --dart-define=POLYCULE_IS_STABLE=$POLYCULE_IS_STABLE \
