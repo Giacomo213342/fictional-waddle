@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:flutter_vodozemac/flutter_vodozemac.dart' as flutter_vodozemac;
 import 'package:http/http.dart' hide Client;
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
@@ -72,7 +73,7 @@ abstract class ClientUtil {
 
   static final nativeImplementations = kIsWeb
       ? NativeImplementationsWebWorker(Uri.parse('web_worker.dart.js'))
-      : NativeImplementationsIsolate(compute);
+      : NativeImplementationsIsolate(compute, vodozemacInit: initVodozemac);
 
   static Future<MatrixImageFileResizedResponse?> customImageResizer(
     MatrixImageFileResizeArguments args,
@@ -86,4 +87,8 @@ abstract class ClientUtil {
         Logs().w('Error shrinking image ${args.fileName}.', e, s);
         return null;
       });
+
+  static Future<void> initVodozemac() async {
+    await flutter_vodozemac.init();
+  }
 }

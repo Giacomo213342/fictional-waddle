@@ -1,8 +1,5 @@
 with (import <nixpkgs> {
   config = {
-    permittedInsecurePackages = [
-      "olm-3.2.16"
-    ];
     allowUnfree = true;
   };
 });
@@ -18,8 +15,7 @@ let
     coreutils
     docker
     ideviceinstaller
-    # olm
-    # darwin.xcode_15_1
+    rustup
     ruby
     cocoapods
     python3
@@ -60,14 +56,10 @@ in mkShell {
 
     export PATH="$HOME/.bin:$DEVELOPER_DIR/usr/bin:$DEVELOPER_DIR/Toolchains/XcodeDefault.xctoolchain/usr/bin:$PATH:/usr/sbin:/usr/bin"
 
-    # ugly workaround for olm: copy it so that flutter finds it
-    # basically finds the dylib of olm and copies it to current working directory
-    # we search in the path of nix ldflags to find the two libraries we need
+    # we search in the path of nix ldflags to find the libcrypto library we need
     # as the path in the $NIX_LDFLAGS starts with '-L' we need to remove this otherwise the path
     # can't be parsed
 
-    # find $(echo $NIX_LDFLAGS | sed 's/-L//g' | uniq) -name "libolm.3.dylib" -print -quit | xargs -I{} cp -f {} $(pwd)
-    cp -f /usr/local/Cellar/libolm/*/lib/libolm.3.dylib $(pwd)
     find $(echo $NIX_LDFLAGS | sed 's/-L//g' | uniq) -name "libcrypto.3.dylib" -print -quit | xargs -I{} cp -f {} $(pwd)
 
   '';

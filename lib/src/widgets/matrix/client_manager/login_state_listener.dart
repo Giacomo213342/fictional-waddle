@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
-import 'package:olm/olm.dart' as olm;
+import 'package:vodozemac/vodozemac.dart' as vodozemac;
 
 import '../../../pages/fatal_error/fatal_error_page.dart';
 import '../../../pages/homeserver/homeserver.dart';
@@ -23,8 +23,6 @@ class LoginStateListener extends StatefulWidget {
 }
 
 class _LoginStateListenerState extends State<LoginStateListener> {
-  static String? _olmVersion;
-
   StreamSubscription<LoginState>? _subscription;
 
   @override
@@ -66,18 +64,12 @@ class _LoginStateListenerState extends State<LoginStateListener> {
     switch (event) {
       case LoginState.loggedIn:
         // under no case start the app if encryption not supported
-        // This should prevent from CI accidentally forgetting to bundle OLM
-        if (_olmVersion == null) {
-          try {
-            _olmVersion = olm.get_library_version().join('.');
-            Logs().d('Running with OLM version $_olmVersion');
-          } on ArgumentError catch (e, s) {
-            Logs().wtf('Unable to load OLM.', e, s);
-            ClientScope.of(context).client.dispose();
+        // This should prevent from CI accidentally forgetting to
+        // bundle Vodozemac
+        if (!vodozemac.isInitialized()) {
+          Logs().wtf('Vodozemac not initialized. This should not happen.');
 
-            context.goMultiClient(FatalErrorPage.routeName, extra: e);
-            rethrow;
-          }
+          context.goMultiClient(FatalErrorPage.routeName);
         }
 
         context.goMultiClient(RoomListPage.routeName);

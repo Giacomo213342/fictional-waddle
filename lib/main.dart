@@ -9,6 +9,7 @@ import 'package:media_kit/media_kit.dart';
 
 import 'src/polycule.dart';
 import 'src/utils/error_logger.dart';
+import 'src/utils/matrix/client_util.dart';
 
 @pragma('vm:entry-point')
 void main([List<String>? args]) {
@@ -27,6 +28,7 @@ void main([List<String>? args]) {
       WidgetsFlutterBinding.ensureInitialized();
       MediaKit.ensureInitialized();
       JustAudioMediaKit.ensureInitialized();
+      await ClientUtil.initVodozemac();
 
       runApp(const PolyculeClient());
     },

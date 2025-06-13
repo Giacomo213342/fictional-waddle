@@ -1166,77 +1166,77 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sessions => '会话';
 
   @override
-  String get notificationSettings => 'Notification rules';
+  String get notificationSettings => '通知规则';
 
   @override
-  String get notificationsGlobal => 'Generic';
+  String get notificationsGlobal => '通用';
 
   @override
-  String get notificationsOverride => 'High';
+  String get notificationsOverride => '高';
 
   @override
-  String get notificationsRoom => 'Rooms';
+  String get notificationsRoom => '房间';
 
   @override
-  String get notificationsSender => 'Senders';
+  String get notificationsSender => '发送者';
 
   @override
-  String get notificationsUnderride => 'Low';
+  String get notificationsUnderride => '低';
 
   @override
-  String get noPushRules => 'No push rules available.';
+  String get noPushRules => '没有可用的推送规则。';
 
   @override
-  String get defaultPushRule => 'This is a default push rule.';
+  String get defaultPushRule => '这是一个默认的推送规则。';
 
   @override
-  String get pushRuleEnabled => 'Enable push rule';
+  String get pushRuleEnabled => '启用推送规则';
 
   @override
-  String get eventContentMatches => 'Event content matches this pattern';
+  String get eventContentMatches => '事件内容匹配此模式';
 
   @override
   String unknownAction(Object action) {
-    return 'Unknown action : $action';
+    return '未知操作 : $action';
   }
 
   @override
-  String get actionNotify => 'Send notification';
+  String get actionNotify => '发送通知';
 
   @override
-  String get actionDontNotify => 'Do not notify';
+  String get actionDontNotify => '不通知';
 
   @override
-  String get notificationTweakSound => 'Sound';
+  String get notificationTweakSound => '声音';
 
   @override
-  String get notificationTweakHighlight => 'Highlight';
+  String get notificationTweakHighlight => '高亮';
 
   @override
   String unknownNotificationTweak(Object tweak) {
-    return 'Unknown tweak : $tweak';
+    return '未知调整 : $tweak';
   }
 
   @override
   String pushConditionSenderNotificationPermission(Object key) {
-    return 'Sender can notify : $key';
+    return '发件人可以通知 : $key';
   }
 
   @override
-  String get tweakEnabled => 'Enabled';
+  String get tweakEnabled => '已启用';
 
   @override
-  String get tweakDisabled => 'Disabled';
+  String get tweakDisabled => '已禁用';
 
   @override
-  String get tweakDefault => 'Notification default';
+  String get tweakDefault => '通知默认';
 
   @override
-  String get pushConditionContainsDisplayName => 'Contains my display name';
+  String get pushConditionContainsDisplayName => '包含我的显示名称';
 
   @override
-  String get pushRulesGlobal => 'Account wide';
+  String get pushRulesGlobal => '账号范围';
 
   @override
-  String get pushRulesDevice => 'This device';
+  String get pushRulesDevice => '此设备';
 }
