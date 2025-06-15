@@ -41,8 +41,6 @@ class RoomListController extends State<RoomListPage> {
     return scope.controller;
   }
 
-  static final Map<String, FocusNode> _focusNodes = {};
-
   final searchController = SearchController();
   final searchFocus = FocusNode();
 
@@ -51,12 +49,6 @@ class RoomListController extends State<RoomListPage> {
       .rooms
       .where((r) => !r.isSpace && !r.isArchived)
       .toList();
-
-  /// provides the [FocusNode] for the room list tile of the given Room [id].
-  static FocusNode getFocusNode(String id) {
-    FocusNode? node = _focusNodes[id];
-    return node ??= _focusNodes[id] = FocusNode();
-  }
 
   @override
   void initState() {
@@ -100,22 +92,7 @@ class RoomListController extends State<RoomListPage> {
     if (!mounted) {
       return;
     }
-    _focusFirstRoom();
     await _checkSSSS(client);
-  }
-
-  /// checks whether our room list contains any item and tries to focus it
-  /// In case of success, it cancels the further sync listener
-  void _focusFirstRoom() {
-    final firstRoom = getRegularRooms().firstOrNull;
-    if (firstRoom == null) {
-      return;
-    }
-    final node = getFocusNode(firstRoom.id);
-    if (!node.canRequestFocus) {
-      return;
-    }
-    node.requestFocus();
   }
 
   void search() {

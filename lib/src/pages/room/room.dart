@@ -48,11 +48,6 @@ class RoomController extends State<RoomPage> {
         child: const RoomView(),
       );
 
-  void focusBack() {
-    final room = RoomScope.of(context).room;
-    RoomListController.getFocusNode(room.id).requestFocus();
-  }
-
   Future<void> knockRoom() => joinRoom();
 
   Future<void> joinRoom() async {
