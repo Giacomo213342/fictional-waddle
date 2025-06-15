@@ -14,7 +14,6 @@ import '../../../widgets/matrix/scopes/room_scope.dart';
 import '../../room/room.dart';
 import '../../room_details/room_details.dart';
 import '../../user_page/user_page.dart';
-import '../room_list.dart';
 import 'room_last_event_preview.dart';
 import 'room_list_trailing.dart';
 
@@ -39,8 +38,6 @@ class RoomListTile extends StatelessWidget {
 
     return DynamicContextMenu(
       itemBuilder: () => _buildContextMenu(context, room),
-      // make the tle keyboard focusable by request
-      focusNode: RoomListController.getFocusNode(room.id),
       onTap: () {
         onActivate?.call();
         context.push(path);
