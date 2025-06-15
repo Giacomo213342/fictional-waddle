@@ -432,5 +432,13 @@
         "format": "String"
       }
     }
+  },
+  "oidcPolicyPath": "política.html",
+  "@oidcPolicyPath": {
+    "translatable": false
+  },
+  "oidcLogoPath": "recursos/recursos/logo/logo-círculo.png",
+  "@oidcLogoPath": {
+    "translatable": false
   }
 }
