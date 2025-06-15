@@ -625,16 +625,6 @@
   "@roomStateOpen": {},
   "roomStateKnock": "用户必须敲门后才能加入此房间。",
   "@roomStateKnock": {},
-  "oidcLogoUrl": "https://polycule.im/web/assets/assets/logo/logo-circle.png",
-  "@oidcLogoUrl": {
-    "translatable": false
-  },
-  "oidcTosUrl": "https://polycule.im/web/tos.html",
-  "@oidcTosUrl": {
-    "translatable": false
-  },
-  "oicPolicyUri": "https://polycule.im/web/policy.html",
-  "@oicPolicyUri": {},
   "loginOidc": "使用 OpenID Connect 登录",
   "@loginOidc": {},
   "manageSessions": "管理会话",
@@ -865,10 +855,6 @@
   },
   "oidcContact": "info@braid.business",
   "@oidcContact": {
-    "translatable": false
-  },
-  "oidcAppUrl": "https://polycule.im/web",
-  "@oidcAppUrl": {
     "translatable": false
   },
   "oidcConfirm": "确认",
