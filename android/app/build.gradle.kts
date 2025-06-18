@@ -10,7 +10,7 @@ plugins {
 configurations.all {
     // https://codeberg.org/UnifiedPush/flutter-connector/issues/21
     // https://central.sonatype.com/artifact/com.google.crypto.tink/tink-android
-    val tink = "com.google.crypto.tink:tink-android:1.17.0"
+    val tink = "com.google.crypto.tink:tink-android:1.18.0"
     resolutionStrategy {
         force(tink)
         dependencySubstitution {
