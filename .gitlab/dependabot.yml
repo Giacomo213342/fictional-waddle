@@ -25,5 +25,4 @@ updates:
     schedule:
       interval: daily
 update-options:
-  auto-merge:
-    merge-train: true
+  auto-merge: true
