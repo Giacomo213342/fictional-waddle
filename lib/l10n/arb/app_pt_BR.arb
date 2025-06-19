@@ -385,10 +385,6 @@
   "@yourCurrentDevice": {},
   "sessions": "Sessões",
   "@sessions": {},
-  "oidcContact": "",
-  "@oidcContact": {
-    "translatable": false
-  },
   "errorReportingPrivacy": "Isso irá conectar com GitLab.com, o hóspede do código fonte da < polícula > e anonimamente compartilhar erros ocorridos e suas causas. Isso não irá compartilhar nenhum dado pessoal para o desenvolvedor.",
   "@errorReportingPrivacy": {},
   "availableCommands": "Comandos disponíveis",
@@ -432,13 +428,5 @@
         "format": "String"
       }
     }
-  },
-  "oidcPolicyPath": "",
-  "@oidcPolicyPath": {
-    "translatable": false
-  },
-  "oidcLogoPath": "",
-  "@oidcLogoPath": {
-    "translatable": false
   }
 }
