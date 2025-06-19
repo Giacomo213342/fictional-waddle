@@ -10,6 +10,7 @@ import 'package:media_kit/media_kit.dart';
 import 'src/polycule.dart';
 import 'src/utils/error_logger.dart';
 import 'src/utils/matrix/client_util.dart';
+import 'src/utils/single_tab/single_tab.dart';
 
 @pragma('vm:entry-point')
 void main([List<String>? args]) {
@@ -30,6 +31,9 @@ void main([List<String>? args]) {
       JustAudioMediaKit.ensureInitialized();
       await ClientUtil.initVodozemac();
 
+      if (!await ensureSingleTab()) {
+        return;
+      }
       runApp(const PolyculeClient());
     },
     (e, s) {

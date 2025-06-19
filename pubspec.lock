@@ -1900,6 +1900,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  web_multiple_tab_detector:
+    dependency: "direct main"
+    description:
+      name: web_multiple_tab_detector
+      sha256: a40d485720ea88b4e25311421d435906ba202ac33e35435403dc1c49c5ed7c4e
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   web_socket:
     dependency: transitive
     description:
