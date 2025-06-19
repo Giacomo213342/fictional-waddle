@@ -171,11 +171,16 @@ check:flutter_version:commit:
   script:
     - ./flutter_version.sh
     - ./scripts/download-sas-emoji-data.sh
-    - git diff . > ../flutter_version.diff
+    - git diff . > ./flutter_version.diff
     - git config --local user.name "< polycule > CI Pipeline"
     - git config --local user.email "gitlab@polycule.im"
     - git add flutter_version .gitlab-ci.yml Dockerfile assets/matrix/sas-emoji.json
     - git commit -sm chore\(deps\)\:\ update\ flutter_version\ \(manual\)
+    # conduct major version bumps on Flutter upgrades
+    - flutter pub upgrade --major-versions
+    - git add pubspec.yaml pubspec.lock
+    - git diff . >> ./flutter_version.diff
+    - git commit -sm chore\(deps\)\:\ Flutter\ pub\ major\ versions\ \(manual\)
     - git push https://git:$CI_PUSH_TOKEN@gitlab.com/$CI_PROJECT_PATH.git HEAD:$CI_COMMIT_REF_NAME
   artifacts:
     paths:
