@@ -385,7 +385,7 @@
   "@yourCurrentDevice": {},
   "sessions": "Sessões",
   "@sessions": {},
-  "oidcContact": "info@braid.business",
+  "oidcContact": "",
   "@oidcContact": {
     "translatable": false
   },
@@ -433,11 +433,11 @@
       }
     }
   },
-  "oidcPolicyPath": "política.html",
+  "oidcPolicyPath": "",
   "@oidcPolicyPath": {
     "translatable": false
   },
-  "oidcLogoPath": "recursos/recursos/logo/logo-círculo.png",
+  "oidcLogoPath": "",
   "@oidcLogoPath": {
     "translatable": false
   }
