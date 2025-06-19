@@ -44,13 +44,14 @@
 	<array>
 		<string>sms</string>
 		<string>tel</string>
+		<string>geo</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>To upload photos, please allow permission to access your photo library.</string>
+	<string>To send media, please allow permission to access your photo library.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>You can verify other sessions and start chats by scanning your peers QR code.</string>
+	<string>To verify other sessions and start chats, you can scanning your peers QR code.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -64,5 +65,9 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<true/>
+	<!-- <key>ITSEncryptionExportComplianceCode</key>
+	<string>TODO</string> -->
 </dict>
 </plist>
