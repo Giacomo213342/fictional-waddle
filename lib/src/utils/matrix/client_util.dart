@@ -72,7 +72,7 @@ abstract class ClientUtil {
       );
 
   static final nativeImplementations = kIsWeb
-      ? NativeImplementationsWebWorker(Uri.parse('web_worker.dart.js'))
+      ? NativeImplementationsWebWorker(Uri.parse('pkg/web_worker.dart.js'))
       : NativeImplementationsIsolate(compute, vodozemacInit: initVodozemac);
 
   static Future<MatrixImageFileResizedResponse?> customImageResizer(

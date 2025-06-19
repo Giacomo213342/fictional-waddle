@@ -655,5 +655,7 @@
   "tweakDefault": "Notification default",
   "pushConditionContainsDisplayName": "Contains my display name",
   "pushRulesGlobal": "Account wide",
-  "pushRulesDevice": "This device"
+  "pushRulesDevice": "This device",
+  "webOAuthReceivedNotice": "OAuth2.0 redirect received. You can close this tab.",
+  "webMultipleTabNotice": "< polycule > is already open in another tab.\nReload once other tabs closed."
 }

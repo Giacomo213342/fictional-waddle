@@ -41,7 +41,7 @@ specific project status.
 | Debian GNU/Linux | `AArch64`, `amd64`                   | [![DEB package from GitLab CI](https://img.shields.io/gitlab/v/tag/polycule_client%2Fpolycule?style=for-the-badge&logo=debian&label=DEB%20Package)](https://gitlab.com/polycule_client/polycule/-/tags)             |        :x:         |
 | Android          | `arm64-v8a`, `armeabi-v7a`, `x86_64` | [![F-Droid Version](https://img.shields.io/f-droid/v/business.braid.polycule?style=for-the-badge&logo=fdroid)](https://f-droid.org/packages/business.braid.polycule/)                                               | :white_check_mark: |
 | iOS              | iPhone, iPad, Apple Silicon Mac      | [![Apple TestFlight](https://img.shields.io/badge/Open_Beta-blue?style=for-the-badge&logo=apple&label=TestFlight)](https://gitlab.com/groups/polycule_client/-/epics/1)                                             |        :x:         |
-| Web              | Firefox                              | [![Web app](https://img.shields.io/website?url=https%3A%2F%2Fpolycule.im%2Fweb&style=for-the-badge&logo=firefox)](https://polycule.im/web/)                                                                         |        :x:         |
+| Web              | Firefox                              | [![Web app](https://img.shields.io/website?url=https%3A%2F%2Fpolycule.im%2Fweb&style=for-the-badge&logo=firefox)](https://polycule.im/web/)                                                                         | :white_check_mark: |
 
 ## Screenshots
 
