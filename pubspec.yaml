@@ -35,7 +35,7 @@ dependencies:
   flutter_html_svg: ^3.0.0-beta.2
   flutter_html_table: ^3.0.0-beta.2
   flutter_keyboard_visibility: ^6.0.0
-  flutter_local_notifications: ^19.2.1
+  flutter_local_notifications: ^19.3.0
   flutter_localizations:
     sdk: flutter
   flutter_openssl_crypto: ^0.5.0
