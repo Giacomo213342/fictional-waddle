@@ -35,6 +35,8 @@ class _LoginStateListenerState extends State<LoginStateListener> {
         .client
         .onLoginStateChanged
         .stream
+        .skipWhile((e) => e == LoginState.softLoggedOut)
+        .distinct()
         .listen(_handleLoginState);
     super.didChangeDependencies();
   }
