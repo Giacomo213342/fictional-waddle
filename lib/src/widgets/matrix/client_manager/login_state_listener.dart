@@ -26,7 +26,10 @@ class _LoginStateListenerState extends State<LoginStateListener> {
   StreamSubscription<LoginState>? _subscription;
 
   @override
-  Widget build(BuildContext context) => widget.child;
+  Widget build(BuildContext context) {
+    context.dependOnInheritedWidgetOfExactType<ClientScope>();
+    return widget.child;
+  }
 
   @override
   void didChangeDependencies() {
