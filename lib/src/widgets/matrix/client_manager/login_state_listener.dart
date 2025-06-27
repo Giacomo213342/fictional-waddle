@@ -26,19 +26,21 @@ class _LoginStateListenerState extends State<LoginStateListener> {
   StreamSubscription<LoginState>? _subscription;
 
   @override
-  Widget build(BuildContext context) {
-    context.dependOnInheritedWidgetOfExactType<ClientScope>();
-    return widget.child;
-  }
+  Widget build(BuildContext context) => widget.child;
 
   @override
   void didChangeDependencies() {
     _subscription?.cancel();
-    _subscription = ClientScope.of(context)
-        .client
-        .onLoginStateChanged
-        .stream
+
+    final client = ClientScope.of(context).client;
+
+    final initialState = client.onLoginStateChanged.value;
+    _subscription = client.onLoginStateChanged.stream
+        // skip soft logout
         .where((e) => e != LoginState.softLoggedOut)
+        // do not handle the first token refresh after the initial state skip
+        .skipWhile((e) => e == initialState)
+        // reduce duplication
         .distinct()
         .listen(_handleLoginState);
     super.didChangeDependencies();
