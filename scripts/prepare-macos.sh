@@ -18,15 +18,15 @@ rm -rf .buildenv
 python3 -m virtualenv .buildenv
 
 if [ ! -f "${FLUTTER_HOME}/bin/flutter" ]; then
-  git clone -b "${FLUTTER_VERSION}" --depth 1 https://github.com/flutter/flutter.git "${FLUTTER_HOME}"
+	git clone -b "${FLUTTER_VERSION}" --depth 1 https://github.com/flutter/flutter.git "${FLUTTER_HOME}"
 
 	git -C "${FLUTTER_HOME}" switch -C stable
 	git -C "${FLUTTER_HOME}" branch origin/master
 
 	flutter --suppress-analytics channel stable --no-cache-artifacts
-  flutter --suppress-analytics precache --universal --ios --macos
+	flutter --suppress-analytics precache --universal --ios --macos
 
-  flutter doctor -v
+	flutter doctor -v
 fi
 
 flutter --disable-analytics
