@@ -1,10 +1,10 @@
 variables:
-  FLUTTER_VERSION: 3.32.4
+  FLUTTER_VERSION: 3.32.5
 
 include:
   - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.43.1
     inputs:
-      gitlab_access_token: $dependabot_gitlab_access_token
+      gitlab_access_token: $CI_PUSH_TOKEN
       stage_name: scan
     rules:
       - if: $PACKAGE_MANAGER_SET
