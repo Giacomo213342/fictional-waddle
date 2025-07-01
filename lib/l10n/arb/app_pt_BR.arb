@@ -428,5 +428,9 @@
         "format": "String"
       }
     }
-  }
+  },
+  "webMultipleTabNotice": "< polícula > já está aberta em outra aba.\nRecarregue assim que outras abas fecharem.",
+  "@webMultipleTabNotice": {},
+  "webOAuthReceivedNotice": "Redirecionamento OAuth2.0 recebido. Você pode fechar essa aba.",
+  "@webOAuthReceivedNotice": {}
 }
