@@ -4,7 +4,7 @@ variables:
 include:
   - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.61.0
     inputs:
-      gitlab_access_token: $gitlab_access_token
+      gitlab_access_token: $dependabot_gitlab_access_token
       stage_name: scan
     rules:
       - if: $PACKAGE_MANAGER_SET
