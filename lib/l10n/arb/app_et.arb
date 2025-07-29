@@ -1,1 +1,102 @@
-{}
+{
+  "appName": "< polycule >",
+  "@appName": {},
+  "about": "Rakenduse teave",
+  "@about": {},
+  "author": "Autor: {author}",
+  "@author": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
+  "appSlogan": "Oskuskasutajatele mõeldud tõhus ja nohikusõbralik [matrix]-i klient.",
+  "@appSlogan": {},
+  "repoLabel": "Lähtekood (GitLab)",
+  "@repoLabel": {},
+  "releaseNotes": "Muudatuste logi",
+  "@releaseNotes": {},
+  "buyMeACoffee": "Osta mulle tass kohvi",
+  "@buyMeACoffee": {},
+  "homeserverHeadline": "Hei ! Tere tulemast, see on < polycule >",
+  "@homeserverHeadline": {
+    "description": "Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'."
+  },
+  "aMatrixClient": "- veel üks [matrix]-i klient",
+  "@aMatrixClient": {},
+  "username": "kasutajanimi",
+  "@username": {},
+  "email": "e-posti aadress",
+  "@email": {},
+  "password": "salasõna",
+  "@password": {},
+  "pleaseProvideEmail": "Palun sisesta oma e-posti aadress.",
+  "@pleaseProvideEmail": {},
+  "pleaseProvidePassword": "Palun sisesta oma salasõna.",
+  "@pleaseProvidePassword": {},
+  "pleaseProvideUsername": "Palun sisesta oma kasutajanimi.",
+  "@pleaseProvideUsername": {},
+  "deleteAll": "Kustuta kõik",
+  "@deleteAll": {},
+  "previous": "Eelmine",
+  "@previous": {},
+  "next": "Järgmine",
+  "@next": {},
+  "hajUser": "Hei {localpart} !",
+  "@hajUser": {
+    "placeholders": {
+      "localpart": {
+        "type": "String?"
+      }
+    }
+  },
+  "loginErrorMessage": "Sisselogimine ei õnnestunud : {message}",
+  "@loginErrorMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "loginError": "Sisselogimine ei õnnestunud ; palun kontrolli, kas kasutajanimi/salasõna on õiged.",
+  "@loginError": {},
+  "platformWeb": "Veeb",
+  "@platformWeb": {},
+  "clientDisplayName": "< polycule > : {platform}",
+  "@clientDisplayName": {
+    "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
+    "placeholders": {
+      "platform": {
+        "type": "String",
+        "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
+      }
+    }
+  },
+  "clientDisplayNameHostname": "< polycule > : {hostname} ({platform})",
+  "@clientDisplayNameHostname": {
+    "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
+    "placeholders": {
+      "hostname": {
+        "type": "String",
+        "description": "The device name."
+      },
+      "platform": {
+        "type": "String",
+        "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
+      }
+    }
+  },
+  "discoverHomeservers": "Avasta uusi koduservereid",
+  "@discoverHomeservers": {},
+  "connectToHomeserver": "Lisa ühendus oma koduserveriga",
+  "@connectToHomeserver": {},
+  "newToMatrixLong": "Otsi [matrix]-i universumist sobilikke koduservereid. Järgnevalt avaneb joinmatrix.org veebisait.",
+  "@newToMatrixLong": {},
+  "connect": "Ühenda",
+  "@connect": {},
+  "pleaseProvideHomeserver": "Palun sisesta koduserver.",
+  "@pleaseProvideHomeserver": {},
+  "homeserverNotValid": "See pole korrektne koduserver.",
+  "@homeserverNotValid": {}
+}
