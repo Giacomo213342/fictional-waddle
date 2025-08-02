@@ -1,0 +1,984 @@
+{
+  "appName": "",
+  "@appName": {},
+  "about": "",
+  "@about": {},
+  "author": "",
+  "@author": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
+  "appSlogan": "",
+  "@appSlogan": {},
+  "repoLabel": "",
+  "@repoLabel": {},
+  "releaseNotes": "",
+  "@releaseNotes": {},
+  "buyMeACoffee": "",
+  "@buyMeACoffee": {},
+  "homeserverHeadline": "",
+  "@homeserverHeadline": {
+    "description": "Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'."
+  },
+  "aMatrixClient": "",
+  "@aMatrixClient": {},
+  "connectToHomeserver": "",
+  "@connectToHomeserver": {},
+  "discoverHomeservers": "",
+  "@discoverHomeservers": {},
+  "newToMatrixLong": "",
+  "@newToMatrixLong": {},
+  "connect": "",
+  "@connect": {},
+  "homeserverNotValid": "",
+  "@homeserverNotValid": {},
+  "pleaseProvideHomeserver": "",
+  "@pleaseProvideHomeserver": {},
+  "errorConnectingToHomeserver": "",
+  "@errorConnectingToHomeserver": {
+    "placeholders": {
+      "homeserver": {
+        "type": "String"
+      }
+    }
+  },
+  "connectingToHomeserver": "",
+  "@connectingToHomeserver": {
+    "placeholders": {
+      "homeserver": {
+        "type": "String"
+      }
+    }
+  },
+  "welcomeToHomeserver": "",
+  "@welcomeToHomeserver": {
+    "placeholders": {
+      "homeserver": {
+        "type": "String"
+      }
+    }
+  },
+  "howWouldYouLikeToConnect": "",
+  "@howWouldYouLikeToConnect": {},
+  "loginPassword": "",
+  "@loginPassword": {},
+  "loginLegacySso": "",
+  "@loginLegacySso": {},
+  "username": "",
+  "@username": {},
+  "email": "",
+  "@email": {},
+  "password": "",
+  "@password": {},
+  "pleaseProvideEmail": "",
+  "@pleaseProvideEmail": {},
+  "pleaseProvidePassword": "",
+  "@pleaseProvidePassword": {},
+  "pleaseProvideUsername": "",
+  "@pleaseProvideUsername": {},
+  "emailMinimals": "",
+  "@emailMinimals": {},
+  "mxidSyntax": "",
+  "@mxidSyntax": {},
+  "clientDisplayName": "",
+  "@clientDisplayName": {
+    "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
+    "placeholders": {
+      "platform": {
+        "type": "String",
+        "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
+      }
+    }
+  },
+  "clientDisplayNameHostname": "",
+  "@clientDisplayNameHostname": {
+    "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
+    "placeholders": {
+      "hostname": {
+        "type": "String",
+        "description": "The device name."
+      },
+      "platform": {
+        "type": "String",
+        "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
+      }
+    }
+  },
+  "platformWeb": "",
+  "@platformWeb": {},
+  "loginError": "",
+  "@loginError": {},
+  "loginErrorMessage": "",
+  "@loginErrorMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "hajUser": "",
+  "@hajUser": {
+    "placeholders": {
+      "localpart": {
+        "type": "String?"
+      }
+    }
+  },
+  "syncInProgress": "",
+  "@syncInProgress": {},
+  "initialSync": "",
+  "@initialSync": {},
+  "syncOffline": "",
+  "@syncOffline": {},
+  "syncFunctional": "",
+  "@syncFunctional": {},
+  "lastSyncReceived": "",
+  "@lastSyncReceived": {
+    "placeholders": {
+      "timestamp": {
+        "type": "DateTime",
+        "format": "jms"
+      },
+      "duration": {
+        "type": "int"
+      }
+    }
+  },
+  "editedToday": "",
+  "@editedToday": {
+    "placeholders": {
+      "timestamp": {
+        "type": "DateTime",
+        "format": "jm"
+      }
+    }
+  },
+  "editedAt": "",
+  "@editedAt": {
+    "placeholders": {
+      "timestamp": {
+        "type": "String"
+      }
+    }
+  },
+  "authenticationRequired": "",
+  "@authenticationRequired": {},
+  "authenticateForAccount": "",
+  "@authenticateForAccount": {
+    "placeholders": {
+      "mxid": {
+        "type": "String"
+      }
+    }
+  },
+  "replyUserSentDate": "",
+  "@replyUserSentDate": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      },
+      "formattedDate": {
+        "type": "String"
+      }
+    }
+  },
+  "view": "",
+  "@view": {},
+  "passphraseNotEmpty": "",
+  "@passphraseNotEmpty": {},
+  "cancel": "",
+  "@cancel": {},
+  "noMatch": "",
+  "@noMatch": {},
+  "keysMatch": "",
+  "@keysMatch": {},
+  "wipeAccount": "",
+  "@wipeAccount": {},
+  "wipeAccountWarning": "",
+  "@wipeAccountWarning": {},
+  "deleteAll": "",
+  "@deleteAll": {},
+  "previous": "",
+  "@previous": {},
+  "next": "",
+  "@next": {},
+  "connectPreviousDevice": "",
+  "@connectPreviousDevice": {},
+  "connectPreviousDeviceLong": "",
+  "@connectPreviousDeviceLong": {},
+  "deviceNotAvailable": "",
+  "@deviceNotAvailable": {},
+  "compareSasNumbers": "",
+  "@compareSasNumbers": {},
+  "compareSasEmojis": "",
+  "@compareSasEmojis": {},
+  "compareSasExplanation": "",
+  "@compareSasExplanation": {},
+  "incomingVerificationRequest": "",
+  "@incomingVerificationRequest": {},
+  "waitingForVerification": "",
+  "@waitingForVerification": {},
+  "waitingForVerificationFallback": "",
+  "@waitingForVerificationFallback": {},
+  "incomingVerificationRequestUser": "",
+  "@incomingVerificationRequestUser": {
+    "placeholders": {
+      "user": {
+        "type": "String?",
+        "description": "User who wants to verify"
+      }
+    }
+  },
+  "incomingVerificationRequestMyself": "",
+  "@incomingVerificationRequestMyself": {},
+  "incomingVerificationRequestLong": "",
+  "@incomingVerificationRequestLong": {},
+  "reject": "",
+  "@reject": {},
+  "proceed": "",
+  "@proceed": {},
+  "enterRecoveryPhrase": "",
+  "@enterRecoveryPhrase": {},
+  "keyVerificationErrorGeneric": "",
+  "@keyVerificationErrorGeneric": {},
+  "keyVerificationErrorUser": "",
+  "@keyVerificationErrorUser": {},
+  "close": "",
+  "@close": {},
+  "verificationSuccessful": "",
+  "@verificationSuccessful": {},
+  "verifyLogin": "",
+  "@verifyLogin": {},
+  "finish": "",
+  "@finish": {},
+  "or": "",
+  "@or": {},
+  "verifyWithOtherDevice": "",
+  "@verifyWithOtherDevice": {},
+  "verifyMethodsNotAvailable": "",
+  "@verifyMethodsNotAvailable": {},
+  "resetAccountWarning": "",
+  "@resetAccountWarning": {},
+  "verifyWithPassphrase": "",
+  "@verifyWithPassphrase": {},
+  "passphraseNoWhitespace": "",
+  "@passphraseNoWhitespace": {},
+  "errorTryAgain": "",
+  "@errorTryAgain": {},
+  "submit": "",
+  "@submit": {},
+  "togglePassword": "",
+  "@togglePassword": {},
+  "loggingInToClient": "",
+  "@loggingInToClient": {},
+  "pendingInvite": "",
+  "@pendingInvite": {},
+  "invite": "",
+  "@invite": {},
+  "inviteLongRoom": "",
+  "@inviteLongRoom": {
+    "description": "Please keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
+    "placeholders": {
+      "roomname": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteLongDM": "",
+  "@inviteLongDM": {},
+  "roomParticipants": "",
+  "@roomParticipants": {
+    "placeholders": {
+      "participants": {
+        "type": "int"
+      }
+    }
+  },
+  "joinRoom": "",
+  "@joinRoom": {},
+  "knockRoom": "",
+  "@knockRoom": {},
+  "youCannotJoinThisRoom": "",
+  "@youCannotJoinThisRoom": {},
+  "addAccount": "",
+  "@addAccount": {},
+  "regionAccountSwitcher": "",
+  "@regionAccountSwitcher": {},
+  "regionChatContents": "",
+  "@regionChatContents": {},
+  "loadingHomeservers": "",
+  "@loadingHomeservers": {},
+  "send": "",
+  "@send": {},
+  "typeGroupImages": "",
+  "@typeGroupImages": {},
+  "typeGroupVideos": "",
+  "@typeGroupVideos": {},
+  "typeGroupAudio": "",
+  "@typeGroupAudio": {},
+  "typeGroupFiles": "",
+  "@typeGroupFiles": {},
+  "msgTypeText": "",
+  "@msgTypeText": {},
+  "msgTypeEmote": "",
+  "@msgTypeEmote": {},
+  "msgTypeNotice": "",
+  "@msgTypeNotice": {},
+  "msgTypeImage": "",
+  "@msgTypeImage": {},
+  "msgTypeVideo": "",
+  "@msgTypeVideo": {},
+  "msgTypeAudio": "",
+  "@msgTypeAudio": {},
+  "msgTypeFile": "",
+  "@msgTypeFile": {},
+  "msgTypeLocation": "",
+  "@msgTypeLocation": {},
+  "msgTypeSticker": "",
+  "@msgTypeSticker": {},
+  "msgTypeBadEncrypted": "",
+  "@msgTypeBadEncrypted": {},
+  "msgTypeNone": "",
+  "@msgTypeNone": {},
+  "sendingFiles": "",
+  "@sendingFiles": {
+    "placeholders": {
+      "files": {
+        "type": "int"
+      }
+    }
+  },
+  "noFilesSelected": "",
+  "@noFilesSelected": {},
+  "yesterday": "",
+  "@yesterday": {},
+  "thisMonth": "",
+  "@thisMonth": {},
+  "lastMonth": "",
+  "@lastMonth": {},
+  "download": "",
+  "@download": {},
+  "share": "",
+  "@share": {},
+  "saveAs": "",
+  "@saveAs": {},
+  "settings": "",
+  "@settings": {},
+  "errorDownloadingAttachment": "",
+  "@errorDownloadingAttachment": {},
+  "retry": "",
+  "@retry": {},
+  "searchPromptLabel": "",
+  "@searchPromptLabel": {},
+  "appearanceAccessibilitySettings": "",
+  "@appearanceAccessibilitySettings": {},
+  "polyculeSettings": "",
+  "@polyculeSettings": {},
+  "systemLanguage": "",
+  "@systemLanguage": {},
+  "language": "",
+  "@language": {},
+  "theme": "",
+  "@theme": {},
+  "dark": "",
+  "@dark": {},
+  "light": "",
+  "@light": {},
+  "systemTheme": "",
+  "@systemTheme": {},
+  "fontAccessibility": "",
+  "@fontAccessibility": {},
+  "inclusiveSans": "",
+  "@inclusiveSans": {},
+  "openDyslexic": "",
+  "@openDyslexic": {},
+  "serif": "",
+  "@serif": {},
+  "defaultFont": "",
+  "@defaultFont": {},
+  "color": "",
+  "@color": {},
+  "systemColor": "",
+  "@systemColor": {},
+  "defaultColor": "",
+  "@defaultColor": {},
+  "customColor": "",
+  "@customColor": {},
+  "highContrast": "",
+  "@highContrast": {},
+  "aboutPolycule": "",
+  "@aboutPolycule": {},
+  "contentNotice": "",
+  "@contentNotice": {
+    "description": "A content notice warning about spoilers or sensitive contents of a message.\nPlease keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
+    "placeholders": {
+      "notice": {
+        "description": "The warning/notice message.",
+        "type": "String"
+      }
+    }
+  },
+  "contentNoticeFallback": "",
+  "@contentNoticeFallback": {},
+  "webUriHandlerTitle": "",
+  "@webUriHandlerTitle": {},
+  "jumpToMessage": "",
+  "@jumpToMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "selectAccount": "",
+  "@selectAccount": {},
+  "sharingFiles": "",
+  "@sharingFiles": {
+    "placeholders": {
+      "files": {
+        "type": "int"
+      }
+    }
+  },
+  "sharingText": "",
+  "@sharingText": {},
+  "sendFiles": "",
+  "@sendFiles": {},
+  "checkingTotalSendSize": "",
+  "@checkingTotalSendSize": {},
+  "totalSendSize": "",
+  "@totalSendSize": {
+    "placeholders": {
+      "size": {
+        "type": "int"
+      }
+    }
+  },
+  "fileSize": "",
+  "@fileSize": {
+    "placeholders": {
+      "size": {
+        "type": "int"
+      }
+    }
+  },
+  "mimeType": "",
+  "@mimeType": {
+    "placeholders": {
+      "mimeType": {
+        "type": "String?"
+      }
+    }
+  },
+  "matrixRoomShareSubject": "",
+  "@matrixRoomShareSubject": {
+    "placeholders": {
+      "roomname": {
+        "type": "String"
+      }
+    }
+  },
+  "matrixUserShareSubject": "",
+  "@matrixUserShareSubject": {
+    "placeholders": {
+      "mxid": {
+        "type": "String"
+      }
+    }
+  },
+  "fileDownloadedTo": "",
+  "@fileDownloadedTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openFile": "",
+  "@openFile": {},
+  "compressFiles": "",
+  "@compressFiles": {},
+  "compressFilesSubtitle": "",
+  "@compressFilesSubtitle": {},
+  "cancelSending": "",
+  "@cancelSending": {},
+  "retrySending": "",
+  "@retrySending": {},
+  "accountSettings": "",
+  "@accountSettings": {},
+  "previewRoom": "",
+  "@previewRoom": {},
+  "joinMatrixCall": "",
+  "@joinMatrixCall": {},
+  "matrixCallTooltip": "",
+  "@matrixCallTooltip": {
+    "placeholders": {
+      "roomId": {
+        "type": "String"
+      }
+    }
+  },
+  "pushSettings": "",
+  "@pushSettings": {},
+  "unifiedPushUnavailable": "",
+  "@unifiedPushUnavailable": {},
+  "selectPushDistributor": "",
+  "@selectPushDistributor": {},
+  "disablePushNotifications": "",
+  "@disablePushNotifications": {},
+  "pushInformationPolycule": "",
+  "@pushInformationPolycule": {},
+  "unifiedPushAbout": "",
+  "@unifiedPushAbout": {},
+  "unifiedPushLink": "",
+  "@unifiedPushLink": {},
+  "setupUnifiedPush": "",
+  "@setupUnifiedPush": {},
+  "googleFirebase": "",
+  "@googleFirebase": {},
+  "newNotification": "",
+  "@newNotification": {},
+  "pushChannelName": "",
+  "@pushChannelName": {},
+  "directChats": "",
+  "@directChats": {},
+  "groups": "",
+  "@groups": {},
+  "unifiedPush": "",
+  "@unifiedPush": {},
+  "reply": "",
+  "@reply": {},
+  "edit": "",
+  "@edit": {},
+  "redact": "",
+  "@redact": {},
+  "copyMessage": "",
+  "@copyMessage": {},
+  "confirmRedact": "",
+  "@confirmRedact": {},
+  "redactEventLong": "",
+  "@redactEventLong": {
+    "placeholders": {
+      "eventId": {
+        "type": "String"
+      }
+    }
+  },
+  "logoutCommandSyntax": "",
+  "@logoutCommandSyntax": {},
+  "roomnameCommandSyntax": "",
+  "@roomnameCommandSyntax": {},
+  "roomdescriptionCommandSyntax": "",
+  "@roomdescriptionCommandSyntax": {},
+  "sendCommandSyntax": "",
+  "@sendCommandSyntax": {},
+  "meCommandSyntax": "",
+  "@meCommandSyntax": {},
+  "dmCommandSyntax": "",
+  "@dmCommandSyntax": {},
+  "createCommandSyntax": "",
+  "@createCommandSyntax": {},
+  "plainCommandSyntax": "",
+  "@plainCommandSyntax": {},
+  "htmlCommandSyntax": "",
+  "@htmlCommandSyntax": {},
+  "reactCommandSyntax": "",
+  "@reactCommandSyntax": {},
+  "joinCommandSyntax": "",
+  "@joinCommandSyntax": {},
+  "leaveCommandSyntax": "",
+  "@leaveCommandSyntax": {},
+  "opCommandSyntax": "",
+  "@opCommandSyntax": {},
+  "kickCommandSyntax": "",
+  "@kickCommandSyntax": {},
+  "banCommandSyntax": "",
+  "@banCommandSyntax": {},
+  "unbanCommandSyntax": "",
+  "@unbanCommandSyntax": {},
+  "inviteCommandSyntax": "",
+  "@inviteCommandSyntax": {},
+  "myroomnickCommandSyntax": "",
+  "@myroomnickCommandSyntax": {},
+  "myroomavatarCommandSyntax": "",
+  "@myroomavatarCommandSyntax": {},
+  "discardsessionCommandSyntax": "",
+  "@discardsessionCommandSyntax": {},
+  "clearcacheCommandSyntax": "",
+  "@clearcacheCommandSyntax": {},
+  "markasdmCommandSyntax": "",
+  "@markasdmCommandSyntax": {},
+  "markasgroupCommandSyntax": "",
+  "@markasgroupCommandSyntax": {},
+  "hugCommandSyntax": "",
+  "@hugCommandSyntax": {},
+  "googlyCommandSyntax": "",
+  "@googlyCommandSyntax": {},
+  "cuddleCommandSyntax": "",
+  "@cuddleCommandSyntax": {},
+  "sendrawCommandSyntax": "",
+  "@sendrawCommandSyntax": {},
+  "ignoreCommandSyntax": "",
+  "@ignoreCommandSyntax": {},
+  "unignoreCommandSyntax": "",
+  "@unignoreCommandSyntax": {},
+  "noErrorReported": "",
+  "@noErrorReported": {},
+  "commandInvalid": "",
+  "@commandInvalid": {},
+  "commandHelp": "",
+  "@commandHelp": {},
+  "availableCommands": "",
+  "@availableCommands": {},
+  "commandError": "",
+  "@commandError": {},
+  "noStickerPacks": "",
+  "@noStickerPacks": {},
+  "react": "",
+  "@react": {},
+  "logs": "",
+  "@logs": {},
+  "reload": "",
+  "@reload": {},
+  "runtimeError": "",
+  "@runtimeError": {},
+  "logSingleError": "",
+  "@logSingleError": {},
+  "enableSentry": "",
+  "@enableSentry": {},
+  "errorReporting": "",
+  "@errorReporting": {},
+  "errorReportingLong": "",
+  "@errorReportingLong": {},
+  "errorReportingPrivacy": "",
+  "@errorReportingPrivacy": {},
+  "learnMore": "",
+  "@learnMore": {},
+  "gitLabPrivacy": "",
+  "@gitLabPrivacy": {
+    "translatable": false
+  },
+  "fontSize": "",
+  "@fontSize": {},
+  "reset": "",
+  "@reset": {},
+  "fontScaleLabel": "",
+  "@fontScaleLabel": {
+    "placeholders": {
+      "scale": {
+        "type": "double",
+        "format": "decimalPercentPattern",
+        "optionalParameters": {
+          "decimalDigits": 1
+        }
+      }
+    }
+  },
+  "openDirectChat": "",
+  "@openDirectChat": {},
+  "startDirectChat": "",
+  "@startDirectChat": {},
+  "ignoreUser": "",
+  "@ignoreUser": {},
+  "unignoreUser": "",
+  "@unignoreUser": {},
+  "ignoreToggleWaiting": "",
+  "@ignoreToggleWaiting": {},
+  "roomStateWtf": "",
+  "@roomStateWtf": {},
+  "roomStatePublic": "",
+  "@roomStatePublic": {},
+  "roomStatePublicKnock": "",
+  "@roomStatePublicKnock": {},
+  "roomStateOpen": "",
+  "@roomStateOpen": {},
+  "roomStateKnock": "",
+  "@roomStateKnock": {},
+  "roomStateSpace": "",
+  "@roomStateSpace": {},
+  "roomStateUnpublic": "",
+  "@roomStateUnpublic": {},
+  "roomStateEncrypted": "",
+  "@roomStateEncrypted": {},
+  "roomStateVerifiedEncrypted": "",
+  "@roomStateVerifiedEncrypted": {},
+  "oidcAppName": "",
+  "@oidcAppName": {
+    "translatable": false
+  },
+  "oidcContact": "",
+  "@oidcContact": {
+    "translatable": false
+  },
+  "oidcLogoPath": "",
+  "@oidcLogoPath": {
+    "translatable": false
+  },
+  "oidcTosPath": "",
+  "@oidcTosPath": {
+    "translatable": false
+  },
+  "oidcPolicyPath": "",
+  "@oidcPolicyPath": {
+    "translatable": false
+  },
+  "loginOidc": "",
+  "@loginOidc": {},
+  "oidcConfirm": "",
+  "@oidcConfirm": {},
+  "manageSessions": "",
+  "@manageSessions": {},
+  "deactivateAccount": "",
+  "@deactivateAccount": {},
+  "networkSettings": "",
+  "@networkSettings": {},
+  "useSystemProxy": "",
+  "@useSystemProxy": {},
+  "verifyCertificates": "",
+  "@verifyCertificates": {},
+  "verifyTlsCertificatesAndroid": "",
+  "@verifyTlsCertificatesAndroid": {},
+  "sendTlsSNI": "",
+  "@sendTlsSNI": {},
+  "minTlsVersion": "",
+  "@minTlsVersion": {},
+  "tls12": "",
+  "@tls12": {},
+  "tls13": "",
+  "@tls13": {},
+  "favoriteAdd": "",
+  "@favoriteAdd": {},
+  "favoriteRemove": "",
+  "@favoriteRemove": {},
+  "markRead": "",
+  "@markRead": {},
+  "markUnread": "",
+  "@markUnread": {},
+  "leaveRoom": "",
+  "@leaveRoom": {},
+  "leaveRoomLong": "",
+  "@leaveRoomLong": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "userDetails": "",
+  "@userDetails": {},
+  "markMute": "",
+  "@markMute": {},
+  "markUnmute": "",
+  "@markUnmute": {},
+  "copyRoomAddress": "",
+  "@copyRoomAddress": {},
+  "search": "",
+  "@search": {},
+  "startVerification": "",
+  "@startVerification": {},
+  "keyVerificationRequestSent": "",
+  "@keyVerificationRequestSent": {},
+  "noHomeserverConnection": "",
+  "@noHomeserverConnection": {},
+  "emojiSettings": "",
+  "@emojiSettings": {},
+  "defaultEmojiTone": "",
+  "@defaultEmojiTone": {},
+  "autoplayAnimations": "",
+  "@autoplayAnimations": {},
+  "yellowSkin": "",
+  "@yellowSkin": {},
+  "paleSkin": "",
+  "@paleSkin": {},
+  "demiPaleSkin": "",
+  "@demiPaleSkin": {},
+  "mediumSkin": "",
+  "@mediumSkin": {},
+  "brownSkin": "",
+  "@brownSkin": {},
+  "blackSkin": "",
+  "@blackSkin": {},
+  "roomDetails": "",
+  "@roomDetails": {},
+  "errorSendingSticker": "",
+  "@errorSendingSticker": {},
+  "viewSourceCode": "",
+  "@viewSourceCode": {},
+  "eventSourceCode": "",
+  "@eventSourceCode": {},
+  "eventSourceContent": "",
+  "@eventSourceContent": {},
+  "eventSourceJson": "",
+  "@eventSourceJson": {},
+  "eventSourceOriginal": "",
+  "@eventSourceOriginal": {},
+  "eventSourceBodyRaw": "",
+  "@eventSourceBodyRaw": {},
+  "eventSourceBodyHtml": "",
+  "@eventSourceBodyHtml": {},
+  "eventSourceUnsigned": "",
+  "@eventSourceUnsigned": {},
+  "eventRendered": "",
+  "@eventRendered": {},
+  "eventQuoted": "",
+  "@eventQuoted": {},
+  "eventPreview": "",
+  "@eventPreview": {},
+  "blurHash": "",
+  "@blurHash": {},
+  "linuxOidcWorkaround": "",
+  "@linuxOidcWorkaround": {},
+  "linuxOidcWorkaroundSnippet": "",
+  "@linuxOidcWorkaroundSnippet": {
+    "translatable": false
+  },
+  "setupSSSSLoading": "",
+  "@setupSSSSLoading": {},
+  "sessionId": "",
+  "@sessionId": {},
+  "sessionIpAddress": "",
+  "@sessionIpAddress": {},
+  "sessionLastSeen": "",
+  "@sessionLastSeen": {},
+  "delete": "",
+  "@delete": {},
+  "verify": "",
+  "@verify": {},
+  "verifyAgain": "",
+  "@verifyAgain": {},
+  "rename": "",
+  "@rename": {},
+  "renameDevice": "",
+  "@renameDevice": {},
+  "deviceName": "",
+  "@deviceName": {},
+  "renameDeviceHint": "",
+  "@renameDeviceHint": {},
+  "openInIDP": "",
+  "@openInIDP": {},
+  "deviceNoEncryption": "",
+  "@deviceNoEncryption": {},
+  "deviceVerified": "",
+  "@deviceVerified": {},
+  "deviceUnverified": "",
+  "@deviceUnverified": {},
+  "deviceBlocked": "",
+  "@deviceBlocked": {},
+  "logout": "",
+  "@logout": {},
+  "logoutWarning": "",
+  "@logoutWarning": {},
+  "logoutWarningLong": "",
+  "@logoutWarningLong": {},
+  "keyBackupAvailable": "",
+  "@keyBackupAvailable": {},
+  "keyBackupExplanation": "",
+  "@keyBackupExplanation": {},
+  "ssssRecoveryKey": "",
+  "@ssssRecoveryKey": {},
+  "ssssRecoveryKeyExplanation": "",
+  "@ssssRecoveryKeyExplanation": {},
+  "confirmSSSSKeyStored": "",
+  "@confirmSSSSKeyStored": {},
+  "yourCurrentDevice": "",
+  "@yourCurrentDevice": {},
+  "moveClientTooltip": "",
+  "@moveClientTooltip": {},
+  "displayName": "",
+  "@displayName": {},
+  "yourDisplayName": "",
+  "@yourDisplayName": {},
+  "displayNameHint": "",
+  "@displayNameHint": {},
+  "changeDisplayName": "",
+  "@changeDisplayName": {},
+  "scanQrCode": "",
+  "@scanQrCode": {},
+  "compareSas": "",
+  "@compareSas": {},
+  "confirmQrScanned": "",
+  "@confirmQrScanned": {},
+  "confirm": "",
+  "@confirm": {},
+  "scanQrWithOtherDevice": "",
+  "@scanQrWithOtherDevice": {},
+  "clientSwitcher": "",
+  "@clientSwitcher": {},
+  "block": "",
+  "@block": {},
+  "unblock": "",
+  "@unblock": {},
+  "sessions": "",
+  "@sessions": {},
+  "notificationSettings": "",
+  "@notificationSettings": {},
+  "notificationsGlobal": "",
+  "@notificationsGlobal": {},
+  "notificationsOverride": "",
+  "@notificationsOverride": {},
+  "notificationsRoom": "",
+  "@notificationsRoom": {},
+  "notificationsSender": "",
+  "@notificationsSender": {},
+  "notificationsUnderride": "",
+  "@notificationsUnderride": {},
+  "noPushRules": "",
+  "@noPushRules": {},
+  "defaultPushRule": "",
+  "@defaultPushRule": {},
+  "pushRuleEnabled": "",
+  "@pushRuleEnabled": {},
+  "eventContentMatches": "",
+  "@eventContentMatches": {},
+  "unknownAction": "",
+  "@unknownAction": {
+    "placeholders": {
+      "action": {
+        "format": "String"
+      }
+    }
+  },
+  "actionNotify": "",
+  "@actionNotify": {},
+  "actionDontNotify": "",
+  "@actionDontNotify": {},
+  "notificationTweakSound": "",
+  "@notificationTweakSound": {},
+  "notificationTweakHighlight": "",
+  "@notificationTweakHighlight": {},
+  "unknownNotificationTweak": "",
+  "@unknownNotificationTweak": {
+    "placeholders": {
+      "tweak": {
+        "format": "String"
+      }
+    }
+  },
+  "pushConditionSenderNotificationPermission": "",
+  "@pushConditionSenderNotificationPermission": {
+    "placeholders": {
+      "key": {
+        "format": "String"
+      }
+    }
+  },
+  "tweakEnabled": "",
+  "@tweakEnabled": {},
+  "tweakDisabled": "",
+  "@tweakDisabled": {},
+  "tweakDefault": "",
+  "@tweakDefault": {},
+  "pushConditionContainsDisplayName": "",
+  "@pushConditionContainsDisplayName": {},
+  "pushRulesGlobal": "",
+  "@pushRulesGlobal": {},
+  "pushRulesDevice": "",
+  "@pushRulesDevice": {},
+  "webOAuthReceivedNotice": "",
+  "@webOAuthReceivedNotice": {},
+  "webMultipleTabNotice": "",
+  "@webMultipleTabNotice": {}
+}
