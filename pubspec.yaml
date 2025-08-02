@@ -22,7 +22,7 @@ dependencies:
   dbus: ^0.7.11
   diacritic: ^0.1.6
   diffutil_dart: ^4.0.1
-  dynamic_color: ^1.6.9
+  dynamic_color: ^1.8.1
   emoji_extension: ^1.2.0
   fetch_client: ^1.1.2
   file_selector: ^1.0.3
