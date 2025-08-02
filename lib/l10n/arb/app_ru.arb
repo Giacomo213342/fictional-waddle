@@ -1,0 +1,30 @@
+{
+  "author": "Автор: {author}",
+  "@author": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
+  "appSlogan": "Продуманный [matrix] клиент для опытных пользователей.",
+  "@appSlogan": {},
+  "repoLabel": "Исходный код (Gitlab)",
+  "@repoLabel": {},
+  "buyMeACoffee": "Поддержите проект",
+  "@buyMeACoffee": {},
+  "homeserverHeadline": "Хай! Добро пожаловать в < polycule >",
+  "@homeserverHeadline": {
+    "description": "Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'."
+  },
+  "aMatrixClient": "- очередной [matrix] клиент",
+  "@aMatrixClient": {},
+  "connectToHomeserver": "Подключиться к своему серверу",
+  "@connectToHomeserver": {},
+  "discoverHomeservers": "Найти новые сервера",
+  "@discoverHomeservers": {},
+  "newToMatrixLong": "Найти подходящие сервера из вселенной [matrix]. Это подключит вас к joinmatrix.org.",
+  "@newToMatrixLong": {},
+  "connect": "Подключиться",
+  "@connect": {}
+}
