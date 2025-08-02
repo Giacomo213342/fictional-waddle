@@ -138,7 +138,7 @@ SPEC CHECKSUMS:
   app_links: 86a57d95d4dec830373b8c85c21d1c59a4a5dc21
   audio_session: 728ae3823d914f809c485d390274861a24b0904e
   cupertino_http: 947a233f40cfea55167a49f2facc18434ea117ba
-  dynamic_color: 2eaa27267de1ca20d879fbd6e01259773fb1670f
+  dynamic_color: 5fdff3953fb3457311091863f72914fc76ea3209
   file_selector_macos: cc3858c981fe6889f364731200d6232dac1d812d
   flutter_local_notifications: 4ccab5b7a22835214a6672e3f9c5e8ae207dab36
   flutter_secure_storage_darwin: 12d2375c690785d97a4e586f15f11be5ae35d5b0
