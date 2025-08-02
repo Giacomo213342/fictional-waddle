@@ -104,7 +104,7 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
 
       final nativeCompleter = IntentManager.oidcCallbackCompleter =
           Completer<OidcCallbackResponse>();
-      await client.oidcAuthorizationGrantFlow(
+      await client.oidcLoginAuthorizationGrantFlow(
         nativeCompleter: nativeCompleter,
         oidcClientId: oidcClientId,
         redirectUri: client.oAuth2RedirectUri,
