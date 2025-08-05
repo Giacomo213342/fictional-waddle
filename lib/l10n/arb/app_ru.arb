@@ -511,7 +511,7 @@
   "@passphraseNoWhitespace": {},
   "submit": "Подтвердить",
   "@submit": {},
-  "roomParticipants": "{participants, plural, =0{Нет участников} =1{1 участник} 5<{{participants} участника} other{{participants} участников}}",
+  "roomParticipants": "{participants, plural, =0{Нет участников} =1{1 участник}  other{{participants} участников}}",
   "@roomParticipants": {
     "placeholders": {
       "participants": {
@@ -541,7 +541,7 @@
       }
     }
   },
-  "totalSendSize": "{size, plural, =0{Размер отправленных данных : 0 байт} =1{Размер отправленных данных : 1 байт} 5<{Размер отправленных данных : {size} байта} other{Размер отправленных данных : {size} байт}}}",
+  "totalSendSize": "{size, plural, =0{Размер отправленных данных : 0 байт} =1{Размер отправленных данных : 1 байт} other{Размер отправленных данных : {size} байт}}}",
   "@totalSendSize": {
     "placeholders": {
       "size": {
@@ -549,7 +549,7 @@
       }
     }
   },
-  "fileSize": "{Размер файла : {size} байт}",
+  "fileSize": "{size, plural, =0{Размер файла : 0 байт} other{Размер файла : {size} байт}}}",
   "@fileSize": {
     "placeholders": {
       "size": {
