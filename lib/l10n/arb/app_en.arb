@@ -444,6 +444,7 @@
   "sendrawCommandSyntax": "Send a raw event. [content]",
   "ignoreCommandSyntax": "Ignore a user. [mxid]",
   "unignoreCommandSyntax": "Unignore a user. [mxid]",
+  "upgraderoomCommandSyntax": "Upgrade and tombstone the room. [version]",
   "noErrorReported": "No error reported.",
   "commandInvalid": "This is no valid < polycule > command.",
   "commandHelp": "Show help",
@@ -657,5 +658,12 @@
   "pushRulesGlobal": "Account wide",
   "pushRulesDevice": "This device",
   "webOAuthReceivedNotice": "OAuth2.0 redirect received. You can close this tab.",
-  "webMultipleTabNotice": "< polycule > is already open in another tab.\nReload once other tabs closed."
+  "webMultipleTabNotice": "< polycule > is already open in another tab.\nReload once other tabs closed.",
+  "mRoomTombstone": "This room has been tombstoned",
+  "mRoomTombstoneAction": "Open replacement room",
+  "details": "Details",
+  "roomId": "[matrix] room ID",
+  "copyRoomId": "Copy room ID",
+  "roomCreatePredecessor": "This room was continued from another room",
+  "roomCreatePredecessorAction": "Open previous room"
 }

@@ -28,9 +28,9 @@ class LoadHistoryIndicator extends StatelessWidget {
     );
   }
 
-  void _requestHistory() {
+  Future<void> _requestHistory() async {
     if (!timeline.isRequestingHistory) {
-      timeline.requestHistory();
+      await timeline.requestHistory();
     }
   }
 }

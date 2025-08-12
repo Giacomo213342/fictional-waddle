@@ -99,12 +99,13 @@ class RoomListTile extends StatelessWidget {
             : AppLocalizations.of(context).markUnmute,
         onPressed: () => _toggleMute(room),
       ),
-      if (room.canonicalAlias.isNotEmpty)
-        ContextMenuItem(
-          icon: Icons.link,
-          label: AppLocalizations.of(context).copyRoomAddress,
-          onPressed: () => _copyRoomAddress(room),
-        ),
+      ContextMenuItem(
+        icon: Icons.link,
+        label: room.canonicalAlias.isNotEmpty
+            ? AppLocalizations.of(context).copyRoomAddress
+            : AppLocalizations.of(context).copyRoomId,
+        onPressed: () => _copyRoomAddress(room),
+      ),
       ContextMenuItem(
         icon: Icons.delete_forever,
         label: AppLocalizations.of(context).leaveRoom,
@@ -119,8 +120,11 @@ class RoomListTile extends StatelessWidget {
 
   Future<void> _toggleUnread(Room room) => room.markUnread(!room.isUnread);
 
-  Future<void> _copyRoomAddress(Room room) =>
-      Clipboard.setData(ClipboardData(text: room.canonicalAlias));
+  Future<void> _copyRoomAddress(Room room) => Clipboard.setData(
+        ClipboardData(
+          text: room.canonicalAlias.isNotEmpty ? room.canonicalAlias : room.id,
+        ),
+      );
 
   Future<void> _leaveRoom(BuildContext context, Room room) async {
     final scope = MatrixScope.captureAll(context);
