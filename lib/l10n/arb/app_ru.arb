@@ -26,5 +26,959 @@
   "newToMatrixLong": "Найти подходящие сервера из вселенной [matrix]. Это подключит вас к joinmatrix.org.",
   "@newToMatrixLong": {},
   "connect": "Подключиться",
-  "@connect": {}
+  "@connect": {},
+  "appName": "< polycule >",
+  "@appName": {},
+  "about": "Информация",
+  "@about": {},
+  "releaseNotes": "Примечания к выпуску",
+  "@releaseNotes": {},
+  "homeserverNotValid": "Это недействительный домашний сервер.",
+  "@homeserverNotValid": {},
+  "pleaseProvideHomeserver": "Пожалуйста, укажите домашний сервер.",
+  "@pleaseProvideHomeserver": {},
+  "errorConnectingToHomeserver": "Не удалось подключиться к {homeserver}. Пожалуйста, проверьте свой выбор.",
+  "@errorConnectingToHomeserver": {
+    "placeholders": {
+      "homeserver": {
+        "type": "String"
+      }
+    }
+  },
+  "connectingToHomeserver": "Подключаемся к {homeserver}…",
+  "@connectingToHomeserver": {
+    "placeholders": {
+      "homeserver": {
+        "type": "String"
+      }
+    }
+  },
+  "welcomeToHomeserver": "Добро пожаловать на {homeserver}!",
+  "@welcomeToHomeserver": {
+    "placeholders": {
+      "homeserver": {
+        "type": "String"
+      }
+    }
+  },
+  "howWouldYouLikeToConnect": "Как бы вы хотели подключиться?",
+  "@howWouldYouLikeToConnect": {},
+  "loginPassword": "Войти с помощью пароля",
+  "@loginPassword": {},
+  "loginLegacySso": "Войти используя legacy SSO",
+  "@loginLegacySso": {},
+  "username": "имя пользователя",
+  "@username": {},
+  "email": "почта",
+  "@email": {},
+  "password": "пароль",
+  "@password": {},
+  "pleaseProvideEmail": "Пожалуйста, введите свой почтовый адрес.",
+  "@pleaseProvideEmail": {},
+  "pleaseProvidePassword": "Пожалуйста, введите пароль.",
+  "@pleaseProvidePassword": {},
+  "pleaseProvideUsername": "Пожалуйста, введите имя пользователя.",
+  "@pleaseProvideUsername": {},
+  "emailMinimals": "Ваша почта должна содержать символ @, локальную часть и ваш домен.",
+  "@emailMinimals": {},
+  "mxidSyntax": "Разрешенные символы: a-z, 0-9 а так же символы ., _, =, -, /, и +.",
+  "@mxidSyntax": {},
+  "clientDisplayName": "< polycule > для {platform}",
+  "@clientDisplayName": {
+    "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
+    "placeholders": {
+      "platform": {
+        "type": "String",
+        "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
+      }
+    }
+  },
+  "clientDisplayNameHostname": "< polycule > на {hostname} ({platform})",
+  "@clientDisplayNameHostname": {
+    "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
+    "placeholders": {
+      "hostname": {
+        "type": "String",
+        "description": "The device name."
+      },
+      "platform": {
+        "type": "String",
+        "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
+      }
+    }
+  },
+  "platformWeb": "интернет",
+  "@platformWeb": {},
+  "loginError": "Не удалось войти ; пожалуйста проверьте данные для входа.",
+  "@loginError": {},
+  "loginErrorMessage": "Не удалось войти : {message}",
+  "@loginErrorMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "hajUser": "Хай {localpart} !",
+  "@hajUser": {
+    "placeholders": {
+      "localpart": {
+        "type": "String?"
+      }
+    }
+  },
+  "syncInProgress": "Идет синхронизация",
+  "@syncInProgress": {},
+  "initialSync": "Идет начальная синхронизация",
+  "@initialSync": {},
+  "syncOffline": "Синхронизация прервана",
+  "@syncOffline": {},
+  "syncFunctional": "Синхронизация исправна",
+  "@syncFunctional": {},
+  "lastSyncReceived": "Последняя синхронизация : {timestamp} ({duration} мс)",
+  "@lastSyncReceived": {
+    "placeholders": {
+      "timestamp": {
+        "type": "DateTime",
+        "format": "jms"
+      },
+      "duration": {
+        "type": "int"
+      }
+    }
+  },
+  "editedToday": "Изменено: {timestamp}",
+  "@editedToday": {
+    "placeholders": {
+      "timestamp": {
+        "type": "DateTime",
+        "format": "jm"
+      }
+    }
+  },
+  "editedAt": "Изменено: {timestamp}",
+  "@editedAt": {
+    "placeholders": {
+      "timestamp": {
+        "type": "String"
+      }
+    }
+  },
+  "authenticationRequired": "Требуется аутентификация",
+  "@authenticationRequired": {},
+  "authenticateForAccount": "Пожалуйста авторизируйтесь для {mxid}.",
+  "@authenticateForAccount": {
+    "placeholders": {
+      "mxid": {
+        "type": "String"
+      }
+    }
+  },
+  "replyUserSentDate": "{username} написал {formattedDate} :",
+  "@replyUserSentDate": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      },
+      "formattedDate": {
+        "type": "String"
+      }
+    }
+  },
+  "view": "Посмотреть",
+  "@view": {},
+  "passphraseNotEmpty": "Фраза-пароль не может быть пустой",
+  "@passphraseNotEmpty": {},
+  "cancel": "Отменить",
+  "@cancel": {},
+  "noMatch": "Не совпадают",
+  "@noMatch": {},
+  "keysMatch": "Ключи совпадают",
+  "@keysMatch": {},
+  "wipeAccount": "Стереть аккаунт",
+  "@wipeAccount": {},
+  "wipeAccountWarning": "Если вы потеряли устройство, вы можете стереть данные и сбросить свой аккаунт. Все чаты и сообщения будут утеряны.",
+  "@wipeAccountWarning": {},
+  "deleteAll": "Удалить всё",
+  "@deleteAll": {},
+  "previous": "Назад",
+  "@previous": {},
+  "next": "Далее",
+  "@next": {},
+  "connectPreviousDevice": "Подключить предыдущее устройство",
+  "@connectPreviousDevice": {},
+  "connectPreviousDeviceLong": "Пожалуйста, проверьте существующее устройство.",
+  "@connectPreviousDeviceLong": {},
+  "deviceNotAvailable": "У меня нет доступа к устройству.",
+  "@deviceNotAvailable": {},
+  "compareSasNumbers": "Сравните SAS числа защиты",
+  "@compareSasNumbers": {},
+  "compareSasEmojis": "Сравните SAS эмодзи защиты",
+  "@compareSasEmojis": {},
+  "compareSasExplanation": "Проверьте, совпадает ли SAS на вашем устройстве и другом устройстве, запрашивающим верификацию.",
+  "@compareSasExplanation": {},
+  "incomingVerificationRequest": "Входящий запрос верификации",
+  "@incomingVerificationRequest": {},
+  "waitingForVerification": "Ожидаем верификации",
+  "@waitingForVerification": {},
+  "waitingForVerificationFallback": "Пожалуйста пройдите верификацию на втором устройстве или введите фразу восстановления.",
+  "@waitingForVerificationFallback": {},
+  "incomingVerificationRequestUser": "{user} хочет верифицироваться",
+  "@incomingVerificationRequestUser": {
+    "placeholders": {
+      "user": {
+        "type": "String?",
+        "description": "User who wants to verify"
+      }
+    }
+  },
+  "incomingVerificationRequestMyself": "Поступил входящий запрос на верификацию другого устройства для вашей учетной записи.",
+  "@incomingVerificationRequestMyself": {},
+  "incomingVerificationRequestLong": "Поступил входящий запрос на проверку, вы хотите принять запрос на верификацию ?",
+  "@incomingVerificationRequestLong": {},
+  "reject": "Отклонить",
+  "@reject": {},
+  "proceed": "Продолжить",
+  "@proceed": {},
+  "enterRecoveryPhrase": "Введите фразу восстановления",
+  "@enterRecoveryPhrase": {},
+  "keyVerificationErrorGeneric": "Произошла ошибка в процессе верификации вашего устройства.",
+  "@keyVerificationErrorGeneric": {},
+  "keyVerificationErrorUser": "Верификация была отменена.",
+  "@keyVerificationErrorUser": {},
+  "close": "Закрыть",
+  "@close": {},
+  "verificationSuccessful": "Успешная верификация ключа",
+  "@verificationSuccessful": {},
+  "finish": "Завершить",
+  "@finish": {},
+  "or": "или",
+  "@or": {},
+  "verifyWithOtherDevice": "Верифицировать другим устройством",
+  "@verifyWithOtherDevice": {},
+  "verifyMethodsNotAvailable": "У вас нет доступного способа верификации ?",
+  "@verifyMethodsNotAvailable": {},
+  "resetAccountWarning": "Вы утратите все предыдущие сообщения. Это нельзя отменить.",
+  "@resetAccountWarning": {},
+  "errorTryAgain": "Произошла ошибка. Попробуйте снова.",
+  "@errorTryAgain": {},
+  "togglePassword": "Переключить видимость пароля",
+  "@togglePassword": {},
+  "loggingInToClient": "Войти в аккаунт",
+  "@loggingInToClient": {},
+  "pendingInvite": "Приглашение в ожидании",
+  "@pendingInvite": {},
+  "invite": "Пригласить",
+  "@invite": {},
+  "inviteLongRoom": "Вас пригласили присоединться к комнате : « {roomname} ».",
+  "@inviteLongRoom": {
+    "description": "Please keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
+    "placeholders": {
+      "roomname": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteLongDM": "Вас пригласили в чат с « {displayname} ».",
+  "@inviteLongDM": {},
+  "joinRoom": "Присоединиться к комнате",
+  "@joinRoom": {},
+  "knockRoom": "Постучать в комнату",
+  "@knockRoom": {},
+  "youCannotJoinThisRoom": "Вы не можете присоединиться к этой комнате.",
+  "@youCannotJoinThisRoom": {},
+  "addAccount": "Добавить новый аккаунт",
+  "@addAccount": {},
+  "loadingHomeservers": "Загружаем домашние сервера. Прогресс неизвестен. Пожалуйста ожидайте.",
+  "@loadingHomeservers": {},
+  "send": "Отправить",
+  "@send": {},
+  "typeGroupImages": "Изображения",
+  "@typeGroupImages": {},
+  "typeGroupVideos": "Видео",
+  "@typeGroupVideos": {},
+  "typeGroupAudio": "Аудио",
+  "@typeGroupAudio": {},
+  "typeGroupFiles": "Все файлы",
+  "@typeGroupFiles": {},
+  "msgTypeText": "Отправить обычное текстовое сообщение.",
+  "@msgTypeText": {},
+  "msgTypeEmote": "Опишите свое настроение.",
+  "@msgTypeEmote": {},
+  "msgTypeNotice": "Отправить сообщение, на которое не могут ответить боты.",
+  "@msgTypeNotice": {},
+  "msgTypeImage": "Отправить изображение.",
+  "@msgTypeImage": {},
+  "msgTypeVideo": "Отправить видео.",
+  "@msgTypeVideo": {},
+  "msgTypeAudio": "Отправить аудио.",
+  "@msgTypeAudio": {},
+  "msgTypeFile": "Отправить файл.",
+  "@msgTypeFile": {},
+  "msgTypeLocation": "Поделиться своей позицией.",
+  "@msgTypeLocation": {},
+  "msgTypeSticker": "Отправить стикер.",
+  "@msgTypeSticker": {},
+  "msgTypeBadEncrypted": "Побесите своего собеседника сообщением, которое нельзя расшифровать.",
+  "@msgTypeBadEncrypted": {},
+  "noFilesSelected": "Файлы не выбраны.",
+  "@noFilesSelected": {},
+  "yesterday": "Вчера",
+  "@yesterday": {},
+  "thisMonth": "В этом месяце",
+  "@thisMonth": {},
+  "lastMonth": "В прошлом месяце",
+  "@lastMonth": {},
+  "download": "Скачать",
+  "@download": {},
+  "share": "Поделиться",
+  "@share": {},
+  "saveAs": "Сохранить как",
+  "@saveAs": {},
+  "settings": "Настройки",
+  "@settings": {},
+  "errorDownloadingAttachment": "Ошибка загрузки вложения к сообщению.",
+  "@errorDownloadingAttachment": {},
+  "retry": "Повторить попытку",
+  "@retry": {},
+  "searchPromptLabel": "Комманда, пользовать, имя комнаты или MXID",
+  "@searchPromptLabel": {},
+  "appearanceAccessibilitySettings": "Внешний вид и доступность",
+  "@appearanceAccessibilitySettings": {},
+  "polyculeSettings": "Настройте свой < polycule >",
+  "@polyculeSettings": {},
+  "systemLanguage": "Язык устройства",
+  "@systemLanguage": {},
+  "language": "Язык",
+  "@language": {},
+  "theme": "Тема",
+  "@theme": {},
+  "dark": "Темный терминал",
+  "@dark": {},
+  "light": "Светлая роза",
+  "@light": {},
+  "systemTheme": "Системная тема",
+  "@systemTheme": {},
+  "fontAccessibility": "Доступность шрифтов",
+  "@fontAccessibility": {},
+  "inclusiveSans": "Повышенная доступность шрифтов",
+  "@inclusiveSans": {},
+  "openDyslexic": "Шрифт, помогающий при дислексии",
+  "@openDyslexic": {},
+  "serif": "Шрифт Serif",
+  "@serif": {},
+  "defaultFont": "Шрифт по умолчанию",
+  "@defaultFont": {},
+  "color": "Настройки цвета",
+  "@color": {},
+  "systemColor": "Системный цвет",
+  "@systemColor": {},
+  "defaultColor": "Тема цвета по умолчанию",
+  "@defaultColor": {},
+  "customColor": "Свой цвет",
+  "@customColor": {},
+  "highContrast": "Высокий контраст",
+  "@highContrast": {},
+  "aboutPolycule": "О < polycule >",
+  "@aboutPolycule": {},
+  "contentNotice": "Предупреждение: « {notice} »",
+  "@contentNotice": {
+    "description": "A content notice warning about spoilers or sensitive contents of a message.\nPlease keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
+    "placeholders": {
+      "notice": {
+        "description": "The warning/notice message.",
+        "type": "String"
+      }
+    }
+  },
+  "contentNoticeFallback": "Предупреждение о содержимом",
+  "@contentNoticeFallback": {},
+  "webUriHandlerTitle": "< polycule > [matrix] клиент",
+  "@webUriHandlerTitle": {},
+  "jumpToMessage": "Перейти к сообщению {message}",
+  "@jumpToMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "selectAccount": "Выберите аккаунт, чтобы продолжить",
+  "@selectAccount": {},
+  "sharingText": "Поделиться текстом с комнатой",
+  "@sharingText": {},
+  "sendFiles": "Отправить файлы",
+  "@sendFiles": {},
+  "checkingTotalSendSize": "Проверяем итоговый размер ...",
+  "@checkingTotalSendSize": {},
+  "mimeType": "Тип файла : {mimeType}",
+  "@mimeType": {
+    "placeholders": {
+      "mimeType": {
+        "type": "String?"
+      }
+    }
+  },
+  "matrixRoomShareSubject": "Присоединиться к комнате « {roomname} » в [matrix]",
+  "@matrixRoomShareSubject": {
+    "placeholders": {
+      "roomname": {
+        "type": "String"
+      }
+    }
+  },
+  "matrixUserShareSubject": "Контакт « {mxid} » в [matrix]",
+  "@matrixUserShareSubject": {
+    "placeholders": {
+      "mxid": {
+        "type": "String"
+      }
+    }
+  },
+  "fileDownloadedTo": "Файл сохранен как « {name} ».",
+  "@fileDownloadedTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openFile": "Открыть",
+  "@openFile": {},
+  "compressFiles": "Сжать файлы",
+  "@compressFiles": {},
+  "compressFilesSubtitle": "Только для поддерживаемых типов",
+  "@compressFilesSubtitle": {},
+  "cancelSending": "Отменить отправку",
+  "@cancelSending": {},
+  "retrySending": "Повторить отправку",
+  "@retrySending": {},
+  "accountSettings": "Настройки аккаунта",
+  "@accountSettings": {},
+  "previewRoom": "Посмотреть как гость",
+  "@previewRoom": {},
+  "joinMatrixCall": "Присоединиться к [matrix] звонку",
+  "@joinMatrixCall": {},
+  "matrixCallTooltip": "ID звонка : {roomId}",
+  "@matrixCallTooltip": {
+    "placeholders": {
+      "roomId": {
+        "type": "String"
+      }
+    }
+  },
+  "pushSettings": "Push-уведомления",
+  "@pushSettings": {},
+  "unifiedPushUnavailable": "UnifiedPush не доступен на вашем устройстве.",
+  "@unifiedPushUnavailable": {},
+  "selectPushDistributor": "Выберите провайдера UnifiedPush",
+  "@selectPushDistributor": {},
+  "disablePushNotifications": "Отключить push-уведомления",
+  "@disablePushNotifications": {},
+  "pushInformationPolycule": "В настоящее время < polycule > поддерживает только push-уведомления на Android. Поддержка Linux запланирована.",
+  "@pushInformationPolycule": {},
+  "unifiedPushAbout": "Вы должны установить провайдера push-уведомлений для работы.\nВы можете найти больше информации по адресу: https://unifiedpush.org/users/intro/",
+  "@unifiedPushAbout": {},
+  "unifiedPushLink": "https://unifiedpush.org/users/intro/",
+  "@unifiedPushLink": {},
+  "setupUnifiedPush": "Настройка UnifiedPush",
+  "@setupUnifiedPush": {},
+  "googleFirebase": "Google Firebase Cloud Сообщения",
+  "@googleFirebase": {},
+  "newNotification": "Новое сообщение в < polycule >",
+  "@newNotification": {},
+  "pushChannelName": "Входящие сообщения",
+  "@pushChannelName": {},
+  "directChats": "Комнаты личных сообщений",
+  "@directChats": {},
+  "groups": "Групповые комнаты",
+  "@groups": {},
+  "unifiedPush": "UnifiedPush",
+  "@unifiedPush": {},
+  "reply": "Ответ",
+  "@reply": {},
+  "edit": "Изменить",
+  "@edit": {},
+  "redact": "Редактировать",
+  "@redact": {},
+  "copyMessage": "Копировать сообщение",
+  "@copyMessage": {},
+  "verifyLogin": "Проверить с помощью ключа",
+  "@verifyLogin": {},
+  "verifyWithPassphrase": "Подтвердить с помощью ключевой фразы",
+  "@verifyWithPassphrase": {},
+  "passphraseNoWhitespace": "Ключевая фраза не может содержать пробелов !",
+  "@passphraseNoWhitespace": {},
+  "submit": "Подтвердить",
+  "@submit": {},
+  "roomParticipants": "{participants, plural, =0{Нет участников} =1{1 участник}  other{{participants} участников}}",
+  "@roomParticipants": {
+    "placeholders": {
+      "participants": {
+        "type": "int"
+      }
+    }
+  },
+  "regionAccountSwitcher": "Область экрана: Список аккаунтов.",
+  "@regionAccountSwitcher": {},
+  "regionChatContents": "Облать экрана: Содержание чата.",
+  "@regionChatContents": {},
+  "msgTypeNone": "Не отправлять сообщение.",
+  "@msgTypeNone": {},
+  "sendingFiles": "{files, plural, =0{Ни один файл не} =1{Один файл} other{{files} файлов}} отправляется ...}",
+  "@sendingFiles": {
+    "placeholders": {
+      "files": {
+        "type": "int"
+      }
+    }
+  },
+  "sharingFiles": "Отправка {files, plural, =1{файла} other{{files} файлов}}.",
+  "@sharingFiles": {
+    "placeholders": {
+      "files": {
+        "type": "int"
+      }
+    }
+  },
+  "totalSendSize": "{size, plural, =0{Размер отправленных данных : 0 байт} =1{Размер отправленных данных : 1 байт} other{Размер отправленных данных : {size} байт}}}",
+  "@totalSendSize": {
+    "placeholders": {
+      "size": {
+        "type": "int"
+      }
+    }
+  },
+  "fileSize": "{size, plural, =0{Размер файла : 0 байт} other{Размер файла : {size} байт}}}",
+  "@fileSize": {
+    "placeholders": {
+      "size": {
+        "type": "int"
+      }
+    }
+  },
+  "confirmRedact": "Событие редактирования",
+  "@confirmRedact": {},
+  "redactEventLong": "Вы точно хотите навсегда изменить событие {eventId} ?",
+  "@redactEventLong": {
+    "placeholders": {
+      "eventId": {
+        "type": "String"
+      }
+    }
+  },
+  "logoutCommandSyntax": "Выйти из этого аккаунта.",
+  "@logoutCommandSyntax": {},
+  "roomnameCommandSyntax": "Установить название комнаты [name].",
+  "@roomnameCommandSyntax": {},
+  "roomdescriptionCommandSyntax": "Установить описание комнаты [description].",
+  "@roomdescriptionCommandSyntax": {},
+  "sendCommandSyntax": "Отправить текстовое сообщение. [m.text]",
+  "@sendCommandSyntax": {},
+  "meCommandSyntax": "Опишите свое настроение. [m.emote]",
+  "@meCommandSyntax": {},
+  "dmCommandSyntax": "Создать комнату для личных сообщений. [mxid] [--no-encryption?]",
+  "@dmCommandSyntax": {},
+  "createCommandSyntax": "Создать комнату. [name?] [--no-encryption?]",
+  "@createCommandSyntax": {},
+  "plainCommandSyntax": "Отправить текстовое сообщение без разметки markdown. [m.text]",
+  "@plainCommandSyntax": {},
+  "htmlCommandSyntax": "Отправить текстовое сообщение используя голый HTML. [m.text]",
+  "@htmlCommandSyntax": {},
+  "reactCommandSyntax": "Ответить реакцией. [reaction]",
+  "@reactCommandSyntax": {},
+  "joinCommandSyntax": "Присоединиться к комнате. [mxid]",
+  "@joinCommandSyntax": {},
+  "leaveCommandSyntax": "Покинуть комнату.",
+  "@leaveCommandSyntax": {},
+  "opCommandSyntax": "Установить приоритет участника. [mxid] [50?]",
+  "@opCommandSyntax": {},
+  "kickCommandSyntax": "Исключить участника. [mxid]",
+  "@kickCommandSyntax": {},
+  "banCommandSyntax": "Забанить участника. [mxid]",
+  "@banCommandSyntax": {},
+  "unbanCommandSyntax": "Разбанить участника. [mxid]",
+  "@unbanCommandSyntax": {},
+  "inviteCommandSyntax": "Пригласить участника. [mxid]",
+  "@inviteCommandSyntax": {},
+  "myroomnickCommandSyntax": "Установить пользовательское имя комнате. [displayname]",
+  "@myroomnickCommandSyntax": {},
+  "myroomavatarCommandSyntax": "Установить пользовательский mxc аватар этой комнате. [mxc]",
+  "@myroomavatarCommandSyntax": {},
+  "discardsessionCommandSyntax": "Отключить ваш исходящий сеанс в комнате.",
+  "@discardsessionCommandSyntax": {},
+  "clearcacheCommandSyntax": "Очистить локальный кэш аккаунта.",
+  "@clearcacheCommandSyntax": {},
+  "markasdmCommandSyntax": "Пометить комнату как DM с участником. [mxid]",
+  "@markasdmCommandSyntax": {},
+  "markasgroupCommandSyntax": "Удалить комнату из списка личных сообщений (DM).",
+  "@markasgroupCommandSyntax": {},
+  "hugCommandSyntax": "Отправить виртуальные обнимашки.",
+  "@hugCommandSyntax": {},
+  "googlyCommandSyntax": "Отправить виртуальный шокированный взгляд.",
+  "@googlyCommandSyntax": {},
+  "cuddleCommandSyntax": "Отправить виртуальные объятия.",
+  "@cuddleCommandSyntax": {},
+  "sendrawCommandSyntax": "Отправить голое событие. [content]",
+  "@sendrawCommandSyntax": {},
+  "ignoreCommandSyntax": "Игнорировать пользователя. [mxid]",
+  "@ignoreCommandSyntax": {},
+  "unignoreCommandSyntax": "Перестать игнорировать пользователя. [mxid]",
+  "@unignoreCommandSyntax": {},
+  "noErrorReported": "Ошибок нет.",
+  "@noErrorReported": {},
+  "commandInvalid": "Это не действительная < polycule > команда.",
+  "@commandInvalid": {},
+  "commandHelp": "Отобразить помощь",
+  "@commandHelp": {},
+  "availableCommands": "Доступные команды",
+  "@availableCommands": {},
+  "commandError": "Код выхода 1",
+  "@commandError": {},
+  "noStickerPacks": "Ни ваш аккаунт, ни эта комната не имеет доступных стикерпаков.",
+  "@noStickerPacks": {},
+  "react": "Отправить реакцию",
+  "@react": {},
+  "logs": "Логи приложения",
+  "@logs": {},
+  "reload": "Перезагрузить",
+  "@reload": {},
+  "runtimeError": "Ваш < polycule > оказался глючным",
+  "@runtimeError": {},
+  "logSingleError": "Делиться анонимно",
+  "@logSingleError": {},
+  "enableSentry": "Делиться всегда",
+  "@enableSentry": {},
+  "errorReporting": "Отчёт об ошибках",
+  "@errorReporting": {},
+  "errorReportingLong": "Вы можете включить отчёт об ошибках чтобы помочь находить баги в < polycule >.",
+  "@errorReportingLong": {},
+  "errorReportingPrivacy": "Это подключит вас к GitLab.com, платформе хранения исходного кода < polycyle > и будет анонимно передавать информацию о ошибках и их причинах. Никакие персональные данные не будут переданы разработчику.",
+  "@errorReportingPrivacy": {},
+  "learnMore": "Узнать больше",
+  "@learnMore": {},
+  "gitLabPrivacy": "https://gitlab.com/help/operations/error_tracking.md",
+  "@gitLabPrivacy": {
+    "translatable": false
+  },
+  "fontSize": "Размер шрифта",
+  "@fontSize": {},
+  "reset": "Сброс",
+  "@reset": {},
+  "fontScaleLabel": "{scale}",
+  "@fontScaleLabel": {
+    "placeholders": {
+      "scale": {
+        "type": "double",
+        "format": "decimalPercentPattern",
+        "optionalParameters": {
+          "decimalDigits": 1
+        }
+      }
+    }
+  },
+  "openDirectChat": "Открыть личную переписку",
+  "@openDirectChat": {},
+  "startDirectChat": "Начать личную переписку",
+  "@startDirectChat": {},
+  "ignoreUser": "Игнорировать",
+  "@ignoreUser": {},
+  "unignoreUser": "Перестать игнорировать",
+  "@unignoreUser": {},
+  "ignoreToggleWaiting": "Обработка состояния игнорирования. Это может занять некоторое время.",
+  "@ignoreToggleWaiting": {},
+  "roomStateWtf": "Безопасность в этой комнате ужасна. Избегайте её.",
+  "@roomStateWtf": {},
+  "roomStatePublic": "Эта комната имеет публичную видимость для всех",
+  "@roomStatePublic": {},
+  "roomStatePublicKnock": "Эта комната имеет публичную видимость для всех, однако им нужно будет \"постучать\" прежде чем войти.",
+  "@roomStatePublicKnock": {},
+  "roomStateOpen": "Эта комната открыта для всех у кого есть ссылка.",
+  "@roomStateOpen": {},
+  "roomStateKnock": "Пользователи должны \"постучать\" чтобы войти в комнату.",
+  "@roomStateKnock": {},
+  "roomStateSpace": "Эта комната открыта только для участников пространства.",
+  "@roomStateSpace": {},
+  "roomStateUnpublic": "Это приватная комната, но в ней отсутствует шифрование.",
+  "@roomStateUnpublic": {},
+  "roomStateEncrypted": "Эта комната зашифрована, но некоторые её участники не подтверждены.",
+  "@roomStateEncrypted": {},
+  "roomStateVerifiedEncrypted": "Эта комната зашифрована и каждая сессия подтверждена.",
+  "@roomStateVerifiedEncrypted": {},
+  "oidcAppName": "< polycule >",
+  "@oidcAppName": {
+    "translatable": false
+  },
+  "oidcContact": "info@braid.business",
+  "@oidcContact": {
+    "translatable": false
+  },
+  "oidcLogoPath": "assets/assets/logo/logo-circle.png",
+  "@oidcLogoPath": {
+    "translatable": false
+  },
+  "oidcTosPath": "tos.html",
+  "@oidcTosPath": {
+    "translatable": false
+  },
+  "oidcPolicyPath": "policy.html",
+  "@oidcPolicyPath": {
+    "translatable": false
+  },
+  "loginOidc": "Войти используя OpenID Connect",
+  "@loginOidc": {},
+  "oidcConfirm": "Подтвердить",
+  "@oidcConfirm": {},
+  "manageSessions": "Управлять сессиями",
+  "@manageSessions": {},
+  "deactivateAccount": "Деактивировать аккаунт",
+  "@deactivateAccount": {},
+  "networkSettings": "Настройки сети",
+  "@networkSettings": {},
+  "useSystemProxy": "Разрешить настройки прокси для устройства",
+  "@useSystemProxy": {},
+  "verifyCertificates": "Проверить TLS сертификаты",
+  "@verifyCertificates": {},
+  "verifyTlsCertificatesAndroid": "Для более старых версий Android уже включен встроенный сертификат Let's Encrypt ISRG ROOT X1.",
+  "@verifyTlsCertificatesAndroid": {},
+  "sendTlsSNI": "Отправить чистый текст Server Name Indication",
+  "@sendTlsSNI": {},
+  "minTlsVersion": "Минимальная требуемая версия TLS от домашнего сервера",
+  "@minTlsVersion": {},
+  "tls12": "TLS 1.2",
+  "@tls12": {},
+  "tls13": "TLS 1.3",
+  "@tls13": {},
+  "favoriteAdd": "Добавить в избранное",
+  "@favoriteAdd": {},
+  "favoriteRemove": "Удалить из избранного",
+  "@favoriteRemove": {},
+  "markRead": "Пометить прочитанным",
+  "@markRead": {},
+  "markUnread": "Пометить непрочитанным",
+  "@markUnread": {},
+  "leaveRoom": "Покинуть комнату",
+  "@leaveRoom": {},
+  "leaveRoomLong": "Пожалуйста подтвердите что вы навсегда покидаете комнату « {name} ».",
+  "@leaveRoomLong": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "userDetails": "Просмотреть профиль пользователя",
+  "@userDetails": {},
+  "markMute": "Заглушить комнату",
+  "@markMute": {},
+  "markUnmute": "Вернуть оповещения комнаты",
+  "@markUnmute": {},
+  "copyRoomAddress": "Копировать адрес публичной комнаты",
+  "@copyRoomAddress": {},
+  "search": "Поиск",
+  "@search": {},
+  "startVerification": "Начать проверку",
+  "@startVerification": {},
+  "keyVerificationRequestSent": "Запрос ключа верификации отправлен.",
+  "@keyVerificationRequestSent": {},
+  "noHomeserverConnection": "Нет связи с домашним сервером.",
+  "@noHomeserverConnection": {},
+  "emojiSettings": "Настройки эмодзи",
+  "@emojiSettings": {},
+  "defaultEmojiTone": "Стандартный тон эмодзи",
+  "@defaultEmojiTone": {},
+  "autoplayAnimations": "Автоматически проигрывать гифки и стикеры",
+  "@autoplayAnimations": {},
+  "yellowSkin": "Желтая кожа",
+  "@yellowSkin": {},
+  "paleSkin": "Бледная кожа",
+  "@paleSkin": {},
+  "demiPaleSkin": "Полу-бледная кожа",
+  "@demiPaleSkin": {},
+  "mediumSkin": "Серая кожа",
+  "@mediumSkin": {},
+  "brownSkin": "Тёмная кожа",
+  "@brownSkin": {},
+  "blackSkin": "Чёрная кожа",
+  "@blackSkin": {},
+  "roomDetails": "Информация о комнате",
+  "@roomDetails": {},
+  "errorSendingSticker": "Ошибка отправки пользовательского стикера.",
+  "@errorSendingSticker": {},
+  "viewSourceCode": "Просмотреть исходный код",
+  "@viewSourceCode": {},
+  "eventSourceCode": "Событие исходного кода",
+  "@eventSourceCode": {},
+  "eventSourceContent": "Содержание события",
+  "@eventSourceContent": {},
+  "eventSourceJson": "Полный JSON",
+  "@eventSourceJson": {},
+  "eventSourceOriginal": "Оригинальное событие",
+  "@eventSourceOriginal": {},
+  "eventSourceBodyRaw": "Тело события (raw)",
+  "@eventSourceBodyRaw": {},
+  "eventSourceBodyHtml": "Тело события (HTML)",
+  "@eventSourceBodyHtml": {},
+  "eventSourceUnsigned": "Неподписанное содержание",
+  "@eventSourceUnsigned": {},
+  "eventRendered": "Отрисованное событие",
+  "@eventRendered": {},
+  "eventQuoted": "Событие цитирования",
+  "@eventQuoted": {},
+  "eventPreview": "Предпросмотр события",
+  "@eventPreview": {},
+  "blurHash": "Хэш размытия",
+  "@blurHash": {},
+  "linuxOidcWorkaround": "В случае, если ваш веб-браузер не предлагает вам открыть < Polycule > после входа, пожалуйста, убедитесь, что вы предоставили для обработки OAuth2.0 редирект в < polycule >, запустив следующую команду в эмуляторе терминала:",
+  "@linuxOidcWorkaround": {},
+  "linuxOidcWorkaroundSnippet": "gio mime x-scheme-handler/im.polycule business.braid.polycule.desktop",
+  "@linuxOidcWorkaroundSnippet": {
+    "translatable": false
+  },
+  "setupSSSSLoading": "Наладка шифрования. Это может занять некоторое время.",
+  "@setupSSSSLoading": {},
+  "sessionId": "ID сессии",
+  "@sessionId": {},
+  "sessionIpAddress": "Последний IP-адрес",
+  "@sessionIpAddress": {},
+  "sessionLastSeen": "Был в сети",
+  "@sessionLastSeen": {},
+  "delete": "Удалить",
+  "@delete": {},
+  "verify": "Проверить",
+  "@verify": {},
+  "verifyAgain": "Проверить снова",
+  "@verifyAgain": {},
+  "rename": "Переименовать",
+  "@rename": {},
+  "renameDevice": "Переименовать устройство",
+  "@renameDevice": {},
+  "deviceName": "Отображаемое имя устройства",
+  "@deviceName": {},
+  "renameDeviceHint": "Оставьте пустым для удаления отображаемого имени",
+  "@renameDeviceHint": {},
+  "openInIDP": "Открыть в провайдере идентификации",
+  "@openInIDP": {},
+  "deviceNoEncryption": "Не поддерживает шифрование",
+  "@deviceNoEncryption": {},
+  "deviceVerified": "Ключи подтверждены",
+  "@deviceVerified": {},
+  "deviceUnverified": "Ключи не подтверждены",
+  "@deviceUnverified": {},
+  "deviceBlocked": "Устройство заблокировано",
+  "@deviceBlocked": {},
+  "logout": "Выйти",
+  "@logout": {},
+  "logoutWarning": "Подтвердить выход",
+  "@logoutWarning": {},
+  "logoutWarningLong": "Если вы выйдете из системы, и у вас не будет ни одной другой сессии а так же вашей фразы восстановления, вы потеряете доступ ко всем вам сообщениям внутри [matrix].",
+  "@logoutWarningLong": {},
+  "keyBackupAvailable": "SSSS бэкап",
+  "@keyBackupAvailable": {},
+  "keyBackupExplanation": "Используйте Secure Secret Storage и Sharing для безопасного резервного копирования ключей сообщений для всех ваших устройств.",
+  "@keyBackupExplanation": {},
+  "ssssRecoveryKey": "Ключ восстановления SSSS",
+  "@ssssRecoveryKey": {},
+  "ssssRecoveryKeyExplanation": "Тщательно храните свой ключ к SSSS в безопасном месте. Без ключа восстановления все предыдущие сообщения будут навсегда потеряны.",
+  "@ssssRecoveryKeyExplanation": {},
+  "confirmSSSSKeyStored": "Ключ сохранён",
+  "@confirmSSSSKeyStored": {},
+  "yourCurrentDevice": "Ваше текущее устройство",
+  "@yourCurrentDevice": {},
+  "moveClientTooltip": "Переместить сюда",
+  "@moveClientTooltip": {},
+  "displayName": "Отображаемое имя",
+  "@displayName": {},
+  "yourDisplayName": "Ваше отображаемое имя",
+  "@yourDisplayName": {},
+  "displayNameHint": "Это будет указано в вашем публичном профиле.",
+  "@displayNameHint": {},
+  "changeDisplayName": "Изменить отображаемое имя",
+  "@changeDisplayName": {},
+  "scanQrCode": "Сканировать QR код",
+  "@scanQrCode": {},
+  "compareSas": "Сравнить SAS секрет",
+  "@compareSas": {},
+  "confirmQrScanned": "QR код успешно просканирован.",
+  "@confirmQrScanned": {},
+  "confirm": "Подтвердить",
+  "@confirm": {},
+  "scanQrWithOtherDevice": "Сканировать этот QR код для другого устройства.",
+  "@scanQrWithOtherDevice": {},
+  "clientSwitcher": "Сменить аккаунт",
+  "@clientSwitcher": {},
+  "block": "Заблокировать",
+  "@block": {},
+  "unblock": "Разблокировать",
+  "@unblock": {},
+  "sessions": "Сессии",
+  "@sessions": {},
+  "notificationSettings": "Настройки уведомлений",
+  "@notificationSettings": {},
+  "notificationsGlobal": "Обобщение",
+  "@notificationsGlobal": {},
+  "notificationsOverride": "Высоко",
+  "@notificationsOverride": {},
+  "notificationsRoom": "Комнаты",
+  "@notificationsRoom": {},
+  "notificationsSender": "Отправители",
+  "@notificationsSender": {},
+  "notificationsUnderride": "Низко",
+  "@notificationsUnderride": {},
+  "noPushRules": "Нет доступных правил для push.",
+  "@noPushRules": {},
+  "defaultPushRule": "Это push-правило по умолчанию.",
+  "@defaultPushRule": {},
+  "pushRuleEnabled": "Включить push-правило",
+  "@pushRuleEnabled": {},
+  "eventContentMatches": "Содержимое события соответствует этому шаблону",
+  "@eventContentMatches": {},
+  "unknownAction": "Неизвестное действие : {action}",
+  "@unknownAction": {
+    "placeholders": {
+      "action": {
+        "format": "String"
+      }
+    }
+  },
+  "actionNotify": "Отправить уведомление",
+  "@actionNotify": {},
+  "actionDontNotify": "Не оповещать",
+  "@actionDontNotify": {},
+  "notificationTweakSound": "Звук",
+  "@notificationTweakSound": {},
+  "notificationTweakHighlight": "Подсветка",
+  "@notificationTweakHighlight": {},
+  "unknownNotificationTweak": "Неизвестная модификация: {tweak}",
+  "@unknownNotificationTweak": {
+    "placeholders": {
+      "tweak": {
+        "format": "String"
+      }
+    }
+  },
+  "pushConditionSenderNotificationPermission": "Отправитель может уведомлять: {key}",
+  "@pushConditionSenderNotificationPermission": {
+    "placeholders": {
+      "key": {
+        "format": "String"
+      }
+    }
+  },
+  "tweakEnabled": "Включено",
+  "@tweakEnabled": {},
+  "tweakDisabled": "Выключено",
+  "@tweakDisabled": {},
+  "tweakDefault": "Стандартное уведомление",
+  "@tweakDefault": {},
+  "pushConditionContainsDisplayName": "Включает моё отображаемое имя",
+  "@pushConditionContainsDisplayName": {},
+  "pushRulesGlobal": "Охват аккаунта",
+  "@pushRulesGlobal": {},
+  "pushRulesDevice": "Это устройство",
+  "@pushRulesDevice": {},
+  "webOAuthReceivedNotice": "Получено перенаправление с OAuth2.0. Вы можете закрыть эту вкладку.",
+  "@webOAuthReceivedNotice": {},
+  "webMultipleTabNotice": "< polycule > уже открыт в другой вкладке.\nОбновите страницу после закрытия других вкладок.",
+  "@webMultipleTabNotice": {}
 }
