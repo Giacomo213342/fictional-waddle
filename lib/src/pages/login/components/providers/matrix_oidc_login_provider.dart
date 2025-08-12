@@ -106,7 +106,7 @@ class _MatrixOidcLoginProviderState extends State<MatrixOidcLoginProvider> {
           Completer<OidcCallbackResponse>();
       await client.oidcLoginAuthorizationGrantFlow(
         nativeCompleter: nativeCompleter,
-        oidcClientId: oidcClientId,
+        clientId: oidcClientId,
         redirectUri: client.oAuth2RedirectUri,
         launchOAuth2Uri: launchUrl,
         responseMode: kIsWeb ? 'fragment' : 'query',
