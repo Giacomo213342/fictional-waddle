@@ -525,7 +525,7 @@
   "@regionChatContents": {},
   "msgTypeNone": "Не отправлять сообщение.",
   "@msgTypeNone": {},
-  "sendingFiles": "{files, plural, =0{Ни один файл не} =1{Один файл}  5<{{files} файла} other{{files} файлов}} отправляется ...}",
+  "sendingFiles": "{files, plural, =0{Ни один файл не} =1{Один файл} other{{files} файлов}} отправляется ...}",
   "@sendingFiles": {
     "placeholders": {
       "files": {
