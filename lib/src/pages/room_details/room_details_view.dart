@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../widgets/matrix/avatar_builder/room_builder.dart';
 import '../../widgets/matrix/scopes/room_scope.dart';
 import 'components/public_room_address_tile.dart';
 import 'components/room_detail_sliver_app_bar.dart';
+import 'components/room_id_tile.dart';
 import 'components/room_topic_view.dart';
 
 class RoomDetailsView extends StatelessWidget {
@@ -23,6 +25,12 @@ class RoomDetailsView extends StatelessWidget {
                   if (room.topic.isNotEmpty) const RoomTopicView(),
                   if (room.canonicalAlias.isNotEmpty)
                     const PublicRoomAddressTile(),
+                  ExpansionTile(
+                    title: Text(AppLocalizations.of(context).details),
+                    children: [
+                      const RoomIdTile(),
+                    ],
+                  ),
                 ],
               ),
             ],

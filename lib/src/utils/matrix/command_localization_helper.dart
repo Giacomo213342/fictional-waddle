@@ -63,6 +63,8 @@ class CommandLocalizationHelper {
       // polycule commands
       case 'logout':
         return l10n.logoutCommandSyntax;
+      case 'upgraderoom':
+        return l10n.upgraderoomCommandSyntax;
       case 'roomname':
         return l10n.roomnameCommandSyntax;
       case 'roomdescription':

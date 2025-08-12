@@ -8,6 +8,7 @@ import '../../../widgets/matrix/scopes/timeline_scope.dart';
 import 'event/event_fallback_text.dart';
 import 'event/m_room_message.dart';
 import 'event/m_room_state.dart';
+import 'event/m_room_tombstone.dart';
 
 class TimelineEventTile extends StatelessWidget {
   const TimelineEventTile({
@@ -45,6 +46,9 @@ class TimelineEventTile extends StatelessWidget {
         EventTypes.RoomCanonicalAlias ||
         EventTypes.RoomMember =>
           const RoomState(),
+        EventTypes.RoomCreate ||
+        EventTypes.RoomTombstone =>
+          const RoomTombstone(),
         EventTypes.SpaceChild || EventTypes.SpaceParent => const RoomState(),
         _ => const EventFallbackText(),
       },
