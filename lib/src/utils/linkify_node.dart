@@ -91,7 +91,12 @@ class MatrixLinkifier extends Linkifier {
         for (final word in element.text.split(' ')) {
           final result = word.parseIdentifierIntoParts();
 
-          if (result == null) {
+          if (result == null ||
+              // do not interpret !XXXXX as room unless other properties set
+              (result.primaryIdentifier.startsWith('!') &&
+                  result.action == null &&
+                  result.via.isEmpty &&
+                  result.secondaryIdentifier == null)) {
             list.add(TextElement(word));
           } else {
             String uri = result.toMatrixToUrl();
