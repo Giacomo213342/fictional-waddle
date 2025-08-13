@@ -43,6 +43,7 @@ extension LinkifyText on Text {
       ),
       linkifiers: [
         const MatrixCallLinkifier(),
+        const ExtraUriLinkifier(),
         const MatrixLinkifier(),
         const UrlLinkifier(),
         const EmailLinkifier(),
@@ -103,6 +104,48 @@ class MatrixLinkifier extends Linkifier {
             String text = result.primaryIdentifier;
 
             list.add(LinkableElement(text, uri));
+          }
+          list.add(TextElement(' '));
+        }
+        list.removeLast();
+      } else {
+        list.add(element);
+      }
+    }
+
+    return list;
+  }
+}
+
+class ExtraUriLinkifier extends Linkifier {
+  const ExtraUriLinkifier();
+
+  /// This is about neither HTTP(S) nor MATRIX URI schemes
+  static const supportedSchemes = {
+    'geo',
+    'tel',
+    'mailto',
+  };
+
+  @override
+  List<LinkifyElement> parse(elements, options) {
+    final list = <LinkifyElement>[];
+
+    for (final element in elements) {
+      if (element is TextElement) {
+        for (final word in element.text.split(' ')) {
+          final result = Uri.tryParse(word);
+
+          if (result == null ||
+              !result.hasScheme ||
+              !supportedSchemes.any((scheme) => result.isScheme(scheme))) {
+            list.add(TextElement(word));
+          } else {
+            final scheme = result.scheme;
+
+            String text = word.substring(scheme.length + 1);
+
+            list.add(LinkableElement(text, word));
           }
           list.add(TextElement(' '));
         }
