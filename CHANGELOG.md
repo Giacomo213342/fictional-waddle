@@ -1,3 +1,7 @@
+## v0.3.2
+
+- fix: downgrade AGP (The one with the braid)
+
 ## v0.3.1
 
 - chore: bump deps (The one with the braid)
