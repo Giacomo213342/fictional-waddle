@@ -1,5 +1,5 @@
 variables:
-  FLUTTER_VERSION: 3.32.7
+  FLUTTER_VERSION: 3.32.8
 
 include:
   - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.61.0
@@ -180,7 +180,7 @@ check:flutter_version:commit:
     - flutter pub upgrade --major-versions
     - git add pubspec.yaml pubspec.lock
     - git diff . >> ./flutter_version.diff
-    - git commit -sm chore\(deps\)\:\ Flutter\ pub\ major\ versions\ \(manual\)
+    - git commit -sm chore\(deps\)\:\ Flutter\ pub\ major\ versions\ \(manual\) || true
     - git push https://git:$CI_PUSH_TOKEN@gitlab.com/$CI_PROJECT_PATH.git HEAD:$CI_COMMIT_REF_NAME
   artifacts:
     paths:
