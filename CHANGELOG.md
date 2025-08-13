@@ -1,3 +1,10 @@
+## v0.3.1
+
+- chore: bump deps (The one with the braid)
+- chore: bump SDK (The one with the braid)
+- fix: do not interpret exclamation mark as room ID (The one with the braid)
+- fix: improve link handling (The one with the braid)
+
 ## v0.3.0
 
 - Added translation using Weblate (Arabic) (Ahmed Najmawi)
