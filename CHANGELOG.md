@@ -1,3 +1,8 @@
+## v0.3.4
+
+- fix: disable auto-merge for dependabot (The one with the braid)
+- Revert "chore(deps): bump com.android.application in /android" (The one with the braid)
+
 ## v0.3.3
 
 - chore(deps): bump com.android.application in /android (- CI Pipeline)
