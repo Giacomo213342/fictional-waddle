@@ -1,3 +1,8 @@
+## v0.3.3
+
+- chore(deps): bump com.android.application in /android (- CI Pipeline)
+- fix: APK version scheme (The one with the braid)
+
 ## v0.3.2
 
 - fix: downgrade AGP (The one with the braid)
