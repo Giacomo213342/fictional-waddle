@@ -25,4 +25,4 @@ updates:
     schedule:
       interval: daily
 update-options:
-  auto-merge: true
+  auto-merge: false
