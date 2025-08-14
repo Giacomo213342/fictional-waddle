@@ -81,15 +81,15 @@ androidComponents {
         variant.outputs.forEach { output ->
             val name = output.filters.find { it.filterType == ABI }?.identifier
             // Stores the value of abiCodes that is associated with the ABI for this variant.
-            val baseAbiCode = abiCodes[name]
+            val abiVersionCode = abiCodes[name]
             // Because abiCodes.get() returns null for ABIs that are not mapped by ext.abiCodes,
             // the following code does not override the version code for universal APKs.
             // However, because we want universal APKs to have the lowest version code,
             // this outcome is desirable.
-            if (baseAbiCode != null) {
+            if (abiVersionCode != null) {
                 // Assigns the new version code to output.versionCode, which changes the version code
                 // for only the output APK, not for the variant itself.
-                output.versionCode.set(baseAbiCode * 1000 + (output.versionCode.get()  ?: 0))
+                output.versionCode.set((output.versionCode.get()  ?: 0) * 10 + abiVersionCode)
             }
         }
     }
