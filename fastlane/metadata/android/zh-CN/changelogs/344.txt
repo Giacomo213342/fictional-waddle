@@ -1,0 +1,2 @@
+- 修复：为 Dependabot 禁用自动合并（The one with the braid）
+- 撤销“chore(deps): 在 /android 中升级 com.android.application”（The one with the braid）

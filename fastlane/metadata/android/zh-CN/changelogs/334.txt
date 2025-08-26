@@ -1,0 +1,2 @@
+- 依赖维护：升级/android 目录下的 com.android.application（- CI Pipeline）
+- 修复：APK 版本方案（The one with the braid）
