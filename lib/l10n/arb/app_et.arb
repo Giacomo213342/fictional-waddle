@@ -437,5 +437,134 @@
         }
     },
     "logoutCommandSyntax": "Logi sellest kontost välja.",
-    "@logoutCommandSyntax": {}
+    "@logoutCommandSyntax": {},
+    "verifyLogin": "Verifitseeri oma võtmega",
+    "@verifyLogin": {},
+    "finish": "Lõpeta",
+    "@finish": {},
+    "or": "või",
+    "@or": {},
+    "verifyWithOtherDevice": "Verifitseeri teise seadmega",
+    "@verifyWithOtherDevice": {},
+    "verifyMethodsNotAvailable": "Sul pole ühtegi kasutatavat verifitseerimismeetodit?",
+    "@verifyMethodsNotAvailable": {},
+    "verifyWithPassphrase": "Verifitseeri salafraasiga",
+    "@verifyWithPassphrase": {},
+    "passphraseNoWhitespace": "Salafraasis ei tohi olla tühikuid!",
+    "@passphraseNoWhitespace": {},
+    "errorTryAgain": "Tekkis viga. Palun proovi uuesti.",
+    "@errorTryAgain": {},
+    "submit": "saada",
+    "@submit": {},
+    "togglePassword": "Vaheta salasõna nähtavust",
+    "@togglePassword": {},
+    "loggingInToClient": "Logi sisse kasutajakontoga",
+    "@loggingInToClient": {},
+    "inviteLongRoom": "Sa oled kutsutud jututuppa : « {roomname} ».",
+    "@inviteLongRoom": {
+        "description": "Please keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
+        "placeholders": {
+            "roomname": {
+                "type": "String"
+            }
+        }
+    },
+    "learnMore": "Loe lisaks",
+    "@learnMore": {},
+    "gitLabPrivacy": "https://gitlab.com/help/operations/error_tracking.md",
+    "@gitLabPrivacy": {
+        "translatable": false
+    },
+    "fontSize": "Kirjatüübi suurus",
+    "@fontSize": {},
+    "reset": "Lähtesta",
+    "@reset": {},
+    "fontScaleLabel": "{scale}",
+    "@fontScaleLabel": {
+        "placeholders": {
+            "scale": {
+                "type": "double",
+                "format": "decimalPercentPattern",
+                "optionalParameters": {
+                    "decimalDigits": 1
+                }
+            }
+        }
+    },
+    "openDirectChat": "Ava otsevestlus",
+    "@openDirectChat": {},
+    "startDirectChat": "Alusta otsevestlust",
+    "@startDirectChat": {},
+    "ignoreUser": "Eira",
+    "@ignoreUser": {},
+    "unignoreUser": "Lõpeta eiramine",
+    "@unignoreUser": {},
+    "ignoreToggleWaiting": "Töötlen eiramise olekut. Selleks võib kuluda natuke aega.",
+    "@ignoreToggleWaiting": {},
+    "roomStateWtf": "Selle jututoa turvalisuses valitseb kaos. Pigem hoia eemale.",
+    "@roomStateWtf": {},
+    "inviteLongDM": "« {displayname} » on kutsununud sind vestlema.",
+    "@inviteLongDM": {},
+    "roomParticipants": "{participants, plural, =0{Osalejaid pole} =1{1 osaleja} other{{participants} osalejat}}",
+    "@roomParticipants": {
+        "placeholders": {
+            "participants": {
+                "type": "int"
+            }
+        }
+    },
+    "joinRoom": "Liitu jututoaga",
+    "@joinRoom": {},
+    "knockRoom": "Liitumiseks koputa jututoa uksele",
+    "@knockRoom": {},
+    "youCannotJoinThisRoom": "Sa ei saa selle jututoaga liituda.",
+    "@youCannotJoinThisRoom": {},
+    "addAccount": "Lisa veel üks kasutajakonto",
+    "@addAccount": {},
+    "msgTypeImage": "Saada pildifail.",
+    "@msgTypeImage": {},
+    "msgTypeVideo": "Saada videofail.",
+    "@msgTypeVideo": {},
+    "msgTypeAudio": "Saada helifail.",
+    "@msgTypeAudio": {},
+    "msgTypeFile": "Saada fail.",
+    "@msgTypeFile": {},
+    "msgTypeLocation": "Jaga oma asukohta.",
+    "@msgTypeLocation": {},
+    "msgTypeSticker": "Saada üks kleeps.",
+    "@msgTypeSticker": {},
+    "msgTypeBadEncrypted": "Tüüta teist osapoolt sõnumiga, mida ta ei saa dekrüptida.",
+    "@msgTypeBadEncrypted": {},
+    "msgTypeNone": "Ära saadagi sõnumit.",
+    "@msgTypeNone": {},
+    "sendingFiles": "{files, plural, =0{Ühtegi faili pole saatmisel.} =1{Üks fail} other{{files} faili}} on saatmisel ...}",
+    "@sendingFiles": {
+        "placeholders": {
+            "files": {
+                "type": "int"
+            }
+        }
+    },
+    "jumpToMessage": "Mine sõnumi juurde: {message}",
+    "@jumpToMessage": {
+        "placeholders": {
+            "message": {
+                "type": "String"
+            }
+        }
+    },
+    "selectAccount": "Jätkamiseks vali kasutajakonto",
+    "@selectAccount": {},
+    "sharingFiles": "Saadan {files, plural, =1{üht faili} other{{files} faili}}.",
+    "@sharingFiles": {
+        "placeholders": {
+            "files": {
+                "type": "int"
+            }
+        }
+    },
+    "sharingText": "Jaga teksti jututoas",
+    "@sharingText": {},
+    "sendFiles": "Saada faile",
+    "@sendFiles": {}
 }
