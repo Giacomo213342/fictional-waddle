@@ -101,52 +101,52 @@
     <screenshots>
         <screenshot environment="gnome:dark">
             <image type="source" width="1080" height="2097" scale="3">
-                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/01.png?ref_type=heads
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/linux/mobile/dark/01.png?ref_type=heads
             </image>
         </screenshot>
         <screenshot environment="gnome:dark">
             <image type="source" width="1080" height="2097" scale="3">
-                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/02.png?ref_type=heads
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/linux/mobile/dark/02.png?ref_type=heads
             </image>
         </screenshot>
         <screenshot environment="gnome:dark">
             <image type="source" width="1080" height="2097" scale="3">
-                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/03.png?ref_type=heads
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/linux/mobile/dark/03.png?ref_type=heads
             </image>
         </screenshot>
         <screenshot environment="gnome:dark">
             <image type="source" width="1080" height="2097" scale="3">
-                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/04.png?ref_type=heads
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/linux/mobile/dark/04.png?ref_type=heads
             </image>
         </screenshot>
         <screenshot environment="gnome:dark">
             <image type="source" width="1080" height="2097" scale="3">
-                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/05.png?ref_type=heads
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/linux/mobile/dark/05.png?ref_type=heads
             </image>
         </screenshot>
         <screenshot environment="gnome:dark">
             <image type="source" width="1080" height="2097" scale="3">
-                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/06.png?ref_type=heads
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/linux/mobile/dark/06.png?ref_type=heads
             </image>
         </screenshot>
         <screenshot type="default" environment="gnome:dark">
             <image type="source" width="1080" height="2097" scale="3">
-                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/07.png?ref_type=heads
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/linux/mobile/dark/07.png?ref_type=heads
             </image>
         </screenshot>
         <screenshot environment="gnome:dark">
             <image type="source" width="1080" height="2097" scale="3">
-                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/08.png?ref_type=heads
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/linux/mobile/dark/08.png?ref_type=heads
             </image>
         </screenshot>
         <screenshot environment="gnome:dark">
             <image type="source" width="1080" height="2097" scale="3">
-                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/09.png?ref_type=heads
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/linux/mobile/dark/09.png?ref_type=heads
             </image>
         </screenshot>
         <screenshot environment="gnome:dark">
             <image type="source" width="1080" height="2097" scale="3">
-                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/mobile/linux/dark/10.png?ref_type=heads
+                https://gitlab.com/polycule_client/polycule/-/raw/main/assets/screenshots/linux/mobile/dark/10.png?ref_type=heads
             </image>
         </screenshot>
     </screenshots>
