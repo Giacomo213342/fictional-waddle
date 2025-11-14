@@ -6,14 +6,10 @@ class PushProviderRadioTile extends StatelessWidget {
   const PushProviderRadioTile({
     super.key,
     this.distributor,
-    this.groupValue,
-    required this.onChanged,
     this.isSingleProvider = false,
   });
 
   final String? distributor;
-  final String? groupValue;
-  final ValueChanged<String?> onChanged;
   final bool isSingleProvider;
 
   @override
@@ -29,9 +25,7 @@ class PushProviderRadioTile extends StatelessWidget {
 
     return RadioListTile<String?>.adaptive(
       value: distributor,
-      groupValue: groupValue,
       title: Text(label),
-      onChanged: onChanged,
     );
   }
 }

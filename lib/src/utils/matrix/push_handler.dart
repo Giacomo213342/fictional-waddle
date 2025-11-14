@@ -7,18 +7,24 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:matrix/matrix.dart';
 import 'package:unifiedpush/unifiedpush.dart';
+import 'package:unifiedpush_platform_interface/unifiedpush_platform_interface.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../l10n/matrix/polycule_matrix_localizations.dart';
 import '../polycule_http_client/polycule_http_client.dart';
 import '../settings_interface.dart';
+import '../unified_push/unified_push_storage_polycule.dart';
 import 'client_util.dart';
 import 'push_manager.dart';
 
-@pragma('vm:entry-point')
 Future<void> pushEntrypoint() async {
   await UnifiedPush.initialize(
     onMessage: handleBackgroundNotification,
+    linuxOptions: LinuxOptions(
+      dbusName: 'business.braid.polycule',
+      storage: UnifiedPushStoragePolycule(),
+      background: true,
+    ),
   );
 }
 

@@ -23,109 +23,120 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
       ),
       body: ValueListenableBuilder<ThemeState>(
         valueListenable: SettingsManager.of(context).theme,
-        builder: (context, themeState, _) {
-          return ListView(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.contrast),
-                title: Text(AppLocalizations.of(context).theme),
+        builder: (context, themeState, _) => ListView(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.contrast),
+              title: Text(AppLocalizations.of(context).theme),
+            ),
+            RadioGroup<PolyculeTheme>(
+              groupValue: themeState.themeMode,
+              onChanged: _setThemeMode,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RadioListTile.adaptive(
+                    value: PolyculeTheme.system,
+                    title: Text(AppLocalizations.of(context).systemTheme),
+                  ),
+                  RadioListTile.adaptive(
+                    value: PolyculeTheme.terminal,
+                    title: Text(AppLocalizations.of(context).dark),
+                  ),
+                  RadioListTile.adaptive(
+                    value: PolyculeTheme.mySpace,
+                    title: Text(AppLocalizations.of(context).light),
+                  ),
+                ],
               ),
-              RadioListTile.adaptive(
-                value: PolyculeTheme.system,
-                groupValue: themeState.themeMode,
-                title: Text(AppLocalizations.of(context).systemTheme),
-                onChanged: _setThemeMode,
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.colorize),
+              title: Text(AppLocalizations.of(context).color),
+            ),
+            RadioGroup<PolyculeColorMode>(
+              groupValue: themeState.colorMode,
+              onChanged: _setColorMode,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RadioListTile.adaptive(
+                    value: PolyculeColorMode.system,
+                    title: Text(AppLocalizations.of(context).systemColor),
+                  ),
+                  RadioListTile.adaptive(
+                    value: PolyculeColorMode.theme,
+                    title: Text(AppLocalizations.of(context).defaultColor),
+                  ),
+                  RadioListTile.adaptive(
+                    value: PolyculeColorMode.highContrast,
+                    title: Text(AppLocalizations.of(context).highContrast),
+                  ),
+                ],
               ),
-              RadioListTile.adaptive(
-                value: PolyculeTheme.terminal,
-                groupValue: themeState.themeMode,
-                title: Text(AppLocalizations.of(context).dark),
-                onChanged: _setThemeMode,
-              ),
-              RadioListTile.adaptive(
-                value: PolyculeTheme.mySpace,
-                groupValue: themeState.themeMode,
-                title: Text(AppLocalizations.of(context).light),
-                onChanged: _setThemeMode,
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.colorize),
-                title: Text(AppLocalizations.of(context).color),
-              ),
-              RadioListTile.adaptive(
-                value: PolyculeColorMode.system,
-                groupValue: themeState.colorMode,
-                title: Text(AppLocalizations.of(context).systemColor),
-                onChanged: _setColorMode,
-              ),
-              RadioListTile.adaptive(
-                value: PolyculeColorMode.theme,
-                groupValue: themeState.colorMode,
-                title: Text(AppLocalizations.of(context).defaultColor),
-                onChanged: _setColorMode,
-              ),
-              RadioListTile.adaptive(
-                value: PolyculeColorMode.highContrast,
-                groupValue: themeState.colorMode,
-                title: Text(AppLocalizations.of(context).highContrast),
-                onChanged: _setColorMode,
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.format_size),
-                title: Text(AppLocalizations.of(context).fontSize),
-                subtitle: Text(
-                  AppLocalizations.of(context)
-                      .fontScaleLabel(themeState.fontScale),
-                ),
-                trailing: IconButton(
-                  onPressed: () => _setFontScale(1),
-                  icon: const Icon(Icons.refresh),
-                  tooltip: AppLocalizations.of(context).reset,
-                ),
-              ),
-              Slider.adaptive(
-                value: themeState.fontScale,
-                onChanged: _setFontScale,
-                divisions: 8,
-                label: AppLocalizations.of(context)
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.format_size),
+              title: Text(AppLocalizations.of(context).fontSize),
+              subtitle: Text(
+                AppLocalizations.of(context)
                     .fontScaleLabel(themeState.fontScale),
-                min: .75,
-                max: 1.75,
               ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.text_format),
-                title: Text(AppLocalizations.of(context).fontAccessibility),
+              trailing: IconButton(
+                onPressed: () => _setFontScale(1),
+                icon: const Icon(Icons.refresh),
+                tooltip: AppLocalizations.of(context).reset,
               ),
-              RadioListTile.adaptive(
-                value: PolyculeFontMode.theme,
-                groupValue: themeState.fontMode,
-                title: Text(AppLocalizations.of(context).defaultFont),
-                onChanged: _setFontMode,
+            ),
+            Slider.adaptive(
+              value: themeState.fontScale,
+              onChanged: _setFontScale,
+              divisions: 8,
+              label: AppLocalizations.of(context)
+                  .fontScaleLabel(themeState.fontScale),
+              min: .75,
+              max: 1.75,
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.text_format),
+              title: Text(AppLocalizations.of(context).fontAccessibility),
+            ),
+            RadioGroup<PolyculeFontMode>(
+              groupValue: themeState.fontMode,
+              onChanged: _setFontMode,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RadioListTile.adaptive(
+                    value: PolyculeFontMode.theme,
+                    title: Text(AppLocalizations.of(context).defaultFont),
+                  ),
+                  RadioListTile.adaptive(
+                    value: PolyculeFontMode.visionLimited,
+                    title: Text(AppLocalizations.of(context).inclusiveSans),
+                  ),
+                  RadioListTile.adaptive(
+                    value: PolyculeFontMode.dyslexic,
+                    title: Text(AppLocalizations.of(context).openDyslexic),
+                  ),
+                  RadioListTile.adaptive(
+                    value: PolyculeFontMode.serif,
+                    title: Text(AppLocalizations.of(context).serif),
+                  ),
+                ],
               ),
-              RadioListTile.adaptive(
-                value: PolyculeFontMode.visionLimited,
-                groupValue: themeState.fontMode,
-                title: Text(AppLocalizations.of(context).inclusiveSans),
-                onChanged: _setFontMode,
-              ),
-              RadioListTile.adaptive(
-                value: PolyculeFontMode.dyslexic,
-                groupValue: themeState.fontMode,
-                title: Text(AppLocalizations.of(context).openDyslexic),
-                onChanged: _setFontMode,
-              ),
-              RadioListTile.adaptive(
-                value: PolyculeFontMode.serif,
-                groupValue: themeState.fontMode,
-                title: Text(AppLocalizations.of(context).serif),
-                onChanged: _setFontMode,
-              ),
-            ],
-          );
-        },
+            ),
+          ],
+        ),
       ),
     );
   }

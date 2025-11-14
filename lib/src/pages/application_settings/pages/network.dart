@@ -16,59 +16,51 @@ class NetworkSettingsPage extends StatefulWidget {
 
 class _NetworkSettingsPageState extends State<NetworkSettingsPage> {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context).networkSettings),
-      ),
-      body: ValueListenableBuilder<NetworkState>(
-        valueListenable: SettingsManager.of(context).network,
-        builder: (context, networkState, _) {
-          return ListView(
-            children: [
-              SwitchListTile.adaptive(
-                // const Icon(Icons.perm_identity),
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context).networkSettings),
+        ),
+        body: ValueListenableBuilder<NetworkState>(
+          valueListenable: SettingsManager.of(context).network,
+          builder: (context, networkState, _) => RadioGroup<int>(
+            groupValue: networkState.tlsMinVersion,
+            onChanged: _setTlsMinVersion,
+            child: ListView(
+              children: [
+                SwitchListTile.adaptive(
+                  title: Text(AppLocalizations.of(context).useSystemProxy),
+                  value: networkState.permitProxy,
+                  onChanged: _setProxy,
+                ),
+                SwitchListTile.adaptive(
+                  title: Text(AppLocalizations.of(context).verifyCertificates),
+                  value: networkState.verifyCertificates,
+                  onChanged: _setVerifyCertificates,
+                ),
+                SwitchListTile.adaptive(
+                  // const Icon(Icons.perm_identity),
 
-                title: Text(AppLocalizations.of(context).useSystemProxy),
-                value: networkState.permitProxy,
-                onChanged: _setProxy,
-              ),
-              SwitchListTile.adaptive(
-                // const Icon(Icons.perm_identity),
-
-                title: Text(AppLocalizations.of(context).verifyCertificates),
-                value: networkState.verifyCertificates,
-                onChanged: _setVerifyCertificates,
-              ),
-              SwitchListTile.adaptive(
-                // const Icon(Icons.perm_identity),
-
-                title: Text(AppLocalizations.of(context).sendTlsSNI),
-                value: networkState.useSni,
-                onChanged: _setSni,
-              ),
-              ListTile(
-                leading: const Icon(Icons.vpn_lock),
-                title: Text(AppLocalizations.of(context).minTlsVersion),
-              ),
-              RadioListTile.adaptive(
-                value: 0x0303,
-                groupValue: networkState.tlsMinVersion,
-                title: Text(AppLocalizations.of(context).tls12),
-                onChanged: _setTlsMinVersion,
-              ),
-              RadioListTile.adaptive(
-                value: 0x0304,
-                groupValue: networkState.tlsMinVersion,
-                title: Text(AppLocalizations.of(context).tls13),
-                onChanged: _setTlsMinVersion,
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
+                  title: Text(AppLocalizations.of(context).sendTlsSNI),
+                  value: networkState.useSni,
+                  onChanged: _setSni,
+                ),
+                ListTile(
+                  leading: const Icon(Icons.vpn_lock),
+                  title: Text(AppLocalizations.of(context).minTlsVersion),
+                ),
+                RadioListTile.adaptive(
+                  value: 0x0303,
+                  title: Text(AppLocalizations.of(context).tls12),
+                ),
+                RadioListTile.adaptive(
+                  value: 0x0304,
+                  title: Text(AppLocalizations.of(context).tls13),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
 
   void _setProxy(bool? permitProxy) {
     if (permitProxy == null) {
