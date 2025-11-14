@@ -1,0 +1,4 @@
+- 杂项：更新依赖项（The one with the braid）
+- 杂项：更新 SDK（The one with the braid）
+- 修复：不将感叹号解释为房间 ID（The one with the braid）
+- 修复：改进链接处理（The one with the braid）

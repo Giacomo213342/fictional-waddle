@@ -1,102 +1,1000 @@
 {
-  "appName": "< polycule >",
-  "@appName": {},
-  "about": "Rakenduse teave",
-  "@about": {},
-  "author": "Autor: {author}",
-  "@author": {
-    "placeholders": {
-      "author": {
-        "type": "String"
-      }
-    }
-  },
-  "appSlogan": "Oskuskasutajatele mõeldud tõhus ja nohikusõbralik [matrix]-i klient.",
-  "@appSlogan": {},
-  "repoLabel": "Lähtekood (GitLab)",
-  "@repoLabel": {},
-  "releaseNotes": "Muudatuste logi",
-  "@releaseNotes": {},
-  "buyMeACoffee": "Osta mulle tass kohvi",
-  "@buyMeACoffee": {},
-  "homeserverHeadline": "Hei ! Tere tulemast, see on < polycule >",
-  "@homeserverHeadline": {
-    "description": "Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'."
-  },
-  "aMatrixClient": "- veel üks [matrix]-i klient",
-  "@aMatrixClient": {},
-  "username": "kasutajanimi",
-  "@username": {},
-  "email": "e-posti aadress",
-  "@email": {},
-  "password": "salasõna",
-  "@password": {},
-  "pleaseProvideEmail": "Palun sisesta oma e-posti aadress.",
-  "@pleaseProvideEmail": {},
-  "pleaseProvidePassword": "Palun sisesta oma salasõna.",
-  "@pleaseProvidePassword": {},
-  "pleaseProvideUsername": "Palun sisesta oma kasutajanimi.",
-  "@pleaseProvideUsername": {},
-  "deleteAll": "Kustuta kõik",
-  "@deleteAll": {},
-  "previous": "Eelmine",
-  "@previous": {},
-  "next": "Järgmine",
-  "@next": {},
-  "hajUser": "Hei {localpart} !",
-  "@hajUser": {
-    "placeholders": {
-      "localpart": {
-        "type": "String?"
-      }
-    }
-  },
-  "loginErrorMessage": "Sisselogimine ei õnnestunud : {message}",
-  "@loginErrorMessage": {
-    "placeholders": {
-      "message": {
-        "type": "String"
-      }
-    }
-  },
-  "loginError": "Sisselogimine ei õnnestunud ; palun kontrolli, kas kasutajanimi/salasõna on õiged.",
-  "@loginError": {},
-  "platformWeb": "Veeb",
-  "@platformWeb": {},
-  "clientDisplayName": "< polycule > : {platform}",
-  "@clientDisplayName": {
-    "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
-    "placeholders": {
-      "platform": {
-        "type": "String",
-        "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
-      }
-    }
-  },
-  "clientDisplayNameHostname": "< polycule > : {hostname} ({platform})",
-  "@clientDisplayNameHostname": {
-    "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
-    "placeholders": {
-      "hostname": {
-        "type": "String",
-        "description": "The device name."
-      },
-      "platform": {
-        "type": "String",
-        "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
-      }
-    }
-  },
-  "discoverHomeservers": "Avasta uusi koduservereid",
-  "@discoverHomeservers": {},
-  "connectToHomeserver": "Lisa ühendus oma koduserveriga",
-  "@connectToHomeserver": {},
-  "newToMatrixLong": "Otsi [matrix]-i universumist sobilikke koduservereid. Järgnevalt avaneb joinmatrix.org veebisait.",
-  "@newToMatrixLong": {},
-  "connect": "Ühenda",
-  "@connect": {},
-  "pleaseProvideHomeserver": "Palun sisesta koduserver.",
-  "@pleaseProvideHomeserver": {},
-  "homeserverNotValid": "See pole korrektne koduserver.",
-  "@homeserverNotValid": {}
+    "appName": "< polycule >",
+    "@appName": {},
+    "about": "Rakenduse teave",
+    "@about": {},
+    "author": "Autor: {author}",
+    "@author": {
+        "placeholders": {
+            "author": {
+                "type": "String"
+            }
+        }
+    },
+    "appSlogan": "Oskuskasutajatele mõeldud tõhus ja nohikusõbralik [matrix]-i klient.",
+    "@appSlogan": {},
+    "repoLabel": "Lähtekood (GitLab)",
+    "@repoLabel": {},
+    "releaseNotes": "Muudatuste logi",
+    "@releaseNotes": {},
+    "buyMeACoffee": "Osta mulle tass kohvi",
+    "@buyMeACoffee": {},
+    "homeserverHeadline": "Hei ! Tere tulemast, see on < polycule >",
+    "@homeserverHeadline": {
+        "description": "Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'."
+    },
+    "aMatrixClient": "- veel üks [matrix]-i klient",
+    "@aMatrixClient": {},
+    "username": "kasutajanimi",
+    "@username": {},
+    "email": "e-posti aadress",
+    "@email": {},
+    "password": "salasõna",
+    "@password": {},
+    "pleaseProvideEmail": "Palun sisesta oma e-posti aadress.",
+    "@pleaseProvideEmail": {},
+    "pleaseProvidePassword": "Palun sisesta oma salasõna.",
+    "@pleaseProvidePassword": {},
+    "pleaseProvideUsername": "Palun sisesta oma kasutajanimi.",
+    "@pleaseProvideUsername": {},
+    "deleteAll": "Kustuta kõik",
+    "@deleteAll": {},
+    "previous": "Eelmine",
+    "@previous": {},
+    "next": "Järgmine",
+    "@next": {},
+    "hajUser": "Hei {localpart} !",
+    "@hajUser": {
+        "placeholders": {
+            "localpart": {
+                "type": "String?"
+            }
+        }
+    },
+    "loginErrorMessage": "Sisselogimine ei õnnestunud : {message}",
+    "@loginErrorMessage": {
+        "placeholders": {
+            "message": {
+                "type": "String"
+            }
+        }
+    },
+    "loginError": "Sisselogimine ei õnnestunud ; palun kontrolli, kas kasutajanimi/salasõna on õiged.",
+    "@loginError": {},
+    "platformWeb": "Veeb",
+    "@platformWeb": {},
+    "clientDisplayName": "< polycule > : {platform}",
+    "@clientDisplayName": {
+        "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
+        "placeholders": {
+            "platform": {
+                "type": "String",
+                "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
+            }
+        }
+    },
+    "clientDisplayNameHostname": "< polycule > : {hostname} ({platform})",
+    "@clientDisplayNameHostname": {
+        "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
+        "placeholders": {
+            "hostname": {
+                "type": "String",
+                "description": "The device name."
+            },
+            "platform": {
+                "type": "String",
+                "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
+            }
+        }
+    },
+    "discoverHomeservers": "Avasta uusi koduservereid",
+    "@discoverHomeservers": {},
+    "connectToHomeserver": "Lisa ühendus oma koduserveriga",
+    "@connectToHomeserver": {},
+    "newToMatrixLong": "Otsi [matrix]-i universumist sobilikke koduservereid. Järgnevalt avaneb joinmatrix.org veebisait.",
+    "@newToMatrixLong": {},
+    "connect": "Ühenda",
+    "@connect": {},
+    "pleaseProvideHomeserver": "Palun sisesta koduserver.",
+    "@pleaseProvideHomeserver": {},
+    "homeserverNotValid": "See pole korrektne koduserver.",
+    "@homeserverNotValid": {},
+    "errorConnectingToHomeserver": "Ühenduse loomine {homeserver} koduserveriga ei õnnestunud. Palun kontrolli oma valikut.",
+    "@errorConnectingToHomeserver": {
+        "placeholders": {
+            "homeserver": {
+                "type": "String"
+            }
+        }
+    },
+    "connectingToHomeserver": "Ühendan koduserveriga {homeserver}…",
+    "@connectingToHomeserver": {
+        "placeholders": {
+            "homeserver": {
+                "type": "String"
+            }
+        }
+    },
+    "welcomeToHomeserver": "Tere tulemast koduserverisse {homeserver} !",
+    "@welcomeToHomeserver": {
+        "placeholders": {
+            "homeserver": {
+                "type": "String"
+            }
+        }
+    },
+    "howWouldYouLikeToConnect": "Kuidas sa sooviksid sisse logida?",
+    "@howWouldYouLikeToConnect": {},
+    "loginPassword": "Logi sisse salasõnaga",
+    "@loginPassword": {},
+    "loginLegacySso": "Logi sisse pärandvormingus SSO-ga",
+    "@loginLegacySso": {},
+    "emailMinimals": "Sinu e-posti aadressis peaks sisalduma @-märk, kasutajanime osa ja domeen.",
+    "@emailMinimals": {},
+    "mxidSyntax": "Lubatud tähemärgid on: a-z, 0-9 ning samuti sümbolid ., _, =, -, /, ja +.",
+    "@mxidSyntax": {},
+    "syncInProgress": "Sünkroonimine on töös",
+    "@syncInProgress": {},
+    "initialSync": "Esmane sünkroonimine on töös",
+    "@initialSync": {},
+    "syncOffline": "Sünkroonimine on katkestatud",
+    "@syncOffline": {},
+    "syncFunctional": "Sünkroonimise olek on toimiv",
+    "@syncFunctional": {},
+    "lastSyncReceived": "Viimane sünkroonimine : {timestamp} ({duration} ms)",
+    "@lastSyncReceived": {
+        "placeholders": {
+            "timestamp": {
+                "type": "DateTime",
+                "format": "jms"
+            },
+            "duration": {
+                "type": "int"
+            }
+        }
+    },
+    "editedToday": "Muudetud: {timestamp}",
+    "@editedToday": {
+        "placeholders": {
+            "timestamp": {
+                "type": "DateTime",
+                "format": "jm"
+            }
+        }
+    },
+    "editedAt": "Muudetud: {timestamp}",
+    "@editedAt": {
+        "placeholders": {
+            "timestamp": {
+                "type": "String"
+            }
+        }
+    },
+    "authenticationRequired": "Autentimine on vajalik",
+    "@authenticationRequired": {},
+    "authenticateForAccount": "Palun tuvasta end {mxid} konto salasõnaga.",
+    "@authenticateForAccount": {
+        "placeholders": {
+            "mxid": {
+                "type": "String"
+            }
+        }
+    },
+    "replyUserSentDate": "{username} kirjutas {formattedDate} :",
+    "@replyUserSentDate": {
+        "placeholders": {
+            "username": {
+                "type": "String"
+            },
+            "formattedDate": {
+                "type": "String"
+            }
+        }
+    },
+    "view": "Vaata",
+    "@view": {},
+    "passphraseNotEmpty": "Salafraas ei saa jääda tühjaks",
+    "@passphraseNotEmpty": {},
+    "cancel": "Katkesta",
+    "@cancel": {},
+    "noMatch": "Võtmed ei klapi",
+    "@noMatch": {},
+    "keysMatch": "Võtmed klapivad",
+    "@keysMatch": {},
+    "wipeAccount": "Tühjenda oma kasutajakonto",
+    "@wipeAccount": {},
+    "wipeAccountWarning": "Kui kaotasid oma seadme, siis saad kustutada kasutajakonto andmed ning kõik lähtestada. Kõik vestlused koos seal leiduvate sõnumitega lähevad kaotsi.",
+    "@wipeAccountWarning": {},
+    "connectPreviousDevice": "Ühenda eelmine seade",
+    "@connectPreviousDevice": {},
+    "connectPreviousDeviceLong": "Palun verifitseeri olemasolev seade.",
+    "@connectPreviousDeviceLong": {},
+    "deviceNotAvailable": "Mul pole oma seadet käepärast.",
+    "@deviceNotAvailable": {},
+    "compareSasNumbers": "Võrdle SAS-i turvanumbreid",
+    "@compareSasNumbers": {},
+    "compareSasEmojis": "Võrdle SAS-i turvaemojisid",
+    "@compareSasEmojis": {},
+    "pendingInvite": "Ootel kutse",
+    "@pendingInvite": {},
+    "invite": "Kutsu",
+    "@invite": {},
+    "details": "Üksikasjad",
+    "@details": {},
+    "roomId": "[matrix]-i jututoa tunnus",
+    "@roomId": {},
+    "copyRoomId": "Kopeeri jututoa tunnus",
+    "@copyRoomId": {},
+    "roomCreatePredecessor": "See jututuba on jätk varasemast jututoast",
+    "@roomCreatePredecessor": {},
+    "roomCreatePredecessorAction": "Ava eelmine jututuba",
+    "@roomCreatePredecessorAction": {},
+    "clientSwitcher": "Vaheta kasutajakontot",
+    "@clientSwitcher": {},
+    "block": "Blokeeri",
+    "@block": {},
+    "unblock": "Lõpeta blokeerimine",
+    "@unblock": {},
+    "sessions": "Sessioonid",
+    "@sessions": {},
+    "notificationSettings": "Teavituse reeglid",
+    "@notificationSettings": {},
+    "notificationsGlobal": "Üldine",
+    "@notificationsGlobal": {},
+    "notificationsOverride": "Oluline",
+    "@notificationsOverride": {},
+    "notificationsRoom": "Jututoad",
+    "@notificationsRoom": {},
+    "notificationsSender": "Saatjad",
+    "@notificationsSender": {},
+    "notificationsUnderride": "Vähetähtis",
+    "@notificationsUnderride": {},
+    "noPushRules": "Tõuketeavituse reegleid pole saadaval.",
+    "@noPushRules": {},
+    "defaultPushRule": "See on vaikimisi tõuketeavituse reegel.",
+    "@defaultPushRule": {},
+    "pushRuleEnabled": "Kasuta tõuketeavituse reeglit",
+    "@pushRuleEnabled": {},
+    "eventContentMatches": "Sõnumi sisu vastab sellele mustrile",
+    "@eventContentMatches": {},
+    "actionNotify": "Teavita",
+    "@actionNotify": {},
+    "actionDontNotify": "Ära teavita",
+    "@actionDontNotify": {},
+    "notificationTweakSound": "Heli",
+    "@notificationTweakSound": {},
+    "unknownAction": "Tundmatu tegevus : {action}",
+    "@unknownAction": {
+        "placeholders": {
+            "action": {
+                "format": "String"
+            }
+        }
+    },
+    "mRoomTombstone": "See jututoa iteratsioon on tegevuse lõpetanud",
+    "@mRoomTombstone": {},
+    "mRoomTombstoneAction": "Ava asenduseks loodud jututuba",
+    "@mRoomTombstoneAction": {},
+    "fileDownloadedTo": "Fail on salvestatud kui « {name} ».",
+    "@fileDownloadedTo": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "openFile": "Ava",
+    "@openFile": {},
+    "compressFiles": "Paki failid kokku",
+    "@compressFiles": {},
+    "compressFilesSubtitle": "Toimib vaid toetatud failide puhul",
+    "@compressFilesSubtitle": {},
+    "cancelSending": "Katkesta saatmine",
+    "@cancelSending": {},
+    "retrySending": "Proovi uuesti saata",
+    "@retrySending": {},
+    "accountSettings": "Kasutajakonto seadistused",
+    "@accountSettings": {},
+    "previewRoom": "Eelvaade külalisena",
+    "@previewRoom": {},
+    "joinMatrixCall": "Liitu [matrix]-i kõnega",
+    "@joinMatrixCall": {},
+    "matrixCallTooltip": "Kõne tunnus : {roomId}",
+    "@matrixCallTooltip": {
+        "placeholders": {
+            "roomId": {
+                "type": "String"
+            }
+        }
+    },
+    "color": "Värvide seadistused",
+    "@color": {},
+    "systemColor": "Süsteemi värvid",
+    "@systemColor": {},
+    "defaultColor": "Kasutatava kujunduse vaikimisi värvid",
+    "@defaultColor": {},
+    "customColor": "Sinu valitud värvid",
+    "@customColor": {},
+    "highContrast": "Väga kontrastne",
+    "@highContrast": {},
+    "aboutPolycule": "Rakenduse teave: < polycule >",
+    "@aboutPolycule": {},
+    "compareSasExplanation": "Palun kontrolli, kas SAS-andmed on samad verifitseerimist palunud seadmes kuvatud andmetega.",
+    "@compareSasExplanation": {},
+    "incomingVerificationRequest": "Saabuv verifitseerimispäring",
+    "@incomingVerificationRequest": {},
+    "waitingForVerification": "Verifitseerimise ootel",
+    "@waitingForVerification": {},
+    "typeGroupImages": "Pildid",
+    "@typeGroupImages": {},
+    "typeGroupVideos": "Videod",
+    "@typeGroupVideos": {},
+    "typeGroupAudio": "Helifailid",
+    "@typeGroupAudio": {},
+    "typeGroupFiles": "Kõik failid",
+    "@typeGroupFiles": {},
+    "msgTypeText": "Saada tavaline tekstisõnum.",
+    "@msgTypeText": {},
+    "msgTypeEmote": "Kirjelda oma meeleolu.",
+    "@msgTypeEmote": {},
+    "yesterday": "Eile",
+    "@yesterday": {},
+    "thisMonth": "Sel kuul",
+    "@thisMonth": {},
+    "lastMonth": "Eelmisel kuul",
+    "@lastMonth": {},
+    "download": "Laadi alla",
+    "@download": {},
+    "share": "Jaga",
+    "@share": {},
+    "saveAs": "Salvesta kui",
+    "@saveAs": {},
+    "settings": "Seadistused",
+    "@settings": {},
+    "errorDownloadingAttachment": "Sõnumi manuse allalaadimisel tekkis viga.",
+    "@errorDownloadingAttachment": {},
+    "retry": "Proovi uuesti",
+    "@retry": {},
+    "searchPromptLabel": "Käsk, kasutajanimi, jututoa nimi või Matrixi kasutajatunnus",
+    "@searchPromptLabel": {},
+    "appearanceAccessibilitySettings": "Välimus ja hõlbustus",
+    "@appearanceAccessibilitySettings": {},
+    "polyculeSettings": "Seadista rakendust < polycule >",
+    "@polyculeSettings": {},
+    "systemLanguage": "Seadme keel",
+    "@systemLanguage": {},
+    "language": "Keel",
+    "@language": {},
+    "theme": "Kujundus",
+    "@theme": {},
+    "dark": "Tume terminal",
+    "@dark": {},
+    "light": "Heleroosa",
+    "@light": {},
+    "systemTheme": "Süsteemi kujundus",
+    "@systemTheme": {},
+    "waitingForVerificationFallback": "Palun verifitseeri oma muu seadmega või sisesta taastefraas.",
+    "@waitingForVerificationFallback": {},
+    "incomingVerificationRequestUser": "{user} palub verifitseerimist",
+    "@incomingVerificationRequestUser": {
+        "placeholders": {
+            "user": {
+                "type": "String?",
+                "description": "User who wants to verify"
+            }
+        }
+    },
+    "noFilesSelected": "Ühtegi faili pole valitud.",
+    "@noFilesSelected": {},
+    "incomingVerificationRequestMyself": "On saabunud verifitseerimispäring sinu mõne muu seadme verifitseerimiseks.",
+    "@incomingVerificationRequestMyself": {},
+    "incomingVerificationRequestLong": "On saabunud verifitseerimispäring, kas sa soovid sellega tegeleda?",
+    "@incomingVerificationRequestLong": {},
+    "reject": "Keeldu",
+    "@reject": {},
+    "proceed": "Jätka",
+    "@proceed": {},
+    "enterRecoveryPhrase": "Sisesta taastefraas",
+    "@enterRecoveryPhrase": {},
+    "keyVerificationErrorGeneric": "Sinu seadme verifitseerimisel tekkis viga.",
+    "@keyVerificationErrorGeneric": {},
+    "keyVerificationErrorUser": "Verifitseerimine on katkestatud.",
+    "@keyVerificationErrorUser": {},
+    "close": "Sulge",
+    "@close": {},
+    "verificationSuccessful": "Võtme verifitseerimine õnnestus",
+    "@verificationSuccessful": {},
+    "loadingHomeservers": "Laadin koduservereid. Olek pole hetkel teada. Palun oota.",
+    "@loadingHomeservers": {},
+    "send": "Saada",
+    "@send": {},
+    "pushSettings": "Tõuketeavitused",
+    "@pushSettings": {},
+    "unifiedPushUnavailable": "UnifiedPush pole sinu seadmes saadaval.",
+    "@unifiedPushUnavailable": {},
+    "selectPushDistributor": "Vali oma UnifiedPushi levitaja",
+    "@selectPushDistributor": {},
+    "disablePushNotifications": "Ära kasuta tõuketeavitusi",
+    "@disablePushNotifications": {},
+    "pushInformationPolycule": "Hetkel toetab < polycule > tõuketeavitusi vaid Androidis. Linuxi tugi on plaanitud tööde loendis.",
+    "@pushInformationPolycule": {},
+    "reply": "Vasta",
+    "@reply": {},
+    "edit": "Muuda",
+    "@edit": {},
+    "redact": "Muuda",
+    "@redact": {},
+    "copyMessage": "Kopeeri sõnum",
+    "@copyMessage": {},
+    "confirmRedact": "Muuda sündmust",
+    "@confirmRedact": {},
+    "redactEventLong": "Kas sa soovid jäädavalt muuta sündmust {eventId} ?",
+    "@redactEventLong": {
+        "placeholders": {
+            "eventId": {
+                "type": "String"
+            }
+        }
+    },
+    "logoutCommandSyntax": "Logi sellest kontost välja.",
+    "@logoutCommandSyntax": {},
+    "verifyLogin": "Verifitseeri oma võtmega",
+    "@verifyLogin": {},
+    "finish": "Lõpeta",
+    "@finish": {},
+    "or": "või",
+    "@or": {},
+    "verifyWithOtherDevice": "Verifitseeri teise seadmega",
+    "@verifyWithOtherDevice": {},
+    "verifyMethodsNotAvailable": "Sul pole ühtegi kasutatavat verifitseerimismeetodit?",
+    "@verifyMethodsNotAvailable": {},
+    "verifyWithPassphrase": "Verifitseeri salafraasiga",
+    "@verifyWithPassphrase": {},
+    "passphraseNoWhitespace": "Salafraasis ei tohi olla tühikuid!",
+    "@passphraseNoWhitespace": {},
+    "errorTryAgain": "Tekkis viga. Palun proovi uuesti.",
+    "@errorTryAgain": {},
+    "submit": "saada",
+    "@submit": {},
+    "togglePassword": "Vaheta salasõna nähtavust",
+    "@togglePassword": {},
+    "loggingInToClient": "Logi sisse kasutajakontoga",
+    "@loggingInToClient": {},
+    "inviteLongRoom": "Sa oled kutsutud jututuppa : « {roomname} ».",
+    "@inviteLongRoom": {
+        "description": "Please keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
+        "placeholders": {
+            "roomname": {
+                "type": "String"
+            }
+        }
+    },
+    "learnMore": "Loe lisaks",
+    "@learnMore": {},
+    "gitLabPrivacy": "https://gitlab.com/help/operations/error_tracking.md",
+    "@gitLabPrivacy": {
+        "translatable": false
+    },
+    "fontSize": "Kirjatüübi suurus",
+    "@fontSize": {},
+    "reset": "Lähtesta",
+    "@reset": {},
+    "fontScaleLabel": "{scale}",
+    "@fontScaleLabel": {
+        "placeholders": {
+            "scale": {
+                "type": "double",
+                "format": "decimalPercentPattern",
+                "optionalParameters": {
+                    "decimalDigits": 1
+                }
+            }
+        }
+    },
+    "openDirectChat": "Ava otsevestlus",
+    "@openDirectChat": {},
+    "startDirectChat": "Alusta otsevestlust",
+    "@startDirectChat": {},
+    "ignoreUser": "Eira",
+    "@ignoreUser": {},
+    "unignoreUser": "Lõpeta eiramine",
+    "@unignoreUser": {},
+    "ignoreToggleWaiting": "Töötlen eiramise olekut. Selleks võib kuluda natuke aega.",
+    "@ignoreToggleWaiting": {},
+    "roomStateWtf": "Selle jututoa turvalisuses valitseb kaos. Pigem hoia eemale.",
+    "@roomStateWtf": {},
+    "inviteLongDM": "« {displayname} » on kutsununud sind vestlema.",
+    "@inviteLongDM": {},
+    "roomParticipants": "{participants, plural, =0{Osalejaid pole} =1{1 osaleja} other{{participants} osalejat}}",
+    "@roomParticipants": {
+        "placeholders": {
+            "participants": {
+                "type": "int"
+            }
+        }
+    },
+    "joinRoom": "Liitu jututoaga",
+    "@joinRoom": {},
+    "knockRoom": "Liitumiseks koputa jututoa uksele",
+    "@knockRoom": {},
+    "youCannotJoinThisRoom": "Sa ei saa selle jututoaga liituda.",
+    "@youCannotJoinThisRoom": {},
+    "addAccount": "Lisa veel üks kasutajakonto",
+    "@addAccount": {},
+    "msgTypeImage": "Saada pildifail.",
+    "@msgTypeImage": {},
+    "msgTypeVideo": "Saada videofail.",
+    "@msgTypeVideo": {},
+    "msgTypeAudio": "Saada helifail.",
+    "@msgTypeAudio": {},
+    "msgTypeFile": "Saada fail.",
+    "@msgTypeFile": {},
+    "msgTypeLocation": "Jaga oma asukohta.",
+    "@msgTypeLocation": {},
+    "msgTypeSticker": "Saada üks kleeps.",
+    "@msgTypeSticker": {},
+    "msgTypeBadEncrypted": "Tüüta teist osapoolt sõnumiga, mida ta ei saa dekrüptida.",
+    "@msgTypeBadEncrypted": {},
+    "msgTypeNone": "Ära saadagi sõnumit.",
+    "@msgTypeNone": {},
+    "sendingFiles": "{files, plural, =0{Ühtegi faili pole saatmisel.} =1{Üks fail} other{{files} faili}} on saatmisel ...}",
+    "@sendingFiles": {
+        "placeholders": {
+            "files": {
+                "type": "int"
+            }
+        }
+    },
+    "jumpToMessage": "Mine sõnumi juurde: {message}",
+    "@jumpToMessage": {
+        "placeholders": {
+            "message": {
+                "type": "String"
+            }
+        }
+    },
+    "selectAccount": "Jätkamiseks vali kasutajakonto",
+    "@selectAccount": {},
+    "sharingFiles": "Saadan {files, plural, =1{üht faili} other{{files} faili}}.",
+    "@sharingFiles": {
+        "placeholders": {
+            "files": {
+                "type": "int"
+            }
+        }
+    },
+    "sharingText": "Jaga teksti jututoas",
+    "@sharingText": {},
+    "sendFiles": "Saada faile",
+    "@sendFiles": {},
+    "msgTypeNotice": "Saada infosõnum, millele robotid ei saa vastata.",
+    "@msgTypeNotice": {},
+    "fontAccessibility": "Kirjatüüpide hõlbustus",
+    "@fontAccessibility": {},
+    "inclusiveSans": "Parema loetavusega kirjatüüp",
+    "@inclusiveSans": {},
+    "openDyslexic": "Düsleksia puhul sobilik kirjatüüp",
+    "@openDyslexic": {},
+    "serif": "Seriifidega kirjatüüp",
+    "@serif": {},
+    "defaultFont": "Vaikimisi kirjatüüp",
+    "@defaultFont": {},
+    "contentNotice": "Sisuhoiatus : « {notice} »",
+    "@contentNotice": {
+        "description": "A content notice warning about spoilers or sensitive contents of a message.\nPlease keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
+        "placeholders": {
+            "notice": {
+                "description": "The warning/notice message.",
+                "type": "String"
+            }
+        }
+    },
+    "contentNoticeFallback": "Sisuhoiatus",
+    "@contentNoticeFallback": {},
+    "webUriHandlerTitle": "[matrix]-i klient < polycule >",
+    "@webUriHandlerTitle": {},
+    "unifiedPushAbout": "Et tõuketeavitused toimiks, palun paigalda teavituste levitaja.\nLisateavet leiad siit : https://unifiedpush.org/users/intro/",
+    "@unifiedPushAbout": {},
+    "unifiedPushLink": "https://unifiedpush.org/users/intro/",
+    "@unifiedPushLink": {},
+    "setupUnifiedPush": "Seadista UnifiedPush",
+    "@setupUnifiedPush": {},
+    "googleFirebase": "Google Firebase Cloud Messaging",
+    "@googleFirebase": {},
+    "newNotification": "Uus sõnum rakenduses < polycyule >",
+    "@newNotification": {},
+    "pushChannelName": "Saabuvad sõnumid",
+    "@pushChannelName": {},
+    "directChats": "Otsevestlused",
+    "@directChats": {},
+    "groups": "Jututoad",
+    "@groups": {},
+    "unifiedPush": "UnifiedPush",
+    "@unifiedPush": {},
+    "joinCommandSyntax": "Liitu jututoaga. [mxid]",
+    "@joinCommandSyntax": {},
+    "leaveCommandSyntax": "Lahku sellest jututoast.",
+    "@leaveCommandSyntax": {},
+    "opCommandSyntax": "Seadista kasutaja õigusi. [mxid] [50?]",
+    "@opCommandSyntax": {},
+    "kickCommandSyntax": "Müksa kasutaja välja. [mxid]",
+    "@kickCommandSyntax": {},
+    "banCommandSyntax": "Sea kasutajale suhtluskeeld. [mxid]",
+    "@banCommandSyntax": {},
+    "unbanCommandSyntax": "Lõpeta kasutaja suhtluskeel. [mxid]",
+    "@unbanCommandSyntax": {},
+    "inviteCommandSyntax": "Saada kutse. [mxid]",
+    "@inviteCommandSyntax": {},
+    "myroomnickCommandSyntax": "Määra siin jututoas endale eraldi alias. [mxid]",
+    "@myroomnickCommandSyntax": {},
+    "myroomavatarCommandSyntax": "Määra siin jututoas endale eraldi tunnuspilt. [mxid]",
+    "@myroomavatarCommandSyntax": {},
+    "react": "Reageeri",
+    "@react": {},
+    "logs": "Rakenduse logid",
+    "@logs": {},
+    "reload": "Laadi uuesti",
+    "@reload": {},
+    "logSingleError": "Jaga anonüümselt",
+    "@logSingleError": {},
+    "runtimeError": "Sinu < polycule > oli vigane",
+    "@runtimeError": {},
+    "enableSentry": "Jaga alati",
+    "@enableSentry": {},
+    "errorReporting": "Vigadest teatamine",
+    "@errorReporting": {},
+    "errorReportingLong": "Kui tahad, et meil oleks lihtsam < polycule > vigu leida ja parandada, siis võid lülitada sisse vigadest teavitamise.",
+    "@errorReportingLong": {},
+    "commandHelp": "Näita abiteavet",
+    "@commandHelp": {},
+    "availableCommands": "Kasutatavad käsud",
+    "@availableCommands": {},
+    "noStickerPacks": "Ei sinul ega sellel jututoal pole ühtegi kasutatavat kleepsupakki.",
+    "@noStickerPacks": {},
+    "oidcTosPath": "tos.html",
+    "@oidcTosPath": {
+        "translatable": false
+    },
+    "oidcLogoPath": "assets/assets/logo/logo-circle.png",
+    "@oidcLogoPath": {
+        "translatable": false
+    },
+    "oidcContact": "info@braid.business",
+    "@oidcContact": {
+        "translatable": false
+    },
+    "oidcAppName": "< polycule >",
+    "@oidcAppName": {
+        "translatable": false
+    },
+    "oidcPolicyPath": "policy.html",
+    "@oidcPolicyPath": {
+        "translatable": false
+    },
+    "loginOidc": "Logi sisse OpenID Connect liidestuse abil",
+    "@loginOidc": {},
+    "oidcConfirm": "Kinnita",
+    "@oidcConfirm": {},
+    "manageSessions": "Halda sessioone",
+    "@manageSessions": {},
+    "deactivateAccount": "Eemalda see konto kasutuselt",
+    "@deactivateAccount": {},
+    "networkSettings": "Võrgu seadistused",
+    "@networkSettings": {},
+    "useSystemProxy": "Kasuta seadme proksiserveri seadistusi",
+    "@useSystemProxy": {},
+    "regionAccountSwitcher": "Rakenduse osa: kasutajakontode vahetaja.",
+    "@regionAccountSwitcher": {},
+    "regionChatContents": "Rakenduse osa: vestluse sisu.",
+    "@regionChatContents": {},
+    "checkingTotalSendSize": "Kontrollin saadetavat andmemahtu ...",
+    "@checkingTotalSendSize": {},
+    "totalSendSize": "{size, plural, =0{Saadetav andmemaht kokku : 0 baiti} =1{Saadetav andmemaht kokku : 1 baiti} other{Saadetav andmemaht kokku : {size} baiti}}",
+    "@totalSendSize": {
+        "placeholders": {
+            "size": {
+                "type": "int"
+            }
+        }
+    },
+    "fileSize": "{size, plural, =0{Faili suurus : 0 baiti} =1{Faili suurus : 1 bait} other{Faili suurus : {size} baiti}}",
+    "@fileSize": {
+        "placeholders": {
+            "size": {
+                "type": "int"
+            }
+        }
+    },
+    "mimeType": "Failitüüp : {mimeType}",
+    "@mimeType": {
+        "placeholders": {
+            "mimeType": {
+                "type": "String?"
+            }
+        }
+    },
+    "matrixRoomShareSubject": "Liitu « {roomname} » jututoaga [matrix]-i võrgus",
+    "@matrixRoomShareSubject": {
+        "placeholders": {
+            "roomname": {
+                "type": "String"
+            }
+        }
+    },
+    "matrixUserShareSubject": "Suhtle kasutajaga « {mxid} » [matrix]-i võrgus",
+    "@matrixUserShareSubject": {
+        "placeholders": {
+            "mxid": {
+                "type": "String"
+            }
+        }
+    },
+    "roomnameCommandSyntax": "Muuda jututoa nimeks : [name].",
+    "@roomnameCommandSyntax": {},
+    "roomdescriptionCommandSyntax": "Muuda jututoa kirjelduseks : [name].",
+    "@roomdescriptionCommandSyntax": {},
+    "sendCommandSyntax": "Saada tekstisõnum. [m.text]",
+    "@sendCommandSyntax": {},
+    "meCommandSyntax": "Kirjelda oma meeleolu. [m.emote]",
+    "@meCommandSyntax": {},
+    "dmCommandSyntax": "Alusta otsesuhtlust. [mxid] [--no-encryption?]",
+    "@dmCommandSyntax": {},
+    "createCommandSyntax": "Loo jututuba. [name?] [--no-encryption?]",
+    "@createCommandSyntax": {},
+    "plainCommandSyntax": "Saada tekstisõnum ilma märgenduskeelt töötlemata. [m.text]",
+    "@plainCommandSyntax": {},
+    "htmlCommandSyntax": "Saada tekstisõnum puhtas HTML-is. [m.text]",
+    "@htmlCommandSyntax": {},
+    "reactCommandSyntax": "Reageeri vastuseks. [reaction]",
+    "@reactCommandSyntax": {},
+    "discardsessionCommandSyntax": "Loobu väljuvast jututoa sessioonist.",
+    "@discardsessionCommandSyntax": {},
+    "clearcacheCommandSyntax": "Kustta kasutajakonto jaoks kohalikus seadmes puhverdatud andmed.",
+    "@clearcacheCommandSyntax": {},
+    "hugCommandSyntax": "Saada virtuaalne kallistus.",
+    "@hugCommandSyntax": {},
+    "googlyCommandSyntax": "Saada virtuaalsed otsivad silmad.",
+    "@googlyCommandSyntax": {},
+    "cuddleCommandSyntax": "Saada virtuaalsed kaisutused.",
+    "@cuddleCommandSyntax": {},
+    "sendrawCommandSyntax": "Saada töötlemata sisu. [content]",
+    "@sendrawCommandSyntax": {},
+    "ignoreCommandSyntax": "Eira kasutajat. [mxid]",
+    "@ignoreCommandSyntax": {},
+    "unignoreCommandSyntax": "Lõpeta kasutaja eiramine. [mxid]",
+    "@unignoreCommandSyntax": {},
+    "upgraderoomCommandSyntax": "Uuenda jututoa versiooni ja lõpeta vana versiooni tegevus. [version]",
+    "@upgraderoomCommandSyntax": {},
+    "noErrorReported": "Ühtegi viga pole teada.",
+    "@noErrorReported": {},
+    "commandInvalid": "See pole korrektne < polycule > käsk.",
+    "@commandInvalid": {},
+    "roomStatePublic": "See jututuba on avalikult nähtav kõigile",
+    "@roomStatePublic": {},
+    "roomStatePublicKnock": "See jututuba on avalikult nähtav kõigile, aga sissepääsemiseks peab esmalt uksele koputama.",
+    "@roomStatePublicKnock": {},
+    "roomStateOpen": "See jututuba on avatud kõigile, kes teavad konkreetset linki.",
+    "@roomStateOpen": {},
+    "roomStateKnock": "Enne jututoaga liitumist peavad kasutajad uksele koputama.",
+    "@roomStateKnock": {},
+    "roomStateSpace": "See jututuba on avatud vaid kogukonna liikmetele.",
+    "@roomStateSpace": {},
+    "roomStateUnpublic": "See jututuba on privaatne, kuid krüptimata.",
+    "@roomStateUnpublic": {},
+    "roomStateEncrypted": "See jututuba on krüptitud, kuid mõned liikmed on verifitseerimata.",
+    "@roomStateEncrypted": {},
+    "roomStateVerifiedEncrypted": "See jututuba on krüptitud ja kõik sessioonid on risttunnustatud ja allkirjastatud.",
+    "@roomStateVerifiedEncrypted": {},
+    "verifyCertificates": "Kontrolli TLS-serifikaate",
+    "@verifyCertificates": {},
+    "favoriteAdd": "Lisa lemmikuks",
+    "@favoriteAdd": {},
+    "favoriteRemove": "Eemalda lemmikute hulgast",
+    "@favoriteRemove": {},
+    "markRead": "Märgi loetuks",
+    "@markRead": {},
+    "markUnread": "Märgi mitteloetuks",
+    "@markUnread": {},
+    "leaveRoom": "Lahku jututoast",
+    "@leaveRoom": {},
+    "leaveRoomLong": "Palun kinnita, et soovid jäädavalt lahkuda jututoast « {name} ».",
+    "@leaveRoomLong": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "userDetails": "Vaata kasutaja profiili",
+    "@userDetails": {},
+    "markMute": "Summuta jututuba",
+    "@markMute": {},
+    "markUnmute": "Lõpeta jututoa summutamine",
+    "@markUnmute": {},
+    "copyRoomAddress": "Kopeeri jututoa avalik aadress",
+    "@copyRoomAddress": {},
+    "search": "Otsi",
+    "@search": {},
+    "startVerification": "Alusta verifitseerimist",
+    "@startVerification": {},
+    "keyVerificationRequestSent": "Võtmete verifitseerimispäring on saadetud.",
+    "@keyVerificationRequestSent": {},
+    "noHomeserverConnection": "Puudub ühendus koduserveriga.",
+    "@noHomeserverConnection": {},
+    "emojiSettings": "Emojide seadistused",
+    "@emojiSettings": {},
+    "sessionId": "Sessiooni tunnus",
+    "@sessionId": {},
+    "sessionIpAddress": "Viimane IP-aadress",
+    "@sessionIpAddress": {},
+    "sessionLastSeen": "Viimati nähtud",
+    "@sessionLastSeen": {},
+    "delete": "Kustuta",
+    "@delete": {},
+    "verify": "Verifitseeri",
+    "@verify": {},
+    "verifyAgain": "Verifitseeri uuesti",
+    "@verifyAgain": {},
+    "rename": "Muuda nime",
+    "@rename": {},
+    "renameDevice": "Muuda seadme nime",
+    "@renameDevice": {},
+    "deviceName": "Seadme kuvatav nimi",
+    "@deviceName": {},
+    "renameDeviceHint": "Seadme nime eemaldamiseks jäta tühjaks",
+    "@renameDeviceHint": {},
+    "logoutWarningLong": "Kui sa logid välja ja sul pole enam ühtegi toimivat sessiooni või oma kasutajakonto taastefraasi, siis sa kaotad ligipääsu kõikidele oma [matrix]-i sõnumitele.",
+    "@logoutWarningLong": {},
+    "minTlsVersion": "Koduserveri nõutav minimaalne TLS-i versioon",
+    "@minTlsVersion": {},
+    "tls12": "TLS 1.2",
+    "@tls12": {},
+    "tls13": "TLS 1.3",
+    "@tls13": {},
+    "defaultEmojiTone": "Emojide vaikimisi toon",
+    "@defaultEmojiTone": {},
+    "autoplayAnimations": "Esita animeeritud pilte ja kleepse automaatselt",
+    "@autoplayAnimations": {},
+    "yellowSkin": "Kollane kest",
+    "@yellowSkin": {},
+    "paleSkin": "Kahvatu kest",
+    "@paleSkin": {},
+    "demiPaleSkin": "Poolkahvatu kest",
+    "@demiPaleSkin": {},
+    "mediumSkin": "Keskmine kest",
+    "@mediumSkin": {},
+    "brownSkin": "Pruun kest",
+    "@brownSkin": {},
+    "blackSkin": "Must kest",
+    "@blackSkin": {},
+    "verifyTlsCertificatesAndroid": "Vanemate Androidi versioonide puhul on Let's Encrypt ISRG ROOT X1 kordusväljaantav sertifikaat juba kaasatud.",
+    "@verifyTlsCertificatesAndroid": {},
+    "sendTlsSNI": "Saada serverinime osund (SNI) tavatekstina",
+    "@sendTlsSNI": {},
+    "roomDetails": "Jututoa üksikasjad",
+    "@roomDetails": {},
+    "errorSendingSticker": "Viga kohandatud kleepsu saatmisel.",
+    "@errorSendingSticker": {},
+    "viewSourceCode": "Vaata lähtekoodi",
+    "@viewSourceCode": {},
+    "eventSourceCode": "Sündmuse lähtekood",
+    "@eventSourceCode": {},
+    "eventSourceContent": "Sündmuse sisu",
+    "@eventSourceContent": {},
+    "eventSourceJson": "Terviklik JSON",
+    "@eventSourceJson": {},
+    "eventSourceOriginal": "Algne sündmus",
+    "@eventSourceOriginal": {},
+    "eventSourceBodyRaw": "Sündmuse põhisisu (töötlemata)",
+    "@eventSourceBodyRaw": {},
+    "eventSourceBodyHtml": "Sündmuse põhisisu (HTML)",
+    "@eventSourceBodyHtml": {},
+    "eventSourceUnsigned": "Allkirjastamata sisu",
+    "@eventSourceUnsigned": {},
+    "eventRendered": "Esitusvalmendatud sündmus",
+    "@eventRendered": {},
+    "eventQuoted": "Tsiteeritud sündmus",
+    "@eventQuoted": {},
+    "eventPreview": "Sündmuse eelvaade",
+    "@eventPreview": {},
+    "blurHash": "Hägustatud sisu",
+    "@blurHash": {},
+    "yourCurrentDevice": "Sinu praegune seade",
+    "@yourCurrentDevice": {},
+    "moveClientTooltip": "Tõsta siia",
+    "@moveClientTooltip": {},
+    "displayName": "Kuvatav nimi",
+    "@displayName": {},
+    "yourDisplayName": "Sinu kuvatav nimi",
+    "@yourDisplayName": {},
+    "displayNameHint": "Seda näidatakse sinu avalikus profiilis.",
+    "@displayNameHint": {},
+    "changeDisplayName": "Muuda kuvatavat nime",
+    "@changeDisplayName": {},
+    "scanQrCode": "Skanneeri QR-koodi",
+    "@scanQrCode": {},
+    "compareSas": "Võrdle SAS-saladust",
+    "@compareSas": {},
+    "confirmQrScanned": "QR-koodi skaneerimine õnnestus.",
+    "@confirmQrScanned": {},
+    "confirm": "Kinnita",
+    "@confirm": {},
+    "scanQrWithOtherDevice": "Skaneeri seda QR-koodi oma teise seadmega.",
+    "@scanQrWithOtherDevice": {},
+    "webMultipleTabNotice": "< polycule > on teisel vahekaardil juba avatud.\nPeale selle sulgemist laadi leht uuesti.",
+    "@webMultipleTabNotice": {},
+    "pushRulesDevice": "See seade",
+    "@pushRulesDevice": {},
+    "webOAuthReceivedNotice": "OAuth2.0-kohane ümbersuunamine on olemas. Sa võid selle vahekaardi sulgeda.",
+    "@webOAuthReceivedNotice": {},
+    "markasgroupCommandSyntax": "Eemalda see jututuba otsevestluste loendist.",
+    "@markasgroupCommandSyntax": {},
+    "commandError": "Vastuse kood: 1",
+    "@commandError": {},
+    "errorReportingPrivacy": "Järgnevaga luuakse ühendus GitLab.com teenusega, kus hallatakse < polycyle > lähtekoodi ning jagatakse anonüümsel viisil tekkinud viga ja selle põhjuseid. Sinu isiklikud andmed ei kuulu arendajale jagamisele.",
+    "@errorReportingPrivacy": {},
+    "linuxOidcWorkaround": "Kui peale sisselogimist sinu veebibrauser ei palu < polycule > rakendust uuesti avada, palun kontrolli, et oled < polycule > rakenduses OAuth2.0-ümbersuunamised lubanud. Selleks käivita terminalis järgnev käsk :",
+    "@linuxOidcWorkaround": {},
+    "linuxOidcWorkaroundSnippet": "gio mime x-scheme-handler/im.polycule business.braid.polycule.desktop",
+    "@linuxOidcWorkaroundSnippet": {
+        "translatable": false
+    },
+    "setupSSSSLoading": "Krüptimise seadistamine on töös. Selleks võib kuluda natuke aega.",
+    "@setupSSSSLoading": {},
+    "openInIDP": "Ava isikutuvastuse teenusepakkuja juures",
+    "@openInIDP": {},
+    "deviceNoEncryption": "Ei toeta krüptimist",
+    "@deviceNoEncryption": {},
+    "deviceVerified": "Võtmed on verifitseeritud",
+    "@deviceVerified": {},
+    "deviceUnverified": "Võtmed on verifitseerimata",
+    "@deviceUnverified": {},
+    "deviceBlocked": "Seade on blokeeritud",
+    "@deviceBlocked": {},
+    "logout": "Logi välja",
+    "@logout": {},
+    "logoutWarning": "Kinnita väljalogimine",
+    "@logoutWarning": {},
+    "keyBackupAvailable": "SSSS varundus",
+    "@keyBackupAvailable": {},
+    "keyBackupExplanation": "Kasuta kõikide oma seadmete sõnumite võtmete turvaliseks varundamiseks SSSS-lahendust (Secure Secret Storage and Sharing).",
+    "@keyBackupExplanation": {},
+    "ssssRecoveryKey": "SSSS taastevõti",
+    "@ssssRecoveryKey": {},
+    "resetAccountWarning": "Sa kaotad kõik oma varasemad sõnumid. Seda tegevust ei saa tagasi võtta.",
+    "@resetAccountWarning": {},
+    "markasdmCommandSyntax": "Märgi see jututuba otsevestluseks praeguse liikmega. [mxid]",
+    "@markasdmCommandSyntax": {},
+    "confirmSSSSKeyStored": "Võti on talletatud",
+    "@confirmSSSSKeyStored": {},
+    "tweakDefault": "Vaikimisi teavitus",
+    "@tweakDefault": {},
+    "tweakDisabled": "Pole kasutusel",
+    "@tweakDisabled": {},
+    "tweakEnabled": "Kasutusel",
+    "@tweakEnabled": {},
+    "pushConditionSenderNotificationPermission": "Saatja võib teavitada : {key}",
+    "@pushConditionSenderNotificationPermission": {
+        "placeholders": {
+            "key": {
+                "format": "String"
+            }
+        }
+    },
+    "unknownNotificationTweak": "Tundmatu kohendus : {tweak}",
+    "@unknownNotificationTweak": {
+        "placeholders": {
+            "tweak": {
+                "format": "String"
+            }
+        }
+    },
+    "notificationTweakHighlight": "Tõsta esile",
+    "@notificationTweakHighlight": {},
+    "pushConditionContainsDisplayName": "Sisaldab minu kuvatavat nime",
+    "@pushConditionContainsDisplayName": {},
+    "pushRulesGlobal": "Kasutajakonto üleselt",
+    "@pushRulesGlobal": {},
+    "ssssRecoveryKeyExplanation": "Salvesta SSSS (Secure Secret Storage and Sharing) taastevõti turvaliselt kas digitaalses salasõnalaekas või vanakooli seifis. Ilma taastevõtmeta kaotad jäädavalt ligipääsu oma varasematele sõnumitele.",
+    "@ssssRecoveryKeyExplanation": {}
 }

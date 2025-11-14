@@ -1,0 +1,9 @@
+<b> Funktsionaalsused </b>
+<ul>
+    <li> optimeeritud kasutamiseks kalhvistikult </li>
+    <li> arendus lähtub hõlbustuse loogikast </li>
+    <li> puudub matrix.org ! </li>
+    <li> kiire ja tõhus </li>
+    <li> kujundus mõjutatud terminali stiilist </li>
+    <li> toimib paljudel platvormidel </li>
+</ul>

@@ -1,0 +1,90 @@
+- 通过 Weblate 添加翻译（阿拉伯语）（Ahmed Najmawi）
+- 通过 Weblate 添加翻译（白俄罗斯语）（Savely Savenok）
+- 通过 Weblate 添加翻译（简体中文）（Poesty Li）
+- 通过 Weblate 添加翻译（葡萄牙语（巴西））（Cirnos）
+- 通过 Weblate 添加翻译（俄语）（welcomereality）
+- 维护：升级依赖（The one with the braid）
+- 维护：升级 Flutter（The one with the braid）
+- 维护：升级 matrix（The one with the braid）
+- 维护：升级 SDK（The one with the braid）
+- 维护：升级 unifiedpush（The one with the braid）
+- 依赖维护：升级/android 目录下的 com.android.application（- CI Pipeline）
+- 依赖维护：升级/android 目录下的 com.android.application（The one with the braid）
+- 依赖维护：升级/android 目录下的 com.google.crypto.tink:tink-android（The one with the braid）
+- 依赖维护：升级 dynamic_color 从 1.7.0 到 1.8.1（- CI Pipeline）
+- 依赖维护：升级 flutter_launcher_icons 从 0.14.3 到 0.14.4（The one with the braid）
+- 依赖维护：升级 flutter_lints 从 5.0.0 到 6.0.0（The one with the braid）
+- 依赖维护：升级 flutter_local_notifications 从 19.2.0 到 19.2.1（The one with the braid）
+- 依赖维护：升级 flutter_local_notifications 从 19.2.1 到 19.3.0（- CI Pipeline）
+- 依赖维护：升级 flutter_local_notifications 从 19.3.1 到 19.4.0（- CI Pipeline）
+- 依赖维护：升级 flutter_zxing 从 2.0.0 到 2.1.0（The one with the braid）
+- 依赖维护：升级 flutter_zxing 从 2.1.0 到 2.2.1（- CI Pipeline）
+- 依赖维护：升级 go_router 从 15.1.2 到 15.1.3（The one with the braid）
+- 依赖维护：升级 go_router 从 15.1.3 到 15.2.0（The one with the braid）
+- 依赖维护：升级 go_router 从 15.2.0 到 15.2.3（The one with the braid）
+- 依赖维护：升级 go_router 从 15.2.3 到 15.2.4（- CI Pipeline）
+- 依赖维护：升级 go_router 从 16.0.0 到 16.1.0（- CI Pipeline）
+- 依赖维护：升级 just_audio 从 0.10.2 到 0.10.3（The one with the braid）
+- 依赖维护：升级 just_audio 从 0.10.3 到 0.10.4（The one with the braid）
+- 依赖维护：升级 nginx 从 1.27.4-alpine-slim 到 1.27.5-alpine-slim（The one with the braid）
+- 依赖维护：升级 nginx 从 1.27.5-alpine-slim 到 1.29.0-alpine-slim（- CI Pipeline）
+- 依赖维护：升级/android 目录下的 org.jetbrains.kotlin.android（- CI Pipeline）
+- 依赖维护：升级/android 目录下的 org.jetbrains.kotlin.android（The one with the braid）
+- 依赖维护：升级 polycule_client/flutter-dockerimages（- CI Pipeline）
+- 依赖维护：升级 polycule_client/flutter-dockerimages 从 3.32.0-web 到 3.32.4-web（The one with the braid）
+- 依赖维护：升级 sentry 从 8.14.2 到 9.0.0（The one with the braid）
+- 依赖维护：升级 sentry 从 9.0.0 到 9.1.0（- CI Pipeline）
+- 依赖维护：升级 sentry 从 9.4.1 到 9.5.0（- CI Pipeline）
+- 依赖维护：升级 sentry 从 9.5.0 到 9.6.0（- CI Pipeline）
+- 依赖维护：升级 share_plus 从 11.0.0 到 11.1.0（- CI Pipeline）
+- 依赖维护：升级 sqflite_common_ffi 从 2.3.5 到 2.3.6（The one with the braid）
+- 依赖维护：升级 sqlcipher_flutter_libs 从 0.6.7 到 0.6.8（- CI Pipeline）
+- 依赖维护：Flutter pub 主版本升级（手动）（polycule CI Pipeline）
+- 依赖维护：迁移依赖升级（The one with the braid）
+- 依赖维护：更新 flutter_version（手动）（polycule CI Pipeline）
+- 依赖维护：更新 podfile（手动）（polycule CI Pipeline）
+- 维护：迁移至 Flutter 3.32.0（The one with the braid）
+- 维护：迁移至 vodozemac（The one with the braid）
+- 维护：将原生 web 初始化移至 Dart（The one with the braid）
+- 维护：重构路由（The one with the braid）
+- 维护：重构主题构建器（The one with the braid）
+- 维护：支持通知规则（The one with the braid）
+- 功能：添加阿拉伯语翻译（The one with the braid）
+- 功能：为 iOS 添加出口合规密钥（The one with the braid）
+- 功能：添加用户会话管理设置（The one with the braid）
+- 功能：升级 SDK（The one with the braid）
+- 功能：为 dependabot 启用自动合并（The one with the braid）
+- 功能：在 Flutter 更新时进行主要 pub 升级（The one with the braid）
+- 功能：将 web 标记为稳定版（The one with the braid）
+- 功能：迁移至 AdaptiveLayout（The one with the braid）
+- 功能：支持墓碑和房间升级（The one with the braid）
+- 修复：dependabot CI 令牌（The one with the braid）
+- 修复：在 dependabot 中禁用合并列车（The one with the braid）
+- 修复：区分 LoginState 流（The one with the braid）
+- 修复：不手动覆盖焦点行为（The one with the braid）
+- 修复：不过度动画响应式布局（The one with the braid）
+- 修复：不覆盖 UnifiedPushService（The one with the braid）
+- 修复：降级 kotlin 版本（The one with the braid）
+- 修复：OIDC 区域设置名称中的重复#号（The one with the braid）
+- 修复：gitignore 生成的文件（The one with the braid）
+- 修复：移动端初始缩放比例（The one with the braid）
+- 修复：将应用标记为单实例（The one with the braid）
+- 修复：迁移至非空数据库（The one with the braid）
+- 修复：从 dependabot 配置中移除自动批准（The one with the braid）
+- 修复：移除不必要的 SafeArea 使用（The one with the braid）
+- 修复：重命名中文 ARB 文件（The one with the braid）
+- 修复：跳过首次登录状态（The one with the braid）
+- 修复：翻译语法（The one with the braid）
+- 修复：更新依赖（The one with the braid）
+- 通过 Weblate 翻译（阿拉伯语）（Ahmed Najmawi）
+- 通过 Weblate 翻译（白俄罗斯语）（Savely Savenok）
+- 通过 Weblate 翻译（简体中文）（Poesty Li）
+- 通过 Weblate 翻译（爱沙尼亚语）（Priit Jõerüüt）
+- 通过 Weblate 翻译（德语）（mondstern）
+- 通过 Weblate 翻译（葡萄牙语（巴西））（Cirnos）
+- 通过 Weblate 翻译（葡萄牙语（巴西））（The one with the braid）
+- 通过 Weblate 翻译（俄语）（Savely Savenok）
+- 通过 Weblate 翻译（俄语）（The one with the braid）
+- 通过 Weblate 翻译（俄语）（welcomereality）
+- 通过 Weblate 翻译（泰米尔语）（தமிழ்நேரம்）
+- 更新翻译文件（Hosted Weblate）

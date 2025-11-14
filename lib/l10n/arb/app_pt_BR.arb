@@ -1,436 +1,446 @@
 {
-  "connectPreviousDeviceLong": "Por favor verifique dispositivo existente.",
-  "@connectPreviousDeviceLong": {},
-  "repoLabel": "Código fonte (GitLab)",
-  "@repoLabel": {},
-  "releaseNotes": "Notas de lançamento",
-  "@releaseNotes": {},
-  "appName": "< polícula >",
-  "@appName": {},
-  "appSlogan": "Um cliente [matrix] geek e eficiente para usuários avançados.",
-  "@appSlogan": {},
-  "homeserverHeadline": "Hoi! Bem-vindo à < polícula >",
-  "@homeserverHeadline": {
-    "description": "Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'."
-  },
-  "homeserverNotValid": "Isso não é uma entrada válida de servidor.",
-  "@homeserverNotValid": {},
-  "connectingToHomeserver": "Conectando-se a {homeserver}…",
-  "@connectingToHomeserver": {
-    "placeholders": {
-      "homeserver": {
-        "type": "String"
-      }
-    }
-  },
-  "welcomeToHomeserver": "Bem-vindo a {homeserver}!",
-  "@welcomeToHomeserver": {
-    "placeholders": {
-      "homeserver": {
-        "type": "String"
-      }
-    }
-  },
-  "loginPassword": "Entrar usando senha",
-  "@loginPassword": {},
-  "username": "nome de usuário",
-  "@username": {},
-  "email": "e-mail",
-  "@email": {},
-  "pleaseProvidePassword": "Por favor insira sua senha.",
-  "@pleaseProvidePassword": {},
-  "mxidSyntax": "Caracteres permitidos: a-z, 0-9 também como os símbolos ., _, =, -, /, e +.",
-  "@mxidSyntax": {},
-  "loginError": "Não foi possível entrar; por favor verifique suas credenciais.",
-  "@loginError": {},
-  "loginErrorMessage": "Não foi possível entrar: {message}",
-  "@loginErrorMessage": {
-    "placeholders": {
-      "message": {
-        "type": "String"
-      }
-    }
-  },
-  "syncInProgress": "Sincronização em progresso",
-  "@syncInProgress": {},
-  "syncOffline": "Sincronização interrompida",
-  "@syncOffline": {},
-  "syncFunctional": "Estado de sincronização saudável",
-  "@syncFunctional": {},
-  "clientDisplayNameHostname": "< polícula > em {hostname} ({platform})",
-  "@clientDisplayNameHostname": {
-    "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
-    "placeholders": {
-      "hostname": {
-        "type": "String",
-        "description": "The device name."
-      },
-      "platform": {
-        "type": "String",
-        "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
-      }
-    }
-  },
-  "platformWeb": "navegador",
-  "@platformWeb": {},
-  "hajUser": "Hoi {localpart}!",
-  "@hajUser": {
-    "placeholders": {
-      "localpart": {
-        "type": "String?"
-      }
-    }
-  },
-  "editedToday": "Editado: {timestamp}",
-  "@editedToday": {
-    "placeholders": {
-      "timestamp": {
-        "type": "DateTime",
-        "format": "jm"
-      }
-    }
-  },
-  "authenticationRequired": "Autenticação necessária",
-  "@authenticationRequired": {},
-  "replyUserSentDate": "{username} escreveu {formattedDate}:",
-  "@replyUserSentDate": {
-    "placeholders": {
-      "username": {
-        "type": "String"
-      },
-      "formattedDate": {
-        "type": "String"
-      }
-    }
-  },
-  "passphraseNotEmpty": "A frase-passe não pode ser vazia",
-  "@passphraseNotEmpty": {},
-  "waitingForVerification": "Esperando por verificação",
-  "@waitingForVerification": {},
-  "waitingForVerificationFallback": "Por favor verifique usando seu segundo dispositivo ou insira sua frase de recuperação.",
-  "@waitingForVerificationFallback": {},
-  "keyVerificationErrorUser": "A verificação foi cancelada.",
-  "@keyVerificationErrorUser": {},
-  "enterRecoveryPhrase": "Insira frase de recuperação",
-  "@enterRecoveryPhrase": {},
-  "errorTryAgain": "Ocorreu um erro. Por favor tente novamente.",
-  "@errorTryAgain": {},
-  "pendingInvite": "Convite pendente",
-  "@pendingInvite": {},
-  "inviteLongDM": "Você é convidado para discutir com « {displayname} ».",
-  "@inviteLongDM": {},
-  "roomParticipants": "{participants, plural, =0{Nenhum participante} =1{1 participante} other{{participants} participantes}}",
-  "@roomParticipants": {
-    "placeholders": {
-      "participants": {
-        "type": "int"
-      }
-    }
-  },
-  "typeGroupFiles": "Todos arquivos",
-  "@typeGroupFiles": {},
-  "yesterday": "Ontem",
-  "@yesterday": {},
-  "lastMonth": "Mês passado",
-  "@lastMonth": {},
-  "settings": "Configurações",
-  "@settings": {},
-  "errorDownloadingAttachment": "Erro ao baixar anexo da mensagem.",
-  "@errorDownloadingAttachment": {},
-  "appearanceAccessibilitySettings": "Aparência e acessibilidade",
-  "@appearanceAccessibilitySettings": {},
-  "systemLanguage": "Idioma do dispositivo",
-  "@systemLanguage": {},
-  "systemTheme": "Tema do sistema",
-  "@systemTheme": {},
-  "inclusiveSans": "Fonte com legibilidade aumentada",
-  "@inclusiveSans": {},
-  "openDyslexic": "Fonte com assistência a dislexia",
-  "@openDyslexic": {},
-  "serif": "Fonte serifada",
-  "@serif": {},
-  "defaultFont": "Fonte padrão",
-  "@defaultFont": {},
-  "color": "Configurações de cor",
-  "@color": {},
-  "systemColor": "Cor do sistema",
-  "@systemColor": {},
-  "defaultColor": "Cor padrão do tema",
-  "@defaultColor": {},
-  "aboutPolycule": "Sobre < polícula >",
-  "@aboutPolycule": {},
-  "webUriHandlerTitle": "Cliente [matrix] < polícula >",
-  "@webUriHandlerTitle": {},
-  "checkingTotalSendSize": "Verificando tamanho total do envio...",
-  "@checkingTotalSendSize": {},
-  "about": "Sobre",
-  "@about": {},
-  "author": "Autor: {author}",
-  "@author": {
-    "placeholders": {
-      "author": {
-        "type": "String"
-      }
-    }
-  },
-  "buyMeACoffee": "Compre-me um café",
-  "@buyMeACoffee": {},
-  "resetAccountWarning": "Você usará todas suas mensagens passadas. Isso não pode ser desfeito.",
-  "@resetAccountWarning": {},
-  "aMatrixClient": "- mais um cliente [matrix]",
-  "@aMatrixClient": {},
-  "pleaseProvideHomeserver": "Por favor forneça um servidor.",
-  "@pleaseProvideHomeserver": {},
-  "errorConnectingToHomeserver": "Não foi possível se conectar a {homeserver}. Por favor verifique sua seleção.",
-  "@errorConnectingToHomeserver": {
-    "placeholders": {
-      "homeserver": {
-        "type": "String"
-      }
-    }
-  },
-  "howWouldYouLikeToConnect": "Como gostaria de conectar?",
-  "@howWouldYouLikeToConnect": {},
-  "loginLegacySso": "Entrar usando antigo SSO",
-  "@loginLegacySso": {},
-  "initialSync": "Sincronização inicial em progresso",
-  "@initialSync": {},
-  "password": "senha",
-  "@password": {},
-  "pleaseProvideEmail": "Por favor forneça seu e-mail.",
-  "@pleaseProvideEmail": {},
-  "pleaseProvideUsername": "Por favor insira seu nome de usuário.",
-  "@pleaseProvideUsername": {},
-  "emailMinimals": "Seu e-mail deve conter pelo menos o símbolo @, uma parte local e seu domínio.",
-  "@emailMinimals": {},
-  "lastSyncReceived": "Última sincronização: {timestamp} {duration}ms)",
-  "@lastSyncReceived": {
-    "placeholders": {
-      "timestamp": {
-        "type": "DateTime",
-        "format": "jms"
-      },
-      "duration": {
-        "type": "int"
-      }
-    }
-  },
-  "wipeAccountWarning": "Se perdeu seu dispositivo, pode limpar e reiniciar sua conta. Todas as mensagens e conversas serão perdidas.",
-  "@wipeAccountWarning": {},
-  "editedAt": "Editado: {timestamp}",
-  "@editedAt": {
-    "placeholders": {
-      "timestamp": {
-        "type": "String"
-      }
-    }
-  },
-  "authenticateForAccount": "Por favor autentique-se com suas credenciais para {mxid}.",
-  "@authenticateForAccount": {
-    "placeholders": {
-      "mxid": {
-        "type": "String"
-      }
-    }
-  },
-  "deviceNotAvailable": "Não tenho meu dispositivo disponível.",
-  "@deviceNotAvailable": {},
-  "wipeAccount": "Limpar conta",
-  "@wipeAccount": {},
-  "previous": "Anterior",
-  "@previous": {},
-  "incomingVerificationRequestUser": "{user} quer verificar",
-  "@incomingVerificationRequestUser": {
-    "placeholders": {
-      "user": {
-        "type": "String?",
-        "description": "User who wants to verify"
-      }
-    }
-  },
-  "keyVerificationErrorGeneric": "Ocorreu um erro ao verificar seu dispositivo.",
-  "@keyVerificationErrorGeneric": {},
-  "or": "ou",
-  "@or": {},
-  "verifyMethodsNotAvailable": "Não tem um método de verificação disponível?",
-  "@verifyMethodsNotAvailable": {},
-  "togglePassword": "Alternar visibilidade da senha",
-  "@togglePassword": {},
-  "inviteLongRoom": "Você é convidado para entrar na sala: « {roomname} ».",
-  "@inviteLongRoom": {
-    "description": "Please keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
-    "placeholders": {
-      "roomname": {
-        "type": "String"
-      }
-    }
-  },
-  "contentNotice": "AC: « {notice} »",
-  "@contentNotice": {
-    "description": "A content notice warning about spoilers or sensitive contents of a message.\nPlease keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
-    "placeholders": {
-      "notice": {
-        "description": "The warning/notice message.",
-        "type": "String"
-      }
-    }
-  },
-  "highContrast": "Alto contraste",
-  "@highContrast": {},
-  "clientDisplayName": "< polícula > no {platform}",
-  "@clientDisplayName": {
-    "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
-    "placeholders": {
-      "platform": {
-        "type": "String",
-        "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
-      }
-    }
-  },
-  "dark": "Terminal escuro",
-  "@dark": {},
-  "passphraseNoWhitespace": "A frase-passe não pode conter espaços em branco!",
-  "@passphraseNoWhitespace": {},
-  "loadingHomeservers": "Carregando servidores. Progresso desconhecido. Favor esperar.",
-  "@loadingHomeservers": {},
-  "regionChatContents": "Região da tela: Conteúdo da conversa.",
-  "@regionChatContents": {},
-  "thisMonth": "Esse mês",
-  "@thisMonth": {},
-  "sharingFiles": "Enviando {files, plural, =1{um arquivo} other{{files} arquivos}}.",
-  "@sharingFiles": {
-    "placeholders": {
-      "files": {
-        "type": "int"
-      }
-    }
-  },
-  "customColor": "Cor personalizada",
-  "@customColor": {},
-  "youCannotJoinThisRoom": "Você não pode entrar nessa sala.",
-  "@youCannotJoinThisRoom": {},
-  "regionAccountSwitcher": "Região da tela: Alternador de contas.",
-  "@regionAccountSwitcher": {},
-  "typeGroupImages": "Imagens",
-  "@typeGroupImages": {},
-  "typeGroupVideos": "Vídeos",
-  "@typeGroupVideos": {},
-  "noFilesSelected": "Nenhum arquivo selecionado.",
-  "@noFilesSelected": {},
-  "searchPromptLabel": "Comando, usuário, nome da sala ou MXID",
-  "@searchPromptLabel": {},
-  "sendingFiles": "{files, plural, =0{Enviando nenhum arquivo.} =1{Um arquivo} other{Enviando {files}}} arquivos...}",
-  "@sendingFiles": {
-    "placeholders": {
-      "files": {
-        "type": "int"
-      }
-    }
-  },
-  "language": "Idioma",
-  "@language": {},
-  "theme": "Tema",
-  "@theme": {},
-  "contentNoticeFallback": "Aviso de conteúdo",
-  "@contentNoticeFallback": {},
-  "unifiedPushLink": "https://unifiedpush.org/users/intro/",
-  "@unifiedPushLink": {},
-  "errorReportingLong": "Você pode ativar relatos de erros para ajudar a encontrar erros na < polícula >.",
-  "@errorReportingLong": {},
-  "roomStatePublic": "Essa sala é publicamente visível para todos",
-  "@roomStatePublic": {},
-  "roomStateOpen": "Essa sala é aberta para todos que conhecem seu endereço.",
-  "@roomStateOpen": {},
-  "roomStateKnock": "Usuários devem bater antes de entrar nessa sala.",
-  "@roomStateKnock": {},
-  "roomStateSpace": "Essa sala é aberta somente para membros do espaço.",
-  "@roomStateSpace": {},
-  "roomStateUnpublic": "Essa sala é privada mas não criptografada.",
-  "@roomStateUnpublic": {},
-  "roomStateEncrypted": "Essa sala é privada mas alguns membros não são verificados.",
-  "@roomStateEncrypted": {},
-  "oidcAppName": "< polícula >",
-  "@oidcAppName": {
-    "translatable": false
-  },
-  "networkSettings": "Configurações de rede",
-  "@networkSettings": {},
-  "tls12": "TLS 1.2",
-  "@tls12": {},
-  "tls13": "TLS 1.3",
-  "@tls13": {},
-  "emojiSettings": "Configurações de emoji",
-  "@emojiSettings": {},
-  "eventSourceOriginal": "Evento original",
-  "@eventSourceOriginal": {},
-  "eventSourceCode": "Código fonte do evento",
-  "@eventSourceCode": {},
-  "eventSourceContent": "Conteúdo do evento",
-  "@eventSourceContent": {},
-  "eventSourceJson": "JSON completo",
-  "@eventSourceJson": {},
-  "errorSendingSticker": "Erro ao enviar figurinha personalizada.",
-  "@errorSendingSticker": {},
-  "roomDetails": "Detalhes da sala",
-  "@roomDetails": {},
-  "eventSourceBodyHtml": "Corpo do evento (HTML)",
-  "@eventSourceBodyHtml": {},
-  "sessionIpAddress": "Último endereço IP",
-  "@sessionIpAddress": {},
-  "deviceNoEncryption": "Não suporta criptografia",
-  "@deviceNoEncryption": {},
-  "deviceBlocked": "Dispositivo bloqueado",
-  "@deviceBlocked": {},
-  "yourCurrentDevice": "Seu dispositivo atual",
-  "@yourCurrentDevice": {},
-  "sessions": "Sessões",
-  "@sessions": {},
-  "errorReportingPrivacy": "Isso irá conectar com GitLab.com, o hóspede do código fonte da < polícula > e anonimamente compartilhar erros ocorridos e suas causas. Isso não irá compartilhar nenhum dado pessoal para o desenvolvedor.",
-  "@errorReportingPrivacy": {},
-  "availableCommands": "Comandos disponíveis",
-  "@availableCommands": {},
-  "roomStatePublicKnock": "Essa sala é visível publicamente para todos, mas eles devem bater antes de entrar.",
-  "@roomStatePublicKnock": {},
-  "notificationsSender": "Remetentes",
-  "@notificationsSender": {},
-  "pushRulesDevice": "Esse dispositivo",
-  "@pushRulesDevice": {},
-  "unknownAction": "Ação desconhecida: {action}",
-  "@unknownAction": {
-    "placeholders": {
-      "action": {
-        "format": "String"
-      }
-    }
-  },
-  "eventContentMatches": "Conteúdo do evento corresponde a esse padrão",
-  "@eventContentMatches": {},
-  "notificationsRoom": "Salas",
-  "@notificationsRoom": {},
-  "notificationSettings": "Regras de notificações",
-  "@notificationSettings": {},
-  "actionNotify": "Enviar notificação",
-  "@actionNotify": {},
-  "notificationTweakSound": "Som",
-  "@notificationTweakSound": {},
-  "pushConditionSenderNotificationPermission": "Remetente pode notificar: {key}",
-  "@pushConditionSenderNotificationPermission": {
-    "placeholders": {
-      "key": {
-        "format": "String"
-      }
-    }
-  },
-  "unknownNotificationTweak": "Ajuste desconhecido: {tweak}",
-  "@unknownNotificationTweak": {
-    "placeholders": {
-      "tweak": {
-        "format": "String"
-      }
-    }
-  },
-  "webMultipleTabNotice": "< polícula > já está aberta em outra aba.\nRecarregue assim que outras abas fecharem.",
-  "@webMultipleTabNotice": {},
-  "webOAuthReceivedNotice": "Redirecionamento OAuth2.0 recebido. Você pode fechar essa aba.",
-  "@webOAuthReceivedNotice": {}
+    "connectPreviousDeviceLong": "Por favor verifique dispositivo existente.",
+    "@connectPreviousDeviceLong": {},
+    "repoLabel": "Código fonte (GitLab)",
+    "@repoLabel": {},
+    "releaseNotes": "Notas de lançamento",
+    "@releaseNotes": {},
+    "appName": "< polícula >",
+    "@appName": {},
+    "appSlogan": "Um cliente [matrix] geek e eficiente para usuários avançados.",
+    "@appSlogan": {},
+    "homeserverHeadline": "Hoi! Bem-vindo à < polícula >",
+    "@homeserverHeadline": {
+        "description": "Welcome message. The term 'Haj' is a pun from the Blåhaj culture and the English salutation 'hey'."
+    },
+    "homeserverNotValid": "Isso não é uma entrada válida de servidor.",
+    "@homeserverNotValid": {},
+    "connectingToHomeserver": "Conectando-se a {homeserver}…",
+    "@connectingToHomeserver": {
+        "placeholders": {
+            "homeserver": {
+                "type": "String"
+            }
+        }
+    },
+    "welcomeToHomeserver": "Bem-vindo a {homeserver}!",
+    "@welcomeToHomeserver": {
+        "placeholders": {
+            "homeserver": {
+                "type": "String"
+            }
+        }
+    },
+    "loginPassword": "Entrar usando senha",
+    "@loginPassword": {},
+    "username": "nome de usuário",
+    "@username": {},
+    "email": "e-mail",
+    "@email": {},
+    "pleaseProvidePassword": "Por favor insira sua senha.",
+    "@pleaseProvidePassword": {},
+    "mxidSyntax": "Caracteres permitidos: a-z, 0-9 também como os símbolos ., _, =, -, /, e +.",
+    "@mxidSyntax": {},
+    "loginError": "Não foi possível entrar; por favor verifique suas credenciais.",
+    "@loginError": {},
+    "loginErrorMessage": "Não foi possível entrar: {message}",
+    "@loginErrorMessage": {
+        "placeholders": {
+            "message": {
+                "type": "String"
+            }
+        }
+    },
+    "syncInProgress": "Sincronização em progresso",
+    "@syncInProgress": {},
+    "syncOffline": "Sincronização interrompida",
+    "@syncOffline": {},
+    "syncFunctional": "Estado de sincronização saudável",
+    "@syncFunctional": {},
+    "clientDisplayNameHostname": "< polícula > em {hostname} ({platform})",
+    "@clientDisplayNameHostname": {
+        "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
+        "placeholders": {
+            "hostname": {
+                "type": "String",
+                "description": "The device name."
+            },
+            "platform": {
+                "type": "String",
+                "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
+            }
+        }
+    },
+    "platformWeb": "navegador",
+    "@platformWeb": {},
+    "hajUser": "Hoi {localpart}!",
+    "@hajUser": {
+        "placeholders": {
+            "localpart": {
+                "type": "String?"
+            }
+        }
+    },
+    "editedToday": "Editado: {timestamp}",
+    "@editedToday": {
+        "placeholders": {
+            "timestamp": {
+                "type": "DateTime",
+                "format": "jm"
+            }
+        }
+    },
+    "authenticationRequired": "Autenticação necessária",
+    "@authenticationRequired": {},
+    "replyUserSentDate": "{username} escreveu {formattedDate}:",
+    "@replyUserSentDate": {
+        "placeholders": {
+            "username": {
+                "type": "String"
+            },
+            "formattedDate": {
+                "type": "String"
+            }
+        }
+    },
+    "passphraseNotEmpty": "A frase-passe não pode ser vazia",
+    "@passphraseNotEmpty": {},
+    "waitingForVerification": "Esperando por verificação",
+    "@waitingForVerification": {},
+    "waitingForVerificationFallback": "Por favor verifique usando seu segundo dispositivo ou insira sua frase de recuperação.",
+    "@waitingForVerificationFallback": {},
+    "keyVerificationErrorUser": "A verificação foi cancelada.",
+    "@keyVerificationErrorUser": {},
+    "enterRecoveryPhrase": "Insira frase de recuperação",
+    "@enterRecoveryPhrase": {},
+    "errorTryAgain": "Ocorreu um erro. Por favor tente novamente.",
+    "@errorTryAgain": {},
+    "pendingInvite": "Convite pendente",
+    "@pendingInvite": {},
+    "inviteLongDM": "Você é convidado para discutir com « {displayname} ».",
+    "@inviteLongDM": {},
+    "roomParticipants": "{participants, plural, =0{Nenhum participante} =1{1 participante} other{{participants} participantes}}",
+    "@roomParticipants": {
+        "placeholders": {
+            "participants": {
+                "type": "int"
+            }
+        }
+    },
+    "typeGroupFiles": "Todos arquivos",
+    "@typeGroupFiles": {},
+    "yesterday": "Ontem",
+    "@yesterday": {},
+    "lastMonth": "Mês passado",
+    "@lastMonth": {},
+    "settings": "Configurações",
+    "@settings": {},
+    "errorDownloadingAttachment": "Erro ao baixar anexo da mensagem.",
+    "@errorDownloadingAttachment": {},
+    "appearanceAccessibilitySettings": "Aparência e acessibilidade",
+    "@appearanceAccessibilitySettings": {},
+    "systemLanguage": "Idioma do dispositivo",
+    "@systemLanguage": {},
+    "systemTheme": "Tema do sistema",
+    "@systemTheme": {},
+    "inclusiveSans": "Fonte com legibilidade aumentada",
+    "@inclusiveSans": {},
+    "openDyslexic": "Fonte com assistência a dislexia",
+    "@openDyslexic": {},
+    "serif": "Fonte serifada",
+    "@serif": {},
+    "defaultFont": "Fonte padrão",
+    "@defaultFont": {},
+    "color": "Configurações de cor",
+    "@color": {},
+    "systemColor": "Cor do sistema",
+    "@systemColor": {},
+    "defaultColor": "Cor padrão do tema",
+    "@defaultColor": {},
+    "aboutPolycule": "Sobre < polícula >",
+    "@aboutPolycule": {},
+    "webUriHandlerTitle": "Cliente [matrix] < polícula >",
+    "@webUriHandlerTitle": {},
+    "checkingTotalSendSize": "Verificando tamanho total do envio...",
+    "@checkingTotalSendSize": {},
+    "about": "Sobre",
+    "@about": {},
+    "author": "Autor: {author}",
+    "@author": {
+        "placeholders": {
+            "author": {
+                "type": "String"
+            }
+        }
+    },
+    "buyMeACoffee": "Compre-me um café",
+    "@buyMeACoffee": {},
+    "resetAccountWarning": "Você usará todas suas mensagens passadas. Isso não pode ser desfeito.",
+    "@resetAccountWarning": {},
+    "aMatrixClient": "- mais um cliente [matrix]",
+    "@aMatrixClient": {},
+    "pleaseProvideHomeserver": "Por favor forneça um servidor.",
+    "@pleaseProvideHomeserver": {},
+    "errorConnectingToHomeserver": "Não foi possível se conectar a {homeserver}. Por favor verifique sua seleção.",
+    "@errorConnectingToHomeserver": {
+        "placeholders": {
+            "homeserver": {
+                "type": "String"
+            }
+        }
+    },
+    "howWouldYouLikeToConnect": "Como gostaria de conectar?",
+    "@howWouldYouLikeToConnect": {},
+    "loginLegacySso": "Entrar usando antigo SSO",
+    "@loginLegacySso": {},
+    "initialSync": "Sincronização inicial em progresso",
+    "@initialSync": {},
+    "password": "senha",
+    "@password": {},
+    "pleaseProvideEmail": "Por favor forneça seu e-mail.",
+    "@pleaseProvideEmail": {},
+    "pleaseProvideUsername": "Por favor insira seu nome de usuário.",
+    "@pleaseProvideUsername": {},
+    "emailMinimals": "Seu e-mail deve conter pelo menos o símbolo @, uma parte local e seu domínio.",
+    "@emailMinimals": {},
+    "lastSyncReceived": "Última sincronização: {timestamp} {duration}ms)",
+    "@lastSyncReceived": {
+        "placeholders": {
+            "timestamp": {
+                "type": "DateTime",
+                "format": "jms"
+            },
+            "duration": {
+                "type": "int"
+            }
+        }
+    },
+    "wipeAccountWarning": "Se perdeu seu dispositivo, pode limpar e reiniciar sua conta. Todas as mensagens e conversas serão perdidas.",
+    "@wipeAccountWarning": {},
+    "editedAt": "Editado: {timestamp}",
+    "@editedAt": {
+        "placeholders": {
+            "timestamp": {
+                "type": "String"
+            }
+        }
+    },
+    "authenticateForAccount": "Por favor autentique-se com suas credenciais para {mxid}.",
+    "@authenticateForAccount": {
+        "placeholders": {
+            "mxid": {
+                "type": "String"
+            }
+        }
+    },
+    "deviceNotAvailable": "Não tenho meu dispositivo disponível.",
+    "@deviceNotAvailable": {},
+    "wipeAccount": "Limpar conta",
+    "@wipeAccount": {},
+    "previous": "Anterior",
+    "@previous": {},
+    "incomingVerificationRequestUser": "{user} quer verificar",
+    "@incomingVerificationRequestUser": {
+        "placeholders": {
+            "user": {
+                "type": "String?",
+                "description": "User who wants to verify"
+            }
+        }
+    },
+    "keyVerificationErrorGeneric": "Ocorreu um erro ao verificar seu dispositivo.",
+    "@keyVerificationErrorGeneric": {},
+    "or": "ou",
+    "@or": {},
+    "verifyMethodsNotAvailable": "Não tem um método de verificação disponível?",
+    "@verifyMethodsNotAvailable": {},
+    "togglePassword": "Alternar visibilidade da senha",
+    "@togglePassword": {},
+    "inviteLongRoom": "Você é convidado para entrar na sala: « {roomname} ».",
+    "@inviteLongRoom": {
+        "description": "Please keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
+        "placeholders": {
+            "roomname": {
+                "type": "String"
+            }
+        }
+    },
+    "contentNotice": "AC: « {notice} »",
+    "@contentNotice": {
+        "description": "A content notice warning about spoilers or sensitive contents of a message.\nPlease keep the Guillemets as quotation marks in case this is in any way understandable (not necessarily lexically correct) in your language.",
+        "placeholders": {
+            "notice": {
+                "description": "The warning/notice message.",
+                "type": "String"
+            }
+        }
+    },
+    "highContrast": "Alto contraste",
+    "@highContrast": {},
+    "clientDisplayName": "< polícula > no {platform}",
+    "@clientDisplayName": {
+        "description": "Describes the device in the list of devices. The parameter is a localized phrase like `web` or `Linux`.",
+        "placeholders": {
+            "platform": {
+                "type": "String",
+                "description": "The already localized (in case translatable) platform. E.g. `web`, `Android` or `Linux`."
+            }
+        }
+    },
+    "dark": "Terminal escuro",
+    "@dark": {},
+    "passphraseNoWhitespace": "A frase-passe não pode conter espaços em branco!",
+    "@passphraseNoWhitespace": {},
+    "loadingHomeservers": "Carregando servidores. Progresso desconhecido. Favor esperar.",
+    "@loadingHomeservers": {},
+    "regionChatContents": "Região da tela: Conteúdo da conversa.",
+    "@regionChatContents": {},
+    "thisMonth": "Esse mês",
+    "@thisMonth": {},
+    "sharingFiles": "Enviando {files, plural, =1{um arquivo} other{{files} arquivos}}.",
+    "@sharingFiles": {
+        "placeholders": {
+            "files": {
+                "type": "int"
+            }
+        }
+    },
+    "customColor": "Cor personalizada",
+    "@customColor": {},
+    "youCannotJoinThisRoom": "Você não pode entrar nessa sala.",
+    "@youCannotJoinThisRoom": {},
+    "regionAccountSwitcher": "Região da tela: Alternador de contas.",
+    "@regionAccountSwitcher": {},
+    "typeGroupImages": "Imagens",
+    "@typeGroupImages": {},
+    "typeGroupVideos": "Vídeos",
+    "@typeGroupVideos": {},
+    "noFilesSelected": "Nenhum arquivo selecionado.",
+    "@noFilesSelected": {},
+    "searchPromptLabel": "Comando, usuário, nome da sala ou MXID",
+    "@searchPromptLabel": {},
+    "sendingFiles": "{files, plural, =0{Enviando nenhum arquivo.} =1{Um arquivo} other{Enviando {files}}} arquivos...}",
+    "@sendingFiles": {
+        "placeholders": {
+            "files": {
+                "type": "int"
+            }
+        }
+    },
+    "language": "Idioma",
+    "@language": {},
+    "theme": "Tema",
+    "@theme": {},
+    "contentNoticeFallback": "Aviso de conteúdo",
+    "@contentNoticeFallback": {},
+    "unifiedPushLink": "https://unifiedpush.org/users/intro/",
+    "@unifiedPushLink": {},
+    "errorReportingLong": "Você pode ativar relatos de erros para ajudar a encontrar erros na < polícula >.",
+    "@errorReportingLong": {},
+    "roomStatePublic": "Essa sala é publicamente visível para todos",
+    "@roomStatePublic": {},
+    "roomStateOpen": "Essa sala é aberta para todos que conhecem seu endereço.",
+    "@roomStateOpen": {},
+    "roomStateKnock": "Usuários devem bater antes de entrar nessa sala.",
+    "@roomStateKnock": {},
+    "roomStateSpace": "Essa sala é aberta somente para membros do espaço.",
+    "@roomStateSpace": {},
+    "roomStateUnpublic": "Essa sala é privada mas não criptografada.",
+    "@roomStateUnpublic": {},
+    "roomStateEncrypted": "Essa sala é privada mas alguns membros não são verificados.",
+    "@roomStateEncrypted": {},
+    "oidcAppName": "< polícula >",
+    "@oidcAppName": {
+        "translatable": false
+    },
+    "networkSettings": "Configurações de rede",
+    "@networkSettings": {},
+    "tls12": "TLS 1.2",
+    "@tls12": {},
+    "tls13": "TLS 1.3",
+    "@tls13": {},
+    "emojiSettings": "Configurações de emoji",
+    "@emojiSettings": {},
+    "eventSourceOriginal": "Evento original",
+    "@eventSourceOriginal": {},
+    "eventSourceCode": "Código fonte do evento",
+    "@eventSourceCode": {},
+    "eventSourceContent": "Conteúdo do evento",
+    "@eventSourceContent": {},
+    "eventSourceJson": "JSON completo",
+    "@eventSourceJson": {},
+    "errorSendingSticker": "Erro ao enviar figurinha personalizada.",
+    "@errorSendingSticker": {},
+    "roomDetails": "Detalhes da sala",
+    "@roomDetails": {},
+    "eventSourceBodyHtml": "Corpo do evento (HTML)",
+    "@eventSourceBodyHtml": {},
+    "sessionIpAddress": "Último endereço IP",
+    "@sessionIpAddress": {},
+    "deviceNoEncryption": "Não suporta criptografia",
+    "@deviceNoEncryption": {},
+    "deviceBlocked": "Dispositivo bloqueado",
+    "@deviceBlocked": {},
+    "yourCurrentDevice": "Seu dispositivo atual",
+    "@yourCurrentDevice": {},
+    "sessions": "Sessões",
+    "@sessions": {},
+    "errorReportingPrivacy": "Isso irá conectar com GitLab.com, o hóspede do código fonte da < polícula > e anonimamente compartilhar erros ocorridos e suas causas. Isso não irá compartilhar nenhum dado pessoal para o desenvolvedor.",
+    "@errorReportingPrivacy": {},
+    "availableCommands": "Comandos disponíveis",
+    "@availableCommands": {},
+    "roomStatePublicKnock": "Essa sala é visível publicamente para todos, mas eles devem bater antes de entrar.",
+    "@roomStatePublicKnock": {},
+    "notificationsSender": "Remetentes",
+    "@notificationsSender": {},
+    "pushRulesDevice": "Esse dispositivo",
+    "@pushRulesDevice": {},
+    "unknownAction": "Ação desconhecida: {action}",
+    "@unknownAction": {
+        "placeholders": {
+            "action": {
+                "format": "String"
+            }
+        }
+    },
+    "eventContentMatches": "Conteúdo do evento corresponde a esse padrão",
+    "@eventContentMatches": {},
+    "notificationsRoom": "Salas",
+    "@notificationsRoom": {},
+    "notificationSettings": "Regras de notificações",
+    "@notificationSettings": {},
+    "actionNotify": "Enviar notificação",
+    "@actionNotify": {},
+    "notificationTweakSound": "Som",
+    "@notificationTweakSound": {},
+    "pushConditionSenderNotificationPermission": "Remetente pode notificar: {key}",
+    "@pushConditionSenderNotificationPermission": {
+        "placeholders": {
+            "key": {
+                "format": "String"
+            }
+        }
+    },
+    "unknownNotificationTweak": "Ajuste desconhecido: {tweak}",
+    "@unknownNotificationTweak": {
+        "placeholders": {
+            "tweak": {
+                "format": "String"
+            }
+        }
+    },
+    "webMultipleTabNotice": "< polícula > já está aberta em outra aba.\nRecarregue assim que outras abas fecharem.",
+    "@webMultipleTabNotice": {},
+    "webOAuthReceivedNotice": "Redirecionamento OAuth2.0 recebido. Você pode fechar essa aba.",
+    "@webOAuthReceivedNotice": {},
+    "mRoomTombstoneAction": "Abrir sala substituta",
+    "@mRoomTombstoneAction": {},
+    "roomCreatePredecessorAction": "Abrir sala anterior",
+    "@roomCreatePredecessorAction": {},
+    "copyRoomId": "Copiar ID da sala",
+    "@copyRoomId": {},
+    "roomCreatePredecessor": "Essa sala foi continuada de outra sala",
+    "@roomCreatePredecessor": {},
+    "roomId": "ID da sala [matrix]",
+    "@roomId": {}
 }
