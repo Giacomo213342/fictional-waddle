@@ -46,17 +46,19 @@ class _PushSettingsPageState extends State<PushSettingsPage> {
               1;
           return ValueListenableBuilder(
             valueListenable: SettingsManager.of(context).pushDistributor,
-            builder: (context, pushDistributor, _) => ListView.builder(
-              itemCount: data.length + 1,
-              itemBuilder: (context, index) {
-                final distributor = data.elementAtOrNull(index);
-                return PushProviderRadioTile(
-                  distributor: distributor,
-                  groupValue: pushDistributor,
-                  onChanged: _setPushDistributor,
-                  isSingleProvider: isSingleProvider,
-                );
-              },
+            builder: (context, pushDistributor, _) => RadioGroup<String?>(
+              groupValue: pushDistributor,
+              onChanged: _setPushDistributor,
+              child: ListView.builder(
+                itemCount: data.length + 1,
+                itemBuilder: (context, index) {
+                  final distributor = data.elementAtOrNull(index);
+                  return PushProviderRadioTile(
+                    distributor: distributor,
+                    isSingleProvider: isSingleProvider,
+                  );
+                },
+              ),
             ),
           );
         },

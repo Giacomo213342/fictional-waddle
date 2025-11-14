@@ -7,9 +7,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:matrix/matrix.dart';
 import 'package:unifiedpush/unifiedpush.dart';
+import 'package:unifiedpush_platform_interface/unifiedpush_platform_interface.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../settings_interface.dart';
+import '../unified_push/unified_push_storage_polycule.dart';
 import 'push_gateway_extension.dart';
 import 'push_handler.dart';
 
@@ -19,7 +21,9 @@ final pusherDataMessageFormat = kIsWeb
         ? 'android'
         : Platform.isIOS
             ? 'ios'
-            : null;
+            : Platform.isLinux
+                ? 'android'
+                : null;
 
 class PushManager {
   PushManager(this.client) {
@@ -75,6 +79,11 @@ class PushManager {
         onRegistrationFailed: onRegistrationFailed,
         onUnregistered: onUnregistered,
         onMessage: onMessage,
+        linuxOptions: LinuxOptions(
+          dbusName: 'business.braid.polycule',
+          storage: UnifiedPushStoragePolycule(),
+          background: false,
+        ),
       );
       if (registered || await UnifiedPush.tryUseCurrentOrDefaultDistributor()) {
         await register();

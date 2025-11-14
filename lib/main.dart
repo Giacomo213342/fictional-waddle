@@ -10,6 +10,7 @@ import 'package:media_kit/media_kit.dart';
 import 'src/polycule.dart';
 import 'src/utils/error_logger.dart';
 import 'src/utils/matrix/client_util.dart';
+import 'src/utils/matrix/push_handler.dart';
 import 'src/utils/single_tab/single_tab.dart';
 
 @pragma('vm:entry-point')
@@ -26,10 +27,16 @@ void main([List<String>? args]) {
     () async {
       Logs().level = Level.verbose;
       Logs().v('Called main() with arguments: $args');
+
       WidgetsFlutterBinding.ensureInitialized();
+      await ClientUtil.initVodozemac();
+
+      if (args?.contains('--unifiedpush-bg') ?? false) {
+        return pushEntrypoint();
+      }
+
       MediaKit.ensureInitialized();
       JustAudioMediaKit.ensureInitialized();
-      await ClientUtil.initVodozemac();
 
       if (!await ensureSingleTab()) {
         return;

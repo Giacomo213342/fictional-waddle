@@ -1,5 +1,5 @@
 variables:
-  FLUTTER_VERSION: 3.32.8
+  FLUTTER_VERSION: 3.35.7
 
 include:
   - component: gitlab.com/dependabot-gitlab/dependabot-standalone/template@3.61.0
@@ -25,7 +25,7 @@ stages:
   # https://github.com/flutter/flutter/issues/169336
   # --no-pub
   - export FLUTTER_BASE_ARGS="--dart-define=POLYCULE_IS_STABLE=$POLYCULE_IS_STABLE --dart-define=POLYCULE_VERSION=$POLYCULE_VERSION --dart-define=no_default_http_client=true --dart-define=cronetHttpNoPlay=true"
-  - export FLUTTER_ARGS="$($POLYCULE_IS_STABLE || echo "--build-number $CI_PIPELINE_ID") ${FLUTTER_BASE_ARGS}"
+  - export FLUTTER_ARGS="$($POLYCULE_IS_STABLE || echo "--build-number $(($CI_PIPELINE_ID / 100))") ${FLUTTER_BASE_ARGS}"
 
 .flutter-setup: &flutter-setup
   - |
@@ -189,10 +189,9 @@ check:flutter_version:commit:
 
 check:podfile:
   extends: .check
-  # our macOS runners are faster
+  image: macos-15-xcode-16
   tags:
-    - macos
-    - nix-shell
+    - saas-macos-medium-m1
   script:
     - pushd ios
     - pod install --deployment
@@ -212,10 +211,9 @@ check:podfile:
 
 check:podfile:commit:
   extends: .check
-  # our macOS runners are faster
+  image: macos-15-xcode-16
   tags:
-    - macos
-    - nix-shell
+    - saas-macos-medium-m1
   when: manual
   script:
     - pushd ios

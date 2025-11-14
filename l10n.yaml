@@ -2,6 +2,4 @@ arb-dir: "lib/l10n/arb"
 format: true
 nullable-getter: false
 output-dir: "lib/l10n/generated"
-synthetic-package: false
-untranslated-messages-file: l10n_errors.txt
 use-deferred-loading: true
