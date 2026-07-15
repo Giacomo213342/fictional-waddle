@@ -17,10 +17,19 @@ class RoomLastEventPreview extends StatelessWidget {
         if (lastEvent == null) {
           return const SizedBox();
         }
-        return EventScope(
+        Widget preview = EventScope(
           event: lastEvent,
           child: const PlainEventPreviewText(),
         );
+
+        if (room.isUnread) {
+          preview = DefaultTextStyle.merge(
+            style: const TextStyle(fontWeight: FontWeight.bold),
+            child: preview,
+          );
+        }
+
+        return preview;
       },
     );
   }

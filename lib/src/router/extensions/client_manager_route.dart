@@ -14,6 +14,7 @@ class ClientManagerRoute extends StatefulShellRoute {
   }) : super.indexedStack(
           builder: (context, state, shell) => MatrixDialogScope(
             child: ClientTabView(
+              uri: state.uri,
               child: shell,
             ),
           ),

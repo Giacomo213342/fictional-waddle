@@ -32,18 +32,25 @@ class IntentManager extends State<IntentManagerWidget> {
 
   StreamSubscription<List<SharedMediaFile>>? _shareIntentSubscription;
   StreamSubscription<String>? _shareTextSubscription;
+  VoidCallback? _notificationRouteCallback;
 
   // prevent from interpreting a deep link as share
   static final _shareCache = Cache<Uri>(const Duration(milliseconds: 200));
 
   static final sharedTextListener = ValueNotifier<String?>(null);
   static final sharedFilesListener = ValueNotifier<List<XFile>?>(null);
+  static final notificationRouteListener = ValueNotifier<String?>(null);
 
   static Completer<OidcCallbackResponse>? oidcCallbackCompleter;
   static Completer<String>? legacySsoCallbackCompleter;
 
   @override
   void initState() {
+    _notificationRouteCallback = _handleNotificationRoute;
+    notificationRouteListener.addListener(_notificationRouteCallback!);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _handleNotificationRoute();
+    });
     _subscribeDeepLinks();
     _subscribeShareIntents();
     _handleLostData();
@@ -55,10 +62,20 @@ class IntentManager extends State<IntentManagerWidget> {
 
   @override
   void dispose() {
+    if (_notificationRouteCallback != null) {
+      notificationRouteListener.removeListener(_notificationRouteCallback!);
+    }
     _appLinkSubscription?.cancel();
     _shareIntentSubscription?.cancel();
     _shareTextSubscription?.cancel();
     super.dispose();
+  }
+
+  void _handleNotificationRoute() {
+    final route = notificationRouteListener.value;
+    if (!mounted || route == null) return;
+    notificationRouteListener.value = null;
+    context.go(route);
   }
 
   Future<void> _subscribeDeepLinks() async {

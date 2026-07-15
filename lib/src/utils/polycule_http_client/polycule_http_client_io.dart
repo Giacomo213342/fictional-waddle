@@ -9,13 +9,30 @@ import 'package:http/io_client.dart';
 import '../../widgets/settings_manager.dart';
 import '../assets.dart';
 import 'polycule_http_client.dart';
+import 'package:socks5_proxy/socks_client.dart';
 
 URLSessionConfiguration _cupertinoConfig =
     URLSessionConfiguration.defaultSessionConfiguration();
 
 SecurityContext _ioContext = SecurityContext.defaultContext;
+NetworkState? _currentSettings;
+InternetAddress? _socks5Address;
 
 Future<void> updateHttpClientSettings(NetworkState settings) async {
+  _currentSettings = settings;
+  if (settings.useSocks5Proxy && settings.proxyHost != null && settings.proxyHost!.isNotEmpty) {
+    _socks5Address = InternetAddress.tryParse(settings.proxyHost!);
+    if (_socks5Address == null) {
+      try {
+        final addresses = await InternetAddress.lookup(settings.proxyHost!);
+        if (addresses.isNotEmpty) {
+          _socks5Address = addresses.first;
+        }
+      } catch (_) {
+        // failed to lookup
+      }
+    }
+  }
   if (Platform.isIOS || Platform.isMacOS) {
     _cupertinoConfig = URLSessionConfiguration.ephemeralSessionConfiguration()
       ..cache = URLCache.withCapacity(
@@ -60,8 +77,24 @@ BaseClient _buildCupertinoClient() {
 }
 
 BaseClient _buildIoClient() {
-  return IOClient(
-    HttpClient(context: _ioContext)
-      ..userAgent = PolyculeHttpClientManager.userAgent,
-  );
+  final client = HttpClient(context: _ioContext)
+    ..userAgent = PolyculeHttpClientManager.userAgent;
+
+  if (_currentSettings?.useSocks5Proxy == true && _socks5Address != null && _currentSettings?.proxyPort != null) {
+    SocksTCPClient.assignToHttpClient(
+      client,
+      [
+        ProxySettings(
+          _socks5Address!,
+          _currentSettings!.proxyPort!,
+          password: _currentSettings?.proxyPassword ?? '',
+          username: _currentSettings?.proxyUsername ?? '',
+        )
+      ]
+    );
+  } else if (_currentSettings?.permitProxy == false) {
+    client.findProxy = (url) => 'DIRECT';
+  }
+
+  return IOClient(client);
 }

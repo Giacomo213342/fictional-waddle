@@ -33,6 +33,43 @@ class _NetworkSettingsPageState extends State<NetworkSettingsPage> {
                   onChanged: _setProxy,
                 ),
                 SwitchListTile.adaptive(
+                  title: const Text('Use SOCKS5 Proxy'),
+                  value: networkState.useSocks5Proxy,
+                  onChanged: _setSocks5Proxy,
+                ),
+                if (networkState.useSocks5Proxy) ...[
+                  ListTile(
+                    title: TextFormField(
+                      decoration: const InputDecoration(labelText: 'Proxy Host'),
+                      initialValue: networkState.proxyHost,
+                      onChanged: _setProxyHost,
+                    ),
+                  ),
+                  ListTile(
+                    title: TextFormField(
+                      decoration: const InputDecoration(labelText: 'Proxy Port'),
+                      initialValue: networkState.proxyPort?.toString(),
+                      keyboardType: TextInputType.number,
+                      onChanged: _setProxyPort,
+                    ),
+                  ),
+                  ListTile(
+                    title: TextFormField(
+                      decoration: const InputDecoration(labelText: 'Proxy Username'),
+                      initialValue: networkState.proxyUsername,
+                      onChanged: _setProxyUsername,
+                    ),
+                  ),
+                  ListTile(
+                    title: TextFormField(
+                      decoration: const InputDecoration(labelText: 'Proxy Password'),
+                      initialValue: networkState.proxyPassword,
+                      obscureText: true,
+                      onChanged: _setProxyPassword,
+                    ),
+                  ),
+                ],
+                SwitchListTile.adaptive(
                   title: Text(AppLocalizations.of(context).verifyCertificates),
                   value: networkState.verifyCertificates,
                   onChanged: _setVerifyCertificates,
@@ -71,6 +108,32 @@ class _NetworkSettingsPageState extends State<NetworkSettingsPage> {
         .network
         .value
         .copyWith(permitProxy: permitProxy);
+  }
+
+  void _setSocks5Proxy(bool? useSocks5Proxy) {
+    if (useSocks5Proxy == null) return;
+    SettingsManager.of(context).network.value =
+        SettingsManager.of(context).network.value.copyWith(useSocks5Proxy: useSocks5Proxy);
+  }
+
+  void _setProxyHost(String value) {
+    SettingsManager.of(context).network.value =
+        SettingsManager.of(context).network.value.copyWith(proxyHost: value);
+  }
+
+  void _setProxyPort(String value) {
+    SettingsManager.of(context).network.value =
+        SettingsManager.of(context).network.value.copyWith(proxyPort: int.tryParse(value));
+  }
+
+  void _setProxyUsername(String value) {
+    SettingsManager.of(context).network.value =
+        SettingsManager.of(context).network.value.copyWith(proxyUsername: value);
+  }
+
+  void _setProxyPassword(String value) {
+    SettingsManager.of(context).network.value =
+        SettingsManager.of(context).network.value.copyWith(proxyPassword: value);
   }
 
   void _setVerifyCertificates(bool? verifyCertificates) {

@@ -7,6 +7,7 @@ class TimelineScope extends InheritedWidget {
     super.key,
     required this.timeline,
     required this.eventChangeStream,
+    this.revision = 0,
     required super.child,
   });
 
@@ -17,8 +18,10 @@ class TimelineScope extends InheritedWidget {
 
   final Timeline timeline;
   final Stream<Event> eventChangeStream;
+  final int revision;
 
   @override
   bool updateShouldNotify(covariant TimelineScope oldWidget) =>
-      timeline.room.id != oldWidget.timeline.room.id;
+      timeline.room.id != oldWidget.timeline.room.id ||
+      revision != oldWidget.revision;
 }

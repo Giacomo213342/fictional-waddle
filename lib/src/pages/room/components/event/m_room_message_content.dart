@@ -24,7 +24,16 @@ class RoomMessageContent extends StatelessWidget {
     }
     switch (event.messageType) {
       case MessageTypes.Sticker:
-        return const Center(child: ImageMessage());
+        final isOwnMessage = event.senderId == event.room.client.userID;
+        return Align(
+          alignment:
+              isOwnMessage ? Alignment.centerRight : Alignment.centerLeft,
+          child: const SizedBox(
+            width: 220,
+            height: 220,
+            child: ImageMessage(compact: true),
+          ),
+        );
       cute_events:
       case CuteEventContent.eventType:
         return const CuteEventMessage();

@@ -15,7 +15,9 @@ import 'send_file_scope.dart';
 import 'type_ahead_helper.dart';
 
 class MessageInput extends StatelessWidget {
-  const MessageInput({super.key});
+  const MessageInput({super.key, this.onStartedTyping});
+
+  final VoidCallback? onStartedTyping;
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +93,9 @@ class MessageInput extends StatelessWidget {
                   ],
                 ),
                 cursorWidth: 10,
+                onChanged: (value) {
+                  if (value.isNotEmpty) onStartedTyping?.call();
+                },
                 onSubmitted: (_) => compose.sendMessage(),
                 textInputAction: TextInputAction.newline,
                 keyboardType: TextInputType.multiline,

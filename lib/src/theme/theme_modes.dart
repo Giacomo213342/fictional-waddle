@@ -23,6 +23,7 @@ enum PolyculeColorMode {
   system,
   theme,
   highContrast,
+  oled,
   custom,
 }
 

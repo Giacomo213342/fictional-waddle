@@ -24,6 +24,8 @@ class SettingsInterface {
         colorMode: switch (colorMode) {
           'system' || null => PolyculeColorMode.system,
           'theme' => PolyculeColorMode.theme,
+          'oled' => PolyculeColorMode.oled,
+          'highContrast' => PolyculeColorMode.highContrast,
           _ => PolyculeColorMode.custom,
         },
         fontMode: switch (fontMode) {
@@ -71,6 +73,11 @@ class SettingsInterface {
       final verifyCertificates =
           await kPolyculeSecureStorage.read(key: 'verifyCertificates');
       final permitProxy = await kPolyculeSecureStorage.read(key: 'permitProxy');
+      final useSocks5Proxy = await kPolyculeSecureStorage.read(key: 'useSocks5Proxy');
+      final proxyHost = await kPolyculeSecureStorage.read(key: 'proxyHost');
+      final proxyPortStr = await kPolyculeSecureStorage.read(key: 'proxyPort');
+      final proxyUsername = await kPolyculeSecureStorage.read(key: 'proxyUsername');
+      final proxyPassword = await kPolyculeSecureStorage.read(key: 'proxyPassword');
       return NetworkState(
         useSni: useSni == null ? true : bool.tryParse(useSni) ?? true,
         tlsMinVersion:
@@ -80,6 +87,11 @@ class SettingsInterface {
             : bool.tryParse(verifyCertificates) ?? true,
         permitProxy:
             permitProxy == null ? true : bool.tryParse(permitProxy) ?? true,
+        useSocks5Proxy: useSocks5Proxy == 'true',
+        proxyHost: proxyHost,
+        proxyPort: proxyPortStr != null ? int.tryParse(proxyPortStr) : null,
+        proxyUsername: proxyUsername,
+        proxyPassword: proxyPassword,
       );
     } on PlatformException catch (e, s) {
       ErrorLogger().captureStackTrace(e, s);
@@ -87,6 +99,11 @@ class SettingsInterface {
       await kPolyculeSecureStorage.delete(key: 'tlsMinVersion');
       await kPolyculeSecureStorage.delete(key: 'verifyCertificates');
       await kPolyculeSecureStorage.delete(key: 'permitProxy');
+      await kPolyculeSecureStorage.delete(key: 'useSocks5Proxy');
+      await kPolyculeSecureStorage.delete(key: 'proxyHost');
+      await kPolyculeSecureStorage.delete(key: 'proxyPort');
+      await kPolyculeSecureStorage.delete(key: 'proxyUsername');
+      await kPolyculeSecureStorage.delete(key: 'proxyPassword');
       return NetworkState();
     }
   }
@@ -107,6 +124,26 @@ class SettingsInterface {
     await kPolyculeSecureStorage.write(
       key: 'permitProxy',
       value: network.permitProxy.toString(),
+    );
+    await kPolyculeSecureStorage.write(
+      key: 'useSocks5Proxy',
+      value: network.useSocks5Proxy.toString(),
+    );
+    await kPolyculeSecureStorage.write(
+      key: 'proxyHost',
+      value: network.proxyHost,
+    );
+    await kPolyculeSecureStorage.write(
+      key: 'proxyPort',
+      value: network.proxyPort?.toString(),
+    );
+    await kPolyculeSecureStorage.write(
+      key: 'proxyUsername',
+      value: network.proxyUsername,
+    );
+    await kPolyculeSecureStorage.write(
+      key: 'proxyPassword',
+      value: network.proxyPassword,
     );
   }
 

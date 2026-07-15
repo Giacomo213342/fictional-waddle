@@ -77,6 +77,11 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                     value: PolyculeColorMode.highContrast,
                     title: Text(AppLocalizations.of(context).highContrast),
                   ),
+                  const RadioListTile.adaptive(
+                    value: PolyculeColorMode.oled,
+                    title: Text('OLED black'),
+                    subtitle: Text('Pure black background'),
+                  ),
                 ],
               ),
             ),
@@ -155,8 +160,12 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
       return;
     }
 
-    SettingsManager.of(context).theme.value =
-        SettingsManager.of(context).theme.value.copyWith(colorMode: colorMode);
+    final current = SettingsManager.of(context).theme.value;
+    SettingsManager.of(context).theme.value = current.copyWith(
+      colorMode: colorMode,
+      themeMode:
+          colorMode == PolyculeColorMode.oled ? PolyculeTheme.terminal : null,
+    );
   }
 
   void _setFontMode(PolyculeFontMode? fontMode) {

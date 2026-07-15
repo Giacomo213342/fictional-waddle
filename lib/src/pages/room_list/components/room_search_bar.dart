@@ -41,9 +41,6 @@ class RoomSearchBar extends StatelessWidget {
               searchController.openView();
             },
             onSubmitted: controller.searchSubmitted,
-            hintText: AppLocalizations.of(context).hajUser(
-              userId,
-            ),
             leading: IconButton(
               onPressed: searchController.openView,
               tooltip: MaterialLocalizations.of(context).searchFieldLabel,

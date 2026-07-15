@@ -99,10 +99,21 @@ class PolyculeThemeBuilder extends StatelessWidget {
             brightness: Brightness.dark,
           );
 
-          final darkColorScheme =
+          var darkColorScheme =
               themeState.colorMode == PolyculeColorMode.system
                   ? darkDynamic ?? darkFallback
                   : darkFallback;
+
+          if (themeState.colorMode == PolyculeColorMode.oled) {
+            darkColorScheme = darkColorScheme.copyWith(
+              surface: Colors.black,
+              surfaceContainerLowest: Colors.black,
+              surfaceContainerLow: Colors.black,
+              surfaceContainer: Colors.black,
+              surfaceContainerHigh: Colors.black,
+              surfaceContainerHighest: Colors.black,
+            );
+          }
 
           final lightFallback = ColorScheme.fromSeed(
             seedColor: PolyColors.pink,
@@ -154,6 +165,8 @@ class PolyculeThemeBuilder extends StatelessWidget {
     required Brightness brightness,
     required ThemeState themeState,
   }) {
+    final oled = themeState.colorMode == PolyculeColorMode.oled &&
+        brightness == Brightness.dark;
     final defaultSide = BorderSide(width: 1, color: colorScheme.primary);
     final defaultBorder = Border.fromBorderSide(defaultSide);
     return ThemeData(
@@ -163,6 +176,20 @@ class PolyculeThemeBuilder extends StatelessWidget {
         PolyculeFonts.notoSans.name,
       ],
       colorScheme: colorScheme,
+      scaffoldBackgroundColor: oled ? Colors.black : null,
+      canvasColor: oled ? Colors.black : null,
+      appBarTheme: oled
+          ? const AppBarTheme(backgroundColor: Colors.black)
+          : const AppBarTheme(),
+      dialogTheme: oled
+          ? const DialogThemeData(backgroundColor: Colors.black)
+          : const DialogThemeData(),
+      bottomSheetTheme: oled
+          ? const BottomSheetThemeData(backgroundColor: Colors.black)
+          : const BottomSheetThemeData(),
+      navigationBarTheme: oled
+          ? const NavigationBarThemeData(backgroundColor: Colors.black)
+          : const NavigationBarThemeData(),
       cardTheme: CardThemeData(
         margin: const EdgeInsets.all(16),
         shape: defaultBorder,

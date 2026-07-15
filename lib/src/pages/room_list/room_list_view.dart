@@ -28,22 +28,26 @@ class RoomListView extends StatelessWidget {
           flexibleSpace: const RoomSearchBar(),
           automaticallyImplyLeading: false,
         ),
-        body: Column(
-          children: [
-            const InitialSyncTile(),
-            const Expanded(
-              child: FadeInRoomList(),
-            ),
-            StreamBuilder<SyncUpdate>(
-              stream: ClientScope.of(context).client.onSync.stream,
-              builder: (context, snapshot) {
-                return SyncUpdateStatusRow(
-                  syncUpdate: snapshot.data,
-                  timestamp: DateTime.now(),
-                );
-              },
-            ),
-          ],
+        body: SafeArea(
+          top: false,
+          minimum: const EdgeInsets.only(bottom: 8),
+          child: Column(
+            children: [
+              const InitialSyncTile(),
+              const Expanded(
+                child: FadeInRoomList(),
+              ),
+              StreamBuilder<SyncUpdate>(
+                stream: ClientScope.of(context).client.onSync.stream,
+                builder: (context, snapshot) {
+                  return SyncUpdateStatusRow(
+                    syncUpdate: snapshot.data,
+                    timestamp: DateTime.now(),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

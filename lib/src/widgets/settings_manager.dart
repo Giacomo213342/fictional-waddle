@@ -154,24 +154,44 @@ class NetworkState {
     this.tlsMinVersion,
     this.verifyCertificates = true,
     this.permitProxy = true,
+    this.useSocks5Proxy = false,
+    this.proxyHost,
+    this.proxyPort,
+    this.proxyUsername,
+    this.proxyPassword,
   });
 
   final bool useSni;
   final int? tlsMinVersion;
   final bool verifyCertificates;
   final bool permitProxy;
+  final bool useSocks5Proxy;
+  final String? proxyHost;
+  final int? proxyPort;
+  final String? proxyUsername;
+  final String? proxyPassword;
 
   NetworkState copyWith({
     bool? useSni,
     int? tlsMinVersion,
     bool? verifyCertificates,
     bool? permitProxy,
+    bool? useSocks5Proxy,
+    String? proxyHost,
+    int? proxyPort,
+    String? proxyUsername,
+    String? proxyPassword,
   }) =>
       NetworkState(
         useSni: useSni ?? this.useSni,
         tlsMinVersion: tlsMinVersion ?? this.tlsMinVersion,
         verifyCertificates: verifyCertificates ?? this.verifyCertificates,
         permitProxy: permitProxy ?? this.permitProxy,
+        useSocks5Proxy: useSocks5Proxy ?? this.useSocks5Proxy,
+        proxyHost: proxyHost ?? this.proxyHost,
+        proxyPort: proxyPort ?? this.proxyPort,
+        proxyUsername: proxyUsername ?? this.proxyUsername,
+        proxyPassword: proxyPassword ?? this.proxyPassword,
       );
 
   @override
@@ -179,7 +199,12 @@ class NetworkState {
       useSni.hashCode ^
       tlsMinVersion.hashCode ^
       verifyCertificates.hashCode ^
-      permitProxy.hashCode;
+      permitProxy.hashCode ^
+      useSocks5Proxy.hashCode ^
+      proxyHost.hashCode ^
+      proxyPort.hashCode ^
+      proxyUsername.hashCode ^
+      proxyPassword.hashCode;
 
   @override
   bool operator ==(Object other) {
@@ -187,7 +212,12 @@ class NetworkState {
       return useSni == other.useSni &&
           tlsMinVersion == other.tlsMinVersion &&
           verifyCertificates == other.verifyCertificates &&
-          permitProxy == other.permitProxy;
+          permitProxy == other.permitProxy &&
+          useSocks5Proxy == other.useSocks5Proxy &&
+          proxyHost == other.proxyHost &&
+          proxyPort == other.proxyPort &&
+          proxyUsername == other.proxyUsername &&
+          proxyPassword == other.proxyPassword;
     }
     return super == other;
   }

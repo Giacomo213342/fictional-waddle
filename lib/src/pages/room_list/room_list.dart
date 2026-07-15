@@ -88,7 +88,9 @@ class RoomListController extends State<RoomListPage> {
     // wait for all basic data to be synced
     await client.accountDataLoading;
     await client.roomsLoading;
-    await client.onSync.stream.first;
+    if (client.onSync.value == null) {
+      await client.onSync.stream.first;
+    }
     if (!mounted) {
       return;
     }

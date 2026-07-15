@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -11,9 +12,11 @@ import 'package:unifiedpush_platform_interface/unifiedpush_platform_interface.da
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../l10n/matrix/polycule_matrix_localizations.dart';
+import '../../widgets/matrix/client_manager/client_store.dart';
 import '../polycule_http_client/polycule_http_client.dart';
 import '../settings_interface.dart';
 import '../unified_push/unified_push_storage_polycule.dart';
+import 'active_room_tracker.dart';
 import 'client_util.dart';
 import 'push_manager.dart';
 
@@ -90,6 +93,12 @@ Future<void> handlePushNotification({
     return;
   }
 
+  final roomId = event.roomId;
+  if (roomId != null && ActiveRoomTracker.isVisible(roomId)) {
+    await notificationsPlugin.cancel(roomId.hashCode);
+    return;
+  }
+
   final id = notification.roomId.hashCode;
 
   final body = event.type == EventTypes.Encrypted
@@ -134,6 +143,18 @@ Future<void> handlePushNotification({
   final notificationGroupId =
       event.room.isDirectChat ? 'directChats' : 'groupChats';
   final groupName = event.room.isDirectChat ? l10n.directChats : l10n.groups;
+
+  if (Platform.isAndroid) {
+    try {
+      const channel = MethodChannel('polycule.shortcuts');
+      await channel.invokeMethod('publishConversationShortcut', {
+        'id': event.room.id,
+        'name': roomName,
+      });
+    } catch (e) {
+      Logs().w('Failed to publish conversation shortcut', e);
+    }
+  }
 
   final messageRooms = AndroidNotificationChannelGroup(
     notificationGroupId,
@@ -194,7 +215,10 @@ Future<void> handlePushNotification({
     title,
     body,
     platformChannelSpecifics,
-    payload: event.roomId,
+    payload: jsonEncode({
+      'client': client.clientName.clientIdentifier,
+      'room': event.roomId,
+    }),
   );
 }
 

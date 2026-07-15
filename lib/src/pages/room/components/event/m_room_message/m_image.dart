@@ -12,12 +12,16 @@ import '../../../../../widgets/matrix/tumbnail_aspect_ratio.dart';
 import '../../../../../widgets/mimed_image.dart';
 
 class ImageMessage extends StatelessWidget {
-  const ImageMessage({super.key});
+  const ImageMessage({super.key, this.compact = false});
+
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 512, maxWidth: 512),
+      constraints: compact
+          ? const BoxConstraints(maxHeight: 220, maxWidth: 220)
+          : const BoxConstraints(maxHeight: 512, maxWidth: 512),
       child: ThumbnailAspectRatio(
         child: MxcEncryptedFileBuilder<MatrixFile, MatrixFile>(
           event: EventScope.of(context).event,

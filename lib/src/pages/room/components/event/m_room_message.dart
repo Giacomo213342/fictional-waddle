@@ -62,6 +62,7 @@ class RoomMessage extends StatelessWidget {
               (nextEvent?.hashCode ?? 1),
         ),
         builder: (context, constraints) {
+          final contentWidth = constraints.maxWidth - 74;
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -112,7 +113,7 @@ class RoomMessage extends StatelessWidget {
                                           const Duration(milliseconds: 150),
                                       alignment: Alignment.centerLeft,
                                       child: SizedBox(
-                                        width: constraints.maxWidth - 74,
+                                        width: contentWidth,
                                         child: replyEvent == null
                                             ? null
                                             : EventScope(
@@ -127,7 +128,7 @@ class RoomMessage extends StatelessWidget {
                                   },
                                 ),
                                 SizedBox(
-                                  width: constraints.maxWidth - 74,
+                                  width: contentWidth,
                                   child: const RoomMessageContent(),
                                 ),
                                 ReactionRow(
@@ -144,10 +145,65 @@ class RoomMessage extends StatelessWidget {
                   const MessageSuffix(),
                 ],
               ),
+              if (event.isReadByEnoughPeople(timeline))
+                const Padding(
+                  padding: EdgeInsets.only(top: 2, right: 12, bottom: 2),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      'read',
+                      style: TextStyle(color: Colors.grey, fontSize: 10),
+                    ),
+                  ),
+                ),
             ],
           );
         },
       ),
     );
+  }
+}
+
+extension on Event {
+  bool isReadByEnoughPeople(Timeline timeline) {
+    if (senderId != room.client.userID) return false;
+
+    final myIndex = timeline.events.indexOf(this);
+    if (myIndex == -1) return false;
+
+    int getReadCount(Event e) {
+      int count = 0;
+      final eIndex = timeline.events.indexOf(e);
+      for (final entry in room.receiptState.global.otherUsers.entries) {
+        if (entry.key == senderId || entry.key == room.client.userID) continue;
+        final receiptEventId = entry.value.eventId;
+        if (receiptEventId == e.eventId) {
+          count++;
+        } else {
+          final receiptIndex =
+              timeline.events.indexWhere((ev) => ev.eventId == receiptEventId);
+          if (receiptIndex != -1 && receiptIndex <= eIndex) {
+            count++;
+          }
+        }
+      }
+      return count;
+    }
+
+    final readCount = getReadCount(this);
+    int requiredReads = (room.summary.mJoinedMemberCount ?? 2) - 2;
+    if (requiredReads < 1) requiredReads = 1;
+
+    if (readCount < requiredReads) return false;
+
+    for (int i = 0; i < myIndex; i++) {
+      final newerEvent = timeline.events[i];
+      if (newerEvent.senderId == room.client.userID) {
+        if (getReadCount(newerEvent) >= requiredReads) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 }

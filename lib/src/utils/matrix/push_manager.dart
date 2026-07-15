@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -10,6 +11,7 @@ import 'package:unifiedpush/unifiedpush.dart';
 import 'package:unifiedpush_platform_interface/unifiedpush_platform_interface.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
+import '../../widgets/intent_manager.dart';
 import '../settings_interface.dart';
 import '../unified_push/unified_push_storage_polycule.dart';
 import 'push_gateway_extension.dart';
@@ -54,7 +56,33 @@ class PushManager {
         iOS: const DarwinInitializationSettings(),
         macOS: const DarwinInitializationSettings(),
       ),
+      onDidReceiveNotificationResponse: _handleNotificationResponse,
     );
+
+    final launchDetails =
+        await notificationsPlugin.getNotificationAppLaunchDetails();
+    if (launchDetails?.didNotificationLaunchApp == true) {
+      _openNotificationPayload(launchDetails?.notificationResponse?.payload);
+    }
+  }
+
+  static void _handleNotificationResponse(NotificationResponse response) {
+    _openNotificationPayload(response.payload);
+  }
+
+  static void _openNotificationPayload(String? payload) {
+    if (payload == null) return;
+    try {
+      final data = jsonDecode(payload) as Map<String, dynamic>;
+      final client = data['client'];
+      final room = data['room'];
+      if (client is int && room is String) {
+        IntentManager.notificationRouteListener.value =
+            '/client/$client/rooms/${Uri.encodeComponent(room)}';
+      }
+    } catch (_) {
+      // Ignore payloads produced by older app versions.
+    }
   }
 
   final settings = const SettingsInterface();
