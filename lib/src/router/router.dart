@@ -46,96 +46,90 @@ import 'extensions/splash_route.dart';
 
 class PolyculeRouter extends GoRouter {
   factory PolyculeRouter(ValueNotifier<List<Client>> clientNotifier) {
-    final routingConfig =
-        ValueNotifier(makeRoutingConfig(clientNotifier.value));
+    final routingConfig = ValueNotifier(
+      makeRoutingConfig(clientNotifier.value),
+    );
     return PolyculeRouter._(routingConfig, clientNotifier);
   }
 
-  PolyculeRouter._(
-    this.routingConfig,
-    this.clientNotifier,
-  ) : super.routingConfig(
-          navigatorKey: _applicationNavigatorKey,
-          debugLogDiagnostics: kDebugMode,
-          routingConfig: routingConfig,
-        ) {
+  PolyculeRouter._(this.routingConfig, this.clientNotifier)
+    : super.routingConfig(
+        navigatorKey: _applicationNavigatorKey,
+        debugLogDiagnostics: kDebugMode,
+        routingConfig: routingConfig,
+      ) {
     clientNotifier.addListener(_updateRoutingConfig);
   }
 
   static RoutingConfig makeRoutingConfig(List<Client> clients) => RoutingConfig(
-        routes: [
-          ClientManagerRoute(
-            branches: [
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: FatalErrorPage.routeName,
-                    builder: (context, state) =>
-                        FatalErrorPage(error: state.extra),
-                  ),
-                  GoRoute(
-                    path: ApplicationSplashScreen.routeName,
-                    builder: (context, state) =>
-                        const ApplicationSplashScreen(),
-                  ),
-                  GoRoute(
-                    path: AccountSelectorPage.routeName,
-                    builder: (context, state) => AccountSelectorPage(
-                      redirect: Uri.decodeComponent(
-                        state.uri.queryParameters['redirect']!,
-                      ),
-                    ),
-                  ),
-                ],
+    routes: [
+      ClientManagerRoute(
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: FatalErrorPage.routeName,
+                builder: (context, state) => FatalErrorPage(error: state.extra),
               ),
-              StatefulShellBranch(
+              GoRoute(
+                path: ApplicationSplashScreen.routeName,
+                builder: (context, state) => const ApplicationSplashScreen(),
+              ),
+              GoRoute(
+                path: AccountSelectorPage.routeName,
+                builder: (context, state) => AccountSelectorPage(
+                  redirect: Uri.decodeComponent(
+                    state.uri.queryParameters['redirect']!,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              ResponsiveShellRoute(
+                builder: (context, state) => const ApplicationSettingsPage(),
                 routes: [
-                  ResponsiveShellRoute(
-                    builder: (context, state) =>
-                        const ApplicationSettingsPage(),
+                  GoRoute(
+                    path: ApplicationSettingsPage.routeName,
+                    builder: (context, state) => const PolyculePlaceholder(),
                     routes: [
                       GoRoute(
-                        path: ApplicationSettingsPage.routeName,
+                        path: AppearanceSettingsPage.routeName,
                         builder: (context, state) =>
-                            const PolyculePlaceholder(),
-                        routes: [
-                          GoRoute(
-                            path: AppearanceSettingsPage.routeName,
-                            builder: (context, state) =>
-                                const AppearanceSettingsPage(),
-                          ),
-                          GoRoute(
-                            path: PushSettingsPage.routeName,
-                            builder: (context, state) =>
-                                const PushSettingsPage(),
-                          ),
-                          GoRoute(
-                            path: NetworkSettingsPage.routeName,
-                            builder: (context, state) =>
-                                const NetworkSettingsPage(),
-                          ),
-                          GoRoute(
-                            path: LogsPage.routeName,
-                            builder: (context, state) => const LogsPage(),
-                          ),
-                          GoRoute(
-                            path: ErrorReportingSettingsPage.routeName,
-                            builder: (context, state) =>
-                                const ErrorReportingSettingsPage(),
-                          ),
-                        ],
+                            const AppearanceSettingsPage(),
+                      ),
+                      GoRoute(
+                        path: PushSettingsPage.routeName,
+                        builder: (context, state) => const PushSettingsPage(),
+                      ),
+                      GoRoute(
+                        path: NetworkSettingsPage.routeName,
+                        builder: (context, state) =>
+                            const NetworkSettingsPage(),
+                      ),
+                      GoRoute(
+                        path: LogsPage.routeName,
+                        builder: (context, state) => const LogsPage(),
+                      ),
+                      GoRoute(
+                        path: ErrorReportingSettingsPage.routeName,
+                        builder: (context, state) =>
+                            const ErrorReportingSettingsPage(),
                       ),
                     ],
                   ),
                 ],
               ),
-              ...clients.map(makeClientBranch),
             ],
           ),
-          PolyculeDeeplinkRoute(),
-          MatrixDeeplinkRoute(),
+          ...clients.map(makeClientBranch),
         ],
-      );
+      ),
+      PolyculeDeeplinkRoute(),
+      MatrixDeeplinkRoute(),
+    ],
+  );
 
   static StatefulShellBranch makeClientBranch(Client client) =>
       StatefulShellBranch(
@@ -182,14 +176,15 @@ class PolyculeRouter extends GoRouter {
                             routes: [
                               RoomAvailableShellRoute(
                                 client: client,
-                                builder: (context, state) => const RoomPage(),
+                                builder: (context, state) =>
+                                    RoomPage(key: ValueKey(state.uri.fragment)),
                                 roomUnavailableBuilder: (context, state) =>
                                     const PublicRoomPage(),
                                 routes: [
                                   RoomAvailableRoute(
                                     client: client,
-                                    path:
-                                        RoomPage.pathParameter.asGoRouterPath(),
+                                    path: RoomPage.pathParameter
+                                        .asGoRouterPath(),
                                     builder: (context, state) =>
                                         const PolyculePlaceholder(),
                                   ),
@@ -204,18 +199,18 @@ class PolyculeRouter extends GoRouter {
                                     path: UserPage.roomPath,
                                     builder: (context, state) =>
                                         MatrixIdentifierScope.fromGoRouterState(
-                                      state: state,
-                                      child: const UserPage(),
-                                    ),
+                                          state: state,
+                                          child: const UserPage(),
+                                        ),
                                   ),
                                   RoomAvailableRoute(
                                     client: client,
                                     path: UserSessionsPage.path,
                                     builder: (context, state) =>
                                         MatrixIdentifierScope.fromGoRouterState(
-                                      state: state,
-                                      child: const UserSessionsPage(),
-                                    ),
+                                          state: state,
+                                          child: const UserSessionsPage(),
+                                        ),
                                   ),
                                 ],
                               ),
@@ -231,9 +226,9 @@ class PolyculeRouter extends GoRouter {
                             path: UserPage.makeRouteName(),
                             builder: (context, state) =>
                                 MatrixIdentifierScope.fromGoRouterState(
-                              state: state,
-                              child: const UserPage(),
-                            ),
+                                  state: state,
+                                  child: const UserPage(),
+                                ),
                           ),
                         ],
                       ),

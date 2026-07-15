@@ -32,16 +32,28 @@ class PushManager {
     unawaited(_initialize());
   }
 
-  static bool _notificationsInitialized = false;
+  static Future<void>? _notificationInitialization;
 
   static Future<void> initializeNotificationPlugin(
     AppLocalizations l10n,
-  ) async {
-    if (_notificationsInitialized) {
-      return;
+  ) {
+    final current = _notificationInitialization;
+    if (current != null) {
+      return current;
     }
-    _notificationsInitialized = true;
+    final initialization = _initializeNotificationPlugin(l10n);
+    _notificationInitialization = initialization;
+    initialization.catchError((Object _) {
+      if (identical(_notificationInitialization, initialization)) {
+        _notificationInitialization = null;
+      }
+    });
+    return initialization;
+  }
 
+  static Future<void> _initializeNotificationPlugin(
+    AppLocalizations l10n,
+  ) async {
     final notificationsPlugin = FlutterLocalNotificationsPlugin();
 
     await notificationsPlugin.initialize(
@@ -71,7 +83,9 @@ class PushManager {
   }
 
   static void _openNotificationPayload(String? payload) {
-    if (payload == null) return;
+    if (payload == null) {
+      return;
+    }
     try {
       final data = jsonDecode(payload) as Map<String, dynamic>;
       final client = data['client'];

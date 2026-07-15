@@ -10,7 +10,6 @@ import '../../../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../../../widgets/matrix/scopes/timeline_scope.dart';
 import '../../../../user_page/user_page.dart';
 import '../../message_user_avatar.dart';
-import 'edit_tooltip.dart';
 
 class MessagePrefix extends StatelessWidget {
   const MessagePrefix({super.key});
@@ -20,17 +19,11 @@ class MessagePrefix extends StatelessWidget {
     final timeline = TimelineScope.of(context).timeline;
     final event = EventScope.of(context).event.getDisplayEvent(timeline);
     timeline.getPreviousDisplayEvent(timeline.events.indexOf(event));
-    final nextEvent =
-        timeline.getNextDisplayEvent(timeline.events.indexOf(event));
+    final nextEvent = timeline.getNextDisplayEvent(
+      timeline.events.indexOf(event),
+    );
 
     final isOwnMessage = event.senderId == event.room.client.userID;
-
-    final edits =
-        event.aggregatedEvents(timeline, RelationshipTypes.edit).toList();
-    edits.sort(
-      (a, b) => a.originServerTs.compareTo(b.originServerTs),
-    );
-    final editEvent = edits.lastOrNull;
 
     final nextMessageSameSender =
         nextEvent?.isSameMessageBubble(event) ?? false;
@@ -38,12 +31,8 @@ class MessagePrefix extends StatelessWidget {
 
     Widget? prefix;
 
-    Widget? editNotice;
-
     if (event.redacted) {
-      editNotice = const Icon(Icons.delete);
-    } else if (editEvent != null) {
-      editNotice = EditTooltip(editEvent: editEvent);
+      prefix = const Icon(Icons.delete);
     }
 
     if (showOtherSenderAvatar) {
@@ -77,8 +66,8 @@ class MessagePrefix extends StatelessWidget {
         onPressed: event.cancelSend,
         icon: const Icon(Icons.cancel_rounded),
       );
-    } else if (isOwnMessage) {
-      prefix = editNotice;
+    } else if (isOwnMessage && event.redacted) {
+      prefix = const Icon(Icons.delete);
     } else {
       prefix = null;
     }
@@ -86,10 +75,7 @@ class MessagePrefix extends StatelessWidget {
     return IconTheme(
       data: IconTheme.of(context).copyWith(size: 16),
       child: SelectionArea(
-        child: SizedBox.square(
-          dimension: 32,
-          child: prefix,
-        ),
+        child: SizedBox.square(dimension: 32, child: prefix),
       ),
     );
   }

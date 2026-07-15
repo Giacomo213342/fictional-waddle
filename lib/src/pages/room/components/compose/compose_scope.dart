@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import '../../../../widgets/matrix/dialogs/command_error_dialog.dart';
 import '../../../../widgets/matrix/dialogs/command_helper_dialog.dart';
 import '../../../../widgets/matrix/scopes/client_scope.dart';
 import '../../../../widgets/matrix/scopes/room_scope.dart';
+import '../../../room_list/room_list_position_tracker.dart';
 import 'send_file_scope.dart';
 import 'type_ahead_helper.dart';
 
@@ -26,10 +28,7 @@ class ComposeScopeWidget extends StatefulWidget {
 }
 
 class _ComposeScope extends InheritedWidget {
-  const _ComposeScope({
-    required this.scope,
-    required super.child,
-  });
+  const _ComposeScope({required this.scope, required super.child});
 
   final ComposeScope scope;
 
@@ -61,14 +60,17 @@ class ComposeScope extends State<ComposeScopeWidget> {
   String _sendMsgType = MessageTypes.Text;
 
   final Map<String, CancelableOperation<String?>> txids = {};
+  Room? _room;
+  Timer? _typingIdleTimer;
+  DateTime? _lastTypingSent;
+  bool _isTyping = false;
 
   @override
   void initState() {
-    messageFocusNode = FocusNode(
-      onKeyEvent: _handleMessageKeyEvent,
-    );
+    messageFocusNode = FocusNode(onKeyEvent: _handleMessageKeyEvent);
 
     messageController.addListener(_adjustMessageType);
+    messageController.addListener(_handleTypingChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadDraft();
     });
@@ -76,17 +78,61 @@ class ComposeScope extends State<ComposeScopeWidget> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _room = RoomScope.of(context).room;
+  }
+
+  @override
   void dispose() {
+    _typingIdleTimer?.cancel();
+    if (_isTyping && _room != null) {
+      unawaited(_room!.setTyping(false));
+    }
     messageController.removeListener(_adjustMessageType);
+    messageController.removeListener(_handleTypingChanged);
     messageController.removeListener(_storeDraft);
+    messageController.dispose();
+    msgTypeController.dispose();
+    messageFocusNode?.dispose();
+    focusNode.dispose();
     super.dispose();
+  }
+
+  void _handleTypingChanged() {
+    final room = _room;
+    if (room == null) return;
+    final hasText = messageController.text.trim().isNotEmpty;
+    _typingIdleTimer?.cancel();
+    if (!hasText) {
+      if (_isTyping) {
+        _isTyping = false;
+        unawaited(room.setTyping(false));
+      }
+      return;
+    }
+
+    RoomListPositionTracker.markInteraction(room);
+    final now = DateTime.now();
+    if (!_isTyping ||
+        _lastTypingSent == null ||
+        now.difference(_lastTypingSent!) > const Duration(seconds: 5)) {
+      _isTyping = true;
+      _lastTypingSent = now;
+      unawaited(room.setTyping(true, timeout: 15000));
+    }
+    _typingIdleTimer = Timer(const Duration(seconds: 12), () {
+      if (!_isTyping) return;
+      _isTyping = false;
+      unawaited(room.setTyping(false));
+    });
   }
 
   @override
   Widget build(BuildContext context) => _ComposeScope(
-        scope: this,
-        child: SendFileScopeWidget(child: widget.child),
-      );
+    scope: this,
+    child: SendFileScopeWidget(child: widget.child),
+  );
 
   Future<void> sendMessage() async {
     final room = RoomScope.of(context).room;
@@ -107,10 +153,7 @@ class ComposeScope extends State<ComposeScopeWidget> {
       String? eventId;
       // some joke enabling to send notices ...
       if (msgType == MessageTypes.Notice) {
-        final event = <String, String>{
-          'msgtype': msgType,
-          'body': message,
-        };
+        final event = <String, String>{'msgtype': msgType, 'body': message};
         eventId = await room.sendEvent(
           event,
           inReplyTo: replyEvent,
@@ -133,8 +176,9 @@ class ComposeScope extends State<ComposeScopeWidget> {
           }
           final command = message.split(' ').first;
           if (command == '/help') {
-            final selectedCommand =
-                await CommandHelperDialog(client: room.client).show(context);
+            final selectedCommand = await CommandHelperDialog(
+              client: room.client,
+            ).show(context);
             if (selectedCommand == null) {
               return;
             }
@@ -143,11 +187,9 @@ class ComposeScope extends State<ComposeScopeWidget> {
           }
           String result = stdout.toString();
           if (result.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(result),
-              ),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(result)));
           }
         }
       }
@@ -261,8 +303,9 @@ class ComposeScope extends State<ComposeScopeWidget> {
   KeyEventResult _handleMessageKeyEvent(FocusNode node, KeyEvent event) {
     if (event.logicalKey == LogicalKeyboardKey.enter &&
         // ensure we don't react to on-screen keyboards here
-        HardwareKeyboard.instance
-            .isLogicalKeyPressed(LogicalKeyboardKey.enter) &&
+        HardwareKeyboard.instance.isLogicalKeyPressed(
+          LogicalKeyboardKey.enter,
+        ) &&
         !HardwareKeyboard.instance.isShiftPressed &&
         !HardwareKeyboard.instance.isControlPressed &&
         !HardwareKeyboard.instance.isAltPressed) {

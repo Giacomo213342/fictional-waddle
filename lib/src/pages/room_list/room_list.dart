@@ -10,6 +10,7 @@ import '../../widgets/matrix/scopes/client_scope.dart';
 import '../account_settings/account_settings.dart';
 import '../room/room.dart';
 import '../ssss_bootstrap/ssss_bootstrap.dart';
+import 'room_list_position_tracker.dart';
 import 'room_list_view.dart';
 
 class RoomListPage extends StatefulWidget {
@@ -22,10 +23,7 @@ class RoomListPage extends StatefulWidget {
 }
 
 class _RoomListScope extends InheritedWidget {
-  const _RoomListScope({
-    required this.controller,
-    required super.child,
-  });
+  const _RoomListScope({required this.controller, required super.child});
 
   final RoomListController controller;
 
@@ -36,19 +34,35 @@ class _RoomListScope extends InheritedWidget {
 
 class RoomListController extends State<RoomListPage> {
   static RoomListController of(BuildContext context) {
-    final _RoomListScope scope =
-        context.dependOnInheritedWidgetOfExactType<_RoomListScope>()!;
+    final _RoomListScope scope = context
+        .dependOnInheritedWidgetOfExactType<_RoomListScope>()!;
     return scope.controller;
   }
 
   final searchController = SearchController();
   final searchFocus = FocusNode();
+  final scrollController = ScrollController();
+  static final Map<String, double> _savedOffsets = {};
+  String? _clientName;
+  bool _restoredOffset = false;
 
-  List<Room> getRegularRooms() => ClientScope.of(context)
-      .client
-      .rooms
-      .where((r) => !r.isSpace && !r.isArchived)
-      .toList();
+  List<Room> getRegularRooms() {
+    final rooms = ClientScope.of(
+      context,
+    ).client.rooms.where((r) => !r.isSpace && !r.isArchived).toList();
+    final originalOrder = {
+      for (final entry in rooms.indexed) entry.$2.id: entry.$1,
+    };
+    rooms.sort((a, b) {
+      final aLowPriority = a.tags.containsKey(TagType.lowPriority);
+      final bLowPriority = b.tags.containsKey(TagType.lowPriority);
+      if (aLowPriority == bLowPriority) {
+        return originalOrder[a.id]!.compareTo(originalOrder[b.id]!);
+      }
+      return aLowPriority ? 1 : -1;
+    });
+    return rooms;
+  }
 
   @override
   void initState() {
@@ -57,14 +71,58 @@ class RoomListController extends State<RoomListPage> {
   }
 
   @override
-  Widget build(BuildContext context) => _RoomListScope(
-        controller: this,
-        child: RoomListView(this),
-      );
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final clientName = ClientScope.of(context).client.clientName;
+    if (_clientName == clientName) return;
+    if (_clientName != null) {
+      RoomListPositionTracker.unregister(_clientName!, _resetToTop);
+    }
+    _clientName = clientName;
+    RoomListPositionTracker.register(clientName, _resetToTop);
+    scrollController.addListener(_saveOffset);
+    if (!_restoredOffset) {
+      _restoredOffset = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !scrollController.hasClients) return;
+        final offset = _savedOffsets[clientName] ?? 0;
+        scrollController.jumpTo(
+          offset.clamp(0, scrollController.position.maxScrollExtent).toDouble(),
+        );
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      _RoomListScope(controller: this, child: RoomListView(this));
 
   @override
   void dispose() {
+    final clientName = _clientName;
+    if (clientName != null) {
+      RoomListPositionTracker.unregister(clientName, _resetToTop);
+    }
+    scrollController
+      ..removeListener(_saveOffset)
+      ..dispose();
+    searchController.dispose();
+    searchFocus.dispose();
     super.dispose();
+  }
+
+  void _saveOffset() {
+    final clientName = _clientName;
+    if (clientName != null && scrollController.hasClients) {
+      _savedOffsets[clientName] = scrollController.offset;
+    }
+  }
+
+  void _resetToTop() {
+    final clientName = _clientName;
+    if (clientName != null) _savedOffsets[clientName] = 0;
+    if (!scrollController.hasClients) return;
+    scrollController.jumpTo(0);
   }
 
   List<Room> filterRooms(String filter) {
@@ -117,9 +175,8 @@ class RoomListController extends State<RoomListPage> {
     if (query.startsWith('/')) {
       final command = client.commands.keys
           .where(
-            (command) => command.startsWith(
-              query.split(' ').first.substring(1),
-            ),
+            (command) =>
+                command.startsWith(query.split(' ').first.substring(1)),
           )
           .firstOrNull;
 
@@ -132,7 +189,8 @@ class RoomListController extends State<RoomListPage> {
         return;
       }
     }
-    final room = filterRooms(query).first;
+    final room = filterRooms(query).firstOrNull;
+    if (room == null) return;
 
     searchController.closeView('');
     searchFocus.unfocus();
@@ -150,11 +208,9 @@ class RoomListController extends State<RoomListPage> {
       if (result.isEmpty || !mounted) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(result)));
     } on CommandException catch (e) {
       if (!mounted) {
         return;

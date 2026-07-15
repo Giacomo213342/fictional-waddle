@@ -7,7 +7,6 @@ import '../../../../../utils/matrix/same_message_bubble_extension.dart';
 import '../../../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../../../widgets/matrix/scopes/timeline_scope.dart';
 import '../../message_user_avatar.dart';
-import 'edit_tooltip.dart';
 
 class MessageSuffix extends StatelessWidget {
   const MessageSuffix({super.key});
@@ -17,33 +16,17 @@ class MessageSuffix extends StatelessWidget {
     final timeline = TimelineScope.of(context).timeline;
     final event = EventScope.of(context).event.getDisplayEvent(timeline);
     timeline.getPreviousDisplayEvent(timeline.events.indexOf(event));
-    final nextEvent =
-        timeline.getNextDisplayEvent(timeline.events.indexOf(event));
+    final nextEvent = timeline.getNextDisplayEvent(
+      timeline.events.indexOf(event),
+    );
 
     final isOwnMessage = event.senderId == event.room.client.userID;
-
-    final edits =
-        event.aggregatedEvents(timeline, RelationshipTypes.edit).toList();
-    edits.sort(
-      (a, b) => a.originServerTs.compareTo(b.originServerTs),
-    );
-    final editEvent = edits.lastOrNull;
 
     final nextMessageSameSender =
         nextEvent?.isSameMessageBubble(event) ?? false;
     final showOwnAvatar = isOwnMessage && !nextMessageSameSender;
 
-    Widget? editNotice;
-
-    if (event.redacted) {
-      editNotice = const Icon(Icons.delete);
-    } else if (editEvent != null) {
-      editNotice = EditTooltip(editEvent: editEvent);
-    }
-
-    Widget avatar = MessageUserAvatar(
-      event: event,
-    );
+    Widget avatar = MessageUserAvatar(event: event);
 
     if (event.messageType == MessageTypes.Notice) {
       avatar = Stack(
@@ -65,9 +48,9 @@ class MessageSuffix extends StatelessWidget {
           dimension: 32,
           child: showOwnAvatar
               ? avatar
-              : !isOwnMessage
-                  ? editNotice
-                  : null,
+              : !isOwnMessage && event.redacted
+              ? const Icon(Icons.delete)
+              : null,
         ),
       ),
     );

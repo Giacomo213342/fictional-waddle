@@ -4,6 +4,7 @@ import 'package:emoji_extension/emoji_extension.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../widgets/matrix/scopes/event_scope.dart';
+import '../../../../utils/matrix/poll_event.dart';
 import 'components/attachment_toolbar.dart';
 import 'event_fallback_text.dart';
 import 'm_room_message/m_audio.dart';
@@ -12,6 +13,7 @@ import 'm_room_message/m_image.dart';
 import 'm_room_message/m_text.dart';
 import 'm_room_message/m_video.dart';
 import 'm_room_message/msc_3935_cute_event.dart';
+import 'm_poll.dart';
 
 class RoomMessageContent extends StatelessWidget {
   const RoomMessageContent({super.key});
@@ -22,12 +24,16 @@ class RoomMessageContent extends StatelessWidget {
     if (event.redacted) {
       return const EventFallbackText();
     }
+    if (event.isPollStart) {
+      return const PollMessage();
+    }
     switch (event.messageType) {
       case MessageTypes.Sticker:
         final isOwnMessage = event.senderId == event.room.client.userID;
         return Align(
-          alignment:
-              isOwnMessage ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: isOwnMessage
+              ? Alignment.centerRight
+              : Alignment.centerLeft,
           child: const SizedBox(
             width: 220,
             height: 220,
@@ -38,27 +44,13 @@ class RoomMessageContent extends StatelessWidget {
       case CuteEventContent.eventType:
         return const CuteEventMessage();
       case MessageTypes.Image:
-        return AttachmentToolbar(
-          child: ImageMessage(
-            key: ValueKey(event),
-          ),
-        );
+        return AttachmentToolbar(child: ImageMessage(key: ValueKey(event)));
       case MessageTypes.Video:
-        return AttachmentToolbar(
-          child: VideoMessage(
-            key: ValueKey(event),
-          ),
-        );
+        return AttachmentToolbar(child: VideoMessage(key: ValueKey(event)));
       case MessageTypes.Audio:
-        return AttachmentToolbar(
-          child: AudioMessage(
-            key: ValueKey(event),
-          ),
-        );
+        return AttachmentToolbar(child: AudioMessage(key: ValueKey(event)));
       case MessageTypes.File:
-        return const AttachmentToolbar(
-          child: FileMessage(),
-        );
+        return const AttachmentToolbar(child: FileMessage());
       case MessageTypes.Text:
       case MessageTypes.Emote:
       case MessageTypes.Notice:

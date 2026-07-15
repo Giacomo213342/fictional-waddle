@@ -33,7 +33,8 @@ class RoomListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final room = RoomScope.of(context).room;
     String location = RoomPage.makeRouteName(room.id);
-    final path = clientifyLocationCallback?.call(location) ??
+    final path =
+        clientifyLocationCallback?.call(location) ??
         context.clientifyLocation(location);
 
     return DynamicContextMenu(
@@ -45,11 +46,7 @@ class RoomListTile extends StatelessWidget {
       child: ListTile(
         key: ValueKey(room.lastEvent),
         visualDensity: VisualDensity.compact,
-        leading: RoomAvatar(
-          key: ValueKey(room.id),
-          room: room,
-          dimension: 36,
-        ),
+        leading: RoomAvatar(key: ValueKey(room.id), room: room, dimension: 36),
         title: const RoomDisplayNameText(),
         subtitle: const RoomLastEventPreview(),
         trailing: const RoomListTrailing(),
@@ -85,6 +82,13 @@ class RoomListTile extends StatelessWidget {
         onPressed: () => _toggleFavorite(room),
       ),
       ContextMenuItem(
+        icon: Icons.low_priority,
+        label: room.tags.containsKey(TagType.lowPriority)
+            ? 'Remove low priority'
+            : 'Mark as low priority',
+        onPressed: () => _toggleLowPriority(room),
+      ),
+      ContextMenuItem(
         icon: Icons.circle_notifications,
         label: room.isUnread
             ? AppLocalizations.of(context).markRead
@@ -92,11 +96,12 @@ class RoomListTile extends StatelessWidget {
         onPressed: () => _toggleUnread(room),
       ),
       ContextMenuItem(
-        icon: Icons.notifications_off,
-        label: true
-            ? AppLocalizations.of(context).markMute
-            // ignore: dead_code
-            : AppLocalizations.of(context).markUnmute,
+        icon: room.pushRuleState == PushRuleState.dontNotify
+            ? Icons.notifications
+            : Icons.notifications_off,
+        label: room.pushRuleState == PushRuleState.dontNotify
+            ? AppLocalizations.of(context).markUnmute
+            : AppLocalizations.of(context).markMute,
         onPressed: () => _toggleMute(room),
       ),
       ContextMenuItem(
@@ -118,13 +123,18 @@ class RoomListTile extends StatelessWidget {
   Future<void> _toggleFavorite(Room room) =>
       room.setFavourite(!room.isFavourite);
 
+  Future<void> _toggleLowPriority(Room room) =>
+      room.tags.containsKey(TagType.lowPriority)
+      ? room.removeTag(TagType.lowPriority)
+      : room.addTag(TagType.lowPriority);
+
   Future<void> _toggleUnread(Room room) => room.markUnread(!room.isUnread);
 
   Future<void> _copyRoomAddress(Room room) => Clipboard.setData(
-        ClipboardData(
-          text: room.canonicalAlias.isNotEmpty ? room.canonicalAlias : room.id,
-        ),
-      );
+    ClipboardData(
+      text: room.canonicalAlias.isNotEmpty ? room.canonicalAlias : room.id,
+    ),
+  );
 
   Future<void> _leaveRoom(BuildContext context, Room room) async {
     final scope = MatrixScope.captureAll(context);
@@ -136,9 +146,9 @@ class RoomListTile extends StatelessWidget {
         child: AlertDialog.adaptive(
           title: Text(AppLocalizations.of(context).leaveRoom),
           content: Text(
-            AppLocalizations.of(context).leaveRoomLong(
-              room.getLocalizedDisplayname(),
-            ),
+            AppLocalizations.of(
+              context,
+            ).leaveRoomLong(room.getLocalizedDisplayname()),
           ),
           actions: [
             TextButton(
@@ -159,17 +169,15 @@ class RoomListTile extends StatelessWidget {
     await room.leave();
   }
 
-  Never _toggleMute(Room room) {
-    throw UnimplementedError();
-  }
+  Future<void> _toggleMute(Room room) => room.setPushRuleState(
+    room.pushRuleState == PushRuleState.dontNotify
+        ? PushRuleState.notify
+        : PushRuleState.dontNotify,
+  );
 
   Future<void> _userDetails(BuildContext context, Room room) =>
-      context.pushMultiClient(
-        UserPage.makeRouteName(room.directChatMatrixID),
-      );
+      context.pushMultiClient(UserPage.makeRouteName(room.directChatMatrixID));
 
   Future<void> _roomDetails(BuildContext context, Room room) =>
-      context.pushMultiClient(
-        RoomDetailsPage.makeRouteName(room.id),
-      );
+      context.pushMultiClient(RoomDetailsPage.makeRouteName(room.id));
 }

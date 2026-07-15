@@ -11,6 +11,7 @@ import '../../../../widgets/matrix/scopes/room_scope.dart';
 import '../event/quoted_event.dart';
 import 'compose_scope.dart';
 import 'msgtype_dropdown.dart';
+import 'poll_creation_dialog.dart';
 import 'send_file_scope.dart';
 import 'type_ahead_helper.dart';
 
@@ -73,14 +74,16 @@ class MessageInput extends StatelessWidget {
               return TextField(
                 controller: textEditingController,
                 focusNode: focusNode,
-                autofocus: !kIsWeb &&
+                autofocus:
+                    !kIsWeb &&
                     (Platform.isWindows ||
                         Platform.isLinux ||
                         Platform.isMacOS),
                 autocorrect: true,
                 contentInsertionConfiguration: ContentInsertionConfiguration(
-                  onContentInserted:
-                      SendFileScope.of(context).sendKeyboardSticker,
+                  onContentInserted: SendFileScope.of(
+                    context,
+                  ).sendKeyboardSticker,
                   allowedMimeTypes: [
                     ...kDefaultContentInsertionMimeTypes,
                     'image/svg+xml',
@@ -108,11 +111,25 @@ class MessageInput extends StatelessWidget {
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   prefixIcon: const MsgtypeDropdown(),
                   helperText: '{ "format": "org.matrix.custom.html" }',
-                  suffixIcon: IconButton(
-                    padding: const EdgeInsets.all(16.0),
-                    tooltip: AppLocalizations.of(context).send,
-                    icon: const Icon(Icons.send),
-                    onPressed: compose.sendMessage,
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        tooltip: 'Create poll',
+                        icon: const Icon(Icons.poll_outlined),
+                        onPressed: () => showDialog<void>(
+                          context: context,
+                          builder: (_) => PollCreationDialog(
+                            room: RoomScope.of(context).room,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: AppLocalizations.of(context).send,
+                        icon: const Icon(Icons.send),
+                        onPressed: compose.sendMessage,
+                      ),
+                    ],
                   ),
                   alignLabelWithHint: false,
                   labelText: 'm.room.message',

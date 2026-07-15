@@ -1,5 +1,7 @@
 import 'package:matrix/matrix.dart';
 
+import 'poll_event.dart';
+
 extension IsDisplayEventExtension on Event {
   bool get shouldDisplayEvent {
     // do not show edit and reaction notices
@@ -13,10 +15,19 @@ extension IsDisplayEventExtension on Event {
     if ([EventTypes.Redaction].contains(type)) {
       return false;
     }
+    if (isPollResponse ||
+        const {
+          MatrixPollEventTypes.end,
+          MatrixPollEventTypes.unstableEnd,
+        }.contains(type)) {
+      return false;
+    }
     // do not display avatar and display name change
     if (type == EventTypes.RoomMember &&
-        [RoomMemberChangeType.displayname, RoomMemberChangeType.avatar]
-            .contains(roomMemberChangeType)) {
+        [
+          RoomMemberChangeType.displayname,
+          RoomMemberChangeType.avatar,
+        ].contains(roomMemberChangeType)) {
       return false;
     }
     // do not display key verification spam

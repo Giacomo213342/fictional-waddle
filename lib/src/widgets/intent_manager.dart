@@ -33,6 +33,7 @@ class IntentManager extends State<IntentManagerWidget> {
   StreamSubscription<List<SharedMediaFile>>? _shareIntentSubscription;
   StreamSubscription<String>? _shareTextSubscription;
   VoidCallback? _notificationRouteCallback;
+  VoidCallback? _clientsReadyCallback;
 
   // prevent from interpreting a deep link as share
   static final _shareCache = Cache<Uri>(const Duration(milliseconds: 200));
@@ -40,6 +41,7 @@ class IntentManager extends State<IntentManagerWidget> {
   static final sharedTextListener = ValueNotifier<String?>(null);
   static final sharedFilesListener = ValueNotifier<List<XFile>?>(null);
   static final notificationRouteListener = ValueNotifier<String?>(null);
+  static final clientsReady = ValueNotifier<bool>(false);
 
   static Completer<OidcCallbackResponse>? oidcCallbackCompleter;
   static Completer<String>? legacySsoCallbackCompleter;
@@ -48,6 +50,8 @@ class IntentManager extends State<IntentManagerWidget> {
   void initState() {
     _notificationRouteCallback = _handleNotificationRoute;
     notificationRouteListener.addListener(_notificationRouteCallback!);
+    _clientsReadyCallback = _handleNotificationRoute;
+    clientsReady.addListener(_clientsReadyCallback!);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _handleNotificationRoute();
     });
@@ -65,6 +69,9 @@ class IntentManager extends State<IntentManagerWidget> {
     if (_notificationRouteCallback != null) {
       notificationRouteListener.removeListener(_notificationRouteCallback!);
     }
+    if (_clientsReadyCallback != null) {
+      clientsReady.removeListener(_clientsReadyCallback!);
+    }
     _appLinkSubscription?.cancel();
     _shareIntentSubscription?.cancel();
     _shareTextSubscription?.cancel();
@@ -73,7 +80,7 @@ class IntentManager extends State<IntentManagerWidget> {
 
   void _handleNotificationRoute() {
     final route = notificationRouteListener.value;
-    if (!mounted || route == null) return;
+    if (!mounted || route == null || !clientsReady.value) return;
     notificationRouteListener.value = null;
     context.go(route);
   }
@@ -82,8 +89,9 @@ class IntentManager extends State<IntentManagerWidget> {
     try {
       // tiny workaround for OAuth2.0 on web
       if (kIsWeb) {
-        _appLinkSubscription =
-            listenWebBroadcastChannel().listen(_handleDeeplink);
+        _appLinkSubscription = listenWebBroadcastChannel().listen(
+          _handleDeeplink,
+        );
         return;
       }
       _appLinkSubscription = AppLinks().uriLinkStream.listen(_handleDeeplink);
@@ -94,9 +102,7 @@ class IntentManager extends State<IntentManagerWidget> {
       }
       _handleDeeplink(initialLink);
     } on MissingPluginException {
-      Logs().d(
-        'package:app_links is not supported on his device.',
-      );
+      Logs().d('package:app_links is not supported on his device.');
     }
   }
 
@@ -109,12 +115,14 @@ class IntentManager extends State<IntentManagerWidget> {
     final segments = uri.pathSegments;
 
     // handle oauth2redirect
-    final isWebOAuth2Redirect = kIsWeb &&
+    final isWebOAuth2Redirect =
+        kIsWeb &&
         // native OIDC
         (uri.fragment.startsWith('state=') ||
             // legacy SSO
             uri.queryParameters.containsKey('loginToken'));
-    final isNativeOAuth2Redirect = !kIsWeb &&
+    final isNativeOAuth2Redirect =
+        !kIsWeb &&
         uri.scheme == 'im.polycule' &&
         segments.isNotEmpty &&
         segments.first == 'oauth2redirect';
@@ -143,8 +151,8 @@ class IntentManager extends State<IntentManagerWidget> {
       // check whether we got a matrix URL but as polycule deeplink
       link = link.replaceFirst(_kPolyculeUriScheme, 'matrix');
     }
-    MatrixIdentifierStringExtensionResults? identifier =
-        link.parseIdentifierIntoParts();
+    MatrixIdentifierStringExtensionResults? identifier = link
+        .parseIdentifierIntoParts();
 
     // bug : the '$' often get lost in Android Intents
     if (identifier == null &&
@@ -184,8 +192,8 @@ class IntentManager extends State<IntentManagerWidget> {
           .getMediaStream()
           .listen(_handleShareIntent);
 
-      final initialShareIntent =
-          await ReceiveSharingIntent.instance.getInitialMedia();
+      final initialShareIntent = await ReceiveSharingIntent.instance
+          .getInitialMedia();
 
       _handleShareIntent(initialShareIntent);
     } on MissingPluginException {
@@ -200,9 +208,10 @@ class IntentManager extends State<IntentManagerWidget> {
       return;
     }
     if (files.length == 1 &&
-        [SharedMediaType.text, SharedMediaType.url].contains(
-          files.single.type,
-        )) {
+        [
+          SharedMediaType.text,
+          SharedMediaType.url,
+        ].contains(files.single.type)) {
       _handleTextShare(files.single.path);
       return;
     }

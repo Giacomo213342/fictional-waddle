@@ -7,16 +7,22 @@ import '../../widgets/matrix/room_display_name_text.dart';
 import '../../widgets/matrix/scopes/room_scope.dart';
 import '../room_details/room_details.dart';
 import '../room_list/room_list.dart';
+import '../room_list/room_list_position_tracker.dart';
 import '../user_page/user_page.dart';
 import 'components/room_body.dart';
 import 'components/room_encryption_inficator.dart';
+import 'components/room_search_dialog.dart';
 
 class RoomView extends StatelessWidget {
   const RoomView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    void leaveRoom() => context.goMultiClient(RoomListPage.routeName);
+    final room = RoomScope.of(context).room;
+    void leaveRoom() {
+      RoomListPositionTracker.prepareReturn(room);
+      context.goMultiClient(RoomListPage.routeName);
+    }
 
     return BackButtonListener(
       onBackButtonPressed: () async {
@@ -25,9 +31,7 @@ class RoomView extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: BackButton(
-            onPressed: leaveRoom,
-          ),
+          leading: BackButton(onPressed: leaveRoom),
           title: RoomBuilder(
             builder: (context, snapshot) {
               final room = snapshot.data ?? RoomScope.of(context).room;
@@ -57,7 +61,12 @@ class RoomView extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.search),
               tooltip: AppLocalizations.of(context).search,
-              onPressed: () {},
+              onPressed: () => showDialog<void>(
+                context: context,
+                useRootNavigator: true,
+                builder: (_) =>
+                    RoomScope(room: room, child: const RoomSearchDialog()),
+              ),
             ),
             const RoomEncryptionIndicator(),
           ],

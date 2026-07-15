@@ -10,6 +10,7 @@ import 'package:mime/mime.dart';
 
 import 'database/polycule_database_builder.dart';
 import 'matrix_refresh_token_client.dart';
+import 'poll_event.dart';
 
 abstract class ClientUtil {
   const ClientUtil._();
@@ -36,11 +37,13 @@ abstract class ClientUtil {
       },
       onSoftLogout: handleSoftLogout,
       httpClient: httpClient,
-      importantStateEvents: {
-        'im.ponies.room_emotes',
+      importantStateEvents: {'im.ponies.room_emotes'},
+      roomPreviewLastEvents: {
+        MatrixPollEventTypes.start,
+        MatrixPollEventTypes.unstableStart,
       },
       enableDehydratedDevices: true,
-      receiptsPublicByDefault: false,
+      receiptsPublicByDefault: true,
       requestHistoryOnLimitedTimeline: true,
       customImageResizer: customImageResizer,
     );
@@ -64,10 +67,7 @@ abstract class ClientUtil {
 
   static BaseClient buildRetryClient(Client client, BaseClient httpClient) =>
       MatrixRefreshTokenClient(
-        inner: FixedTimeoutHttpClient(
-          httpClient,
-          const Duration(seconds: 40),
-        ),
+        inner: FixedTimeoutHttpClient(httpClient, const Duration(seconds: 40)),
         client: client,
       );
 
@@ -78,12 +78,17 @@ abstract class ClientUtil {
   static Future<MatrixImageFileResizedResponse?> customImageResizer(
     MatrixImageFileResizeArguments args,
   ) =>
-      Future.value(
-        switch (lookupMimeType(args.fileName, headerBytes: args.bytes)) {
-          null || 'image/svg+xml' => null,
-          _ => nativeImplementations.shrinkImage(args, retryInDummy: true),
-        },
-      ).catchError((e, s) {
+      Future.value(switch (lookupMimeType(
+        args.fileName,
+        headerBytes: args.bytes,
+      )) {
+        null || 'image/svg+xml' => null,
+        _ => nativeImplementations.shrinkImage(
+            args,
+            retryInDummy: true,
+          ),
+      })
+          .catchError((e, s) {
         Logs().w('Error shrinking image ${args.fileName}.', e, s);
         return null;
       });

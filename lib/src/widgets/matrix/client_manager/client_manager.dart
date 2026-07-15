@@ -19,10 +19,7 @@ import '../../../utils/matrix/database/idb/stub.dart'
 typedef GetClientCallback = Client Function();
 
 class ClientManagerRoot extends StatefulWidget {
-  const ClientManagerRoot({
-    super.key,
-    required this.child,
-  });
+  const ClientManagerRoot({super.key, required this.child});
 
   final Widget child;
 
@@ -31,10 +28,7 @@ class ClientManagerRoot extends StatefulWidget {
 }
 
 class _ClientManagerScope extends InheritedWidget {
-  const _ClientManagerScope({
-    required this.manager,
-    required super.child,
-  });
+  const _ClientManagerScope({required this.manager, required super.child});
 
   final ClientManager manager;
 
@@ -77,10 +71,9 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
 
   @override
   void initState() {
+    IntentManager.clientsReady.value = false;
     store = ClientStore(buildClient: _buildClient);
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => _loadClients(),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadClients());
     super.initState();
   }
 
@@ -96,10 +89,7 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
   @override
   Widget build(BuildContext context) => ErrorDialogScope(
         child: IntentManagerWidget(
-          child: _ClientManagerScope(
-            manager: this,
-            child: widget.child,
-          ),
+          child: _ClientManagerScope(manager: this, child: widget.child),
         ),
       );
 
@@ -136,9 +126,7 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
 
     pushManagers[identifier] = PushManager(client);
 
-    client.init(
-      waitForFirstSync: false,
-    );
+    await client.init(waitForFirstSync: false);
     return client;
   }
 
@@ -169,6 +157,7 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
         .listen(_updateHttpClients);
 
     await store.loadClients();
+    IntentManager.clientsReady.value = true;
     return true;
   }
 
@@ -195,8 +184,10 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
     _httpClient = httpClientCallback;
     for (final client in store.activeClients.value) {
       client.httpClient.close();
-      client.httpClient =
-          ClientUtil.buildRetryClient(client, httpClientCallback.call());
+      client.httpClient = ClientUtil.buildRetryClient(
+        client,
+        httpClientCallback.call(),
+      );
     }
   }
 }

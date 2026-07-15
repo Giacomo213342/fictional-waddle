@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../utils/matrix/neighboaring_event_extension.dart';
+import '../../../../utils/matrix/is_display_event_extension.dart';
 import '../../../../utils/matrix/same_message_bubble_extension.dart';
 import '../../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../../widgets/matrix/scopes/timeline_scope.dart';
@@ -16,9 +17,7 @@ import 'message_bubble_timestamp.dart';
 import 'quoted_event.dart';
 
 class RoomMessage extends StatelessWidget {
-  const RoomMessage({
-    super.key,
-  });
+  const RoomMessage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,19 +26,28 @@ class RoomMessage extends StatelessWidget {
     final timeline = TimelineScope.of(context).timeline;
 
     final event = scope.event;
-    final previousEvent =
-        timeline.getPreviousDisplayEvent(timeline.events.indexOf(event));
-    final nextEvent =
-        timeline.getNextDisplayEvent(timeline.events.indexOf(event));
+    final previousEvent = timeline.getPreviousDisplayEvent(
+      timeline.events.indexOf(event),
+    );
+    final nextEvent = timeline.getNextDisplayEvent(
+      timeline.events.indexOf(event),
+    );
 
     final previousMessageSameSender =
         previousEvent?.isSameMessageBubble(event) ?? false;
     final nextMessageSameSender =
         nextEvent?.isSameMessageBubble(event) ?? false;
+    final isOwnMessage = event.senderId == event.room.client.userID;
+    final showSenderName =
+        !isOwnMessage &&
+        (event.room.summary.mJoinedMemberCount ?? 0) >= 4 &&
+        !previousMessageSameSender;
+    final isEdited = event
+        .aggregatedEvents(timeline, RelationshipTypes.edit)
+        .isNotEmpty;
+    final isRead = event.isReadByEnoughPeople(timeline);
 
-    final border = BorderSide(
-      color: Theme.of(context).colorScheme.primary,
-    );
+    final border = BorderSide(color: Theme.of(context).colorScheme.primary);
 
     Event? replyEventFallback;
     if (event.relationshipType == RelationshipTypes.reply) {
@@ -102,6 +110,11 @@ class RoomMessage extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                if (showSenderName)
+                                  SizedBox(
+                                    width: contentWidth,
+                                    child: _MessageSenderName(event: event),
+                                  ),
                                 FutureBuilder(
                                   initialData: replyEventFallback,
                                   future: event.getReplyEvent(timeline),
@@ -109,18 +122,17 @@ class RoomMessage extends StatelessWidget {
                                     final replyEvent =
                                         snapshot.data ?? replyEventFallback;
                                     return AnimatedSize(
-                                      duration:
-                                          const Duration(milliseconds: 150),
+                                      duration: const Duration(
+                                        milliseconds: 150,
+                                      ),
                                       alignment: Alignment.centerLeft,
                                       child: SizedBox(
                                         width: contentWidth,
                                         child: replyEvent == null
                                             ? null
                                             : EventScope(
-                                                event:
-                                                    replyEvent.getDisplayEvent(
-                                                  timeline,
-                                                ),
+                                                event: replyEvent
+                                                    .getDisplayEvent(timeline),
                                                 child: const QuotedEvent(),
                                               ),
                                       ),
@@ -131,10 +143,7 @@ class RoomMessage extends StatelessWidget {
                                   width: contentWidth,
                                   child: const RoomMessageContent(),
                                 ),
-                                ReactionRow(
-                                  event: event,
-                                  timeline: timeline,
-                                ),
+                                ReactionRow(event: event, timeline: timeline),
                               ],
                             ),
                           ),
@@ -145,14 +154,23 @@ class RoomMessage extends StatelessWidget {
                   const MessageSuffix(),
                 ],
               ),
-              if (event.isReadByEnoughPeople(timeline))
-                const Padding(
-                  padding: EdgeInsets.only(top: 2, right: 12, bottom: 2),
+              if (isRead || isEdited)
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 2,
+                    left: isOwnMessage ? 0 : 12,
+                    right: isOwnMessage ? 12 : 0,
+                    bottom: 2,
+                  ),
                   child: Align(
-                    alignment: Alignment.centerRight,
+                    alignment: isOwnMessage
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
                     child: Text(
-                      'read',
-                      style: TextStyle(color: Colors.grey, fontSize: 10),
+                      isOwnMessage
+                          ? [if (isRead) 'read', if (isEdited) 'e'].join(' ')
+                          : 'e',
+                      style: const TextStyle(color: Colors.grey, fontSize: 10),
                     ),
                   ),
                 ),
@@ -160,6 +178,34 @@ class RoomMessage extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class _MessageSenderName extends StatelessWidget {
+  const _MessageSenderName({required this.event});
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<User?>(
+      future: event.fetchSenderUser(),
+      builder: (context, snapshot) {
+        final user = snapshot.data ?? event.senderFromMemoryOrFallback;
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(8, 5, 8, 2),
+          child: Text(
+            user.displayName ?? user.id,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -180,9 +226,13 @@ extension on Event {
         if (receiptEventId == e.eventId) {
           count++;
         } else {
-          final receiptIndex =
-              timeline.events.indexWhere((ev) => ev.eventId == receiptEventId);
+          final receiptIndex = timeline.events.indexWhere(
+            (ev) => ev.eventId == receiptEventId,
+          );
           if (receiptIndex != -1 && receiptIndex <= eIndex) {
+            count++;
+          } else if (receiptIndex == -1 &&
+              entry.value.ts >= e.originServerTs.millisecondsSinceEpoch) {
             count++;
           }
         }
@@ -191,14 +241,15 @@ extension on Event {
     }
 
     final readCount = getReadCount(this);
-    int requiredReads = (room.summary.mJoinedMemberCount ?? 2) - 2;
-    if (requiredReads < 1) requiredReads = 1;
+    final memberCount = room.summary.mJoinedMemberCount ?? 2;
+    final requiredReads = memberCount <= 3 ? 1 : memberCount - 1;
 
     if (readCount < requiredReads) return false;
 
     for (int i = 0; i < myIndex; i++) {
       final newerEvent = timeline.events[i];
-      if (newerEvent.senderId == room.client.userID) {
+      if (newerEvent.senderId == room.client.userID &&
+          newerEvent.shouldDisplayEvent) {
         if (getReadCount(newerEvent) >= requiredReads) {
           return false;
         }

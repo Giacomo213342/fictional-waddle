@@ -2,14 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../utils/matrix/active_room_tracker.dart';
 import '../../../../utils/matrix/neighboaring_event_extension.dart';
+import '../../../../utils/matrix/poll_event.dart';
 import '../../../../widgets/ascii_progress_indicator.dart';
 import '../../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../../widgets/matrix/scopes/room_scope.dart';
 import '../../../../widgets/matrix/scopes/timeline_scope.dart';
+import '../../../room_list/room_list_position_tracker.dart';
 import '../compose/compose_scope.dart';
 import '../compose/message_input.dart';
 import '../load_history_indicator.dart';
@@ -30,6 +33,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
   final scrollController = ScrollController();
   final eventUpdateStreamController = StreamController<Event>.broadcast();
   final fullyReadMarkerKey = GlobalKey();
+  final focusedEventKey = GlobalKey();
   bool _hasJumpedToUnread = false;
   bool _markingRead = false;
   bool _userScrollInProgress = false;
@@ -37,6 +41,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
   StreamSubscription<String>? _roomUpdateSubscription;
   StreamSubscription<SyncUpdate>? _syncSubscription;
   String? _unreadBoundaryEventId;
+  String? _focusedEventId;
 
   @override
   void initState() {
@@ -65,9 +70,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
   Widget build(BuildContext context) {
     final timeline = this.timeline;
     if (timeline == null || timeline.events.isEmpty) {
-      return const Center(
-        child: AsciiProgressIndicator(),
-      );
+      return const Center(child: AsciiProgressIndicator());
     }
     final room = RoomScope.of(context).room;
     final showTyping = room.summary.mJoinedMemberCount == 3 &&
@@ -89,6 +92,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
                   if (notification is ScrollStartNotification &&
                       notification.dragDetails != null) {
                     _userScrollInProgress = true;
+                    RoomListPositionTracker.markInteraction(room);
                   } else if (notification is ScrollUpdateNotification &&
                       notification.dragDetails != null) {
                     _userScrollInProgress = true;
@@ -110,9 +114,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
                     initialItemCount: timeline.events.length + 1,
                     itemBuilder: (context, index, animation) {
                       if (index == timeline.events.length) {
-                        return LoadHistoryIndicator(
-                          timeline: timeline,
-                        );
+                        return LoadHistoryIndicator(timeline: timeline);
                       }
                       return buildTransitionedTile(
                         animation: animation,
@@ -171,15 +173,24 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     previousEvent ??= timeline.getPreviousDisplayEvent(index);
     event ??= timeline.events[index];
 
-    final room = RoomScope.of(context).room;
-    final isUnreadBoundary = event.eventId == _unreadBoundaryEventId &&
-        index > 0;
+    final isUnreadBoundary =
+        event.eventId == _unreadBoundaryEventId && index > 0;
 
     Widget tile = EventScope(
       key: ValueKey(event.eventId),
       event: event,
       child: const TimelineEventTile(),
     );
+
+    if (event.eventId == _focusedEventId) {
+      tile = DecoratedBox(
+        key: focusedEventKey,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer.withAlpha(80),
+        ),
+        child: tile,
+      );
+    }
 
     if (isUnreadBoundary) {
       tile = Column(
@@ -191,20 +202,18 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
       );
     }
 
-    return SizeTransition(
-      sizeFactor: animation,
-      child: tile,
-    );
+    return SizeTransition(sizeFactor: animation, child: tile);
   }
 
   Future<void> _getTimeline() async {
     final room = RoomScope.of(context).room;
+    final fragment = GoRouterState.of(context).uri.fragment;
+    _focusedEventId = fragment.isEmpty ? null : Uri.decodeComponent(fragment);
     ActiveRoomTracker.lifecycleState =
         WidgetsBinding.instance.lifecycleState ?? AppLifecycleState.resumed;
     String? initialReadEventId;
     if (room.isUnread) {
-      final receiptEventId =
-          room.receiptState.global.latestOwnReceipt?.eventId;
+      final receiptEventId = room.receiptState.global.latestOwnReceipt?.eventId;
       initialReadEventId = receiptEventId?.isNotEmpty == true
           ? receiptEventId
           : room.fullyRead.isNotEmpty
@@ -221,6 +230,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
       if (mounted) setState(() => _receiptRevision++);
     });
     final timeline = await room.getTimeline(
+      eventContextId: _focusedEventId,
       onInsert: _insertEvent,
       onRemove: _removeEvent,
       onChange: _changeEvent,
@@ -237,7 +247,32 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     setState(() {
       this.timeline = timeline;
     });
-    unawaited(_markLatestRead(preserveUnreadMarker: true));
+    if (_focusedEventId == null) {
+      unawaited(_markLatestRead(preserveUnreadMarker: true));
+    } else {
+      final focusedIndex = timeline.events.indexWhere(
+        (event) => event.eventId == _focusedEventId,
+      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !scrollController.hasClients) return;
+        if (focusedEventKey.currentContext == null && focusedIndex > 0) {
+          scrollController.jumpTo(
+            (focusedIndex * 72.0)
+                .clamp(0, scrollController.position.maxScrollExtent)
+                .toDouble(),
+          );
+        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final target = focusedEventKey.currentContext;
+          if (!mounted || target == null) return;
+          Scrollable.ensureVisible(
+            target,
+            duration: const Duration(milliseconds: 250),
+            alignment: .4,
+          );
+        });
+      });
+    }
 
     if (!_hasJumpedToUnread) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -252,8 +287,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
           final markerY = markerBox.localToGlobal(Offset.zero).dy -
               viewportBox.localToGlobal(Offset.zero).dy;
           final viewportHeight = viewportBox.size.height;
-          if (markerY >= viewportHeight * .25 &&
-              markerY <= viewportHeight) {
+          if (markerY >= viewportHeight * .25 && markerY <= viewportHeight) {
             return;
           }
         }
@@ -282,8 +316,11 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     // message after the receipt, stopping at the first incoming event.
     for (var index = readIndex - 1; index >= 0; index--) {
       final event = timeline.events[index];
-      if (![EventTypes.Message, EventTypes.Sticker, EventTypes.Encrypted]
-          .contains(event.type)) {
+      if (![
+        EventTypes.Message,
+        EventTypes.Sticker,
+        EventTypes.Encrypted,
+      ].contains(event.type)) {
         continue;
       }
       if (event.senderId != ownUserId) break;
@@ -307,7 +344,11 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     if (!preserveUnreadMarker) _unreadBoundaryEventId = null;
     if (mounted) setState(() {});
     try {
-      await room.setReadMarker(latestEventId, mRead: latestEventId);
+      await room.setReadMarker(
+        latestEventId,
+        mRead: latestEventId,
+        public: true,
+      );
       if (room.isUnread) await room.markUnread(false);
       // The homeserver confirms these counters on the next sync. Update the
       // in-memory room immediately so the room list cannot retain stale UI.
@@ -321,6 +362,14 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
 
   void _insertEvent(int insertID) {
     listKey.currentState?.insertItem(insertID);
+
+    final insertedEvent = timeline?.events.elementAtOrNull(insertID);
+    if (insertedEvent?.senderId == RoomScope.of(context).room.client.userID) {
+      RoomListPositionTracker.markInteraction(RoomScope.of(context).room);
+    }
+    if (insertedEvent?.isPollResponse ?? false) {
+      setState(() => _receiptRevision++);
+    }
 
     _notifyNeighboringEvents(insertID);
     if (insertID == 0 &&
@@ -341,11 +390,9 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     }
     _notifyNeighboringEvents(index);
 
-    listKey.currentState!.removeItem(
-      index,
-      (context, animation) {
-        return Container();
-        /*final oldWidget = widget.controller.eventKeyRegistry
+    listKey.currentState!.removeItem(index, (context, animation) {
+      return Container();
+      /*final oldWidget = widget.controller.eventKeyRegistry
             .remove(event.eventId)
             ?.currentState
             ?.widget;
@@ -362,8 +409,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
           previousEvent: previousEvent,
           nextEvent: nextEvent,
         );*/
-      },
-    );
+    });
   }
 
   void _changeEvent(int index) {

@@ -20,6 +20,7 @@ import 'active_room_tracker.dart';
 import 'client_util.dart';
 import 'push_manager.dart';
 
+@pragma('vm:entry-point')
 Future<void> pushEntrypoint() async {
   await UnifiedPush.initialize(
     onMessage: handleBackgroundNotification,
@@ -31,24 +32,39 @@ Future<void> pushEntrypoint() async {
   );
 }
 
+@pragma('vm:entry-point')
 Future<void> handleBackgroundNotification(
   PushMessage message,
   String instance,
 ) async {
+  WidgetsFlutterBinding.ensureInitialized();
   // first load our network settings from storage
   final settings = await const SettingsInterface().getNetwork();
   await PolyculeHttpClientManager.init(ValueNotifier(settings));
   final httpCallback =
       await PolyculeHttpClientManager.httpClientCallbackStream.first;
 
-  final client =
-      await ClientUtil.clientConstructor(instance, httpCallback.call());
+  final client = await ClientUtil.clientConstructor(
+    instance,
+    httpCallback.call(),
+  );
+  await client.init(waitForFirstSync: false);
 
-  final locale = WidgetsBinding.instance.platformDispatcher
-          .computePlatformResolvedLocale(AppLocalizations.supportedLocales) ??
+  final locale =
+      WidgetsBinding.instance.platformDispatcher.computePlatformResolvedLocale(
+        AppLocalizations.supportedLocales,
+      ) ??
       const Locale('en');
   final l10n = await AppLocalizations.delegate.load(locale);
-  handlePushNotification(client: client, l10n: l10n, message: message.content);
+  try {
+    await handlePushNotification(
+      client: client,
+      l10n: l10n,
+      message: message.content,
+    );
+  } finally {
+    await client.dispose();
+  }
 }
 
 Future<void> handlePushNotification({
@@ -77,16 +93,14 @@ Future<void> handlePushNotification({
     } else {
       await client.roomsLoading;
       await client.oneShotSync();
-      final activeNotifications =
-          await notificationsPlugin.getActiveNotifications();
+      final activeNotifications = await notificationsPlugin
+          .getActiveNotifications();
       for (final activeNotification in activeNotifications) {
         final room = client.rooms
-            .where(
-              (room) => room.id.hashCode == activeNotification.id,
-            )
+            .where((room) => room.id.hashCode == activeNotification.id)
             .singleOrNull;
         if (room == null || !room.isUnreadOrInvited) {
-          notificationsPlugin.cancel(activeNotification.id!);
+          await notificationsPlugin.cancel(activeNotification.id!);
         }
       }
     }
@@ -99,7 +113,12 @@ Future<void> handlePushNotification({
     return;
   }
 
-  final id = notification.roomId.hashCode;
+  if (event.room.pushRuleState == PushRuleState.dontNotify) {
+    await notificationsPlugin.cancel(event.room.id.hashCode);
+    return;
+  }
+
+  final id = event.room.id.hashCode;
 
   final body = event.type == EventTypes.Encrypted
       ? l10n.newNotification
@@ -113,7 +132,7 @@ Future<void> handlePushNotification({
         );
   final messagingStyleInformation = !kIsWeb && Platform.isAndroid
       ? await AndroidFlutterLocalNotificationsPlugin()
-          .getActiveNotificationMessagingStyle(id)
+            .getActiveNotificationMessagingStyle(id)
       : null;
 
   final sender = event.senderFromMemoryOrFallback;
@@ -123,25 +142,18 @@ Future<void> handlePushNotification({
     important: event.room.isFavourite,
     key: event.senderId,
     icon: await sender.avatarUrl?.downloadAndroidIcon(client),
-    name: sender.calcDisplayname(
-      i18n: l10n.matrix,
-    ),
+    name: sender.calcDisplayname(i18n: l10n.matrix),
   );
 
-  final newMessage = Message(
-    body,
-    event.originServerTs,
-    person,
-  );
+  final newMessage = Message(body, event.originServerTs, person);
 
   messagingStyleInformation?.messages?.add(newMessage);
 
-  final roomName = event.room.getLocalizedDisplayname(
-    l10n.matrix,
-  );
+  final roomName = event.room.getLocalizedDisplayname(l10n.matrix);
 
-  final notificationGroupId =
-      event.room.isDirectChat ? 'directChats' : 'groupChats';
+  final notificationGroupId = event.room.isDirectChat
+      ? 'directChats'
+      : 'groupChats';
   final groupName = event.room.isDirectChat ? l10n.directChats : l10n.groups;
 
   if (Platform.isAndroid) {
@@ -164,25 +176,29 @@ Future<void> handlePushNotification({
     event.room.id,
     roomName,
     groupId: notificationGroupId,
+    importance: Importance.high,
   );
 
   await notificationsPlugin
       .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
+        AndroidFlutterLocalNotificationsPlugin
+      >()
       ?.createNotificationChannelGroup(messageRooms);
   await notificationsPlugin
       .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
+        AndroidFlutterLocalNotificationsPlugin
+      >()
       ?.createNotificationChannel(roomsChannel);
 
   final androidPlatformChannelSpecifics = AndroidNotificationDetails(
-    'polycule.notifications',
-    l10n.pushChannelName,
+    event.room.id,
+    roomName,
     number: notification.counts?.unread,
     category: AndroidNotificationCategory.message,
     icon: '@drawable/ic_launcher_foreground',
     shortcutId: event.room.id,
-    styleInformation: messagingStyleInformation ??
+    styleInformation:
+        messagingStyleInformation ??
         MessagingStyleInformation(
           person,
           htmlFormatContent: true,
@@ -225,9 +241,7 @@ Future<void> handlePushNotification({
 PushNotification decodeMessage(Uint8List message) {
   final content = utf8.decode(message);
   final json = jsonDecode(content);
-  final data = Map<String, dynamic>.from(
-    json['notification'],
-  );
+  final data = Map<String, dynamic>.from(json['notification']);
   return PushNotification.fromJson(data);
 }
 

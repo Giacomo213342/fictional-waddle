@@ -38,6 +38,7 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
 
     return AnimatedList(
       key: listKey,
+      controller: controller.scrollController,
       itemBuilder: (context, index, animation) {
         final room = RoomListController.of(context).getRegularRooms()[index];
         return SizeTransition(
@@ -100,21 +101,18 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
         // this is a stub and will never be called
         change: (pos, payload) {},
         move: (from, to) {
-          listState.removeItem(
-            from,
-            (context, animation) {
-              final room = roomsCache[to];
-              return SizeTransition(
-                key: Key(room.id),
-                sizeFactor: animation,
-                child: RoomScope(
-                  key: ValueKey(room.id),
-                  room: room,
-                  child: const RoomListTile(),
-                ),
-              );
-            },
-          );
+          listState.removeItem(from, (context, animation) {
+            final room = roomsCache[to];
+            return SizeTransition(
+              key: Key(room.id),
+              sizeFactor: animation,
+              child: RoomScope(
+                key: ValueKey(room.id),
+                room: room,
+                child: const RoomListTile(),
+              ),
+            );
+          });
           listState.insertItem(to);
         },
       );
@@ -123,10 +121,8 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
   }
 
   void _startSlidingSync() {
-    _slidingSyncListener = ClientScope.of(context)
-        .client
-        .onSync
-        .stream
-        .listen(_simulateSlidingSync);
+    _slidingSyncListener = ClientScope.of(
+      context,
+    ).client.onSync.stream.listen(_simulateSlidingSync);
   }
 }

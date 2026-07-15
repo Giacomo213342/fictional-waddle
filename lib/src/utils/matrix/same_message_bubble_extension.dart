@@ -8,12 +8,9 @@ extension SameMessageBubbleExtension on Event {
     if (redacted) {
       return true;
     }
-    return [
-          EventTypes.Message,
-          EventTypes.Sticker,
-        ].contains(
-          type,
-        ) &&
+    const messageTypes = {EventTypes.Message, EventTypes.Sticker};
+    return messageTypes.contains(type) &&
+        messageTypes.contains(other.type) &&
         other.originServerTs.difference(originServerTs).abs().inMinutes < 5;
   }
 }

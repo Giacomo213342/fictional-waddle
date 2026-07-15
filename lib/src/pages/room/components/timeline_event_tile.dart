@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../utils/matrix/is_display_event_extension.dart';
+import '../../../utils/matrix/poll_event.dart';
 import '../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../widgets/matrix/scopes/timeline_scope.dart';
 import 'event/event_fallback_text.dart';
@@ -11,15 +12,14 @@ import 'event/m_room_state.dart';
 import 'event/m_room_tombstone.dart';
 
 class TimelineEventTile extends StatelessWidget {
-  const TimelineEventTile({
-    super.key,
-  });
+  const TimelineEventTile({super.key});
 
   @override
   Widget build(BuildContext context) {
     final scope = EventScope.of(context);
-    final event =
-        scope.event.getDisplayEvent(TimelineScope.of(context).timeline);
+    final event = scope.event.getDisplayEvent(
+      TimelineScope.of(context).timeline,
+    );
 
     if (!event.shouldDisplayEvent) {
       return const SizedBox();
@@ -31,8 +31,9 @@ class TimelineEventTile extends StatelessWidget {
         EventTypes.Reaction || EventTypes.Redaction => const SizedBox(),
         EventTypes.Sticker ||
         EventTypes.Message ||
-        EventTypes.Encrypted =>
-          const RoomMessage(),
+        EventTypes.Encrypted => const RoomMessage(),
+        MatrixPollEventTypes.start ||
+        MatrixPollEventTypes.unstableStart => const RoomMessage(),
         EventTypes.RoomCreate ||
         EventTypes.RoomPowerLevels ||
         EventTypes.RoomJoinRules ||
@@ -44,11 +45,9 @@ class TimelineEventTile extends StatelessWidget {
         EventTypes.RoomAvatar ||
         EventTypes.RoomAliases ||
         EventTypes.RoomCanonicalAlias ||
-        EventTypes.RoomMember =>
-          const RoomState(),
+        EventTypes.RoomMember => const RoomState(),
         EventTypes.RoomCreate ||
-        EventTypes.RoomTombstone =>
-          const RoomTombstone(),
+        EventTypes.RoomTombstone => const RoomTombstone(),
         EventTypes.SpaceChild || EventTypes.SpaceParent => const RoomState(),
         _ => const EventFallbackText(),
       },
