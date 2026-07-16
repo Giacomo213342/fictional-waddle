@@ -20,7 +20,9 @@ import 'message_bubble_timestamp.dart';
 import 'quoted_event.dart';
 
 class RoomMessage extends StatelessWidget {
-  const RoomMessage({super.key});
+  const RoomMessage({super.key, this.isEdited = false});
+
+  final bool isEdited;
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +46,6 @@ class RoomMessage extends StatelessWidget {
     final showSenderName = !isOwnMessage &&
         (event.room.summary.mJoinedMemberCount ?? 0) >= 4 &&
         !previousMessageSameSender;
-    final isEdited =
-        event.aggregatedEvents(timeline, RelationshipTypes.edit).isNotEmpty;
     final isRead = event.isReadByEnoughPeople(timeline);
 
     final border = BorderSide(color: Theme.of(context).colorScheme.primary);

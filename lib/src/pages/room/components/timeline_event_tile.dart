@@ -61,9 +61,12 @@ class _TimelineEventTileState extends State<TimelineEventTile> {
 
   @override
   Widget build(BuildContext context) {
-    final event = (_event ?? EventScope.of(context).event).getDisplayEvent(
-      TimelineScope.of(context).timeline,
-    );
+    final timeline = TimelineScope.of(context).timeline;
+    final sourceEvent = _event ?? EventScope.of(context).event;
+    final isEdited = sourceEvent
+        .aggregatedEvents(timeline, RelationshipTypes.edit)
+        .isNotEmpty;
+    final event = sourceEvent.getDisplayEvent(timeline);
 
     if (!event.shouldDisplayEvent) {
       return const SizedBox();
@@ -75,7 +78,7 @@ class _TimelineEventTileState extends State<TimelineEventTile> {
         EventTypes.Reaction || EventTypes.Redaction => const SizedBox(),
         EventTypes.Sticker ||
         EventTypes.Message ||
-        EventTypes.Encrypted => const RoomMessage(),
+        EventTypes.Encrypted => RoomMessage(isEdited: isEdited),
         MatrixPollEventTypes.start ||
         MatrixPollEventTypes.unstableStart => const RoomMessage(),
         EventTypes.RoomCreate ||
