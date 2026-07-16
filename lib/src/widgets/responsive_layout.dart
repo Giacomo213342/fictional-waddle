@@ -23,24 +23,48 @@ class ResponsiveLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget child;
     final segments =
         uri?.path.replaceFirst(RegExp(r'/client/\d+'), '').split('/');
-    if (segments == null) {
-      child = main;
-    } else {
+    var showSecondary = false;
+    if (segments != null) {
       segments.removeWhere((element) => element.isEmpty);
-      if (segments.length < 2) {
-        child = main;
-      } else {
-        child = secondary ?? main;
-      }
+      showSecondary = segments.length >= 2 && secondary != null;
     }
 
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth < Breakpoints.mediumLargeAndUp.beginWidth!) {
-          return child;
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              main,
+              IgnorePointer(
+                ignoring: !showSecondary,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 220),
+                  reverseDuration: const Duration(milliseconds: 180),
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeInCubic,
+                  transitionBuilder: (child, animation) => FadeTransition(
+                    opacity: animation,
+                    child: SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0.08, 0),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: child,
+                    ),
+                  ),
+                  child: showSecondary
+                      ? KeyedSubtree(
+                          key: ValueKey('secondary:${uri?.path}'),
+                          child: secondary!,
+                        )
+                      : const SizedBox.shrink(key: ValueKey('main')),
+                ),
+              ),
+            ],
+          );
         } else {
           return Row(
             children: [
