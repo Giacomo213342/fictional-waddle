@@ -26,34 +26,40 @@ class AccountSettingsView extends StatelessWidget {
     final client = ClientScope.of(context).client;
     void leaveSettings() => context.goMultiClient(RoomListPage.routeName);
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(onPressed: leaveSettings),
-        title: Text(AppLocalizations.of(context).accountSettings),
-      ),
-      body: ListView(
-        children: [
-          const OwnProfilePreview(),
-          const MxidQRCodeTile(),
-          const SSSSAvailableTile(),
-          const EmojiSettingsTile(),
-          const NotificationSettingsTile(),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: Text(AppLocalizations.of(context).polyculeSettings),
-            onTap: () => context.push(ApplicationSettingsPage.routeName),
-          ),
-          if (client.getOidcAccountManagementUri() != null)
-            const OidcAccountSettingsTile(),
-          const ManageSessionsTile(),
-          const Divider(),
-          const LogoutTile(),
-          if (client.getOidcAccountManagementUri(
-                action: OidcAccountManagementActions.accountDeactivate,
-              ) !=
-              null)
-            const DeactivateAccountTile(),
-        ],
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        leaveSettings();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: BackButton(onPressed: leaveSettings),
+          title: Text(AppLocalizations.of(context).accountSettings),
+        ),
+        body: ListView(
+          children: [
+            const OwnProfilePreview(),
+            const MxidQRCodeTile(),
+            const SSSSAvailableTile(),
+            const EmojiSettingsTile(),
+            const NotificationSettingsTile(),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: Text(AppLocalizations.of(context).polyculeSettings),
+              onTap: () => context.push(ApplicationSettingsPage.routeName),
+            ),
+            if (client.getOidcAccountManagementUri() != null)
+              const OidcAccountSettingsTile(),
+            const ManageSessionsTile(),
+            const Divider(),
+            const LogoutTile(),
+            if (client.getOidcAccountManagementUri(
+                  action: OidcAccountManagementActions.accountDeactivate,
+                ) !=
+                null)
+              const DeactivateAccountTile(),
+          ],
+        ),
       ),
     );
   }

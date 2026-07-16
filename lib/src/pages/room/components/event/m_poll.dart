@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
@@ -14,17 +16,6 @@ class PollMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     final event = EventScope.of(context).event;
     final timeline = TimelineScope.of(context).timeline;
-    return StreamBuilder<Event>(
-      stream: TimelineScope.of(context).eventChangeStream.where(
-            (changed) =>
-                changed.eventId == event.eventId ||
-                changed.pollResponseTarget == event.eventId,
-          ),
-      builder: (context, _) => _buildPoll(context, event, timeline),
-    );
-  }
-
-  Widget _buildPoll(BuildContext context, Event event, Timeline timeline) {
     final answers = event.pollAnswers;
     final responses = <String, Event>{};
     for (final response in timeline.events) {
@@ -62,14 +53,12 @@ class PollMessage extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 6),
               child: InkWell(
                 borderRadius: BorderRadius.circular(8),
-                onTap: event.room.canSendEvent(
-                  event.type == MatrixPollEventTypes.unstableStart
-                      ? MatrixPollEventTypes.unstableResponse
-                      : MatrixPollEventTypes.response,
-                )
-                    ? () async {
+                onTap: event.room.canSendDefaultMessages
+                    ? () {
                         RoomListPositionTracker.markInteraction(event.room);
-                        await event.room.sendPollResponse(event, answer.id);
+                        unawaited(
+                          event.room.sendPollResponse(event.eventId, answer.id),
+                        );
                       }
                     : null,
                 child: DecoratedBox(

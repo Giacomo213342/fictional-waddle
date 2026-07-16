@@ -130,24 +130,16 @@ extension MatrixPollRoom on Room {
     );
   }
 
-  Future<String?> sendPollResponse(Event poll, String answerId) {
-    final unstable = poll.type == MatrixPollEventTypes.unstableStart;
+  Future<String?> sendPollResponse(String pollEventId, String answerId) {
     return sendEvent(
       {
         'm.relates_to': {
           'rel_type': 'm.reference',
-          'event_id': poll.eventId,
+          'event_id': pollEventId,
         },
-        if (unstable)
-          MatrixPollEventTypes.unstableResponse: {
-            'answers': [answerId],
-          }
-        else
-          'm.selections': [answerId],
+        'm.selections': [answerId],
       },
-      type: unstable
-          ? MatrixPollEventTypes.unstableResponse
-          : MatrixPollEventTypes.response,
+      type: MatrixPollEventTypes.response,
     );
   }
 }

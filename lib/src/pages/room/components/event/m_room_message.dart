@@ -15,7 +15,6 @@ import 'components/reaction_row.dart';
 import 'm_room_message_content.dart';
 import 'message_bubble_timestamp.dart';
 import 'quoted_event.dart';
-import '../timeline/timeline_navigation_scope.dart';
 
 class RoomMessage extends StatelessWidget {
   const RoomMessage({super.key});
@@ -39,11 +38,13 @@ class RoomMessage extends StatelessWidget {
     final nextMessageSameSender =
         nextEvent?.isSameMessageBubble(event) ?? false;
     final isOwnMessage = event.senderId == event.room.client.userID;
-    final showSenderName = !isOwnMessage &&
+    final showSenderName =
+        !isOwnMessage &&
         (event.room.summary.mJoinedMemberCount ?? 0) >= 4 &&
         !previousMessageSameSender;
-    final isEdited =
-        event.aggregatedEvents(timeline, RelationshipTypes.edit).isNotEmpty;
+    final isEdited = event
+        .aggregatedEvents(timeline, RelationshipTypes.edit)
+        .isNotEmpty;
     final isRead = event.isReadByEnoughPeople(timeline);
 
     final border = BorderSide(color: Theme.of(context).colorScheme.primary);
@@ -132,15 +133,7 @@ class RoomMessage extends StatelessWidget {
                                             : EventScope(
                                                 event: replyEvent
                                                     .getDisplayEvent(timeline),
-                                                child: QuotedEvent(
-                                                  onTap: () =>
-                                                      TimelineNavigationScope
-                                                          .of(
-                                                    context,
-                                                  ).onNavigate(
-                                                    replyEvent.eventId,
-                                                  ),
-                                                ),
+                                                child: const QuotedEvent(),
                                               ),
                                       ),
                                     );
@@ -207,9 +200,9 @@ class _MessageSenderName extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         );
       },

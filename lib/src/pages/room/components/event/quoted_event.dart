@@ -7,9 +7,7 @@ import 'event_fallback_text.dart';
 import 'm_room_message_content.dart';
 
 class QuotedEvent extends StatelessWidget {
-  const QuotedEvent({super.key, this.onTap});
-
-  final VoidCallback? onTap;
+  const QuotedEvent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +15,7 @@ class QuotedEvent extends StatelessWidget {
     final content = EventScope.of(context).event.hasAttachment
         ? const EventFallbackText()
         : const RoomMessageContent();
-    final quote = Padding(
+    return Padding(
       padding: const EdgeInsets.only(
         left: 4.0,
         bottom: 4.0,
@@ -64,11 +62,6 @@ class QuotedEvent extends StatelessWidget {
           ),
         ),
       ),
-    );
-    if (onTap == null) return quote;
-    return Semantics(
-      button: true,
-      child: InkWell(onTap: onTap, child: quote),
     );
   }
 }

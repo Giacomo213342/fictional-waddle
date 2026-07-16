@@ -11,6 +11,7 @@ import '../../../../widgets/matrix/scopes/room_scope.dart';
 import '../event/quoted_event.dart';
 import 'compose_scope.dart';
 import 'msgtype_dropdown.dart';
+import 'poll_creation_dialog.dart';
 import 'send_file_scope.dart';
 import 'type_ahead_helper.dart';
 
@@ -73,7 +74,8 @@ class MessageInput extends StatelessWidget {
               return TextField(
                 controller: textEditingController,
                 focusNode: focusNode,
-                autofocus: !kIsWeb &&
+                autofocus:
+                    !kIsWeb &&
                     (Platform.isWindows ||
                         Platform.isLinux ||
                         Platform.isMacOS),
@@ -112,6 +114,16 @@ class MessageInput extends StatelessWidget {
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      IconButton(
+                        tooltip: 'Create poll',
+                        icon: const Icon(Icons.poll_outlined),
+                        onPressed: () => showDialog<void>(
+                          context: context,
+                          builder: (_) => PollCreationDialog(
+                            room: RoomScope.of(context).room,
+                          ),
+                        ),
+                      ),
                       IconButton(
                         tooltip: AppLocalizations.of(context).send,
                         icon: const Icon(Icons.send),
