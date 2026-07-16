@@ -20,6 +20,9 @@ class ClientTabView extends StatelessWidget {
         RegExp(r'^(/client/\d+/rooms/[^/]+)(?:/.*)?$').firstMatch(path);
     if (room != null) {
       final roomPath = room.group(1)!;
+      if (path == roomPath && uri.fragment.isNotEmpty) {
+        return roomPath;
+      }
       return path == roomPath
           ? roomPath.substring(0, roomPath.lastIndexOf('/'))
           : roomPath;
