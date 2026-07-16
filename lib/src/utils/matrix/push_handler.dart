@@ -82,7 +82,7 @@ class _BackgroundDeadlineExceeded implements Exception {}
 class _HeadlessSessionRestoreClient extends http.BaseClient {
   _HeadlessSessionRestoreClient(this.inner, this.nextBatch);
 
-  final http.BaseClient inner;
+  final http.Client inner;
   final String nextBatch;
 
   @override
