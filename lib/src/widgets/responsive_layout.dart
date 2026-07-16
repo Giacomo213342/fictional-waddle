@@ -41,15 +41,14 @@ class ResponsiveLayout extends StatelessWidget {
               IgnorePointer(
                 ignoring: !showSecondary,
                 child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  reverseDuration: const Duration(milliseconds: 180),
+                  duration: const Duration(milliseconds: 300),
+                  reverseDuration: const Duration(milliseconds: 260),
                   switchInCurve: Curves.easeOutCubic,
                   switchOutCurve: Curves.easeInCubic,
-                  transitionBuilder: (child, animation) => FadeTransition(
-                    opacity: animation,
+                  transitionBuilder: (child, animation) => RepaintBoundary(
                     child: SlideTransition(
                       position: Tween<Offset>(
-                        begin: const Offset(0.08, 0),
+                        begin: const Offset(0.22, 0),
                         end: Offset.zero,
                       ).animate(animation),
                       child: child,
