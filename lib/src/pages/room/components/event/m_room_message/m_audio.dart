@@ -81,7 +81,7 @@ class _AudioMessageState extends State<AudioMessage>
                   const SizedBox(width: 6),
                   Expanded(child: _buildProgress(loaded, duration)),
                   const SizedBox(width: 2),
-                  _buildSpeedSelector(loaded),
+                  _buildSpeedSelector(),
                 ],
               ),
             ),
@@ -195,36 +195,41 @@ class _AudioMessageState extends State<AudioMessage>
     );
   }
 
-  Widget _buildSpeedSelector(bool enabled) {
+  Widget _buildSpeedSelector() {
     final notifier = _speedNotifier!;
     return ValueListenableBuilder<double>(
       valueListenable: notifier,
-      builder: (context, speed, _) => PopupMenuButton<double>(
-        enabled: enabled,
-        initialValue: speed,
-        tooltip: '${speed.toStringAsFixed(1)}x',
-        onSelected: (value) => notifier.value = value,
-        itemBuilder: (context) => [
-          for (final value in _playbackSpeeds)
-            PopupMenuItem(
-              value: value,
-              child: Text('${value.toStringAsFixed(1)}x'),
-            ),
-        ],
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
-          child: Text(
-            '${speed.toStringAsFixed(1)}x',
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: enabled
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).disabledColor,
-                  fontWeight: FontWeight.w600,
+      builder: (context, speed, _) => Semantics(
+        button: true,
+        value: '${speed.toStringAsFixed(1)}x',
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: _advancePlaybackSpeed,
+          child: SizedBox(
+            height: 48,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 7),
+              child: Center(
+                child: Text(
+                  '${speed.toStringAsFixed(1)}x',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
+              ),
+            ),
           ),
         ),
       ),
     );
+  }
+
+  void _advancePlaybackSpeed() {
+    final notifier = _speedNotifier!;
+    final currentIndex = _playbackSpeeds.indexOf(notifier.value);
+    final nextIndex = (currentIndex + 1) % _playbackSpeeds.length;
+    notifier.value = _playbackSpeeds[nextIndex];
   }
 
   Future<Duration?> _makeAudio(MatrixFile? file) async {
