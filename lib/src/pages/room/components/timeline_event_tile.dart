@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
@@ -11,13 +13,55 @@ import 'event/m_room_message.dart';
 import 'event/m_room_state.dart';
 import 'event/m_room_tombstone.dart';
 
-class TimelineEventTile extends StatelessWidget {
+class TimelineEventTile extends StatefulWidget {
   const TimelineEventTile({super.key});
 
   @override
+  State<TimelineEventTile> createState() => _TimelineEventTileState();
+}
+
+class _TimelineEventTileState extends State<TimelineEventTile> {
+  StreamSubscription<Event>? _eventSubscription;
+  Stream<Event>? _eventStream;
+  Event? _event;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final scopedEvent = EventScope.of(context).event;
+    final stream = TimelineScope.of(context).eventChangeStream;
+    _event ??= scopedEvent;
+    if (!identical(stream, _eventStream)) {
+      _eventSubscription?.cancel();
+      _eventStream = stream;
+      _eventSubscription = stream.listen(_handleEventChange);
+    }
+  }
+
+  @override
+  void dispose() {
+    _eventSubscription?.cancel();
+    super.dispose();
+  }
+
+  bool _isSameLogicalEvent(Event current, Event update) {
+    return current.matchesEventOrTransactionId(update.eventId) ||
+        current.matchesEventOrTransactionId(update.transactionId) ||
+        update.matchesEventOrTransactionId(current.eventId) ||
+        update.matchesEventOrTransactionId(current.transactionId);
+  }
+
+  void _handleEventChange(Event update) {
+    final current = _event;
+    if (!mounted || current == null || !_isSameLogicalEvent(current, update)) {
+      return;
+    }
+    setState(() => _event = update);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final scope = EventScope.of(context);
-    final event = scope.event.getDisplayEvent(
+    final event = (_event ?? EventScope.of(context).event).getDisplayEvent(
       TimelineScope.of(context).timeline,
     );
 

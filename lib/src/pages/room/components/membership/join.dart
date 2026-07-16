@@ -488,7 +488,13 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     final fingerprint = _makeReceiptFingerprint(room);
     if (!mounted || fingerprint == _receiptFingerprint) return;
     _receiptFingerprint = fingerprint;
-    setState(() {});
+    final timeline = this.timeline;
+    if (timeline == null) return;
+    for (final event in timeline.events) {
+      if (event.senderId == room.client.userID) {
+        eventUpdateStreamController.add(event);
+      }
+    }
   }
 
   Future<void> _navigateToEvent(String eventId) async {
