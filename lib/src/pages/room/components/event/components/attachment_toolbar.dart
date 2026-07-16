@@ -400,8 +400,9 @@ class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
   final _transformationController = TransformationController();
   final Set<int> _activePointers = {};
   bool _loading = false;
-  bool _zoomed = false;
   double _dismissOffset = 0;
+
+  double get _scale => _transformationController.value.getMaxScaleOnAxis();
 
   @override
   void dispose() {
@@ -468,21 +469,26 @@ class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
                 opacity: opacity,
                 child: Transform.translate(
                   offset: Offset(0, _dismissOffset),
-                  child: InteractiveViewer(
-                    transformationController: _transformationController,
-                    alignment: Alignment.center,
-                    boundaryMargin: EdgeInsets.zero,
-                    constrained: false,
-                    minScale: 1,
-                    maxScale: 5,
-                    panEnabled: _zoomed,
-                    scaleEnabled: true,
-                    trackpadScrollCausesScale: true,
-                    onInteractionUpdate: (_) => _updateZoomState(),
-                    onInteractionEnd: (_) => _finishInteraction(),
-                    child: SizedBox.fromSize(
-                      size: imageSize,
-                      child: const ImageMessage(fullscreen: true),
+                  child: SizedBox.expand(
+                    child: InteractiveViewer(
+                      transformationController: _transformationController,
+                      alignment: Alignment.center,
+                      boundaryMargin: EdgeInsets.zero,
+                      minScale: 1,
+                      maxScale: 5,
+                      panEnabled: true,
+                      scaleEnabled: true,
+                      trackpadScrollCausesScale: true,
+                      onInteractionUpdate: (_) =>
+                          _constrainToImage(viewport, imageSize),
+                      onInteractionEnd: (_) =>
+                          _finishInteraction(viewport, imageSize),
+                      child: Center(
+                        child: SizedBox.fromSize(
+                          size: imageSize,
+                          child: const ImageMessage(fullscreen: true),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -513,7 +519,7 @@ class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
   }
 
   void _handlePointerMove(PointerMoveEvent event) {
-    if (_zoomed || _activePointers.length != 1) return;
+    if (_scale > 1.01 || _activePointers.length != 1) return;
     final nextOffset = math.max(0.0, _dismissOffset + event.delta.dy);
     if (nextOffset != _dismissOffset) {
       setState(() => _dismissOffset = nextOffset);
@@ -522,7 +528,7 @@ class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
 
   void _handlePointerEnd(PointerEvent event) {
     _activePointers.remove(event.pointer);
-    if (_activePointers.isNotEmpty || _zoomed) return;
+    if (_activePointers.isNotEmpty || _scale > 1.01) return;
     if (_dismissOffset >= 96) {
       Navigator.of(context).maybePop();
     } else if (_dismissOffset != 0) {
@@ -530,20 +536,38 @@ class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
     }
   }
 
-  void _updateZoomState() {
-    final zoomed = _transformationController.value.getMaxScaleOnAxis() > 1.01;
-    if (zoomed == _zoomed) return;
-    setState(() {
-      _zoomed = zoomed;
-      if (zoomed) _dismissOffset = 0;
-    });
+  void _constrainToImage(Size viewport, Size image) {
+    final matrix = _transformationController.value;
+    final scale = matrix.getMaxScaleOnAxis();
+    final translation = matrix.getTranslation();
+
+    double constrainAxis(
+      double current,
+      double viewportExtent,
+      double imageExtent,
+    ) {
+      if (imageExtent * scale <= viewportExtent) {
+        return viewportExtent * (1 - scale) / 2;
+      }
+      final margin = (viewportExtent - imageExtent) / 2;
+      final minimum = viewportExtent - (margin + imageExtent) * scale;
+      final maximum = -margin * scale;
+      return current.clamp(minimum, maximum).toDouble();
+    }
+
+    final dx = constrainAxis(translation.x, viewport.width, image.width);
+    final dy = constrainAxis(translation.y, viewport.height, image.height);
+    if (dx == translation.x && dy == translation.y) return;
+    _transformationController.value = matrix.clone()
+      ..setTranslationRaw(dx, dy, translation.z);
   }
 
-  void _finishInteraction() {
-    if (_transformationController.value.getMaxScaleOnAxis() <= 1.01) {
+  void _finishInteraction(Size viewport, Size image) {
+    if (_scale <= 1.01) {
       _transformationController.value = Matrix4.identity();
-      if (_zoomed) setState(() => _zoomed = false);
+      return;
     }
+    _constrainToImage(viewport, image);
   }
 
   Future<void> _run(Future<void> Function() action) async {
