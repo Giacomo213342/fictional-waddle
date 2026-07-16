@@ -5,15 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
+import '../../../../router/extensions/go_router_path_extension.dart';
 import '../../../../utils/matrix/active_room_tracker.dart';
 import '../../../../utils/matrix/neighboaring_event_extension.dart';
 import '../../../../utils/matrix/poll_event.dart';
 import '../../../../widgets/ascii_progress_indicator.dart';
 import '../../../../widgets/matrix/scopes/event_scope.dart';
+import '../../../../widgets/matrix/scopes/event_navigation_scope.dart';
 import '../../../../widgets/matrix/scopes/poll_update_scope.dart';
 import '../../../../widgets/matrix/scopes/room_scope.dart';
 import '../../../../widgets/matrix/scopes/timeline_scope.dart';
 import '../../../room_list/room_list_position_tracker.dart';
+import '../../room.dart';
 import '../compose/compose_scope.dart';
 import '../compose/message_input.dart';
 import '../load_history_indicator.dart';
@@ -35,7 +38,8 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
   final eventUpdateStreamController = StreamController<Event>.broadcast();
   final pollUpdateStreamController = StreamController<String>.broadcast();
   final fullyReadMarkerKey = GlobalKey();
-  final focusedEventKey = GlobalKey();
+  final eventHighlightStreamController = StreamController<String>.broadcast();
+  final Map<String, GlobalKey> _eventKeys = {};
   bool _hasJumpedToUnread = false;
   bool _markingRead = false;
   bool _userScrollInProgress = false;
@@ -60,6 +64,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     _syncSubscription?.cancel();
     eventUpdateStreamController.close();
     pollUpdateStreamController.close();
+    eventHighlightStreamController.close();
     scrollController.dispose();
     super.dispose();
   }
@@ -80,86 +85,101 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
         room.typingUsers.any((user) => user.id != room.client.userID);
 
     return ComposeScopeWidget(
-      child: PollUpdateScope(
-        eventIds: pollUpdateStreamController.stream,
-        child: TimelineScope(
-          timeline: timeline,
-          eventChangeStream: eventUpdateStreamController.stream,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (notification) {
-                    if (notification is ScrollStartNotification &&
-                        notification.dragDetails != null) {
-                      _userScrollInProgress = true;
-                      RoomListPositionTracker.markInteraction(room);
-                    } else if (notification is ScrollUpdateNotification &&
-                        notification.dragDetails != null) {
-                      _userScrollInProgress = true;
-                    } else if (notification is ScrollEndNotification) {
-                      final reachedBottom = notification.metrics.pixels <= 64;
-                      if (_userScrollInProgress && reachedBottom) {
-                        _markLatestRead();
-                      }
-                      _userScrollInProgress = false;
-                    }
-                    return false;
-                  },
-                  child: SelectionArea(
-                    child: AnimatedList(
-                      controller: scrollController,
-                      shrinkWrap: true,
-                      key: listKey,
-                      reverse: true,
-                      initialItemCount: timeline.events.length + 1,
-                      itemBuilder: (context, index, animation) {
-                        if (index == timeline.events.length) {
-                          return LoadHistoryIndicator(timeline: timeline);
+      child: EventNavigationScope(
+        navigate: _navigateToEvent,
+        highlightEvents: eventHighlightStreamController.stream,
+        child: PollUpdateScope(
+          eventIds: pollUpdateStreamController.stream,
+          child: TimelineScope(
+            timeline: timeline,
+            eventChangeStream: eventUpdateStreamController.stream,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (_focusedEventId != null)
+                  Material(
+                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    child: ListTile(
+                      dense: true,
+                      leading: const Icon(Icons.arrow_downward),
+                      title: const Text('Back to latest messages'),
+                      onTap: _returnToLatest,
+                    ),
+                  ),
+                Expanded(
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (notification) {
+                      if (notification is ScrollStartNotification &&
+                          notification.dragDetails != null) {
+                        _userScrollInProgress = true;
+                        RoomListPositionTracker.markInteraction(room);
+                      } else if (notification is ScrollUpdateNotification &&
+                          notification.dragDetails != null) {
+                        _userScrollInProgress = true;
+                      } else if (notification is ScrollEndNotification) {
+                        final reachedBottom = notification.metrics.pixels <= 64;
+                        if (_userScrollInProgress && reachedBottom) {
+                          _markLatestRead();
                         }
-                        return buildTransitionedTile(
-                          animation: animation,
-                          index: index,
-                          timeline: timeline,
-                        );
-                      },
+                        _userScrollInProgress = false;
+                      }
+                      return false;
+                    },
+                    child: SelectionArea(
+                      child: AnimatedList(
+                        controller: scrollController,
+                        shrinkWrap: true,
+                        key: listKey,
+                        reverse: true,
+                        initialItemCount: timeline.events.length + 1,
+                        itemBuilder: (context, index, animation) {
+                          if (index == timeline.events.length) {
+                            return LoadHistoryIndicator(timeline: timeline);
+                          }
+                          return buildTransitionedTile(
+                            animation: animation,
+                            index: index,
+                            timeline: timeline,
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
-              ),
-              if (room.canSendDefaultMessages)
-                SafeArea(
-                  top: false,
-                  minimum: const EdgeInsets.only(bottom: 8),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      AnimatedSize(
-                        duration: const Duration(milliseconds: 120),
-                        alignment: Alignment.bottomCenter,
-                        child: showTyping
-                            ? Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 12,
-                                  right: 12,
-                                  bottom: 4,
-                                ),
-                                child: Text(
-                                  'typing...',
-                                  style: Theme.of(context).textTheme.labelSmall,
-                                ),
-                              )
-                            : const SizedBox.shrink(),
-                      ),
-                      MessageInput(onStartedTyping: _dismissUnreadMarker),
-                    ],
+                if (room.canSendDefaultMessages)
+                  SafeArea(
+                    top: false,
+                    minimum: const EdgeInsets.only(bottom: 8),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AnimatedSize(
+                          duration: const Duration(milliseconds: 120),
+                          alignment: Alignment.bottomCenter,
+                          child: showTyping
+                              ? Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 12,
+                                    right: 12,
+                                    bottom: 4,
+                                  ),
+                                  child: Text(
+                                    'typing...',
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                        MessageInput(onStartedTyping: _dismissUnreadMarker),
+                      ],
+                    ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -181,21 +201,16 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     final isUnreadBoundary =
         event.eventId == _unreadBoundaryEventId && index > 0;
 
-    Widget tile = EventScope(
-      key: ValueKey(event.eventId),
-      event: event,
-      child: const TimelineEventTile(),
+    Widget tile = _EventHighlight(
+      key: _eventKeys.putIfAbsent(event.eventId, () => GlobalKey()),
+      eventId: event.eventId,
+      events: eventHighlightStreamController.stream,
+      child: EventScope(
+        key: ValueKey(event.eventId),
+        event: event,
+        child: const TimelineEventTile(),
+      ),
     );
-
-    if (event.eventId == _focusedEventId) {
-      tile = DecoratedBox(
-        key: focusedEventKey,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primaryContainer.withAlpha(80),
-        ),
-        child: tile,
-      );
-    }
 
     if (isUnreadBoundary) {
       tile = Column(
@@ -261,7 +276,8 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
       );
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted || !scrollController.hasClients) return;
-        if (focusedEventKey.currentContext == null && focusedIndex > 0) {
+        final focusedKey = _eventKeys[_focusedEventId];
+        if (focusedKey?.currentContext == null && focusedIndex > 0) {
           scrollController.jumpTo(
             (focusedIndex * 72.0)
                 .clamp(0, scrollController.position.maxScrollExtent)
@@ -269,13 +285,14 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
           );
         }
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          final target = focusedEventKey.currentContext;
+          final target = _eventKeys[_focusedEventId]?.currentContext;
           if (!mounted || target == null) return;
           Scrollable.ensureVisible(
             target,
             duration: const Duration(milliseconds: 250),
             alignment: .4,
           );
+          eventHighlightStreamController.add(_focusedEventId!);
         });
       });
     }
@@ -472,5 +489,118 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     if (!mounted || fingerprint == _receiptFingerprint) return;
     _receiptFingerprint = fingerprint;
     setState(() {});
+  }
+
+  Future<void> _navigateToEvent(String eventId) async {
+    final timeline = this.timeline;
+    final index = timeline?.events.indexWhere(
+          (event) => event.eventId == eventId,
+        ) ??
+        -1;
+    final target = _eventKeys[eventId]?.currentContext;
+    if (index != -1 && target != null) {
+      await Scrollable.ensureVisible(
+        target,
+        duration: const Duration(milliseconds: 280),
+        alignment: .4,
+      );
+      if (mounted) eventHighlightStreamController.add(eventId);
+      return;
+    }
+
+    if (!mounted) return;
+    final room = RoomScope.of(context).room;
+    context.goMultiClient(
+      '${RoomPage.makeRouteName(room.id)}#${Uri.encodeComponent(eventId)}',
+    );
+  }
+
+  void _returnToLatest() {
+    final room = RoomScope.of(context).room;
+    context.goMultiClient(RoomPage.makeRouteName(room.id));
+  }
+}
+
+class _EventHighlight extends StatefulWidget {
+  const _EventHighlight({
+    super.key,
+    required this.eventId,
+    required this.events,
+    required this.child,
+  });
+
+  final String eventId;
+  final Stream<String> events;
+  final Widget child;
+
+  @override
+  State<_EventHighlight> createState() => _EventHighlightState();
+}
+
+class _EventHighlightState extends State<_EventHighlight>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _glow;
+  StreamSubscription<String>? _subscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+    _glow = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0, end: 1), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: 1, end: 0), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: 0, end: 1), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: 1, end: 0), weight: 1),
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _listen();
+  }
+
+  @override
+  void didUpdateWidget(covariant _EventHighlight oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.events != widget.events ||
+        oldWidget.eventId != widget.eventId) {
+      _listen();
+    }
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _listen() {
+    _subscription?.cancel();
+    _subscription = widget.events
+        .where((eventId) => eventId == widget.eventId)
+        .listen((_) => _controller.forward(from: 0));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final neon = Theme.of(context).colorScheme.primary;
+    return AnimatedBuilder(
+      animation: _glow,
+      child: widget.child,
+      builder: (context, child) => DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border.all(color: neon.withValues(alpha: _glow.value * .8)),
+          boxShadow: [
+            BoxShadow(
+              color: neon.withValues(alpha: _glow.value * .35),
+              blurRadius: 10 * _glow.value,
+              spreadRadius: 1.5 * _glow.value,
+            ),
+          ],
+        ),
+        child: child,
+      ),
+    );
   }
 }
