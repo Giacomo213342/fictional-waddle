@@ -16,6 +16,7 @@ import '../settings_interface.dart';
 import '../unified_push/unified_push_storage_polycule.dart';
 import 'push_gateway_extension.dart';
 import 'push_handler.dart';
+import 'push_log_journal.dart';
 
 final pusherDataMessageFormat = kIsWeb
     ? null
@@ -33,6 +34,56 @@ class PushManager {
   }
 
   static Future<void>? _notificationInitialization;
+  static Future<void>? _fallbackDismissal;
+  static const backgroundFallbackTag = 'polycule.unifiedpush.fallback';
+
+  static int backgroundFallbackId(String roomId) =>
+      roomId.hashCode ^ 0x40000000;
+
+  static Future<void> dismissBackgroundFallbackNotifications() {
+    final current = _fallbackDismissal;
+    if (current != null) return current;
+    final dismissal = _dismissBackgroundFallbackNotifications();
+    _fallbackDismissal = dismissal;
+    return dismissal.whenComplete(() {
+      if (identical(_fallbackDismissal, dismissal)) {
+        _fallbackDismissal = null;
+      }
+    });
+  }
+
+  static Future<void> _dismissBackgroundFallbackNotifications() async {
+    if (kIsWeb || !Platform.isAndroid) return;
+    try {
+      final plugin = FlutterLocalNotificationsPlugin();
+      final active = await plugin.getActiveNotifications();
+      final fallbacks = active.where((notification) {
+        if (notification.id == null) return false;
+        if (notification.tag == backgroundFallbackTag) return true;
+        final roomId = notification.channelId;
+        return notification.tag == null &&
+            roomId != null &&
+            notification.id == backgroundFallbackId(roomId);
+      });
+      var dismissed = 0;
+      for (final fallback in fallbacks) {
+        await plugin.cancel(fallback.id!, tag: fallback.tag);
+        dismissed++;
+      }
+      if (dismissed > 0) {
+        await PushLogJournal.record(
+          'Dismissed $dismissed generic notification(s) on foreground.',
+        );
+      }
+    } catch (error, stackTrace) {
+      await PushLogJournal.record(
+        'Unable to dismiss generic notifications on foreground.',
+        level: Level.warning,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+  }
 
   static Future<void> initializeNotificationPlugin(
     AppLocalizations l10n, {

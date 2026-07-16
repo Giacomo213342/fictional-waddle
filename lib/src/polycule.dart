@@ -1,13 +1,44 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import 'router/router.dart';
 import 'theme/theme_builder.dart';
+import 'utils/matrix/push_manager.dart';
 import 'widgets/matrix/client_manager/client_manager.dart';
 import 'widgets/settings_manager.dart';
 
-class PolyculeClient extends StatelessWidget {
+class PolyculeClient extends StatefulWidget {
   const PolyculeClient({super.key});
+
+  @override
+  State<PolyculeClient> createState() => _PolyculeClientState();
+}
+
+class _PolyculeClientState extends State<PolyculeClient>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(PushManager.dismissBackgroundFallbackNotifications());
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(PushManager.dismissBackgroundFallbackNotifications());
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => ClientManagerRoot(

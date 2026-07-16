@@ -23,13 +23,21 @@ import 'client_util.dart';
 import 'is_display_event_extension.dart';
 import 'push_manager.dart';
 import 'poll_event.dart';
+import 'push_log_journal.dart';
 
 final Map<String, Future<void>> _backgroundNotificationQueues = {};
 const _headlessStorageTimeout = Duration(seconds: 5);
 const _headlessRequestTimeout = Duration(seconds: 30);
 const _backgroundNotificationDeadline = Duration(seconds: 10);
 
-int _backgroundFallbackId(String roomId) => roomId.hashCode ^ 0x40000000;
+Future<void> _cancelBackgroundFallback(
+  FlutterLocalNotificationsPlugin plugin,
+  String roomId,
+) =>
+    plugin.cancel(
+      PushManager.backgroundFallbackId(roomId),
+      tag: PushManager.backgroundFallbackTag,
+    );
 
 @pragma('vm:entry-point')
 Future<void> pushEntrypoint() async {
@@ -128,7 +136,7 @@ Future<void> handleBackgroundNotification(
   Client? client;
   Set<String>? mutedRoomIds;
   final notificationState = BackgroundNotificationState();
-  Logs().i('Background notification received for $instance.');
+  await PushLogJournal.record('Received background callback for $instance.');
 
   Future<bool> showFallback() async {
     final shown = await notificationState.showFallback(
@@ -141,7 +149,7 @@ Future<void> handleBackgroundNotification(
       ),
     );
     if (shown) {
-      Logs().i(
+      await PushLogJournal.record(
         'Background fallback shown after '
         '${stopwatch.elapsedMilliseconds}ms.',
       );
@@ -154,9 +162,9 @@ Future<void> handleBackgroundNotification(
     final settings = await const SettingsInterface()
         .getNetwork(failClosed: true)
         .timeout(_headlessStorageTimeout);
-    Logs().i(
+    await PushLogJournal.record(
       settings.useSocks5Proxy
-          ? 'Headless Matrix lookup requires SOCKS5.'
+          ? 'Network settings loaded: SOCKS5 required.'
           : 'Headless Matrix lookup uses the direct/system network path.',
     );
     await PolyculeHttpClientManager.init(
@@ -164,16 +172,24 @@ Future<void> handleBackgroundNotification(
     ).timeout(_headlessStorageTimeout);
     final httpCallback = await PolyculeHttpClientManager.httpClientCallback
         .timeout(_headlessStorageTimeout);
+    await PushLogJournal.record('HTTP client initialized.');
 
-    Logs().d('Opening headless Matrix client.');
+    await PushLogJournal.record(
+      'Opening Matrix database.',
+      level: Level.debug,
+    );
     client = await ClientUtil.clientConstructor(
       instance,
       httpCallback.call(),
       requestTimeout: _headlessRequestTimeout,
     );
     mutedRoomIds = await _prepareHeadlessPushClient(client!);
-    Logs().d('Looking up Matrix event for background notification.');
-    return handlePushNotification(
+    await PushLogJournal.record(
+      'Matrix session prepared; cached muted rooms: ${mutedRoomIds!.length}.',
+      level: Level.debug,
+    );
+    await PushLogJournal.record('Looking up Matrix event.');
+    final result = await handlePushNotification(
       client: client!,
       l10n: l10n,
       message: message.content,
@@ -183,6 +199,10 @@ Future<void> handleBackgroundNotification(
       publishShortcut: false,
       backgroundState: notificationState,
     );
+    await PushLogJournal.record(
+      'Matrix notification handling result: ${result.name}.',
+    );
+    return result;
   }();
 
   try {
@@ -198,24 +218,31 @@ Future<void> handleBackgroundNotification(
       await showFallback();
     }
   } on _BackgroundDeadlineExceeded catch (error, stackTrace) {
-    Logs().w(
+    await PushLogJournal.record(
       'Full background notification exceeded 10 seconds.',
-      error,
-      stackTrace,
+      level: Level.warning,
+      error: error,
+      stackTrace: stackTrace,
     );
     await showFallback();
     try {
       await fullNotification;
     } catch (error, stackTrace) {
-      Logs().e(
+      await PushLogJournal.record(
         'Late background notification lookup failed.',
-        error,
-        stackTrace,
+        level: Level.error,
+        error: error,
+        stackTrace: stackTrace,
       );
       await showFallback();
     }
   } catch (error, stackTrace) {
-    Logs().e('Background notification failed.', error, stackTrace);
+    await PushLogJournal.record(
+      'Background notification failed.',
+      level: Level.error,
+      error: error,
+      stackTrace: stackTrace,
+    );
     await showFallback();
   } finally {
     final clientToDispose = client;
@@ -227,7 +254,7 @@ Future<void> handleBackgroundNotification(
             .w('Failed to dispose headless Matrix client.', error, stackTrace);
       }
     }
-    Logs().i(
+    await PushLogJournal.record(
       'Background notification finished in ${stopwatch.elapsedMilliseconds}ms.',
     );
   }
@@ -271,13 +298,14 @@ Future<bool> _showBackgroundFallbackNotification({
     final clientIdentifier = client?.clientName.clientIdentifier ??
         int.tryParse(RegExp(r'(\d+)$').firstMatch(instance)?.group(1) ?? '');
     await plugin.show(
-      _backgroundFallbackId(roomId),
+      PushManager.backgroundFallbackId(roomId),
       roomName,
       l10n.newNotification,
       NotificationDetails(
         android: AndroidNotificationDetails(
           roomId,
           roomName,
+          tag: PushManager.backgroundFallbackTag,
           importance: Importance.high,
           priority: Priority.max,
           category: AndroidNotificationCategory.message,
@@ -291,7 +319,12 @@ Future<bool> _showBackgroundFallbackNotification({
     );
     return true;
   } catch (error, stackTrace) {
-    Logs().e('Fallback background notification failed.', error, stackTrace);
+    await PushLogJournal.record(
+      'Fallback notification failed.',
+      level: Level.error,
+      error: error,
+      stackTrace: stackTrace,
+    );
     return false;
   }
 }
@@ -374,7 +407,7 @@ Future<PushNotificationResult> handlePushNotification({
     } else {
       await backgroundState.suppress((fallbackShown) async {
         if (fallbackShown) {
-          await notificationsPlugin.cancel(_backgroundFallbackId(roomId));
+          await _cancelBackgroundFallback(notificationsPlugin, roomId);
         }
         await notificationsPlugin.cancel(roomId.hashCode);
       });
@@ -389,8 +422,9 @@ Future<PushNotificationResult> handlePushNotification({
     } else {
       await backgroundState.suppress((fallbackShown) async {
         if (fallbackShown) {
-          await notificationsPlugin.cancel(
-            _backgroundFallbackId(event.room.id),
+          await _cancelBackgroundFallback(
+            notificationsPlugin,
+            event.room.id,
           );
         }
         await notificationsPlugin.cancel(event.room.id.hashCode);
@@ -405,8 +439,9 @@ Future<PushNotificationResult> handlePushNotification({
     } else {
       await backgroundState.suppress((fallbackShown) async {
         if (fallbackShown) {
-          await notificationsPlugin.cancel(
-            _backgroundFallbackId(event.room.id),
+          await _cancelBackgroundFallback(
+            notificationsPlugin,
+            event.room.id,
           );
         }
       });
@@ -537,8 +572,9 @@ Future<PushNotificationResult> handlePushNotification({
   } else {
     await backgroundState.showComplete(
       cancelFallback: () async {
-        await notificationsPlugin.cancel(
-          _backgroundFallbackId(event.room.id),
+        await _cancelBackgroundFallback(
+          notificationsPlugin,
+          event.room.id,
         );
         await notificationsPlugin.cancel(id);
       },

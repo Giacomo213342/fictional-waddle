@@ -6,6 +6,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../theme/fonts.dart';
+import '../../../utils/matrix/push_log_journal.dart';
 import 'logs/log_row.dart';
 
 class LogsPage extends StatefulWidget {
@@ -79,9 +80,13 @@ class _LogsPageState extends State<LogsPage> {
   }
 
   Future<void> _refreshLogs() async {
+    final pushEvents = await PushLogJournal.readEvents();
+    if (!mounted) return;
     setState(() {
-      events = Logs()
-          .outputEvents
+      events = <LogEvent>[
+        ...pushEvents,
+        ...Logs().outputEvents,
+      ]
           .reversed
           .where((logEvent) => logEvent.level.index <= logLevel.index)
           .toList();
