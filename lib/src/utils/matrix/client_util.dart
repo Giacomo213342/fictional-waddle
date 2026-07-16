@@ -17,8 +17,9 @@ abstract class ClientUtil {
 
   static Future<Client> clientConstructor(
     String name,
-    BaseClient httpClient,
-  ) async {
+    BaseClient httpClient, {
+    Duration requestTimeout = const Duration(seconds: 40),
+  }) async {
     final client = Client(
       name,
       database: await polyculeDatabaseBuilder(name),
@@ -47,7 +48,11 @@ abstract class ClientUtil {
       requestHistoryOnLimitedTimeline: true,
       customImageResizer: customImageResizer,
     );
-    client.httpClient = buildRetryClient(client, httpClient);
+    client.httpClient = buildRetryClient(
+      client,
+      httpClient,
+      requestTimeout: requestTimeout,
+    );
     return client;
   }
 
@@ -65,9 +70,13 @@ abstract class ClientUtil {
     }
   }
 
-  static BaseClient buildRetryClient(Client client, BaseClient httpClient) =>
+  static BaseClient buildRetryClient(
+    Client client,
+    BaseClient httpClient, {
+    Duration requestTimeout = const Duration(seconds: 40),
+  }) =>
       MatrixRefreshTokenClient(
-        inner: FixedTimeoutHttpClient(httpClient, const Duration(seconds: 40)),
+        inner: FixedTimeoutHttpClient(httpClient, requestTimeout),
         client: client,
       );
 

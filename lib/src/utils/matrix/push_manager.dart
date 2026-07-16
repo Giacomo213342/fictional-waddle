@@ -35,13 +35,17 @@ class PushManager {
   static Future<void>? _notificationInitialization;
 
   static Future<void> initializeNotificationPlugin(
-    AppLocalizations l10n,
-  ) {
+    AppLocalizations l10n, {
+    bool processLaunchDetails = true,
+  }) {
     final current = _notificationInitialization;
     if (current != null) {
       return current;
     }
-    final initialization = _initializeNotificationPlugin(l10n);
+    final initialization = _initializeNotificationPlugin(
+      l10n,
+      processLaunchDetails: processLaunchDetails,
+    );
     _notificationInitialization = initialization;
     initialization.catchError((Object _) {
       if (identical(_notificationInitialization, initialization)) {
@@ -52,29 +56,34 @@ class PushManager {
   }
 
   static Future<void> _initializeNotificationPlugin(
-    AppLocalizations l10n,
-  ) async {
+    AppLocalizations l10n, {
+    required bool processLaunchDetails,
+  }) async {
     final notificationsPlugin = FlutterLocalNotificationsPlugin();
 
-    await notificationsPlugin.initialize(
-      InitializationSettings(
-        android: const AndroidInitializationSettings(
-          '@drawable/ic_launcher_foreground',
-        ),
-        linux: LinuxInitializationSettings(
-          defaultActionName: l10n.view,
-          defaultIcon: ThemeLinuxIcon('business.braid.polycule'),
-        ),
-        iOS: const DarwinInitializationSettings(),
-        macOS: const DarwinInitializationSettings(),
-      ),
-      onDidReceiveNotificationResponse: _handleNotificationResponse,
-    );
+    await notificationsPlugin
+        .initialize(
+          InitializationSettings(
+            android: const AndroidInitializationSettings(
+              '@drawable/ic_launcher_foreground',
+            ),
+            linux: LinuxInitializationSettings(
+              defaultActionName: l10n.view,
+              defaultIcon: ThemeLinuxIcon('business.braid.polycule'),
+            ),
+            iOS: const DarwinInitializationSettings(),
+            macOS: const DarwinInitializationSettings(),
+          ),
+          onDidReceiveNotificationResponse: _handleNotificationResponse,
+        )
+        .timeout(const Duration(seconds: 5));
 
-    final launchDetails =
-        await notificationsPlugin.getNotificationAppLaunchDetails();
-    if (launchDetails?.didNotificationLaunchApp == true) {
-      _openNotificationPayload(launchDetails?.notificationResponse?.payload);
+    if (processLaunchDetails) {
+      final launchDetails =
+          await notificationsPlugin.getNotificationAppLaunchDetails();
+      if (launchDetails?.didNotificationLaunchApp == true) {
+        _openNotificationPayload(launchDetails?.notificationResponse?.payload);
+      }
     }
   }
 
@@ -108,19 +117,59 @@ class PushManager {
   String get instance => client.clientName;
 
   String? endpoint;
+  Future<void>? _registrationRetry;
+
+  void _runCallback(
+    String name,
+    Future<void> Function() callback, {
+    bool retryRegistration = false,
+  }) {
+    unawaited(
+      callback().catchError((Object error, StackTrace stackTrace) {
+        Logs().e('UnifiedPush $name callback failed.', error, stackTrace);
+        if (retryRegistration) _scheduleRegistrationRetry();
+      }),
+    );
+  }
+
+  void _scheduleRegistrationRetry() {
+    if (_registrationRetry != null) return;
+    late final Future<void> retry;
+    retry = Future<void>.delayed(const Duration(seconds: 30)).then((_) async {
+      if (identical(_registrationRetry, retry)) {
+        _registrationRetry = null;
+      }
+      if (!client.isLogged()) return;
+      await _initialize();
+    });
+    _registrationRetry = retry;
+  }
 
   Future<void> _initialize() async {
-    final locale = WidgetsBinding.instance.platformDispatcher
-            .computePlatformResolvedLocale(AppLocalizations.supportedLocales) ??
-        const Locale('en');
-    localizations = await AppLocalizations.delegate.load(locale);
-    await initializeNotificationPlugin(localizations);
     try {
+      final locale = WidgetsBinding.instance.platformDispatcher
+              .computePlatformResolvedLocale(
+            AppLocalizations.supportedLocales,
+          ) ??
+          const Locale('en');
+      localizations = await AppLocalizations.delegate.load(locale);
+      await initializeNotificationPlugin(localizations);
       final registered = await UnifiedPush.initialize(
-        onNewEndpoint: onNewEndpoint,
+        onNewEndpoint: (endpoint, instance) => _runCallback(
+          'new endpoint',
+          () => onNewEndpoint(endpoint, instance),
+          retryRegistration: true,
+        ),
         onRegistrationFailed: onRegistrationFailed,
-        onUnregistered: onUnregistered,
-        onMessage: onMessage,
+        onUnregistered: (instance) => _runCallback(
+          'unregistered',
+          () => onUnregistered(instance),
+        ),
+        onMessage: (message, instance) => _runCallback(
+          'message',
+          () => onMessage(message, instance),
+        ),
+        onTempUnavailable: onTempUnavailable,
         linuxOptions: LinuxOptions(
           dbusName: 'business.braid.polycule',
           storage: UnifiedPushStoragePolycule(),
@@ -130,7 +179,12 @@ class PushManager {
       if (registered || await UnifiedPush.tryUseCurrentOrDefaultDistributor()) {
         await register();
       }
-    } on UnimplementedError catch (_) {}
+    } on UnimplementedError catch (_) {
+      // UnifiedPush is not available on this platform.
+    } catch (error, stackTrace) {
+      Logs().e('UnifiedPush initialization failed.', error, stackTrace);
+      _scheduleRegistrationRetry();
+    }
   }
 
   Future<void> onNewEndpoint(PushEndpoint endpoint, String instance) async {
@@ -167,6 +221,16 @@ class PushManager {
     if (instance != this.instance) {
       return;
     }
+    Logs().w('UnifiedPush registration failed for $instance: $reason');
+    if (reason != FailedReason.actionRequired) {
+      _scheduleRegistrationRetry();
+    }
+  }
+
+  void onTempUnavailable(String instance) {
+    if (instance != this.instance) return;
+    Logs().w('UnifiedPush distributor is temporarily unavailable.');
+    _scheduleRegistrationRetry();
   }
 
   Future<void> unregister() async {

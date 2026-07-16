@@ -24,6 +24,8 @@ import 'push_manager.dart';
 import 'poll_event.dart';
 
 final Map<String, Future<void>> _backgroundNotificationQueues = {};
+const _headlessStorageTimeout = Duration(seconds: 5);
+const _headlessRequestTimeout = Duration(seconds: 8);
 
 @pragma('vm:entry-point')
 Future<void> pushEntrypoint() async {
@@ -60,24 +62,29 @@ Future<void> handleBackgroundNotification(
 ) async {
   final stopwatch = Stopwatch()..start();
   WidgetsFlutterBinding.ensureInitialized();
-  // first load our network settings from storage
-  final settings = await const SettingsInterface().getNetwork();
-  await PolyculeHttpClientManager.init(ValueNotifier(settings));
-  final httpCallback = await PolyculeHttpClientManager.httpClientCallback;
-
-  final client = await ClientUtil.clientConstructor(
-    instance,
-    httpCallback.call(),
-  );
-
   final locale =
       WidgetsBinding.instance.platformDispatcher.computePlatformResolvedLocale(
             AppLocalizations.supportedLocales,
           ) ??
           const Locale('en');
   final l10n = await AppLocalizations.delegate.load(locale);
+  Client? client;
   Set<String>? mutedRoomIds;
   try {
+    final settings = await const SettingsInterface()
+        .getNetwork()
+        .timeout(_headlessStorageTimeout);
+    await PolyculeHttpClientManager.init(
+      ValueNotifier(settings),
+    ).timeout(_headlessStorageTimeout);
+    final httpCallback = await PolyculeHttpClientManager.httpClientCallback
+        .timeout(_headlessStorageTimeout);
+
+    client = await ClientUtil.clientConstructor(
+      instance,
+      httpCallback.call(),
+      requestTimeout: _headlessRequestTimeout,
+    );
     mutedRoomIds = await _prepareHeadlessPushClient(client);
     await handlePushNotification(
       client: client,
@@ -85,19 +92,26 @@ Future<void> handleBackgroundNotification(
       message: message.content,
       mutedRoomIds: mutedRoomIds,
       performClearingSync: false,
+      eventLookupTimeout: const Duration(seconds: 6),
     );
   } catch (error, stackTrace) {
     Logs().e('Background notification failed.', error, stackTrace);
-    if (mutedRoomIds != null) {
-      await _showBackgroundFallbackNotification(
-        client: client,
-        l10n: l10n,
-        message: message.content,
-        mutedRoomIds: mutedRoomIds,
-      );
-    }
+    await _showBackgroundFallbackNotification(
+      instance: instance,
+      client: client,
+      l10n: l10n,
+      message: message.content,
+      mutedRoomIds: mutedRoomIds,
+    );
   } finally {
-    await client.dispose();
+    if (client != null) {
+      try {
+        await client.dispose().timeout(_headlessStorageTimeout);
+      } catch (error, stackTrace) {
+        Logs()
+            .w('Failed to dispose headless Matrix client.', error, stackTrace);
+      }
+    }
     Logs().i(
       'Background notification finished in ${stopwatch.elapsedMilliseconds}ms.',
     );
@@ -105,17 +119,26 @@ Future<void> handleBackgroundNotification(
 }
 
 Future<void> _showBackgroundFallbackNotification({
-  required Client client,
+  required String instance,
+  required Client? client,
   required AppLocalizations l10n,
   required Uint8List message,
-  required Set<String> mutedRoomIds,
+  required Set<String>? mutedRoomIds,
 }) async {
   try {
     final notification = decodeMessage(message);
     final roomId = notification.roomId;
-    if (roomId == null || mutedRoomIds.contains(roomId)) return;
+    if (roomId == null || mutedRoomIds?.contains(roomId) == true) return;
+    if (mutedRoomIds == null) {
+      Logs().w(
+        'Showing fallback without cached mute rules for $instance.',
+      );
+    }
 
-    await PushManager.initializeNotificationPlugin(l10n);
+    await PushManager.initializeNotificationPlugin(
+      l10n,
+      processLaunchDetails: false,
+    ).timeout(_headlessStorageTimeout);
     final plugin = FlutterLocalNotificationsPlugin();
     final roomName = notification.roomName ?? l10n.appName;
     if (!kIsWeb && Platform.isAndroid) {
@@ -130,6 +153,8 @@ Future<void> _showBackgroundFallbackNotification({
             ),
           );
     }
+    final clientIdentifier = client?.clientName.clientIdentifier ??
+        int.tryParse(RegExp(r'(\d+)$').firstMatch(instance)?.group(1) ?? '');
     await plugin.show(
       roomId.hashCode,
       roomName,
@@ -145,10 +170,9 @@ Future<void> _showBackgroundFallbackNotification({
         ),
         iOS: const DarwinNotificationDetails(),
       ),
-      payload: jsonEncode({
-        'client': client.clientName.clientIdentifier,
-        'room': roomId,
-      }),
+      payload: clientIdentifier == null
+          ? null
+          : jsonEncode({'client': clientIdentifier, 'room': roomId}),
     );
   } catch (error, stackTrace) {
     Logs().e('Fallback background notification failed.', error, stackTrace);
@@ -180,6 +204,7 @@ Future<void> handlePushNotification({
   required Uint8List message,
   Set<String> mutedRoomIds = const {},
   bool performClearingSync = true,
+  Duration eventLookupTimeout = const Duration(seconds: 8),
 }) async {
   final notification = decodeMessage(message);
 
@@ -192,6 +217,7 @@ Future<void> handlePushNotification({
   final event = await client.getEventByPushNotification(
     notification,
     storeInDatabase: false,
+    timeoutForServerRequests: eventLookupTimeout,
   );
 
   if (event == null) {
