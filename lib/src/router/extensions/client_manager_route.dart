@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 import 'package:go_router/go_router.dart';
 
 import '../../widgets/matrix/client_manager/client_tab_view.dart';
@@ -11,7 +13,8 @@ class ClientManagerRoute extends StatefulShellRoute {
     super.parentNavigatorKey,
     super.redirect,
     super.restorationScopeId,
-  }) : super.indexedStack(
+  }) : super(
+          navigatorContainerBuilder: _activeBranchContainer,
           builder: (context, state, shell) => MatrixDialogScope(
             child: ClientTabView(
               uri: state.uri,
@@ -19,4 +22,37 @@ class ClientManagerRoute extends StatefulShellRoute {
             ),
           ),
         );
+
+  /// Keeps the state of every account branch while allowing only the active
+  /// Navigator to report whether Android back can be handled.
+  ///
+  /// Offstage Navigators still dispatch [NavigationNotification]s. Letting
+  /// those notifications escape an IndexedStack means an inactive branch can
+  /// overwrite the active branch's `canHandlePop` value and make Android
+  /// unregister Flutter's back callback. The platform then closes the Activity
+  /// without ever asking GoRouter to pop the room.
+  static Widget _activeBranchContainer(
+    BuildContext context,
+    StatefulNavigationShell shell,
+    List<Widget> children,
+  ) {
+    return IndexedStack(
+      index: shell.currentIndex,
+      children: List.generate(children.length, (index) {
+        final active = index == shell.currentIndex;
+        return Offstage(
+          offstage: !active,
+          child: TickerMode(
+            enabled: active,
+            child: active
+                ? children[index]
+                : NotificationListener<NavigationNotification>(
+                    onNotification: (_) => true,
+                    child: children[index],
+                  ),
+          ),
+        );
+      }),
+    );
+  }
 }

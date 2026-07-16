@@ -23,6 +23,7 @@ import '../pages/public_room/public_room.dart';
 import '../pages/room/room.dart';
 import '../pages/room_details/room_details.dart';
 import '../pages/room_list/room_list.dart';
+import '../pages/room_list/room_list_position_tracker.dart';
 import '../pages/splash_screen/splash_screen.dart';
 import '../pages/ssss_bootstrap/ssss_bootstrap.dart';
 import '../pages/user_page/user_page.dart';
@@ -185,6 +186,21 @@ class PolyculeRouter extends GoRouter {
                                     client: client,
                                     path: RoomPage.pathParameter
                                         .asGoRouterPath(),
+                                    onExit: (context, state) {
+                                      final encodedRoomId = state
+                                          .pathParameters[RoomPage.pathParameter];
+                                      if (encodedRoomId != null) {
+                                        final room = client.getRoomById(
+                                          Uri.decodeComponent(encodedRoomId),
+                                        );
+                                        if (room != null) {
+                                          RoomListPositionTracker.prepareReturn(
+                                            room,
+                                          );
+                                        }
+                                      }
+                                      return true;
+                                    },
                                     builder: (context, state) =>
                                         const PolyculePlaceholder(),
                                   ),
