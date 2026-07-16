@@ -65,7 +65,7 @@ class SettingsInterface {
     );
   }
 
-  Future<NetworkState> getNetwork() async {
+  Future<NetworkState> getNetwork({bool failClosed = false}) async {
     try {
       final useSni = await kPolyculeSecureStorage.read(key: 'useSni');
       final tlsMinVersion =
@@ -95,6 +95,7 @@ class SettingsInterface {
       );
     } on PlatformException catch (e, s) {
       ErrorLogger().captureStackTrace(e, s);
+      if (failClosed) rethrow;
       await kPolyculeSecureStorage.delete(key: 'useSni');
       await kPolyculeSecureStorage.delete(key: 'tlsMinVersion');
       await kPolyculeSecureStorage.delete(key: 'verifyCertificates');

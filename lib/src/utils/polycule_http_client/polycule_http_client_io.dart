@@ -5,11 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:cupertino_http/cupertino_http.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
+import 'package:socks5_proxy/socks_client.dart';
 
 import '../../widgets/settings_manager.dart';
 import '../assets.dart';
 import 'polycule_http_client.dart';
-import 'package:socks5_proxy/socks_client.dart';
 
 URLSessionConfiguration _cupertinoConfig =
     URLSessionConfiguration.defaultSessionConfiguration();
@@ -20,17 +20,20 @@ InternetAddress? _socks5Address;
 
 Future<void> updateHttpClientSettings(NetworkState settings) async {
   _currentSettings = settings;
-  if (settings.useSocks5Proxy && settings.proxyHost != null && settings.proxyHost!.isNotEmpty) {
-    _socks5Address = InternetAddress.tryParse(settings.proxyHost!);
+  _socks5Address = null;
+  if (settings.useSocks5Proxy) {
+    final host = settings.proxyHost?.trim();
+    final port = settings.proxyPort;
+    if (host == null || host.isEmpty || port == null) {
+      throw StateError('SOCKS5 is enabled but its host or port is missing.');
+    }
+    _socks5Address = InternetAddress.tryParse(host);
     if (_socks5Address == null) {
-      try {
-        final addresses = await InternetAddress.lookup(settings.proxyHost!);
-        if (addresses.isNotEmpty) {
-          _socks5Address = addresses.first;
-        }
-      } catch (_) {
-        // failed to lookup
+      final addresses = await InternetAddress.lookup(host);
+      if (addresses.isEmpty) {
+        throw StateError('Unable to resolve the SOCKS5 proxy.');
       }
+      _socks5Address = addresses.first;
     }
   }
   if (Platform.isIOS || Platform.isMacOS) {
@@ -80,17 +83,22 @@ BaseClient _buildIoClient() {
   final client = HttpClient(context: _ioContext)
     ..userAgent = PolyculeHttpClientManager.userAgent;
 
-  if (_currentSettings?.useSocks5Proxy == true && _socks5Address != null && _currentSettings?.proxyPort != null) {
+  if (_currentSettings?.useSocks5Proxy == true) {
+    final address = _socks5Address;
+    final port = _currentSettings?.proxyPort;
+    if (address == null || port == null) {
+      throw StateError('SOCKS5 is enabled but the proxy is unavailable.');
+    }
     SocksTCPClient.assignToHttpClient(
       client,
       [
         ProxySettings(
-          _socks5Address!,
-          _currentSettings!.proxyPort!,
+          address,
+          port,
           password: _currentSettings?.proxyPassword ?? '',
           username: _currentSettings?.proxyUsername ?? '',
-        )
-      ]
+        ),
+      ],
     );
   } else if (_currentSettings?.permitProxy == false) {
     client.findProxy = (url) => 'DIRECT';

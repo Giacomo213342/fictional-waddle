@@ -20,12 +20,16 @@ import '../unified_push/unified_push_storage_polycule.dart';
 import 'active_room_tracker.dart';
 import 'cached_push_rules.dart';
 import 'client_util.dart';
+import 'is_display_event_extension.dart';
 import 'push_manager.dart';
 import 'poll_event.dart';
 
 final Map<String, Future<void>> _backgroundNotificationQueues = {};
 const _headlessStorageTimeout = Duration(seconds: 5);
-const _headlessRequestTimeout = Duration(seconds: 8);
+const _headlessRequestTimeout = Duration(seconds: 30);
+const _backgroundNotificationDeadline = Duration(seconds: 10);
+
+int _backgroundFallbackId(String roomId) => roomId.hashCode ^ 0x40000000;
 
 @pragma('vm:entry-point')
 Future<void> pushEntrypoint() async {
@@ -55,6 +59,59 @@ void _queueBackgroundNotification(PushMessage message, String instance) {
   unawaited(tracked);
 }
 
+enum PushNotificationResult { shown, suppressed, unresolved }
+
+class _BackgroundDeadlineExceeded implements Exception {}
+
+class BackgroundNotificationState {
+  Future<void> _mutation = Future.value();
+  bool _fallbackShown = false;
+  bool _settled = false;
+
+  Future<T> _synchronized<T>(Future<T> Function() action) async {
+    final previous = _mutation;
+    final gate = Completer<void>();
+    _mutation = gate.future;
+    await previous;
+    try {
+      return await action();
+    } finally {
+      gate.complete();
+    }
+  }
+
+  Future<bool> showFallback(Future<bool> Function() show) =>
+      _synchronized(() async {
+        if (_settled || _fallbackShown) return false;
+        _fallbackShown = await show();
+        return _fallbackShown;
+      });
+
+  Future<void> showComplete({
+    required Future<void> Function() cancelFallback,
+    required Future<void> Function() show,
+  }) =>
+      _synchronized(() async {
+        if (_settled) return;
+        if (_fallbackShown) {
+          await cancelFallback();
+          _fallbackShown = false;
+        }
+        await show();
+        _settled = true;
+      });
+
+  Future<void> suppress(
+    Future<void> Function(bool fallbackShown) settle,
+  ) =>
+      _synchronized(() async {
+        if (_settled) return;
+        await settle(_fallbackShown);
+        _fallbackShown = false;
+        _settled = true;
+      });
+}
+
 @pragma('vm:entry-point')
 Future<void> handleBackgroundNotification(
   PushMessage message,
@@ -70,24 +127,38 @@ Future<void> handleBackgroundNotification(
   final l10n = await AppLocalizations.delegate.load(locale);
   Client? client;
   Set<String>? mutedRoomIds;
+  final notificationState = BackgroundNotificationState();
   Logs().i('Background notification received for $instance.');
-  final placeholderShown = await _showBackgroundFallbackNotification(
-    instance: instance,
-    client: null,
-    l10n: l10n,
-    message: message.content,
-    mutedRoomIds: null,
-  );
-  if (placeholderShown) {
-    Logs().i(
-      'Background placeholder shown after ${stopwatch.elapsedMilliseconds}ms.',
+
+  Future<bool> showFallback() async {
+    final shown = await notificationState.showFallback(
+      () => _showBackgroundFallbackNotification(
+        instance: instance,
+        client: client,
+        l10n: l10n,
+        message: message.content,
+        mutedRoomIds: mutedRoomIds,
+      ),
     );
+    if (shown) {
+      Logs().i(
+        'Background fallback shown after '
+        '${stopwatch.elapsedMilliseconds}ms.',
+      );
+    }
+    return shown;
   }
-  try {
+
+  final fullNotification = () async {
     Logs().d('Loading headless network settings.');
     final settings = await const SettingsInterface()
-        .getNetwork()
+        .getNetwork(failClosed: true)
         .timeout(_headlessStorageTimeout);
+    Logs().i(
+      settings.useSocks5Proxy
+          ? 'Headless Matrix lookup requires SOCKS5.'
+          : 'Headless Matrix lookup uses the direct/system network path.',
+    );
     await PolyculeHttpClientManager.init(
       ValueNotifier(settings),
     ).timeout(_headlessStorageTimeout);
@@ -100,32 +171,57 @@ Future<void> handleBackgroundNotification(
       httpCallback.call(),
       requestTimeout: _headlessRequestTimeout,
     );
-    mutedRoomIds = await _prepareHeadlessPushClient(client);
+    mutedRoomIds = await _prepareHeadlessPushClient(client!);
     Logs().d('Looking up Matrix event for background notification.');
-    await handlePushNotification(
-      client: client,
+    return handlePushNotification(
+      client: client!,
       l10n: l10n,
       message: message.content,
-      mutedRoomIds: mutedRoomIds,
+      mutedRoomIds: mutedRoomIds!,
       performClearingSync: false,
-      eventLookupTimeout: const Duration(seconds: 6),
+      eventLookupTimeout: _headlessRequestTimeout,
       publishShortcut: false,
+      backgroundState: notificationState,
     );
+  }();
+
+  try {
+    final remaining = _backgroundNotificationDeadline - stopwatch.elapsed;
+    if (remaining.isNegative) {
+      throw _BackgroundDeadlineExceeded();
+    }
+    final result = await fullNotification.timeout(
+      remaining,
+      onTimeout: () => throw _BackgroundDeadlineExceeded(),
+    );
+    if (result == PushNotificationResult.unresolved) {
+      await showFallback();
+    }
+  } on _BackgroundDeadlineExceeded catch (error, stackTrace) {
+    Logs().w(
+      'Full background notification exceeded 10 seconds.',
+      error,
+      stackTrace,
+    );
+    await showFallback();
+    try {
+      await fullNotification;
+    } catch (error, stackTrace) {
+      Logs().e(
+        'Late background notification lookup failed.',
+        error,
+        stackTrace,
+      );
+      await showFallback();
+    }
   } catch (error, stackTrace) {
     Logs().e('Background notification failed.', error, stackTrace);
-    if (!placeholderShown) {
-      await _showBackgroundFallbackNotification(
-        instance: instance,
-        client: client,
-        l10n: l10n,
-        message: message.content,
-        mutedRoomIds: mutedRoomIds,
-      );
-    }
+    await showFallback();
   } finally {
-    if (client != null) {
+    final clientToDispose = client;
+    if (clientToDispose != null) {
       try {
-        await client.dispose().timeout(_headlessStorageTimeout);
+        await clientToDispose.dispose().timeout(_headlessStorageTimeout);
       } catch (error, stackTrace) {
         Logs()
             .w('Failed to dispose headless Matrix client.', error, stackTrace);
@@ -175,14 +271,13 @@ Future<bool> _showBackgroundFallbackNotification({
     final clientIdentifier = client?.clientName.clientIdentifier ??
         int.tryParse(RegExp(r'(\d+)$').firstMatch(instance)?.group(1) ?? '');
     await plugin.show(
-      roomId.hashCode,
+      _backgroundFallbackId(roomId),
       roomName,
       l10n.newNotification,
       NotificationDetails(
         android: AndroidNotificationDetails(
           roomId,
           roomName,
-          onlyAlertOnce: true,
           importance: Importance.high,
           priority: Priority.max,
           category: AndroidNotificationCategory.message,
@@ -220,7 +315,7 @@ Future<Set<String>> _prepareHeadlessPushClient(Client client) async {
   );
 }
 
-Future<void> handlePushNotification({
+Future<PushNotificationResult> handlePushNotification({
   required Client client,
   required AppLocalizations l10n,
   required Uint8List message,
@@ -228,6 +323,7 @@ Future<void> handlePushNotification({
   bool performClearingSync = true,
   Duration eventLookupTimeout = const Duration(seconds: 8),
   bool publishShortcut = true,
+  BackgroundNotificationState? backgroundState,
 }) async {
   final notification = decodeMessage(message);
 
@@ -247,7 +343,11 @@ Future<void> handlePushNotification({
     Logs().v('Notification is a clearing indicator.');
     if (notification.counts?.unread == null ||
         notification.counts?.unread == 0) {
-      await notificationsPlugin.cancelAll();
+      if (backgroundState == null) {
+        await notificationsPlugin.cancelAll();
+      } else {
+        await backgroundState.suppress((_) => notificationsPlugin.cancelAll());
+      }
     } else if (performClearingSync) {
       await client.roomsLoading;
       await client.oneShotSync();
@@ -261,20 +361,57 @@ Future<void> handlePushNotification({
           await notificationsPlugin.cancel(activeNotification.id!);
         }
       }
+    } else {
+      return PushNotificationResult.unresolved;
     }
-    return;
+    return PushNotificationResult.suppressed;
   }
 
   final roomId = event.roomId;
   if (roomId != null && ActiveRoomTracker.isVisible(roomId)) {
-    await notificationsPlugin.cancel(roomId.hashCode);
-    return;
+    if (backgroundState == null) {
+      await notificationsPlugin.cancel(roomId.hashCode);
+    } else {
+      await backgroundState.suppress((fallbackShown) async {
+        if (fallbackShown) {
+          await notificationsPlugin.cancel(_backgroundFallbackId(roomId));
+        }
+        await notificationsPlugin.cancel(roomId.hashCode);
+      });
+    }
+    return PushNotificationResult.suppressed;
   }
 
   if (mutedRoomIds.contains(event.room.id) ||
       event.room.pushRuleState == PushRuleState.dontNotify) {
-    await notificationsPlugin.cancel(event.room.id.hashCode);
-    return;
+    if (backgroundState == null) {
+      await notificationsPlugin.cancel(event.room.id.hashCode);
+    } else {
+      await backgroundState.suppress((fallbackShown) async {
+        if (fallbackShown) {
+          await notificationsPlugin.cancel(
+            _backgroundFallbackId(event.room.id),
+          );
+        }
+        await notificationsPlugin.cancel(event.room.id.hashCode);
+      });
+    }
+    return PushNotificationResult.suppressed;
+  }
+
+  if (!event.shouldDisplayEvent) {
+    if (backgroundState == null) {
+      return PushNotificationResult.suppressed;
+    } else {
+      await backgroundState.suppress((fallbackShown) async {
+        if (fallbackShown) {
+          await notificationsPlugin.cancel(
+            _backgroundFallbackId(event.room.id),
+          );
+        }
+      });
+    }
+    return PushNotificationResult.suppressed;
   }
 
   final id = event.room.id.hashCode;
@@ -351,7 +488,6 @@ Future<void> handlePushNotification({
   final androidPlatformChannelSpecifics = AndroidNotificationDetails(
     event.room.id,
     roomName,
-    onlyAlertOnce: true,
     number: notification.counts?.unread,
     category: AndroidNotificationCategory.message,
     icon: '@drawable/ic_launcher_foreground',
@@ -386,16 +522,30 @@ Future<void> handlePushNotification({
 
   final title = event.room.getLocalizedDisplayname(l10n.matrix);
 
-  await notificationsPlugin.show(
-    id,
-    title,
-    body,
-    platformChannelSpecifics,
-    payload: jsonEncode({
-      'client': client.clientName.clientIdentifier,
-      'room': event.roomId,
-    }),
-  );
+  Future<void> show() => notificationsPlugin.show(
+        id,
+        title,
+        body,
+        platformChannelSpecifics,
+        payload: jsonEncode({
+          'client': client.clientName.clientIdentifier,
+          'room': event.roomId,
+        }),
+      );
+  if (backgroundState == null) {
+    await show();
+  } else {
+    await backgroundState.showComplete(
+      cancelFallback: () async {
+        await notificationsPlugin.cancel(
+          _backgroundFallbackId(event.room.id),
+        );
+        await notificationsPlugin.cancel(id);
+      },
+      show: show,
+    );
+  }
+  return PushNotificationResult.shown;
 }
 
 PushNotification decodeMessage(Uint8List message) {
