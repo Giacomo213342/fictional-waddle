@@ -21,6 +21,7 @@ import '../pages/homeserver/homeserver.dart';
 import '../pages/login/login.dart';
 import '../pages/public_room/public_room.dart';
 import '../pages/room/room.dart';
+import '../pages/room/room_view.dart';
 import '../pages/room_details/room_details.dart';
 import '../pages/room_list/room_list.dart';
 import '../pages/splash_screen/splash_screen.dart';
