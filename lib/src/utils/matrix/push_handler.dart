@@ -76,8 +76,9 @@ Future<void> handleBackgroundNotification(
           ) ??
           const Locale('en');
   final l10n = await AppLocalizations.delegate.load(locale);
+  Set<String>? mutedRoomIds;
   try {
-    final mutedRoomIds = await _prepareHeadlessPushClient(client);
+    mutedRoomIds = await _prepareHeadlessPushClient(client);
     await handlePushNotification(
       client: client,
       l10n: l10n,
@@ -87,11 +88,70 @@ Future<void> handleBackgroundNotification(
     );
   } catch (error, stackTrace) {
     Logs().e('Background notification failed.', error, stackTrace);
+    if (mutedRoomIds != null) {
+      await _showBackgroundFallbackNotification(
+        client: client,
+        l10n: l10n,
+        message: message.content,
+        mutedRoomIds: mutedRoomIds,
+      );
+    }
   } finally {
     await client.dispose();
     Logs().i(
       'Background notification finished in ${stopwatch.elapsedMilliseconds}ms.',
     );
+  }
+}
+
+Future<void> _showBackgroundFallbackNotification({
+  required Client client,
+  required AppLocalizations l10n,
+  required Uint8List message,
+  required Set<String> mutedRoomIds,
+}) async {
+  try {
+    final notification = decodeMessage(message);
+    final roomId = notification.roomId;
+    if (roomId == null || mutedRoomIds.contains(roomId)) return;
+
+    await PushManager.initializeNotificationPlugin(l10n);
+    final plugin = FlutterLocalNotificationsPlugin();
+    final roomName = notification.roomName ?? l10n.appName;
+    if (!kIsWeb && Platform.isAndroid) {
+      await plugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(
+            AndroidNotificationChannel(
+              roomId,
+              roomName,
+              importance: Importance.high,
+            ),
+          );
+    }
+    await plugin.show(
+      roomId.hashCode,
+      roomName,
+      l10n.newNotification,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          roomId,
+          roomName,
+          importance: Importance.high,
+          priority: Priority.max,
+          category: AndroidNotificationCategory.message,
+          icon: '@drawable/ic_launcher_foreground',
+        ),
+        iOS: const DarwinNotificationDetails(),
+      ),
+      payload: jsonEncode({
+        'client': client.clientName.clientIdentifier,
+        'room': roomId,
+      }),
+    );
+  } catch (error, stackTrace) {
+    Logs().e('Fallback background notification failed.', error, stackTrace);
   }
 }
 

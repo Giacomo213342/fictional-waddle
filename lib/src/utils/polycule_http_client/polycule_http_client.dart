@@ -33,6 +33,7 @@ abstract class PolyculeHttpClientManager {
       settings.addListener(() => _buildHttpClient(settings.value));
       completer.complete();
     } catch (error, stackTrace) {
+      unawaited(completer.future.catchError((_) {}));
       completer.completeError(error, stackTrace);
       _initFuture = null;
       rethrow;
