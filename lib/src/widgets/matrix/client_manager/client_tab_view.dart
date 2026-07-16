@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../pages/room_list/room_list_position_tracker.dart';
 import '../../../utils/matrix/active_room_tracker.dart';
-import '../scopes/client_scope.dart';
 import 'components/top/keyboard_aware_top_bar.dart';
 
 class ClientTabView extends StatelessWidget {
@@ -13,31 +10,6 @@ class ClientTabView extends StatelessWidget {
 
   final Uri uri;
   final Widget child;
-
-  String? get _backTarget {
-    final path = uri.path;
-    final room =
-        RegExp(r'^(/client/\d+/rooms/[^/]+)(?:/.*)?$').firstMatch(path);
-    if (room != null) {
-      final roomPath = room.group(1)!;
-      if (path == roomPath && uri.fragment.isNotEmpty) {
-        return roomPath;
-      }
-      return path == roomPath
-          ? roomPath.substring(0, roomPath.lastIndexOf('/'))
-          : roomPath;
-    }
-
-    final settings =
-        RegExp(r'^(/client/\d+)/settings(?:/.*)?$').firstMatch(path);
-    if (settings != null) {
-      final settingsRoot = '${settings.group(1)!}/settings';
-      return path == settingsRoot
-          ? '${settings.group(1)!}/rooms'
-          : settingsRoot;
-    }
-    return null;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,45 +19,26 @@ class ClientTabView extends StatelessWidget {
         ? null
         : Uri.decodeComponent(activeRoomMatch.group(1)!);
 
-    return BackButtonListener(
-      onBackButtonPressed: () async {
-        final target = _backTarget;
-        if (target == null) {
-          return false;
-        }
-        final roomId = activeRoomMatch?.group(1);
-        if (roomId != null && target.endsWith('/rooms')) {
-          final room = ClientScope.of(context).client.getRoomById(
-                Uri.decodeComponent(roomId),
-              );
-          if (room != null) {
-            RoomListPositionTracker.prepareReturn(room);
-          }
-        }
-        context.go(target);
-        return true;
-      },
-      child: Scaffold(
-        body: AdaptiveLayout(
-          transitionDuration: const Duration(milliseconds: 300),
-          body: SlotLayout(
-            config: {
-              Breakpoints.smallAndUp: SlotLayout.from(
-                key: const Key('body'),
-                builder: (context) => child,
-              ),
-            },
-          ),
-          topNavigation: SlotLayout(
-            config: {
-              Breakpoints.mediumLargeAndUp: SlotLayout.from(
-                key: const Key('top-app-bar'),
-                builder: (context) {
-                  return const KeyboardAwareTopBar();
-                },
-              ),
-            },
-          ),
+    return Scaffold(
+      body: AdaptiveLayout(
+        transitionDuration: const Duration(milliseconds: 300),
+        body: SlotLayout(
+          config: {
+            Breakpoints.smallAndUp: SlotLayout.from(
+              key: const Key('body'),
+              builder: (context) => child,
+            ),
+          },
+        ),
+        topNavigation: SlotLayout(
+          config: {
+            Breakpoints.mediumLargeAndUp: SlotLayout.from(
+              key: const Key('top-app-bar'),
+              builder: (context) {
+                return const KeyboardAwareTopBar();
+              },
+            ),
+          },
         ),
       ),
     );

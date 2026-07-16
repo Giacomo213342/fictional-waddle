@@ -186,7 +186,9 @@ class PolyculeRouter extends GoRouter {
                                     path: RoomPage.pathParameter
                                         .asGoRouterPath(),
                                     builder: (context, state) =>
-                                        const PolyculePlaceholder(),
+                                        const RoomRoutePopScope(
+                                          child: PolyculePlaceholder(),
+                                        ),
                                   ),
                                   RoomAvailableRoute(
                                     client: client,

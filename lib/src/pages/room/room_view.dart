@@ -22,8 +22,12 @@ class RoomView extends StatelessWidget {
   Widget build(BuildContext context) {
     final room = RoomScope.of(context).room;
     void returnToRoomList() {
-      RoomListPositionTracker.prepareReturn(room);
-      context.goMultiClient(RoomListPage.routeName);
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        RoomListPositionTracker.prepareReturn(room);
+        context.goMultiClient(RoomListPage.routeName);
+      }
     }
 
     void navigateBack() {
@@ -82,6 +86,26 @@ class RoomView extends StatelessWidget {
         hint: AppLocalizations.of(context).regionChatContents,
         child: const RoomBody(),
       ),
+    );
+  }
+}
+
+/// Connects return bookkeeping to the actual leaf route popped by Android.
+class RoomRoutePopScope extends StatelessWidget {
+  const RoomRoutePopScope({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final room = RoomScope.of(context).room;
+    return PopScope<void>(
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          RoomListPositionTracker.prepareReturn(room);
+        }
+      },
+      child: child,
     );
   }
 }
