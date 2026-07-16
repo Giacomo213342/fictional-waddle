@@ -43,7 +43,7 @@ build:apk:
       else
         export KEY_PASSWORD="${KEY_PASSWORD:-$KEYSTORE_PASSWORD}"
       fi
-      export KEY_ALIAS="${KEYSTORE_ALIAS:-alias_name}"
+      export KEY_ALIAS="${KEYSTORE_ALIAS:-my-key}"
   script:
     - export POLYCULE_VERSION="$(git describe --always)"
     - export FLUTTER_ARGS="--build-number $((CI_PIPELINE_ID / 100)) --dart-define=POLYCULE_IS_STABLE=false --dart-define=POLYCULE_VERSION=$POLYCULE_VERSION --dart-define=no_default_http_client=true --dart-define=cronetHttpNoPlay=true"
