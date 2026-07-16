@@ -41,22 +41,16 @@ class ResponsiveLayout extends StatelessWidget {
               IgnorePointer(
                 ignoring: !showSecondary,
                 child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  reverseDuration: const Duration(milliseconds: 260),
-                  switchInCurve: Curves.easeOutCubic,
-                  switchOutCurve: Curves.easeInCubic,
+                  duration: const Duration(milliseconds: 140),
+                  reverseDuration: const Duration(milliseconds: 120),
+                  switchInCurve: Curves.easeOut,
+                  switchOutCurve: Curves.easeIn,
                   transitionBuilder: (child, animation) => RepaintBoundary(
-                    child: SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(0.22, 0),
-                        end: Offset.zero,
-                      ).animate(animation),
-                      child: child,
-                    ),
+                    child: FadeTransition(opacity: animation, child: child),
                   ),
                   child: showSecondary
                       ? KeyedSubtree(
-                          key: ValueKey('secondary:${uri?.path}'),
+                          key: const ValueKey('secondary'),
                           child: secondary!,
                         )
                       : const SizedBox.shrink(key: ValueKey('main')),
