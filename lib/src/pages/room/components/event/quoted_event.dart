@@ -39,11 +39,10 @@ class QuotedEvent extends StatelessWidget {
           style: DefaultTextStyle.of(context).style.copyWith(
                 color: Theme.of(context).colorScheme.onSecondaryContainer,
               ),
-          child: SelectionArea(
+          child: _QuoteSelection(
+            selectable: onTap == null,
             child: Padding(
-              padding: const EdgeInsets.only(
-                left: 4.0,
-              ),
+              padding: const EdgeInsets.only(left: 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -68,7 +67,22 @@ class QuotedEvent extends StatelessWidget {
     if (onTap == null) return quote;
     return Semantics(
       button: true,
-      child: InkWell(onTap: onTap, child: quote),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: quote,
+      ),
     );
   }
+}
+
+class _QuoteSelection extends StatelessWidget {
+  const _QuoteSelection({required this.selectable, required this.child});
+
+  final bool selectable;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) =>
+      selectable ? SelectionArea(child: child) : child;
 }
