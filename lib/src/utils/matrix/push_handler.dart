@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
 import 'package:matrix/matrix.dart';
 import 'package:unifiedpush/unifiedpush.dart';
 import 'package:unifiedpush_platform_interface/unifiedpush_platform_interface.dart';
@@ -41,6 +42,11 @@ Future<void> _cancelBackgroundFallback(
 
 @pragma('vm:entry-point')
 Future<void> pushEntrypoint() async {
+  // The background isolate does not execute the foreground `main()` path.
+  // Initialize the crypto implementation here as well, otherwise Client.init
+  // cannot restore the stored Olm/Megolm session and every encrypted push is
+  // rendered as a generic notification.
+  await ClientUtil.initVodozemac();
   await UnifiedPush.initialize(
     onMessage: _queueBackgroundNotification,
     linuxOptions: LinuxOptions(
@@ -70,6 +76,38 @@ void _queueBackgroundNotification(PushMessage message, String instance) {
 enum PushNotificationResult { shown, suppressed, unresolved }
 
 class _BackgroundDeadlineExceeded implements Exception {}
+
+/// Lets the Matrix SDK restore its local session without issuing the
+/// unconditional `/sync` request at the end of [Client.init].
+class _HeadlessSessionRestoreClient extends http.BaseClient {
+  _HeadlessSessionRestoreClient(this.inner, this.nextBatch);
+
+  final http.BaseClient inner;
+  final String nextBatch;
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) {
+    if (request.url.path.endsWith('/sync')) {
+      final bytes = utf8.encode(jsonEncode({'next_batch': nextBatch}));
+      return Future.value(
+        http.StreamedResponse(
+          Stream.value(bytes),
+          200,
+          contentLength: bytes.length,
+          headers: const {'content-type': 'application/json'},
+          request: request,
+        ),
+      );
+    }
+    return inner.send(request);
+  }
+
+  @override
+  void close() {
+    // The wrapped client remains owned by the Matrix Client and is restored
+    // immediately after local session initialization.
+  }
+}
 
 class BackgroundNotificationState {
   Future<void> _mutation = Future.value();
@@ -348,7 +386,31 @@ Future<bool> _showBackgroundFallbackNotification({
 }
 
 Future<Set<String>> _prepareHeadlessPushClient(Client client) async {
-  final account = await client.database.getClient(client.clientName);
+  var account = await client.database.getClient(client.clientName);
+  final savedHttpClient = client.httpClient;
+  final previousBatch = account?['prev_batch'];
+
+  // Client.init is the SDK-owned path that restores user/device identity,
+  // rooms and the encrypted Olm account from the local database. Disable its
+  // sync loop before initialization. The SDK unconditionally performs one
+  // zero-timeout sync at the end of init, so satisfy only that request from a
+  // local response which preserves the stored sync token.
+  client.backgroundSync = false;
+  client.httpClient = _HeadlessSessionRestoreClient(
+    savedHttpClient,
+    previousBatch is String ? previousBatch : '',
+  );
+  try {
+    await client.init(
+      waitForFirstSync: true,
+      waitUntilLoadCompletedLoaded: true,
+    );
+  } finally {
+    client.backgroundSync = false;
+    client.httpClient = savedHttpClient;
+  }
+
+  account = await client.database.getClient(client.clientName);
   final homeserver = account?['homeserver_url'];
   final accessToken = account?['token'];
   if (homeserver is! String || accessToken is! String) {
@@ -357,8 +419,7 @@ Future<Set<String>> _prepareHeadlessPushClient(Client client) async {
 
   client
     ..homeserver = Uri.parse(homeserver)
-    ..accessToken = accessToken
-    ..backgroundSync = false;
+    ..accessToken = accessToken;
 
   final rawTokenExpiresAt = account?['token_expires_at'];
   final tokenExpiresAtMs = int.tryParse(
@@ -491,6 +552,13 @@ Future<PushNotificationResult> handlePushNotification({
     storeInDatabase: false,
     timeoutForServerRequests: eventLookupTimeout,
   );
+
+  if (backgroundState != null && event?.type == EventTypes.Encrypted) {
+    await PushLogJournal.record(
+      'Encrypted push could not be decrypted with the locally stored session.',
+      level: Level.warning,
+    );
+  }
 
   if (event == null) {
     Logs().v('Notification is a clearing indicator.');
