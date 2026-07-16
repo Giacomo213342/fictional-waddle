@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -17,14 +18,17 @@ import '../polycule_http_client/polycule_http_client.dart';
 import '../settings_interface.dart';
 import '../unified_push/unified_push_storage_polycule.dart';
 import 'active_room_tracker.dart';
+import 'cached_push_rules.dart';
 import 'client_util.dart';
 import 'push_manager.dart';
 import 'poll_event.dart';
 
+final Map<String, Future<void>> _backgroundNotificationQueues = {};
+
 @pragma('vm:entry-point')
 Future<void> pushEntrypoint() async {
   await UnifiedPush.initialize(
-    onMessage: handleBackgroundNotification,
+    onMessage: _queueBackgroundNotification,
     linuxOptions: LinuxOptions(
       dbusName: 'business.braid.polycule',
       storage: UnifiedPushStoragePolycule(),
@@ -33,11 +37,28 @@ Future<void> pushEntrypoint() async {
   );
 }
 
+void _queueBackgroundNotification(PushMessage message, String instance) {
+  final previous = _backgroundNotificationQueues[instance] ?? Future.value();
+  late final Future<void> tracked;
+  tracked = previous
+      .then((_) => handleBackgroundNotification(message, instance))
+      .catchError((Object error, StackTrace stackTrace) {
+    Logs().e('Queued background notification failed.', error, stackTrace);
+  }).whenComplete(() {
+    if (identical(_backgroundNotificationQueues[instance], tracked)) {
+      _backgroundNotificationQueues.remove(instance);
+    }
+  });
+  _backgroundNotificationQueues[instance] = tracked;
+  unawaited(tracked);
+}
+
 @pragma('vm:entry-point')
 Future<void> handleBackgroundNotification(
   PushMessage message,
   String instance,
 ) async {
+  final stopwatch = Stopwatch()..start();
   WidgetsFlutterBinding.ensureInitialized();
   // first load our network settings from storage
   final settings = await const SettingsInterface().getNetwork();
@@ -49,7 +70,6 @@ Future<void> handleBackgroundNotification(
     instance,
     httpCallback.call(),
   );
-  await client.init(waitForFirstSync: false);
 
   final locale =
       WidgetsBinding.instance.platformDispatcher.computePlatformResolvedLocale(
@@ -58,20 +78,49 @@ Future<void> handleBackgroundNotification(
           const Locale('en');
   final l10n = await AppLocalizations.delegate.load(locale);
   try {
+    final mutedRoomIds = await _prepareHeadlessPushClient(client);
     await handlePushNotification(
       client: client,
       l10n: l10n,
       message: message.content,
+      mutedRoomIds: mutedRoomIds,
+      performClearingSync: false,
     );
+  } catch (error, stackTrace) {
+    Logs().e('Background notification failed.', error, stackTrace);
   } finally {
     await client.dispose();
+    Logs().i(
+      'Background notification finished in ${stopwatch.elapsedMilliseconds}ms.',
+    );
   }
+}
+
+Future<Set<String>> _prepareHeadlessPushClient(Client client) async {
+  final account = await client.database.getClient(client.clientName);
+  final homeserver = account?['homeserver_url'];
+  final accessToken = account?['token'];
+  if (homeserver is! String || accessToken is! String) {
+    throw StateError('No stored Matrix session for ${client.clientName}.');
+  }
+
+  client
+    ..homeserver = Uri.parse(homeserver)
+    ..accessToken = accessToken
+    ..backgroundSync = false;
+
+  final accountData = await client.database.getAccountData();
+  return mutedRoomIdsFromPushRules(
+    accountData[EventTypes.PushRules]?.content,
+  );
 }
 
 Future<void> handlePushNotification({
   required Client client,
   required AppLocalizations l10n,
   required Uint8List message,
+  Set<String> mutedRoomIds = const {},
+  bool performClearingSync = true,
 }) async {
   final notification = decodeMessage(message);
 
@@ -91,7 +140,7 @@ Future<void> handlePushNotification({
     if (notification.counts?.unread == null ||
         notification.counts?.unread == 0) {
       await notificationsPlugin.cancelAll();
-    } else {
+    } else if (performClearingSync) {
       await client.roomsLoading;
       await client.oneShotSync();
       final activeNotifications =
@@ -114,7 +163,8 @@ Future<void> handlePushNotification({
     return;
   }
 
-  if (event.room.pushRuleState == PushRuleState.dontNotify) {
+  if (mutedRoomIds.contains(event.room.id) ||
+      event.room.pushRuleState == PushRuleState.dontNotify) {
     await notificationsPlugin.cancel(event.room.id.hashCode);
     return;
   }

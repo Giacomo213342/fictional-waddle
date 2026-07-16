@@ -29,11 +29,11 @@ void main([List<String>? args]) {
       Logs().v('Called main() with arguments: $args');
 
       WidgetsFlutterBinding.ensureInitialized();
-      await ClientUtil.initVodozemac();
-
       if (args?.contains('--unifiedpush-bg') ?? false) {
         return pushEntrypoint();
       }
+
+      await ClientUtil.initVodozemac();
 
       MediaKit.ensureInitialized();
       JustAudioMediaKit.ensureInitialized();
