@@ -55,7 +55,7 @@ class ClientTabView extends StatelessWidget {
                 builder: (context) => child,
               ),
             },
-          },
+          ),
           topNavigation: SlotLayout(
             config: {
               Breakpoints.mediumLargeAndUp: SlotLayout.from(
