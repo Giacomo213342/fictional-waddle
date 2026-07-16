@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
+import '../../../../utils/matrix/poll_event.dart';
+import '../../../../widgets/matrix/scopes/room_scope.dart';
 import 'compose_scope.dart';
+import 'poll_creation_dialog.dart';
 import 'send_file_scope.dart';
 
 class MsgtypeDropdown extends StatelessWidget {
@@ -22,6 +25,7 @@ class MsgtypeDropdown extends StatelessWidget {
     MessageTypes.Audio,
     MessageTypes.File,
     MessageTypes.Sticker,
+    MatrixPollEventTypes.start,
   ];
 
   static const msgTypesIcons = {
@@ -34,8 +38,7 @@ class MsgtypeDropdown extends StatelessWidget {
     MessageTypes.File: Icons.file_copy,
     MessageTypes.Location: Icons.location_searching,
     MessageTypes.Sticker: Icons.add_reaction,
-    MessageTypes.BadEncrypted: Icons.lock_open,
-    MessageTypes.None: Icons.square,
+    MatrixPollEventTypes.start: Icons.poll_outlined,
   };
 
   @override
@@ -73,15 +76,14 @@ class MsgtypeDropdown extends StatelessWidget {
       MessageTypes.File: l.msgTypeFile,
       MessageTypes.Location: l.msgTypeLocation,
       MessageTypes.Sticker: l.msgTypeSticker,
-      MessageTypes.BadEncrypted: l.msgTypeBadEncrypted,
-      MessageTypes.None: l.msgTypeNone,
+      MatrixPollEventTypes.start: 'Poll',
     };
     return UnmodifiableListView(
       MsgtypeDropdown.msgTypesIcons.keys.map(
         (msgType) => DropdownMenuEntry(
           value: msgType,
           enabled: MsgtypeDropdown.supportedMsgTypes.contains(msgType),
-          label: msgType,
+          label: msgType == MatrixPollEventTypes.start ? 'm.poll' : msgType,
           leadingIcon: Tooltip(
             message: msgTypesTooltips[msgType],
             child: Icon(MsgtypeDropdown.msgTypesIcons[msgType]),
@@ -116,6 +118,13 @@ class MsgtypeDropdown extends StatelessWidget {
         SendFileScope.of(context).sendFile(msgType);
       case MessageTypes.Sticker:
         SendFileScope.of(context).showStickerSelector(msgType);
+      case MatrixPollEventTypes.start:
+        showDialog<void>(
+          context: context,
+          builder: (_) => PollCreationDialog(
+            room: RoomScope.of(context).room,
+          ),
+        );
       default:
         ComposeScope.of(context).setSendMsgType(MessageTypes.Text);
         break;

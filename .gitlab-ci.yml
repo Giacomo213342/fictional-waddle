@@ -47,12 +47,12 @@ build:apk:
   script:
     - export POLYCULE_VERSION="$(git describe --always)"
     - export FLUTTER_ARGS="--build-number $((CI_PIPELINE_ID / 100)) --dart-define=POLYCULE_IS_STABLE=false --dart-define=POLYCULE_VERSION=$POLYCULE_VERSION --dart-define=no_default_http_client=true --dart-define=cronetHttpNoPlay=true"
-    - flutter build apk --release $FLUTTER_ARGS
-    - zipalign -p -f 4 build/app/outputs/flutter-apk/app-release.apk polycule-release-aligned.apk
-    - apksigner sign --ks android/app/keystore.jks --ks-pass "pass:$KEYSTORE_PASSWORD" --ks-key-alias "$KEY_ALIAS" --key-pass "pass:$KEY_PASSWORD" polycule-release-aligned.apk
-    - apksigner verify --verbose --print-certs polycule-release-aligned.apk
+    - flutter build apk --release --target-platform android-arm64 --split-per-abi $FLUTTER_ARGS
+    - zipalign -p -f 4 build/app/outputs/flutter-apk/app-arm64-v8a-release.apk polycule-arm64-v8a.apk
+    - apksigner sign --ks android/app/keystore.jks --ks-pass "pass:$KEYSTORE_PASSWORD" --ks-key-alias "$KEY_ALIAS" --key-pass "pass:$KEY_PASSWORD" polycule-arm64-v8a.apk
+    - apksigner verify --verbose --print-certs polycule-arm64-v8a.apk
   artifacts:
     name: "polycule-$CI_COMMIT_SHORT_SHA"
     paths:
-      - polycule-release-aligned.apk
+      - polycule-arm64-v8a.apk
     expire_in: 30 days

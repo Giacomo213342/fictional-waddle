@@ -44,11 +44,15 @@ class ClientTabView extends StatelessWidget {
         ? null
         : Uri.decodeComponent(activeRoomMatch.group(1)!);
 
-    return BackButtonListener(
-      onBackButtonPressed: () async {
+    return PopScope(
+      canPop: _backTarget == null,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) {
+          return;
+        }
         final target = _backTarget;
         if (target == null) {
-          return false;
+          return;
         }
         final roomId = activeRoomMatch?.group(1);
         if (roomId != null && target.endsWith('/rooms')) {
@@ -60,7 +64,6 @@ class ClientTabView extends StatelessWidget {
           }
         }
         context.go(target);
-        return true;
       },
       child: Scaffold(
         body: AdaptiveLayout(

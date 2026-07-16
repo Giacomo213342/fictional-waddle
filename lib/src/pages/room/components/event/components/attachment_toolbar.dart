@@ -16,6 +16,7 @@ import '../../../../../widgets/matrix/scopes/client_scope.dart';
 import '../../../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../../../widgets/polycule_overflow_bar.dart';
 import '../../../../../widgets/share_origin_builder.dart';
+import 'full_screen_image.dart';
 
 class AttachmentToolbar extends StatefulWidget {
   const AttachmentToolbar({
@@ -46,6 +47,7 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
   @override
   Widget build(BuildContext context) {
     final event = EventScope.of(context).event;
+    final isImage = event.messageType == MessageTypes.Image;
     final density = Theme.of(context).visualDensity;
     final densityOffset = density.vertical - density.baseSizeAdjustment.dx;
     return Center(
@@ -53,61 +55,74 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          widget.child,
-          PolyculeOverflowBar(
-            children: loading
-                ? [
-                    Builder(
-                      builder: (context) {
-                        return SizedBox(
-                          height: (IconTheme.of(context).size ?? 24) +
-                              24 -
-                              densityOffset,
-                          child: const Center(child: LinearProgressIndicator()),
-                        );
-                      },
-                    ),
-                  ]
-                : [
-                    if (canShare)
-                      ShareOriginBuilder(
-                        builder: (context, rect) {
-                          return IconButton(
-                            tooltip: MaterialLocalizations.of(context)
-                                .shareButtonLabel,
-                            onPressed: () => _share(event, rect),
-                            icon: const Icon(Icons.share),
+          if (isImage)
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => FullScreenImage.open(context, event),
+              child: Hero(
+                tag: 'attachment-${event.eventId}',
+                child: widget.child,
+              ),
+            )
+          else
+            widget.child,
+          if (!isImage)
+            PolyculeOverflowBar(
+              children: loading
+                  ? [
+                      Builder(
+                        builder: (context) {
+                          return SizedBox(
+                            height: (IconTheme.of(context).size ?? 24) +
+                                24 -
+                                densityOffset,
+                            child:
+                                const Center(child: LinearProgressIndicator()),
                           );
                         },
                       ),
-                    if (canDownload)
-                      ShareOriginBuilder(
-                        builder: (context, rect) {
-                          return IconButton(
-                            tooltip: AppLocalizations.of(context).download,
-                            onPressed: () => _download(event, rect),
-                            icon: const Icon(Icons.save_alt),
-                          );
-                        },
-                      ),
-                    if (canSaveAs)
-                      IconButton(
-                        tooltip: AppLocalizations.of(context).saveAs,
-                        onPressed: () => _saveAs(event),
-                        icon: const Icon(Icons.save_as),
-                      ),
-                    if (canView)
-                      IconButton(
-                        tooltip: AppLocalizations.of(context).openFile,
-                        onPressed: () => _openExternally(event),
-                        icon: const Icon(Icons.visibility),
-                      ),
-                  ],
-          ),
-          Divider(
-            height: 1,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+                    ]
+                  : [
+                      if (canShare)
+                        ShareOriginBuilder(
+                          builder: (context, rect) {
+                            return IconButton(
+                              tooltip: MaterialLocalizations.of(context)
+                                  .shareButtonLabel,
+                              onPressed: () => _share(event, rect),
+                              icon: const Icon(Icons.share),
+                            );
+                          },
+                        ),
+                      if (canDownload)
+                        ShareOriginBuilder(
+                          builder: (context, rect) {
+                            return IconButton(
+                              tooltip: AppLocalizations.of(context).download,
+                              onPressed: () => _download(event, rect),
+                              icon: const Icon(Icons.save_alt),
+                            );
+                          },
+                        ),
+                      if (canSaveAs)
+                        IconButton(
+                          tooltip: AppLocalizations.of(context).saveAs,
+                          onPressed: () => _saveAs(event),
+                          icon: const Icon(Icons.save_as),
+                        ),
+                      if (canView)
+                        IconButton(
+                          tooltip: AppLocalizations.of(context).openFile,
+                          onPressed: () => _openExternally(event),
+                          icon: const Icon(Icons.visibility),
+                        ),
+                    ],
+            ),
+          if (!isImage)
+            Divider(
+              height: 1,
+              color: Theme.of(context).colorScheme.primary,
+            ),
         ],
       ),
     );

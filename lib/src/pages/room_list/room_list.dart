@@ -34,8 +34,8 @@ class _RoomListScope extends InheritedWidget {
 
 class RoomListController extends State<RoomListPage> {
   static RoomListController of(BuildContext context) {
-    final _RoomListScope scope = context
-        .dependOnInheritedWidgetOfExactType<_RoomListScope>()!;
+    final _RoomListScope scope =
+        context.dependOnInheritedWidgetOfExactType<_RoomListScope>()!;
     return scope.controller;
   }
 
@@ -50,16 +50,17 @@ class RoomListController extends State<RoomListPage> {
     final rooms = ClientScope.of(
       context,
     ).client.rooms.where((r) => !r.isSpace && !r.isArchived).toList();
-    final originalOrder = {
-      for (final entry in rooms.indexed) entry.$2.id: entry.$1,
-    };
     rooms.sort((a, b) {
       final aLowPriority = a.tags.containsKey(TagType.lowPriority);
       final bLowPriority = b.tags.containsKey(TagType.lowPriority);
-      if (aLowPriority == bLowPriority) {
-        return originalOrder[a.id]!.compareTo(originalOrder[b.id]!);
+      if (aLowPriority != bLowPriority) {
+        return aLowPriority ? 1 : -1;
       }
-      return aLowPriority ? 1 : -1;
+      final aTimestamp =
+          a.lastEvent?.originServerTs.millisecondsSinceEpoch ?? 0;
+      final bTimestamp =
+          b.lastEvent?.originServerTs.millisecondsSinceEpoch ?? 0;
+      return bTimestamp.compareTo(aTimestamp);
     });
     return rooms;
   }

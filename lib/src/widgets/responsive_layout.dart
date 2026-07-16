@@ -23,24 +23,42 @@ class ResponsiveLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget child;
     final segments =
         uri?.path.replaceFirst(RegExp(r'/client/\d+'), '').split('/');
-    if (segments == null) {
-      child = main;
-    } else {
-      segments.removeWhere((element) => element.isEmpty);
-      if (segments.length < 2) {
-        child = main;
-      } else {
-        child = secondary ?? main;
-      }
-    }
+    segments?.removeWhere((element) => element.isEmpty);
+    final showSecondary =
+        segments != null && segments.length >= 2 && secondary != null;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth < Breakpoints.mediumLargeAndUp.beginWidth!) {
-          return child;
+          return ClipRect(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                IgnorePointer(
+                  ignoring: showSecondary,
+                  child: AnimatedSlide(
+                    offset:
+                        showSecondary ? const Offset(-0.08, 0) : Offset.zero,
+                    duration: const Duration(milliseconds: 260),
+                    curve: Curves.easeOutCubic,
+                    child: main,
+                  ),
+                ),
+                if (secondary != null)
+                  IgnorePointer(
+                    ignoring: !showSecondary,
+                    child: AnimatedSlide(
+                      offset: showSecondary ? Offset.zero : const Offset(1, 0),
+                      duration: const Duration(milliseconds: 260),
+                      curve: Curves.easeOutCubic,
+                      child: secondary,
+                    ),
+                  ),
+              ],
+            ),
+          );
         } else {
           return Row(
             children: [

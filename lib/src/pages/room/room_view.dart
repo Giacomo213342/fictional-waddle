@@ -24,57 +24,51 @@ class RoomView extends StatelessWidget {
       context.goMultiClient(RoomListPage.routeName);
     }
 
-    return BackButtonListener(
-      onBackButtonPressed: () async {
-        leaveRoom();
-        return true;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          leading: BackButton(onPressed: leaveRoom),
-          title: RoomBuilder(
-            builder: (context, snapshot) {
-              final room = snapshot.data ?? RoomScope.of(context).room;
+    return Scaffold(
+      appBar: AppBar(
+        leading: BackButton(onPressed: leaveRoom),
+        title: RoomBuilder(
+          builder: (context, snapshot) {
+            final room = snapshot.data ?? RoomScope.of(context).room;
 
-              final style = DefaultTextStyle.of(context);
-              return TextButton(
-                onPressed: () => context.pushMultiClient(
-                  room.isDirectChat
-                      ? UserPage.makeRoomRouteName(
-                          room.id,
-                          room.directChatMatrixID!,
-                        )
-                      : RoomDetailsPage.makeRouteName(room.id),
-                ),
-                child: DefaultTextStyle(
-                  style: style.style,
-                  overflow: style.overflow,
-                  textAlign: style.textAlign,
-                  softWrap: style.softWrap,
-                  maxLines: style.maxLines,
-                  child: const RoomDisplayNameText(),
-                ),
-              );
-            },
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              tooltip: AppLocalizations.of(context).search,
-              onPressed: () => showDialog<void>(
-                context: context,
-                useRootNavigator: true,
-                builder: (_) =>
-                    RoomScope(room: room, child: const RoomSearchDialog()),
+            final style = DefaultTextStyle.of(context);
+            return TextButton(
+              onPressed: () => context.pushMultiClient(
+                room.isDirectChat
+                    ? UserPage.makeRoomRouteName(
+                        room.id,
+                        room.directChatMatrixID!,
+                      )
+                    : RoomDetailsPage.makeRouteName(room.id),
               ),
+              child: DefaultTextStyle(
+                style: style.style,
+                overflow: style.overflow,
+                textAlign: style.textAlign,
+                softWrap: style.softWrap,
+                maxLines: style.maxLines,
+                child: const RoomDisplayNameText(),
+              ),
+            );
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: AppLocalizations.of(context).search,
+            onPressed: () => showDialog<void>(
+              context: context,
+              useRootNavigator: true,
+              builder: (_) =>
+                  RoomScope(room: room, child: const RoomSearchDialog()),
             ),
-            const RoomEncryptionIndicator(),
-          ],
-        ),
-        body: Semantics(
-          hint: AppLocalizations.of(context).regionChatContents,
-          child: const RoomBody(),
-        ),
+          ),
+          const RoomEncryptionIndicator(),
+        ],
+      ),
+      body: Semantics(
+        hint: AppLocalizations.of(context).regionChatContents,
+        child: const RoomBody(),
       ),
     );
   }

@@ -18,6 +18,7 @@ import '../settings_interface.dart';
 import '../unified_push/unified_push_storage_polycule.dart';
 import 'active_room_tracker.dart';
 import 'client_util.dart';
+import 'poll_event.dart';
 import 'push_manager.dart';
 
 @pragma('vm:entry-point')
@@ -48,13 +49,12 @@ Future<void> handleBackgroundNotification(
     instance,
     httpCallback.call(),
   );
-  await client.init(waitForFirstSync: false);
 
   final locale =
       WidgetsBinding.instance.platformDispatcher.computePlatformResolvedLocale(
-        AppLocalizations.supportedLocales,
-      ) ??
-      const Locale('en');
+            AppLocalizations.supportedLocales,
+          ) ??
+          const Locale('en');
   final l10n = await AppLocalizations.delegate.load(locale);
   try {
     await handlePushNotification(
@@ -80,29 +80,40 @@ Future<void> handlePushNotification({
   await PushManager.initializeNotificationPlugin(l10n);
 
   // this code is mostly based on FluffyChat's implementation - huge credits
-  final event = await client.getEventByPushNotification(
-    notification,
-    storeInDatabase: false,
-  );
+  Event? event;
+  var eventLookupFailed = false;
+  try {
+    // This SDK helper deliberately works with an uninitialized client. Calling
+    // client.init() here starts a sync and can starve the short-lived Android
+    // background service after the app has been removed from recents.
+    event = await client.getEventByPushNotification(
+      notification,
+      storeInDatabase: false,
+      timeoutForServerRequests: const Duration(seconds: 6),
+    );
+  } catch (error, stackTrace) {
+    eventLookupFailed = true;
+    Logs().w(
+      'Unable to resolve push event; showing fallback.',
+      error,
+      stackTrace,
+    );
+  }
 
   if (event == null) {
+    if (eventLookupFailed && notification.roomId != null) {
+      await _showFallbackNotification(
+        notificationsPlugin: notificationsPlugin,
+        client: client,
+        l10n: l10n,
+        notification: notification,
+      );
+      return;
+    }
     Logs().v('Notification is a clearing indicator.');
     if (notification.counts?.unread == null ||
         notification.counts?.unread == 0) {
       await notificationsPlugin.cancelAll();
-    } else {
-      await client.roomsLoading;
-      await client.oneShotSync();
-      final activeNotifications = await notificationsPlugin
-          .getActiveNotifications();
-      for (final activeNotification in activeNotifications) {
-        final room = client.rooms
-            .where((room) => room.id.hashCode == activeNotification.id)
-            .singleOrNull;
-        if (room == null || !room.isUnreadOrInvited) {
-          await notificationsPlugin.cancel(activeNotification.id!);
-        }
-      }
     }
     return;
   }
@@ -120,19 +131,21 @@ Future<void> handlePushNotification({
 
   final id = event.room.id.hashCode;
 
-  final body = event.type == EventTypes.Encrypted
-      ? l10n.newNotification
-      : await event.calcLocalizedBody(
-          l10n.matrix,
-          plaintextBody: true,
-          withSenderNamePrefix: false,
-          hideReply: true,
-          hideEdit: true,
-          removeMarkdown: true,
-        );
+  final body = event.isPollStart
+      ? 'Poll: ${event.pollQuestion ?? l10n.newNotification}'
+      : event.type == EventTypes.Encrypted
+          ? l10n.newNotification
+          : await event.calcLocalizedBody(
+              l10n.matrix,
+              plaintextBody: true,
+              withSenderNamePrefix: false,
+              hideReply: true,
+              hideEdit: true,
+              removeMarkdown: true,
+            );
   final messagingStyleInformation = !kIsWeb && Platform.isAndroid
       ? await AndroidFlutterLocalNotificationsPlugin()
-            .getActiveNotificationMessagingStyle(id)
+          .getActiveNotificationMessagingStyle(id)
       : null;
 
   final sender = event.senderFromMemoryOrFallback;
@@ -151,9 +164,8 @@ Future<void> handlePushNotification({
 
   final roomName = event.room.getLocalizedDisplayname(l10n.matrix);
 
-  final notificationGroupId = event.room.isDirectChat
-      ? 'directChats'
-      : 'groupChats';
+  final notificationGroupId =
+      event.room.isDirectChat ? 'directChats' : 'groupChats';
   final groupName = event.room.isDirectChat ? l10n.directChats : l10n.groups;
 
   if (Platform.isAndroid) {
@@ -181,13 +193,11 @@ Future<void> handlePushNotification({
 
   await notificationsPlugin
       .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin
-      >()
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannelGroup(messageRooms);
   await notificationsPlugin
       .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin
-      >()
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(roomsChannel);
 
   final androidPlatformChannelSpecifics = AndroidNotificationDetails(
@@ -197,8 +207,7 @@ Future<void> handlePushNotification({
     category: AndroidNotificationCategory.message,
     icon: '@drawable/ic_launcher_foreground',
     shortcutId: event.room.id,
-    styleInformation:
-        messagingStyleInformation ??
+    styleInformation: messagingStyleInformation ??
         MessagingStyleInformation(
           person,
           htmlFormatContent: true,
@@ -234,6 +243,45 @@ Future<void> handlePushNotification({
     payload: jsonEncode({
       'client': client.clientName.clientIdentifier,
       'room': event.roomId,
+    }),
+  );
+}
+
+Future<void> _showFallbackNotification({
+  required FlutterLocalNotificationsPlugin notificationsPlugin,
+  required Client client,
+  required AppLocalizations l10n,
+  required PushNotification notification,
+}) async {
+  final roomId = notification.roomId!;
+  final roomName = notification.roomName ?? l10n.appName;
+  final channel = AndroidNotificationChannel(
+    roomId,
+    roomName,
+    importance: Importance.high,
+  );
+  await notificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+  await notificationsPlugin.show(
+    roomId.hashCode,
+    roomName,
+    l10n.newNotification,
+    NotificationDetails(
+      android: AndroidNotificationDetails(
+        roomId,
+        roomName,
+        icon: '@drawable/ic_launcher_foreground',
+        category: AndroidNotificationCategory.message,
+        importance: Importance.high,
+        priority: Priority.max,
+      ),
+      iOS: const DarwinNotificationDetails(),
+    ),
+    payload: jsonEncode({
+      'client': client.clientName.clientIdentifier,
+      'room': roomId,
     }),
   );
 }
