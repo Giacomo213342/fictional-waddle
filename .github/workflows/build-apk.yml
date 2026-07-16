@@ -65,11 +65,16 @@ jobs:
         shell: bash
         run: |
           export POLYCULE_VERSION="$(git describe --always)"
+          BUILD_NUMBER=$((200000000 + GITHUB_RUN_NUMBER))
+          if ((BUILD_NUMBER > 209999999)); then
+            echo "Android build number range exhausted: $BUILD_NUMBER" >&2
+            exit 1
+          fi
           flutter build apk \
             --release \
             --target-platform android-arm64 \
             --split-per-abi \
-            --build-number "$GITHUB_RUN_NUMBER" \
+            --build-number "$BUILD_NUMBER" \
             --dart-define=POLYCULE_IS_STABLE=false \
             --dart-define=POLYCULE_VERSION="$POLYCULE_VERSION" \
             --dart-define=no_default_http_client=true \
