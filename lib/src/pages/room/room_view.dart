@@ -22,12 +22,8 @@ class RoomView extends StatelessWidget {
   Widget build(BuildContext context) {
     final room = RoomScope.of(context).room;
     void returnToRoomList() {
-      if (context.canPop()) {
-        context.pop();
-      } else {
-        RoomListPositionTracker.prepareReturn(room);
-        context.goMultiClient(RoomListPage.routeName);
-      }
+      RoomListPositionTracker.prepareReturn(room);
+      context.goMultiClient(RoomListPage.routeName);
     }
 
     void navigateBack() {
