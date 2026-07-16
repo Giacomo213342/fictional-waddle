@@ -236,7 +236,7 @@ class SettingsInterface {
   }
 
   Future<double> getAudioPlaybackSpeed() async {
-    const supportedSpeeds = {0.5, 1.0, 1.5, 2.0};
+    const supportedSpeeds = [0.5, 1.0, 1.5, 2.0];
     try {
       final stored = await kPolyculeSecureStorage.read(
         key: 'audio_playback_speed',
