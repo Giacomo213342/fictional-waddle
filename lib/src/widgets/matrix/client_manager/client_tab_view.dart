@@ -22,10 +22,14 @@ class ClientTabView extends StatelessWidget {
         ? null
         : Uri.decodeComponent(activeRoomMatch.group(1)!);
 
-    return PopScope<void>(
-      canPop: activeRoomMatch == null,
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop || activeRoomMatch == null) return;
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        if (activeRoomMatch == null) return false;
+
+        // Dialogs, media viewers and bottom sheets live on the root navigator.
+        // They must consume Android back before the room route does.
+        if (Navigator.of(context, rootNavigator: true).canPop()) return false;
+
         final roomId = Uri.decodeComponent(activeRoomMatch.group(1)!);
         final room = ClientScope.of(context).client.getRoomById(roomId);
         if (room != null) {
@@ -44,6 +48,7 @@ class ClientTabView extends StatelessWidget {
                 .toString(),
           );
         }
+        return true;
       },
       child: Scaffold(
         body: AdaptiveLayout(
