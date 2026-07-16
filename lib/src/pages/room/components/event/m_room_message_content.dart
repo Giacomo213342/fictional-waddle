@@ -30,21 +30,28 @@ class RoomMessageContent extends StatelessWidget {
     switch (event.messageType) {
       case MessageTypes.Sticker:
         final isOwnMessage = event.senderId == event.room.client.userID;
-        return Align(
-          alignment: isOwnMessage
-              ? Alignment.centerRight
-              : Alignment.centerLeft,
-          child: const SizedBox(
-            width: 220,
-            height: 220,
-            child: ImageMessage(compact: true),
+        return AttachmentToolbar(
+          showToolbar: false,
+          openFullscreen: true,
+          child: Align(
+            alignment:
+                isOwnMessage ? Alignment.centerRight : Alignment.centerLeft,
+            child: const SizedBox(
+              width: 220,
+              height: 220,
+              child: ImageMessage(compact: true),
+            ),
           ),
         );
       cute_events:
       case CuteEventContent.eventType:
         return const CuteEventMessage();
       case MessageTypes.Image:
-        return AttachmentToolbar(child: ImageMessage(key: ValueKey(event)));
+        return AttachmentToolbar(
+          showToolbar: false,
+          openFullscreen: true,
+          child: ImageMessage(key: ValueKey(event)),
+        );
       case MessageTypes.Video:
         return AttachmentToolbar(child: VideoMessage(key: ValueKey(event)));
       case MessageTypes.Audio:

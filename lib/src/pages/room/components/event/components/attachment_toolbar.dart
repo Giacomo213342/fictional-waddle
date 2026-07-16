@@ -14,16 +14,22 @@ import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../utils/file_selector.dart';
 import '../../../../../widgets/matrix/scopes/client_scope.dart';
 import '../../../../../widgets/matrix/scopes/event_scope.dart';
+import '../../../../../widgets/matrix/scopes/matrix_scope.dart';
 import '../../../../../widgets/polycule_overflow_bar.dart';
 import '../../../../../widgets/share_origin_builder.dart';
+import '../m_room_message/m_image.dart';
 
 class AttachmentToolbar extends StatefulWidget {
   const AttachmentToolbar({
     super.key,
     required this.child,
+    this.showToolbar = true,
+    this.openFullscreen = false,
   });
 
   final Widget child;
+  final bool showToolbar;
+  final bool openFullscreen;
 
   @override
   State<AttachmentToolbar> createState() => _AttachmentToolbarState();
@@ -46,6 +52,15 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
   @override
   Widget build(BuildContext context) {
     final event = EventScope.of(context).event;
+    final child = widget.openFullscreen
+        ? InkWell(
+            onTap: () => _openFullscreen(event),
+            child: widget.child,
+          )
+        : widget.child;
+    if (!widget.showToolbar) {
+      return Center(child: child);
+    }
     final density = Theme.of(context).visualDensity;
     final densityOffset = density.vertical - density.baseSizeAdjustment.dx;
     return Center(
@@ -53,7 +68,7 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          widget.child,
+          child,
           PolyculeOverflowBar(
             children: loading
                 ? [
@@ -113,6 +128,23 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
     );
   }
 
+  Future<void> _openFullscreen(Event event) async {
+    final scope = MatrixScope.captureAll(context);
+    await Navigator.of(context, rootNavigator: true).push<void>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (context) => MatrixScope(
+          scope: scope,
+          child: _FullscreenAttachment(
+            title: event.body,
+            onShare: (rect) => _share(event, rect),
+            onDownload: (rect) => _download(event, rect),
+          ),
+        ),
+      ),
+    );
+  }
+
   XFile _buildXFile(Event event, MatrixFile mxFile) {
     final bytes = mxFile.bytes;
     final mimeType = mxFile.mimeType;
@@ -133,7 +165,7 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
       final mxFile = await event.downloadAndDecryptAttachment();
       final xfile = _buildXFile(event, mxFile);
 
-      SharePlus.instance.share(
+      await SharePlus.instance.share(
         ShareParams(
           files: [xfile],
           sharePositionOrigin: rect,
@@ -345,5 +377,81 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
         ),
       ),
     );
+  }
+}
+
+class _FullscreenAttachment extends StatefulWidget {
+  const _FullscreenAttachment({
+    required this.title,
+    required this.onShare,
+    required this.onDownload,
+  });
+
+  final String title;
+  final Future<void> Function(Rect? rect) onShare;
+  final Future<void> Function(Rect? rect) onDownload;
+
+  @override
+  State<_FullscreenAttachment> createState() => _FullscreenAttachmentState();
+}
+
+class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
+  bool _loading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: Text(widget.title),
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.black54,
+        actions: _loading
+            ? const [
+                Padding(
+                  padding: EdgeInsets.all(14),
+                  child: SizedBox.square(
+                    dimension: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+              ]
+            : [
+                ShareOriginBuilder(
+                  builder: (context, rect) => IconButton(
+                    tooltip: MaterialLocalizations.of(
+                      context,
+                    ).shareButtonLabel,
+                    onPressed: () => _run(() => widget.onShare(rect)),
+                    icon: const Icon(Icons.share),
+                  ),
+                ),
+                ShareOriginBuilder(
+                  builder: (context, rect) => IconButton(
+                    tooltip: AppLocalizations.of(context).download,
+                    onPressed: () => _run(() => widget.onDownload(rect)),
+                    icon: const Icon(Icons.save_alt),
+                  ),
+                ),
+              ],
+      ),
+      body: InteractiveViewer(
+        boundaryMargin: const EdgeInsets.all(128),
+        minScale: 0.5,
+        maxScale: 5,
+        trackpadScrollCausesScale: true,
+        child: const ImageMessage(fullscreen: true),
+      ),
+    );
+  }
+
+  Future<void> _run(Future<void> Function() action) async {
+    setState(() => _loading = true);
+    try {
+      await action();
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 }

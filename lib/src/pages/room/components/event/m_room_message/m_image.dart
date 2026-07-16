@@ -12,54 +12,65 @@ import '../../../../../widgets/matrix/tumbnail_aspect_ratio.dart';
 import '../../../../../widgets/mimed_image.dart';
 
 class ImageMessage extends StatelessWidget {
-  const ImageMessage({super.key, this.compact = false});
+  const ImageMessage({
+    super.key,
+    this.compact = false,
+    this.fullscreen = false,
+  });
 
   final bool compact;
+  final bool fullscreen;
 
   @override
   Widget build(BuildContext context) {
+    final image = ThumbnailAspectRatio(
+      child: MxcEncryptedFileBuilder<MatrixFile, MatrixFile>(
+        event: EventScope.of(context).event,
+        thumbnail: fullscreen
+            ? ThumbnailRequest.attachmentOnly
+            : ThumbnailRequest.thumbnailOnly,
+        builder: (context, thumbnail, attachment, retryCallback) {
+          final data = thumbnail.data ?? attachment.data;
+
+          final label = (thumbnail.hasError || attachment.hasError)
+              ? RetryDownloadButton(callback: retryCallback)
+              : const AsciiProgressIndicator();
+
+          return Stack(
+            alignment: Alignment.center,
+            fit: StackFit.expand,
+            children: [
+              AnimatedOpacity(
+                opacity: data == null ? 1 : 0,
+                duration: MxcAvatar.kFadeDuration,
+                curve: Curves.easeInOut,
+                child: BlurHashIndicator(label: label),
+              ),
+              AnimatedOpacity(
+                opacity: data == null ? 0 : 1,
+                duration: MxcAvatar.kFadeDuration,
+                curve: Curves.easeInOut,
+                child: data == null
+                    ? null
+                    : MimedImage(
+                        bytes: data.bytes,
+                        name: data.name,
+                        fit: BoxFit.contain,
+                      ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+    if (fullscreen) {
+      return SizedBox.expand(child: image);
+    }
     return ConstrainedBox(
       constraints: compact
           ? const BoxConstraints(maxHeight: 220, maxWidth: 220)
           : const BoxConstraints(maxHeight: 512, maxWidth: 512),
-      child: ThumbnailAspectRatio(
-        child: MxcEncryptedFileBuilder<MatrixFile, MatrixFile>(
-          event: EventScope.of(context).event,
-          thumbnail: ThumbnailRequest.thumbnailOnly,
-          builder: (context, thumbnail, attachment, retryCallback) {
-            final data = thumbnail.data ?? attachment.data;
-
-            final label = (thumbnail.hasError || attachment.hasError)
-                ? RetryDownloadButton(callback: retryCallback)
-                : const AsciiProgressIndicator();
-
-            return Stack(
-              alignment: Alignment.center,
-              fit: StackFit.expand,
-              children: [
-                AnimatedOpacity(
-                  opacity: data == null ? 1 : 0,
-                  duration: MxcAvatar.kFadeDuration,
-                  curve: Curves.easeInOut,
-                  child: BlurHashIndicator(label: label),
-                ),
-                AnimatedOpacity(
-                  opacity: data == null ? 0 : 1,
-                  duration: MxcAvatar.kFadeDuration,
-                  curve: Curves.easeInOut,
-                  child: data == null
-                      ? null
-                      : MimedImage(
-                          bytes: data.bytes,
-                          name: data.name,
-                          fit: BoxFit.contain,
-                        ),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+      child: image,
     );
   }
 }
