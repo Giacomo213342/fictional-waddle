@@ -19,6 +19,7 @@ import '../unified_push/unified_push_storage_polycule.dart';
 import 'active_room_tracker.dart';
 import 'client_util.dart';
 import 'push_manager.dart';
+import 'poll_event.dart';
 
 @pragma('vm:entry-point')
 Future<void> pushEntrypoint() async {
@@ -52,9 +53,9 @@ Future<void> handleBackgroundNotification(
 
   final locale =
       WidgetsBinding.instance.platformDispatcher.computePlatformResolvedLocale(
-        AppLocalizations.supportedLocales,
-      ) ??
-      const Locale('en');
+            AppLocalizations.supportedLocales,
+          ) ??
+          const Locale('en');
   final l10n = await AppLocalizations.delegate.load(locale);
   try {
     await handlePushNotification(
@@ -93,8 +94,8 @@ Future<void> handlePushNotification({
     } else {
       await client.roomsLoading;
       await client.oneShotSync();
-      final activeNotifications = await notificationsPlugin
-          .getActiveNotifications();
+      final activeNotifications =
+          await notificationsPlugin.getActiveNotifications();
       for (final activeNotification in activeNotifications) {
         final room = client.rooms
             .where((room) => room.id.hashCode == activeNotification.id)
@@ -122,17 +123,19 @@ Future<void> handlePushNotification({
 
   final body = event.type == EventTypes.Encrypted
       ? l10n.newNotification
-      : await event.calcLocalizedBody(
-          l10n.matrix,
-          plaintextBody: true,
-          withSenderNamePrefix: false,
-          hideReply: true,
-          hideEdit: true,
-          removeMarkdown: true,
-        );
+      : event.isPollStart
+          ? 'Poll: ${event.pollQuestion ?? 'Poll'}'
+          : await event.calcLocalizedBody(
+              l10n.matrix,
+              plaintextBody: true,
+              withSenderNamePrefix: false,
+              hideReply: true,
+              hideEdit: true,
+              removeMarkdown: true,
+            );
   final messagingStyleInformation = !kIsWeb && Platform.isAndroid
       ? await AndroidFlutterLocalNotificationsPlugin()
-            .getActiveNotificationMessagingStyle(id)
+          .getActiveNotificationMessagingStyle(id)
       : null;
 
   final sender = event.senderFromMemoryOrFallback;
@@ -151,9 +154,8 @@ Future<void> handlePushNotification({
 
   final roomName = event.room.getLocalizedDisplayname(l10n.matrix);
 
-  final notificationGroupId = event.room.isDirectChat
-      ? 'directChats'
-      : 'groupChats';
+  final notificationGroupId =
+      event.room.isDirectChat ? 'directChats' : 'groupChats';
   final groupName = event.room.isDirectChat ? l10n.directChats : l10n.groups;
 
   if (Platform.isAndroid) {
@@ -181,13 +183,11 @@ Future<void> handlePushNotification({
 
   await notificationsPlugin
       .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin
-      >()
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannelGroup(messageRooms);
   await notificationsPlugin
       .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin
-      >()
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(roomsChannel);
 
   final androidPlatformChannelSpecifics = AndroidNotificationDetails(
@@ -197,8 +197,7 @@ Future<void> handlePushNotification({
     category: AndroidNotificationCategory.message,
     icon: '@drawable/ic_launcher_foreground',
     shortcutId: event.room.id,
-    styleInformation:
-        messagingStyleInformation ??
+    styleInformation: messagingStyleInformation ??
         MessagingStyleInformation(
           person,
           htmlFormatContent: true,
@@ -206,14 +205,16 @@ Future<void> handlePushNotification({
           groupConversation: !event.room.isDirectChat,
           messages: [newMessage],
         ),
-    ticker: event.calcLocalizedBodyFallback(
-      l10n.matrix,
-      plaintextBody: true,
-      withSenderNamePrefix: true,
-      hideReply: true,
-      hideEdit: true,
-      removeMarkdown: true,
-    ),
+    ticker: event.isPollStart
+        ? 'Poll: ${event.pollQuestion ?? 'Poll'}'
+        : event.calcLocalizedBodyFallback(
+            l10n.matrix,
+            plaintextBody: true,
+            withSenderNamePrefix: true,
+            hideReply: true,
+            hideEdit: true,
+            removeMarkdown: true,
+          ),
     importance: Importance.high,
     priority: Priority.max,
     groupKey: notificationGroupId,

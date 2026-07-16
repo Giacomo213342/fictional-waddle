@@ -10,6 +10,7 @@ import '../../../../utils/matrix/neighboaring_event_extension.dart';
 import '../../../../utils/matrix/poll_event.dart';
 import '../../../../widgets/ascii_progress_indicator.dart';
 import '../../../../widgets/matrix/scopes/event_scope.dart';
+import '../../../../widgets/matrix/scopes/poll_update_scope.dart';
 import '../../../../widgets/matrix/scopes/room_scope.dart';
 import '../../../../widgets/matrix/scopes/timeline_scope.dart';
 import '../../../room_list/room_list_position_tracker.dart';
@@ -32,12 +33,13 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
   final listKey = GlobalKey<AnimatedListState>();
   final scrollController = ScrollController();
   final eventUpdateStreamController = StreamController<Event>.broadcast();
+  final pollUpdateStreamController = StreamController<String>.broadcast();
   final fullyReadMarkerKey = GlobalKey();
   final focusedEventKey = GlobalKey();
   bool _hasJumpedToUnread = false;
   bool _markingRead = false;
   bool _userScrollInProgress = false;
-  int _receiptRevision = 0;
+  String _receiptFingerprint = '';
   StreamSubscription<String>? _roomUpdateSubscription;
   StreamSubscription<SyncUpdate>? _syncSubscription;
   String? _unreadBoundaryEventId;
@@ -57,6 +59,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     _roomUpdateSubscription?.cancel();
     _syncSubscription?.cancel();
     eventUpdateStreamController.close();
+    pollUpdateStreamController.close();
     scrollController.dispose();
     super.dispose();
   }
@@ -77,85 +80,87 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
         room.typingUsers.any((user) => user.id != room.client.userID);
 
     return ComposeScopeWidget(
-      child: TimelineScope(
-        timeline: timeline,
-        eventChangeStream: eventUpdateStreamController.stream,
-        revision: _receiptRevision,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: NotificationListener<ScrollNotification>(
-                onNotification: (notification) {
-                  if (notification is ScrollStartNotification &&
-                      notification.dragDetails != null) {
-                    _userScrollInProgress = true;
-                    RoomListPositionTracker.markInteraction(room);
-                  } else if (notification is ScrollUpdateNotification &&
-                      notification.dragDetails != null) {
-                    _userScrollInProgress = true;
-                  } else if (notification is ScrollEndNotification) {
-                    final reachedBottom = notification.metrics.pixels <= 64;
-                    if (_userScrollInProgress && reachedBottom) {
-                      _markLatestRead();
-                    }
-                    _userScrollInProgress = false;
-                  }
-                  return false;
-                },
-                child: SelectionArea(
-                  child: AnimatedList(
-                    controller: scrollController,
-                    shrinkWrap: true,
-                    key: listKey,
-                    reverse: true,
-                    initialItemCount: timeline.events.length + 1,
-                    itemBuilder: (context, index, animation) {
-                      if (index == timeline.events.length) {
-                        return LoadHistoryIndicator(timeline: timeline);
+      child: PollUpdateScope(
+        eventIds: pollUpdateStreamController.stream,
+        child: TimelineScope(
+          timeline: timeline,
+          eventChangeStream: eventUpdateStreamController.stream,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    if (notification is ScrollStartNotification &&
+                        notification.dragDetails != null) {
+                      _userScrollInProgress = true;
+                      RoomListPositionTracker.markInteraction(room);
+                    } else if (notification is ScrollUpdateNotification &&
+                        notification.dragDetails != null) {
+                      _userScrollInProgress = true;
+                    } else if (notification is ScrollEndNotification) {
+                      final reachedBottom = notification.metrics.pixels <= 64;
+                      if (_userScrollInProgress && reachedBottom) {
+                        _markLatestRead();
                       }
-                      return buildTransitionedTile(
-                        animation: animation,
-                        index: index,
-                        timeline: timeline,
-                      );
-                    },
+                      _userScrollInProgress = false;
+                    }
+                    return false;
+                  },
+                  child: SelectionArea(
+                    child: AnimatedList(
+                      controller: scrollController,
+                      shrinkWrap: true,
+                      key: listKey,
+                      reverse: true,
+                      initialItemCount: timeline.events.length + 1,
+                      itemBuilder: (context, index, animation) {
+                        if (index == timeline.events.length) {
+                          return LoadHistoryIndicator(timeline: timeline);
+                        }
+                        return buildTransitionedTile(
+                          animation: animation,
+                          index: index,
+                          timeline: timeline,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-            if (room.canSendDefaultMessages)
-              SafeArea(
-                top: false,
-                minimum: const EdgeInsets.only(bottom: 8),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AnimatedSize(
-                      duration: const Duration(milliseconds: 120),
-                      alignment: Alignment.bottomCenter,
-                      child: showTyping
-                          ? Padding(
-                              padding: const EdgeInsets.only(
-                                left: 12,
-                                right: 12,
-                                bottom: 4,
-                              ),
-                              child: Text(
-                                'typing...',
-                                style: Theme.of(context).textTheme.labelSmall,
-                              ),
-                            )
-                          : const SizedBox.shrink(),
-                    ),
-                    MessageInput(onStartedTyping: _dismissUnreadMarker),
-                  ],
+              if (room.canSendDefaultMessages)
+                SafeArea(
+                  top: false,
+                  minimum: const EdgeInsets.only(bottom: 8),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 120),
+                        alignment: Alignment.bottomCenter,
+                        child: showTyping
+                            ? Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 12,
+                                  right: 12,
+                                  bottom: 4,
+                                ),
+                                child: Text(
+                                  'typing...',
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                      ),
+                      MessageInput(onStartedTyping: _dismissUnreadMarker),
+                    ],
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -220,14 +225,15 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
               ? room.fullyRead
               : null;
     }
+    _receiptFingerprint = _makeReceiptFingerprint(room);
     _roomUpdateSubscription ??= room.onUpdate.stream.listen((_) {
-      if (mounted) setState(() => _receiptRevision++);
+      _refreshReceipts(room);
     });
     _syncSubscription ??= room.client.onSync.stream.listen((_) {
       // Read receipts are ephemeral events: they update the room receipt
       // state without changing a timeline event, so the normal timeline
       // callbacks do not rebuild message read indicators.
-      if (mounted) setState(() => _receiptRevision++);
+      _refreshReceipts(room);
     });
     final timeline = await room.getTimeline(
       eventContextId: _focusedEventId,
@@ -368,7 +374,8 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
       RoomListPositionTracker.markInteraction(RoomScope.of(context).room);
     }
     if (insertedEvent?.isPollResponse ?? false) {
-      setState(() => _receiptRevision++);
+      final target = insertedEvent?.pollResponseTarget;
+      if (target != null) pollUpdateStreamController.add(target);
     }
 
     _notifyNeighboringEvents(insertID);
@@ -450,5 +457,20 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     if (nextEvent != null) {
       eventUpdateStreamController.add(nextEvent);
     }
+  }
+
+  String _makeReceiptFingerprint(Room room) {
+    final entries = room.receiptState.global.otherUsers.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+    return entries
+        .map((entry) => '${entry.key}:${entry.value.eventId}:${entry.value.ts}')
+        .join('|');
+  }
+
+  void _refreshReceipts(Room room) {
+    final fingerprint = _makeReceiptFingerprint(room);
+    if (!mounted || fingerprint == _receiptFingerprint) return;
+    _receiptFingerprint = fingerprint;
+    setState(() {});
   }
 }

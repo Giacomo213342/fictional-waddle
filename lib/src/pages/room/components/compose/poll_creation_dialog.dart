@@ -116,7 +116,16 @@ class _PollCreationDialogState extends State<PollCreationDialog> {
     if (question.isEmpty || answers.length < 2) return;
     setState(() => _sending = true);
     RoomListPositionTracker.markInteraction(widget.room);
-    await widget.room.sendPoll(question, answers);
-    if (mounted) Navigator.of(context).pop();
+    try {
+      await widget.room.sendPoll(question, answers);
+      if (mounted) Navigator.of(context).pop();
+    } catch (error, stackTrace) {
+      Logs().w('Unable to create poll.', error, stackTrace);
+      if (!mounted) return;
+      setState(() => _sending = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to create poll. Try again.')),
+      );
+    }
   }
 }

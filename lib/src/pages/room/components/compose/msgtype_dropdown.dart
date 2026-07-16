@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
@@ -5,13 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
+import '../../../../widgets/matrix/scopes/room_scope.dart';
 import 'compose_scope.dart';
+import 'poll_creation_dialog.dart';
 import 'send_file_scope.dart';
 
 class MsgtypeDropdown extends StatelessWidget {
   const MsgtypeDropdown({super.key});
 
   static const _colon = Text(':');
+  static const poll = 'm.poll';
 
   static const supportedMsgTypes = [
     MessageTypes.Text,
@@ -22,6 +26,7 @@ class MsgtypeDropdown extends StatelessWidget {
     MessageTypes.Audio,
     MessageTypes.File,
     MessageTypes.Sticker,
+    poll,
   ];
 
   static const msgTypesIcons = {
@@ -34,8 +39,7 @@ class MsgtypeDropdown extends StatelessWidget {
     MessageTypes.File: Icons.file_copy,
     MessageTypes.Location: Icons.location_searching,
     MessageTypes.Sticker: Icons.add_reaction,
-    MessageTypes.BadEncrypted: Icons.lock_open,
-    MessageTypes.None: Icons.square,
+    poll: Icons.poll_outlined,
   };
 
   @override
@@ -73,8 +77,7 @@ class MsgtypeDropdown extends StatelessWidget {
       MessageTypes.File: l.msgTypeFile,
       MessageTypes.Location: l.msgTypeLocation,
       MessageTypes.Sticker: l.msgTypeSticker,
-      MessageTypes.BadEncrypted: l.msgTypeBadEncrypted,
-      MessageTypes.None: l.msgTypeNone,
+      poll: 'Create poll',
     };
     return UnmodifiableListView(
       MsgtypeDropdown.msgTypesIcons.keys.map(
@@ -116,6 +119,16 @@ class MsgtypeDropdown extends StatelessWidget {
         SendFileScope.of(context).sendFile(msgType);
       case MessageTypes.Sticker:
         SendFileScope.of(context).showStickerSelector(msgType);
+      case poll:
+        ComposeScope.of(context).setSendMsgType(MessageTypes.Text);
+        unawaited(
+          showDialog<void>(
+            context: context,
+            builder: (_) => PollCreationDialog(
+              room: RoomScope.of(context).room,
+            ),
+          ),
+        );
       default:
         ComposeScope.of(context).setSendMsgType(MessageTypes.Text);
         break;

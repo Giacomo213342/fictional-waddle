@@ -1,20 +1,36 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
 import '../../../../utils/matrix/poll_event.dart';
 import '../../../../widgets/matrix/scopes/event_scope.dart';
+import '../../../../widgets/matrix/scopes/poll_update_scope.dart';
 import '../../../../widgets/matrix/scopes/timeline_scope.dart';
 import '../../../room_list/room_list_position_tracker.dart';
 
-class PollMessage extends StatelessWidget {
+class PollMessage extends StatefulWidget {
   const PollMessage({super.key});
+
+  @override
+  State<PollMessage> createState() => _PollMessageState();
+}
+
+class _PollMessageState extends State<PollMessage> {
+  String? _pendingAnswerId;
+  bool _sending = false;
 
   @override
   Widget build(BuildContext context) {
     final event = EventScope.of(context).event;
+    return StreamBuilder<String>(
+      stream: PollUpdateScope.of(
+        context,
+      ).eventIds.where((eventId) => eventId == event.eventId),
+      builder: (context, _) => _buildPoll(context, event),
+    );
+  }
+
+  Widget _buildPoll(BuildContext context, Event event) {
     final timeline = TimelineScope.of(context).timeline;
     final answers = event.pollAnswers;
     final responses = <String, Event>{};
@@ -30,7 +46,13 @@ class PollMessage extends StatelessWidget {
         counts[selection] = (counts[selection] ?? 0) + 1;
       }
     }
-    final ownSelection = responses[event.room.client.userID]?.pollSelections;
+    final confirmedSelection =
+        responses[event.room.client.userID]?.pollSelections;
+    final ownSelection = confirmedSelection?.isNotEmpty == true
+        ? confirmedSelection
+        : _pendingAnswerId == null
+            ? null
+            : [_pendingAnswerId!];
     final totalVotes = responses.length;
 
     return Padding(
@@ -53,13 +75,8 @@ class PollMessage extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 6),
               child: InkWell(
                 borderRadius: BorderRadius.circular(8),
-                onTap: event.room.canSendDefaultMessages
-                    ? () {
-                        RoomListPositionTracker.markInteraction(event.room);
-                        unawaited(
-                          event.room.sendPollResponse(event.eventId, answer.id),
-                        );
-                      }
+                onTap: event.room.canSendDefaultMessages && !_sending
+                    ? () => _vote(event, answer.id)
                     : null,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -83,7 +100,15 @@ class PollMessage extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Expanded(child: Text(answer.text)),
-                            Text('$votes'),
+                            if (_sending && _pendingAnswerId == answer.id)
+                              const SizedBox.square(
+                                dimension: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            else
+                              Text('$votes'),
                           ],
                         ),
                         const SizedBox(height: 5),
@@ -102,5 +127,25 @@ class PollMessage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _vote(Event poll, String answerId) async {
+    setState(() {
+      _pendingAnswerId = answerId;
+      _sending = true;
+    });
+    RoomListPositionTracker.markInteraction(poll.room);
+    try {
+      await poll.room.sendPollResponse(poll, answerId);
+    } catch (error, stackTrace) {
+      Logs().w('Unable to send poll response.', error, stackTrace);
+      if (!mounted) return;
+      setState(() => _pendingAnswerId = null);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to send vote. Try again.')),
+      );
+    } finally {
+      if (mounted) setState(() => _sending = false);
+    }
   }
 }

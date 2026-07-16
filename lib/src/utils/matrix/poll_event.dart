@@ -1,5 +1,7 @@
 import 'package:matrix/matrix.dart';
 
+import 'poll_wire_format.dart';
+
 abstract class MatrixPollEventTypes {
   static const start = 'm.poll.start';
   static const response = 'm.poll.response';
@@ -130,16 +132,17 @@ extension MatrixPollRoom on Room {
     );
   }
 
-  Future<String?> sendPollResponse(String pollEventId, String answerId) {
+  Future<String?> sendPollResponse(Event poll, String answerId) {
+    final unstable = poll.type == MatrixPollEventTypes.unstableStart;
     return sendEvent(
-      {
-        'm.relates_to': {
-          'rel_type': 'm.reference',
-          'event_id': pollEventId,
-        },
-        'm.selections': [answerId],
-      },
-      type: MatrixPollEventTypes.response,
+      buildPollResponseContent(
+        pollEventId: poll.eventId,
+        answerId: answerId,
+        unstable: unstable,
+      ),
+      type: unstable
+          ? MatrixPollEventTypes.unstableResponse
+          : MatrixPollEventTypes.response,
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../l10n/matrix/polycule_matrix_localizations.dart';
+import '../../../utils/matrix/poll_event.dart';
 import '../../../widgets/matrix/scopes/event_scope.dart';
 
 class PlainEventPreviewText extends StatelessWidget {
@@ -10,6 +11,17 @@ class PlainEventPreviewText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final event = EventScope.of(context).event;
+
+    if (event.isPollStart) {
+      final sender = event.senderFromMemoryOrFallback.calcDisplayname(
+        i18n: AppLocalizations.of(context).matrix,
+      );
+      return Text(
+        '$sender: Poll: ${event.pollQuestion ?? 'Poll'}',
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+      );
+    }
 
     return FutureBuilder(
       future: event.calcLocalizedBody(
