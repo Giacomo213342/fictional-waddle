@@ -38,24 +38,7 @@ class ResponsiveLayout extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               main,
-              IgnorePointer(
-                ignoring: !showSecondary,
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 140),
-                  reverseDuration: const Duration(milliseconds: 120),
-                  switchInCurve: Curves.easeOut,
-                  switchOutCurve: Curves.easeIn,
-                  transitionBuilder: (child, animation) => RepaintBoundary(
-                    child: FadeTransition(opacity: animation, child: child),
-                  ),
-                  child: showSecondary
-                      ? KeyedSubtree(
-                          key: const ValueKey('secondary'),
-                          child: secondary!,
-                        )
-                      : const SizedBox.shrink(key: ValueKey('main')),
-                ),
-              ),
+              if (showSecondary) secondary!,
             ],
           );
         } else {

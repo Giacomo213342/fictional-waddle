@@ -21,7 +21,7 @@ class ClientTabView extends StatelessWidget {
 
     return Scaffold(
       body: AdaptiveLayout(
-        transitionDuration: const Duration(milliseconds: 300),
+        transitionDuration: Duration.zero,
         body: SlotLayout(
           config: {
             Breakpoints.smallAndUp: SlotLayout.from(
