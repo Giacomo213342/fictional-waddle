@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
 
 import '../../../pages/room_list/room_list_position_tracker.dart';
 import '../../../utils/matrix/active_room_tracker.dart';
@@ -23,6 +26,9 @@ class ClientTabView extends StatefulWidget {
 class _ClientTabViewState extends State<ClientTabView> {
   late final VoidCallback _notificationRouteCallback;
   late final VoidCallback _clientsReadyCallback;
+  StreamSubscription<SyncUpdate>? _notificationSyncSubscription;
+  Client? _notificationSyncClient;
+  String? _notificationSyncRoute;
 
   @override
   void initState() {
@@ -44,23 +50,72 @@ class _ClientTabViewState extends State<ClientTabView> {
       _notificationRouteCallback,
     );
     IntentManager.clientsReady.removeListener(_clientsReadyCallback);
+    unawaited(_notificationSyncSubscription?.cancel());
     super.dispose();
   }
 
   void _openPendingNotification() {
     final route = IntentManager.notificationRouteListener.value;
-    if (!mounted || route == null || !IntentManager.clientsReady.value) return;
+    if (!mounted) return;
+    if (route == null) {
+      _cancelNotificationSyncWatch();
+      return;
+    }
+    if (!IntentManager.clientsReady.value) return;
 
-    final match = RegExp(r'^/client/(\d+)/rooms/[^/]+$').firstMatch(route);
+    final match = RegExp(r'^/client/(\d+)/rooms/([^/]+)$').firstMatch(route);
     final clientIdentifier = int.tryParse(match?.group(1) ?? '');
-    if (clientIdentifier == null ||
-        ClientManager.of(context).getClientByIdentifier(clientIdentifier) ==
-            null) {
+    final encodedRoomId = match?.group(2);
+    if (clientIdentifier == null || encodedRoomId == null) {
+      IntentManager.notificationRouteListener.value = null;
       return;
     }
 
+    final client =
+        ClientManager.of(context).getClientByIdentifier(clientIdentifier);
+    if (client == null) return;
+
+    final roomId = Uri.decodeComponent(encodedRoomId);
+    final initialSyncFinished = client.onSync.value != null;
+    final roomAvailable = client.getRoomById(roomId) != null;
+    if (!initialSyncFinished || !roomAvailable) {
+      _watchNotificationClient(client, route);
+      return;
+    }
+
+    _cancelNotificationSyncWatch();
     GoRouter.of(context).go(route);
-    IntentManager.notificationRouteListener.value = null;
+    if (IntentManager.notificationRouteListener.value == route) {
+      IntentManager.notificationRouteListener.value = null;
+    }
+  }
+
+  void _watchNotificationClient(Client client, String route) {
+    if (identical(_notificationSyncClient, client) &&
+        _notificationSyncRoute == route) {
+      return;
+    }
+    _cancelNotificationSyncWatch();
+    _notificationSyncClient = client;
+    _notificationSyncRoute = route;
+    _notificationSyncSubscription = client.onSync.stream.listen(
+      (_) => _openPendingNotification(),
+      onError: (Object error, StackTrace stackTrace) {
+        Logs().w(
+          'Unable to wait for notification room sync.',
+          error,
+          stackTrace,
+        );
+      },
+    );
+  }
+
+  void _cancelNotificationSyncWatch() {
+    final subscription = _notificationSyncSubscription;
+    _notificationSyncSubscription = null;
+    _notificationSyncClient = null;
+    _notificationSyncRoute = null;
+    if (subscription != null) unawaited(subscription.cancel());
   }
 
   Future<bool> _handleBackButton() async {
