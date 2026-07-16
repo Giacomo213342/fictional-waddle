@@ -65,11 +65,27 @@ jobs:
         shell: bash
         run: |
           export POLYCULE_VERSION="$(git describe --always)"
-          BUILD_NUMBER=$((200000000 + GITHUB_RUN_NUMBER))
-          if ((BUILD_NUMBER > 209999999)); then
+          # The last GitLab ARM64 APK has versionCode 268295502. The ABI
+          # suffix is added by Gradle, so its Flutter build number was
+          # 26829550. GitHub run 3 is therefore the first continuation and
+          # must produce ARM64 versionCode 268295512.
+          LAST_GITLAB_BUILD_NUMBER=26829550
+          LAST_GITHUB_RUN_BEFORE_MIGRATION=2
+          BUILD_NUMBER=$((
+            LAST_GITLAB_BUILD_NUMBER
+            + GITHUB_RUN_NUMBER
+            - LAST_GITHUB_RUN_BEFORE_MIGRATION
+          ))
+          ARM64_VERSION_CODE=$((BUILD_NUMBER * 10 + 2))
+          if ((ARM64_VERSION_CODE <= 268295502)); then
+            echo "Android versionCode does not follow the last GitLab APK: $ARM64_VERSION_CODE" >&2
+            exit 1
+          fi
+          if ((ARM64_VERSION_CODE > 2100000000)); then
             echo "Android build number range exhausted: $BUILD_NUMBER" >&2
             exit 1
           fi
+          echo "Building ARM64 APK with versionCode $ARM64_VERSION_CODE"
           flutter build apk \
             --release \
             --target-platform android-arm64 \
