@@ -96,6 +96,10 @@ dev_dependencies:
     sdk: flutter
 
 dependency_overrides:
+  # Backport of unifiedpush_android 3.4.1's plugin reinitialization fix. Keep
+  # this local until the transitive lock can move to the upstream release.
+  unifiedpush_android:
+    path: third_party/unifiedpush_android
   matrix:
     git:
       url: https://github.com/TheOneWithTheBraid/matrix-dart-sdk.git

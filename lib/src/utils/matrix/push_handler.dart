@@ -70,7 +70,21 @@ Future<void> handleBackgroundNotification(
   final l10n = await AppLocalizations.delegate.load(locale);
   Client? client;
   Set<String>? mutedRoomIds;
+  Logs().i('Background notification received for $instance.');
+  final placeholderShown = await _showBackgroundFallbackNotification(
+    instance: instance,
+    client: null,
+    l10n: l10n,
+    message: message.content,
+    mutedRoomIds: null,
+  );
+  if (placeholderShown) {
+    Logs().i(
+      'Background placeholder shown after ${stopwatch.elapsedMilliseconds}ms.',
+    );
+  }
   try {
+    Logs().d('Loading headless network settings.');
     final settings = await const SettingsInterface()
         .getNetwork()
         .timeout(_headlessStorageTimeout);
@@ -80,12 +94,14 @@ Future<void> handleBackgroundNotification(
     final httpCallback = await PolyculeHttpClientManager.httpClientCallback
         .timeout(_headlessStorageTimeout);
 
+    Logs().d('Opening headless Matrix client.');
     client = await ClientUtil.clientConstructor(
       instance,
       httpCallback.call(),
       requestTimeout: _headlessRequestTimeout,
     );
     mutedRoomIds = await _prepareHeadlessPushClient(client);
+    Logs().d('Looking up Matrix event for background notification.');
     await handlePushNotification(
       client: client,
       l10n: l10n,
@@ -93,16 +109,19 @@ Future<void> handleBackgroundNotification(
       mutedRoomIds: mutedRoomIds,
       performClearingSync: false,
       eventLookupTimeout: const Duration(seconds: 6),
+      publishShortcut: false,
     );
   } catch (error, stackTrace) {
     Logs().e('Background notification failed.', error, stackTrace);
-    await _showBackgroundFallbackNotification(
-      instance: instance,
-      client: client,
-      l10n: l10n,
-      message: message.content,
-      mutedRoomIds: mutedRoomIds,
-    );
+    if (!placeholderShown) {
+      await _showBackgroundFallbackNotification(
+        instance: instance,
+        client: client,
+        l10n: l10n,
+        message: message.content,
+        mutedRoomIds: mutedRoomIds,
+      );
+    }
   } finally {
     if (client != null) {
       try {
@@ -118,7 +137,7 @@ Future<void> handleBackgroundNotification(
   }
 }
 
-Future<void> _showBackgroundFallbackNotification({
+Future<bool> _showBackgroundFallbackNotification({
   required String instance,
   required Client? client,
   required AppLocalizations l10n,
@@ -128,7 +147,7 @@ Future<void> _showBackgroundFallbackNotification({
   try {
     final notification = decodeMessage(message);
     final roomId = notification.roomId;
-    if (roomId == null || mutedRoomIds?.contains(roomId) == true) return;
+    if (roomId == null || mutedRoomIds?.contains(roomId) == true) return false;
     if (mutedRoomIds == null) {
       Logs().w(
         'Showing fallback without cached mute rules for $instance.',
@@ -163,6 +182,7 @@ Future<void> _showBackgroundFallbackNotification({
         android: AndroidNotificationDetails(
           roomId,
           roomName,
+          onlyAlertOnce: true,
           importance: Importance.high,
           priority: Priority.max,
           category: AndroidNotificationCategory.message,
@@ -174,8 +194,10 @@ Future<void> _showBackgroundFallbackNotification({
           ? null
           : jsonEncode({'client': clientIdentifier, 'room': roomId}),
     );
+    return true;
   } catch (error, stackTrace) {
     Logs().e('Fallback background notification failed.', error, stackTrace);
+    return false;
   }
 }
 
@@ -205,6 +227,7 @@ Future<void> handlePushNotification({
   Set<String> mutedRoomIds = const {},
   bool performClearingSync = true,
   Duration eventLookupTimeout = const Duration(seconds: 8),
+  bool publishShortcut = true,
 }) async {
   final notification = decodeMessage(message);
 
@@ -293,7 +316,7 @@ Future<void> handlePushNotification({
       event.room.isDirectChat ? 'directChats' : 'groupChats';
   final groupName = event.room.isDirectChat ? l10n.directChats : l10n.groups;
 
-  if (Platform.isAndroid) {
+  if (Platform.isAndroid && publishShortcut) {
     try {
       const channel = MethodChannel('polycule.shortcuts');
       await channel.invokeMethod('publishConversationShortcut', {
@@ -328,6 +351,7 @@ Future<void> handlePushNotification({
   final androidPlatformChannelSpecifics = AndroidNotificationDetails(
     event.room.id,
     roomName,
+    onlyAlertOnce: true,
     number: notification.counts?.unread,
     category: AndroidNotificationCategory.message,
     icon: '@drawable/ic_launcher_foreground',

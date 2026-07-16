@@ -124,9 +124,8 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
       (loginState) => _handleLoginStateChange(client, loginState),
     );
 
-    pushManagers[identifier] = PushManager(client);
-
     await client.init(waitForFirstSync: false);
+    pushManagers[identifier] = PushManager(client);
     return client;
   }
 
