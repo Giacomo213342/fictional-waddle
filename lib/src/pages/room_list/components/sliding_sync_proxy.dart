@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:diffutil_dart/diffutil.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../widgets/matrix/scopes/client_scope.dart';
@@ -20,7 +19,7 @@ class SlidingSyncProxy extends StatefulWidget {
 class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
   final listKey = GlobalKey<AnimatedListState>();
 
-  List<Room>? roomsCache;
+  List<Room>? _displayedRooms;
 
   StreamSubscription<SyncUpdate>? _slidingSyncListener;
 
@@ -34,13 +33,13 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
   Widget build(BuildContext context) {
     final controller = RoomListController.of(context);
     final rooms = controller.getRegularRooms();
-    final roomsCache = this.roomsCache ??= rooms;
+    final displayedRooms = _displayedRooms ??= [...rooms];
 
     return AnimatedList(
       key: listKey,
       controller: controller.scrollController,
       itemBuilder: (context, index, animation) {
-        final room = RoomListController.of(context).getRegularRooms()[index];
+        final room = _displayedRooms![index];
         return SizeTransition(
           key: Key(room.id),
           sizeFactor: animation,
@@ -51,7 +50,7 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
           ),
         );
       },
-      initialItemCount: roomsCache.length,
+      initialItemCount: displayedRooms.length,
     );
   }
 
@@ -62,67 +61,64 @@ class _SlidingSyncProxyState extends State<SlidingSyncProxy> {
   }
 
   void _simulateSlidingSync(SyncUpdate syncUpdate) {
-    final roomsCache = this.roomsCache;
+    final displayedRooms = _displayedRooms;
     final listState = listKey.currentState;
-    if (listState == null || roomsCache == null) {
+    if (listState == null || displayedRooms == null) {
       return;
     }
 
-    final rooms = RoomListController.of(context).getRegularRooms();
+    final desiredRooms = RoomListController.of(context).getRegularRooms();
+    final desiredIds = desiredRooms.map((room) => room.id).toSet();
 
-    final diffResult = calculateListDiff<Room>(
-      roomsCache,
-      rooms,
-      equalityChecker: (r1, r2) => r1.id == r2.id,
-    );
-
-    for (final update in diffResult.getUpdates()) {
-      update.when(
-        insert: (pos, count) {
-          listState.insertAllItems(pos, count);
-        },
-        remove: (pos, count) {
-          for (int position = pos; position < pos + count; position++) {
-            final room = roomsCache[pos];
-            listState.removeItem(
-              pos,
-              (context, animation) => SizeTransition(
-                key: Key(room.id),
-                sizeFactor: animation,
-                child: RoomScope(
-                  key: ValueKey(room.id),
-                  room: room,
-                  child: const RoomListTile(),
-                ),
-              ),
-            );
-          }
-        },
-        // this is a stub and will never be called
-        change: (pos, payload) {},
-        move: (from, to) {
-          listState.removeItem(from, (context, animation) {
-            final room = roomsCache[to];
-            return SizeTransition(
-              key: Key(room.id),
-              sizeFactor: animation,
-              child: RoomScope(
-                key: ValueKey(room.id),
-                room: room,
-                child: const RoomListTile(),
-              ),
-            );
-          });
-          listState.insertItem(to);
-        },
-      );
+    for (var index = displayedRooms.length - 1; index >= 0; index--) {
+      if (!desiredIds.contains(displayedRooms[index].id)) {
+        _removeRoom(listState, index);
+      }
     }
-    this.roomsCache = [...rooms];
+
+    for (var index = 0; index < desiredRooms.length; index++) {
+      final desiredRoom = desiredRooms[index];
+      if (index < displayedRooms.length &&
+          displayedRooms[index].id == desiredRoom.id) {
+        displayedRooms[index] = desiredRoom;
+        continue;
+      }
+
+      final oldIndex = displayedRooms.indexWhere(
+        (room) => room.id == desiredRoom.id,
+        index + 1,
+      );
+      if (oldIndex != -1) {
+        _removeRoom(listState, oldIndex);
+      }
+      displayedRooms.insert(index, desiredRoom);
+      listState.insertItem(index);
+    }
+
+    while (displayedRooms.length > desiredRooms.length) {
+      _removeRoom(listState, displayedRooms.length - 1);
+    }
   }
 
   void _startSlidingSync() {
     _slidingSyncListener = ClientScope.of(
       context,
     ).client.onSync.stream.listen(_simulateSlidingSync);
+  }
+
+  void _removeRoom(AnimatedListState listState, int index) {
+    final room = _displayedRooms!.removeAt(index);
+    listState.removeItem(
+      index,
+      (context, animation) => SizeTransition(
+        key: Key(room.id),
+        sizeFactor: animation,
+        child: RoomScope(
+          key: ValueKey(room.id),
+          room: room,
+          child: const RoomListTile(),
+        ),
+      ),
+    );
   }
 }

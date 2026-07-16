@@ -10,6 +10,7 @@ import '../../widgets/matrix/scopes/client_scope.dart';
 import '../account_settings/account_settings.dart';
 import '../room/room.dart';
 import '../ssss_bootstrap/ssss_bootstrap.dart';
+import 'room_list_ordering.dart';
 import 'room_list_position_tracker.dart';
 import 'room_list_view.dart';
 
@@ -50,18 +51,10 @@ class RoomListController extends State<RoomListPage> {
     final rooms = ClientScope.of(
       context,
     ).client.rooms.where((r) => !r.isSpace && !r.isArchived).toList();
-    final originalOrder = {
-      for (final entry in rooms.indexed) entry.$2.id: entry.$1,
-    };
-    rooms.sort((a, b) {
-      final aLowPriority = a.tags.containsKey(TagType.lowPriority);
-      final bLowPriority = b.tags.containsKey(TagType.lowPriority);
-      if (aLowPriority == bLowPriority) {
-        return originalOrder[a.id]!.compareTo(originalOrder[b.id]!);
-      }
-      return aLowPriority ? 1 : -1;
-    });
-    return rooms;
+    return normalBeforeLowPriority(
+      rooms,
+      isLowPriority: (room) => room.tags.containsKey(TagType.lowPriority),
+    );
   }
 
   @override
