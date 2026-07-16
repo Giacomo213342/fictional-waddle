@@ -189,16 +189,34 @@ Future<void> handleBackgroundNotification(
       level: Level.debug,
     );
     await PushLogJournal.record('Looking up Matrix event.');
-    final result = await handlePushNotification(
-      client: client!,
-      l10n: l10n,
-      message: message.content,
-      mutedRoomIds: mutedRoomIds!,
-      performClearingSync: false,
-      eventLookupTimeout: _headlessRequestTimeout,
-      publishShortcut: false,
-      backgroundState: notificationState,
-    );
+    Future<PushNotificationResult> resolveNotification() =>
+        handlePushNotification(
+          client: client!,
+          l10n: l10n,
+          message: message.content,
+          mutedRoomIds: mutedRoomIds!,
+          performClearingSync: false,
+          eventLookupTimeout: _headlessRequestTimeout,
+          publishShortcut: false,
+          backgroundState: notificationState,
+        );
+
+    PushNotificationResult result;
+    try {
+      result = await resolveNotification();
+    } on MatrixException catch (error) {
+      if (error.error != MatrixError.M_UNKNOWN_TOKEN) rethrow;
+      await PushLogJournal.record(
+        'Homeserver rejected the access token; refreshing the stored '
+        'session and retrying once.',
+        level: Level.warning,
+      );
+      await _refreshHeadlessPushAccessToken(
+        client!,
+        rejectedAccessToken: client!.accessToken,
+      );
+      result = await resolveNotification();
+    }
     await PushLogJournal.record(
       'Matrix notification handling result: ${result.name}.',
     );
@@ -342,10 +360,112 @@ Future<Set<String>> _prepareHeadlessPushClient(Client client) async {
     ..accessToken = accessToken
     ..backgroundSync = false;
 
+  final rawTokenExpiresAt = account?['token_expires_at'];
+  final tokenExpiresAtMs = int.tryParse(
+    rawTokenExpiresAt is String ? rawTokenExpiresAt : '',
+  );
+  final tokenExpiresAt = tokenExpiresAtMs == null
+      ? null
+      : DateTime.fromMillisecondsSinceEpoch(tokenExpiresAtMs);
+  if (tokenExpiresAt != null &&
+      tokenExpiresAt.difference(DateTime.now()) <= const Duration(minutes: 1) &&
+      account?['refresh_token'] is String) {
+    await PushLogJournal.record(
+      'Stored Matrix access token is expired or near expiry; refreshing it.',
+    );
+    await _refreshHeadlessPushAccessToken(
+      client,
+      rejectedAccessToken: accessToken,
+    );
+  }
+
   final accountData = await client.database.getAccountData();
   return mutedRoomIdsFromPushRules(
     accountData[EventTypes.PushRules]?.content,
   );
+}
+
+Future<void> _refreshHeadlessPushAccessToken(
+  Client client, {
+  required String? rejectedAccessToken,
+}) async {
+  final account = await client.database.getClient(client.clientName);
+  if (account == null) {
+    throw StateError('No stored Matrix session for ${client.clientName}.');
+  }
+
+  final storedAccessToken = account['token'];
+  if (storedAccessToken is! String) {
+    throw StateError('Stored Matrix session has no access token.');
+  }
+
+  // A foreground client may have rotated the token after this headless
+  // client was created. Prefer that token instead of rotating twice.
+  if (rejectedAccessToken != null &&
+      storedAccessToken != rejectedAccessToken) {
+    client.accessToken = storedAccessToken;
+    await PushLogJournal.record(
+      'A newer Matrix access token was already stored; using it for retry.',
+    );
+    return;
+  }
+
+  final homeserver = account['homeserver_url'];
+  final refreshToken = account['refresh_token'];
+  final userId = account['user_id'];
+  if (homeserver is! String ||
+      refreshToken is! String ||
+      userId is! String) {
+    throw StateError('Stored Matrix session cannot be refreshed.');
+  }
+
+  final oidcClientId = account['oidc_dynamic_client_id'];
+  final rawOidcMetadata = account['oidc_auth_metadata'];
+  Map<String, Object?>? oidcMetadata;
+  if (rawOidcMetadata is String) {
+    final decoded = jsonDecode(rawOidcMetadata);
+    if (decoded is Map) {
+      oidcMetadata = Map<String, Object?>.from(decoded);
+    }
+  }
+
+  late final String newAccessToken;
+  late final String newRefreshToken;
+  late final DateTime? newTokenExpiresAt;
+  final oidcTokenEndpoint = oidcMetadata?['token_endpoint'];
+  if (oidcTokenEndpoint is String && oidcClientId is String) {
+    final response = await client.oidcRefreshToken(
+      tokenEndpoint: Uri.parse(oidcTokenEndpoint),
+      refreshToken: refreshToken,
+      oidcClientId: oidcClientId,
+    );
+    newAccessToken = response.accessToken;
+    newRefreshToken = response.refreshToken;
+    newTokenExpiresAt = DateTime.now().add(
+      Duration(seconds: response.expiresIn),
+    );
+  } else {
+    final response = await client.refresh(refreshToken);
+    newAccessToken = response.accessToken;
+    newRefreshToken = response.refreshToken ?? refreshToken;
+    newTokenExpiresAt = response.expiresInMs == null
+        ? null
+        : DateTime.now().add(Duration(milliseconds: response.expiresInMs!));
+  }
+
+  client.accessToken = newAccessToken;
+  await client.database.updateClient(
+    homeserver,
+    newAccessToken,
+    newTokenExpiresAt,
+    newRefreshToken,
+    userId,
+    account['device_id'] as String?,
+    account['device_name'] as String?,
+    account['prev_batch'] as String?,
+    account['olm_account'] as String?,
+  );
+  await PushLogJournal.record('Matrix access token refreshed successfully.');
 }
 
 Future<PushNotificationResult> handlePushNotification({
