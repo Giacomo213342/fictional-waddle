@@ -27,20 +27,39 @@ abstract class PolyculeHttpClientManager {
     if (started != null) {
       return started.future;
     }
-    _initFuture = Completer<void>();
-    await _buildHttpClient(settings.value);
-    settings.addListener(() => _buildHttpClient(settings.value));
-    _initFuture?.complete();
+    final completer = _initFuture = Completer<void>();
+    try {
+      await _buildHttpClient(settings.value);
+      settings.addListener(() => _buildHttpClient(settings.value));
+      completer.complete();
+    } catch (error, stackTrace) {
+      completer.completeError(error, stackTrace);
+      _initFuture = null;
+      rethrow;
+    }
   }
 
   static final StreamController<ClientCallback> _clientController =
       StreamController<ClientCallback>.broadcast();
+  static ClientCallback? _currentClientCallback;
 
   static Stream<ClientCallback> get httpClientCallbackStream =>
       _clientController.stream;
 
+  static Future<ClientCallback> get httpClientCallback async {
+    final current = _currentClientCallback;
+    if (current != null) return current;
+
+    final initialization = _initFuture;
+    if (initialization != null) await initialization.future;
+
+    return _currentClientCallback ?? _clientController.stream.first;
+  }
+
   static Future<void> _buildHttpClient(NetworkState settings) async {
     await updateHttpClientSettings(settings);
-    _clientController.add(getHttpClientPlatformCallback());
+    final callback = getHttpClientPlatformCallback();
+    _currentClientCallback = callback;
+    _clientController.add(callback);
   }
 }

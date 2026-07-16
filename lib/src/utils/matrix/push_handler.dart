@@ -63,8 +63,7 @@ Future<void> handleBackgroundNotification(
   // first load our network settings from storage
   final settings = await const SettingsInterface().getNetwork();
   await PolyculeHttpClientManager.init(ValueNotifier(settings));
-  final httpCallback =
-      await PolyculeHttpClientManager.httpClientCallbackStream.first;
+  final httpCallback = await PolyculeHttpClientManager.httpClientCallback;
 
   final client = await ClientUtil.clientConstructor(
     instance,

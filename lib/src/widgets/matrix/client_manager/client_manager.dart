@@ -151,8 +151,7 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
 
   Future<bool> _loadClients() async {
     // first ensure we have an HTTP client
-    _httpClient =
-        await PolyculeHttpClientManager.httpClientCallbackStream.first;
+    _httpClient = await PolyculeHttpClientManager.httpClientCallback;
     _httpClientListener = PolyculeHttpClientManager.httpClientCallbackStream
         .listen(_updateHttpClients);
 
