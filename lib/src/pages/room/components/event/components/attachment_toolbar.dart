@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -396,7 +397,17 @@ class _FullscreenAttachment extends StatefulWidget {
 }
 
 class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
+  final _transformationController = TransformationController();
+  final Set<int> _activePointers = {};
   bool _loading = false;
+  bool _zoomed = false;
+  double _dismissOffset = 0;
+
+  @override
+  void dispose() {
+    _transformationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -436,14 +447,103 @@ class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
                 ),
               ],
       ),
-      body: InteractiveViewer(
-        boundaryMargin: const EdgeInsets.all(128),
-        minScale: 0.5,
-        maxScale: 5,
-        trackpadScrollCausesScale: true,
-        child: const ImageMessage(fullscreen: true),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final viewport = constraints.biggest;
+          final imageSize = _fittedImageSize(
+            viewport,
+            EventScope.of(context).event,
+          );
+          final opacity = (1 - (_dismissOffset / viewport.height))
+              .clamp(0.55, 1.0)
+              .toDouble();
+          return Listener(
+            onPointerDown: _handlePointerDown,
+            onPointerMove: _handlePointerMove,
+            onPointerUp: _handlePointerEnd,
+            onPointerCancel: _handlePointerEnd,
+            child: ColoredBox(
+              color: Colors.black,
+              child: Opacity(
+                opacity: opacity,
+                child: Transform.translate(
+                  offset: Offset(0, _dismissOffset),
+                  child: InteractiveViewer(
+                    transformationController: _transformationController,
+                    alignment: Alignment.center,
+                    boundaryMargin: EdgeInsets.zero,
+                    constrained: false,
+                    minScale: 1,
+                    maxScale: 5,
+                    panEnabled: _zoomed,
+                    scaleEnabled: true,
+                    trackpadScrollCausesScale: true,
+                    onInteractionUpdate: (_) => _updateZoomState(),
+                    onInteractionEnd: (_) => _finishInteraction(),
+                    child: SizedBox.fromSize(
+                      size: imageSize,
+                      child: const ImageMessage(fullscreen: true),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
+  }
+
+  Size _fittedImageSize(Size viewport, Event event) {
+    final info = event.infoMap as Map<String, Object?>?;
+    final width = (info?['w'] as num?)?.toDouble();
+    final height = (info?['h'] as num?)?.toDouble();
+    if (width == null || height == null || width <= 0 || height <= 0) {
+      return viewport;
+    }
+    final scale = math.min(viewport.width / width, viewport.height / height);
+    return Size(width * scale, height * scale);
+  }
+
+  void _handlePointerDown(PointerDownEvent event) {
+    _activePointers.add(event.pointer);
+    if (_activePointers.length > 1 && _dismissOffset != 0) {
+      setState(() => _dismissOffset = 0);
+    }
+  }
+
+  void _handlePointerMove(PointerMoveEvent event) {
+    if (_zoomed || _activePointers.length != 1) return;
+    final nextOffset = math.max(0.0, _dismissOffset + event.delta.dy);
+    if (nextOffset != _dismissOffset) {
+      setState(() => _dismissOffset = nextOffset);
+    }
+  }
+
+  void _handlePointerEnd(PointerEvent event) {
+    _activePointers.remove(event.pointer);
+    if (_activePointers.isNotEmpty || _zoomed) return;
+    if (_dismissOffset >= 96) {
+      Navigator.of(context).maybePop();
+    } else if (_dismissOffset != 0) {
+      setState(() => _dismissOffset = 0);
+    }
+  }
+
+  void _updateZoomState() {
+    final zoomed = _transformationController.value.getMaxScaleOnAxis() > 1.01;
+    if (zoomed == _zoomed) return;
+    setState(() {
+      _zoomed = zoomed;
+      if (zoomed) _dismissOffset = 0;
+    });
+  }
+
+  void _finishInteraction() {
+    if (_transformationController.value.getMaxScaleOnAxis() <= 1.01) {
+      _transformationController.value = Matrix4.identity();
+      if (_zoomed) setState(() => _zoomed = false);
+    }
   }
 
   Future<void> _run(Future<void> Function() action) async {
