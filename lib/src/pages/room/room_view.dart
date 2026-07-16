@@ -28,7 +28,9 @@ class RoomView extends StatelessWidget {
 
     void navigateBack() {
       if (GoRouterState.of(context).uri.fragment.isNotEmpty) {
-        context.goMultiClient(RoomPage.makeRouteName(room.id));
+        context.goMultiClient(
+          '${RoomListPage.routeName}/${Uri.encodeComponent(room.id)}',
+        );
         return;
       }
       returnToRoomList();

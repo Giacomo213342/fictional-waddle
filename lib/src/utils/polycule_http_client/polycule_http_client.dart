@@ -54,7 +54,9 @@ abstract class PolyculeHttpClientManager {
     final initialization = _initFuture;
     if (initialization != null) await initialization.future;
 
-    return _currentClientCallback ?? _clientController.stream.first;
+    final initialized = _currentClientCallback;
+    if (initialized != null) return initialized;
+    return _clientController.stream.first;
   }
 
   static Future<void> _buildHttpClient(NetworkState settings) async {
