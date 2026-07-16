@@ -55,7 +55,7 @@ class RoomMessageContent extends StatelessWidget {
       case MessageTypes.Video:
         return AttachmentToolbar(child: VideoMessage(key: ValueKey(event)));
       case MessageTypes.Audio:
-        return AttachmentToolbar(child: AudioMessage(key: ValueKey(event)));
+        return AudioMessage(key: ValueKey(event));
       case MessageTypes.File:
         return const AttachmentToolbar(child: FileMessage());
       case MessageTypes.Text:

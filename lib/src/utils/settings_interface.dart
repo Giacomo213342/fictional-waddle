@@ -235,6 +235,28 @@ class SettingsInterface {
     );
   }
 
+  Future<double> getAudioPlaybackSpeed() async {
+    const supportedSpeeds = {0.5, 1.0, 1.5, 2.0};
+    try {
+      final stored = await kPolyculeSecureStorage.read(
+        key: 'audio_playback_speed',
+      );
+      final speed = double.tryParse(stored ?? '');
+      return supportedSpeeds.contains(speed) ? speed! : 1.0;
+    } on PlatformException catch (e, s) {
+      ErrorLogger().captureStackTrace(e, s);
+      await kPolyculeSecureStorage.delete(key: 'audio_playback_speed');
+      return 1.0;
+    }
+  }
+
+  Future<void> storeAudioPlaybackSpeed(double speed) {
+    return kPolyculeSecureStorage.write(
+      key: 'audio_playback_speed',
+      value: speed.toString(),
+    );
+  }
+
   Future<String?> getPushKey(String clientName) async {
     try {
       return kPolyculeSecureStorage.read(key: 'push_key_$clientName');

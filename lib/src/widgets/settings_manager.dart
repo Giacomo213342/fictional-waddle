@@ -58,6 +58,11 @@ class SettingsManager extends InheritedWidget {
     }
     sentryEnabled.addListener(_storeSentryEnabled);
 
+    final storedAudioPlaybackSpeed =
+        await _settingsInterface.getAudioPlaybackSpeed();
+    audioPlaybackSpeed.value = storedAudioPlaybackSpeed;
+    audioPlaybackSpeed.addListener(_storeAudioPlaybackSpeed);
+
     initCompleter.complete();
   }
 
@@ -66,6 +71,7 @@ class SettingsManager extends InheritedWidget {
   final locale = ValueNotifier<Locale?>(null);
   final pushDistributor = ValueNotifier<String?>(null);
   final sentryEnabled = ValueNotifier<bool>(false);
+  final audioPlaybackSpeed = ValueNotifier<double>(1.0);
 
   static SettingsManager? maybeOf(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<SettingsManager>();
@@ -100,6 +106,10 @@ class SettingsManager extends InheritedWidget {
   Future<void> _storeSentryEnabled() async {
     ErrorLogger().sentryEnabled = sentryEnabled.value;
     await _settingsInterface.storeSentryEnabled(sentryEnabled.value);
+  }
+
+  Future<void> _storeAudioPlaybackSpeed() async {
+    await _settingsInterface.storeAudioPlaybackSpeed(audioPlaybackSpeed.value);
   }
 }
 

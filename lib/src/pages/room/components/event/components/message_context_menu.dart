@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -9,6 +11,7 @@ import '../../../../../widgets/dynamic_context_menu.dart';
 import '../../../../../widgets/matrix/dialogs/event_source_code_dialog.dart';
 import '../../../../../widgets/matrix/scopes/matrix_scope.dart';
 import '../../compose/compose_scope.dart';
+import 'attachment_toolbar.dart';
 import '../quoted_event.dart';
 
 class MessageContextMenu extends StatelessWidget {
@@ -115,6 +118,22 @@ class MessageContextMenu extends StatelessWidget {
         type: ContextMenuButtonType.copy,
         icon: Icons.copy,
       ),
+      if (event.messageType == MessageTypes.Audio && AttachmentActions.canShare)
+        ContextMenuItem(
+          onPressed: () => unawaited(AttachmentActions.share(context, event)),
+          label: MaterialLocalizations.of(context).shareButtonLabel,
+          type: ContextMenuButtonType.custom,
+          icon: Icons.share,
+        ),
+      if (event.messageType == MessageTypes.Audio &&
+          AttachmentActions.canDownload)
+        ContextMenuItem(
+          onPressed: () =>
+              unawaited(AttachmentActions.download(context, event)),
+          label: AppLocalizations.of(context).download,
+          type: ContextMenuButtonType.custom,
+          icon: Icons.save_alt,
+        ),
       if (room.canSendDefaultMessages)
         ContextMenuItem(
           onPressed: () => _replyMessage(context),

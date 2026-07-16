@@ -20,6 +20,162 @@ import '../../../../../widgets/polycule_overflow_bar.dart';
 import '../../../../../widgets/share_origin_builder.dart';
 import '../m_room_message/m_image.dart';
 
+class AttachmentActions {
+  const AttachmentActions._();
+
+  static final _separator = Platform.isWindows ? r'\' : r'/';
+
+  static bool get canShare => !kIsWeb && !Platform.isLinux;
+
+  static bool get canDownload => true;
+
+  static XFile buildXFile(Event event, MatrixFile mxFile) {
+    return XFile.fromData(
+      mxFile.bytes,
+      mimeType: mxFile.mimeType,
+      name: mxFile.name,
+      lastModified: event.originServerTs,
+    );
+  }
+
+  static Future<void> share(
+    BuildContext context,
+    Event event, {
+    Rect? shareOrigin,
+    ValueChanged<bool>? onLoading,
+  }) async {
+    onLoading?.call(true);
+    try {
+      final mxFile = await event.downloadAndDecryptAttachment();
+      final xfile = buildXFile(event, mxFile);
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [xfile],
+          sharePositionOrigin: shareOrigin,
+        ),
+      );
+    } catch (error, stackTrace) {
+      handleError(context, error, stackTrace);
+    } finally {
+      onLoading?.call(false);
+    }
+  }
+
+  static Future<void> download(
+    BuildContext context,
+    Event event, {
+    Rect? shareOrigin,
+    ValueChanged<bool>? onLoading,
+  }) async {
+    if (kIsWeb) {
+      return share(
+        context,
+        event,
+        shareOrigin: shareOrigin,
+        onLoading: onLoading,
+      );
+    }
+    if (Platform.isAndroid) {
+      return _downloadAndroid(context, event, onLoading: onLoading);
+    }
+
+    final client = ClientScope.of(context).client;
+    onLoading?.call(true);
+    try {
+      final mxFile = await event.downloadAndDecryptAttachment();
+      final xfile = buildXFile(event, mxFile);
+      final directory = await getDownloadsDirectory();
+      await directory!.create();
+
+      var file = File('${directory.path}$_separator${mxFile.name}');
+      if (await file.exists()) {
+        final txid = client.generateUniqueTransactionId();
+        final name = mxFile.name.contains('.')
+            ? mxFile.name.replaceRange(
+                mxFile.name.lastIndexOf('.'),
+                mxFile.name.lastIndexOf('.'),
+                txid,
+              )
+            : '${mxFile.name}$txid';
+        file = File('${directory.path}$_separator$name');
+      }
+      await xfile.saveTo(file.path);
+      await showFileStored(context, file.path);
+    } catch (error, stackTrace) {
+      handleError(context, error, stackTrace);
+    } finally {
+      onLoading?.call(false);
+    }
+  }
+
+  static Future<void> _downloadAndroid(
+    BuildContext context,
+    Event event, {
+    ValueChanged<bool>? onLoading,
+  }) async {
+    onLoading?.call(true);
+    try {
+      await FileSelector.ensureAndroidInitialized();
+      final mxFile = await event.downloadAndDecryptAttachment();
+      final xfile = buildXFile(event, mxFile);
+      final directory = await getTemporaryDirectory();
+      final tmpPath = '${directory.path}$_separator${mxFile.name}';
+      await xfile.saveTo(tmpPath);
+
+      final mediaStore = MediaStore();
+      final info = await mediaStore.saveFile(
+        tempFilePath: tmpPath,
+        dirType: DirType.download,
+        dirName: DirName.download,
+      );
+      final uri = info?.uri;
+      if (info == null || !info.isSuccessful || uri == null) return;
+      final path = await mediaStore.getFilePathFromUri(
+        uriString: uri.toString(),
+      );
+      if (path != null) await showFileStored(context, path);
+    } catch (error, stackTrace) {
+      handleError(context, error, stackTrace);
+    } finally {
+      onLoading?.call(false);
+    }
+  }
+
+  static Future<void> showFileStored(BuildContext context, String path) async {
+    final name = path.split(_separator).last;
+    final uri = Uri.file(path);
+    final canLaunch = await canLaunchUrl(uri);
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context).fileDownloadedTo(name)),
+        action: canLaunch
+            ? SnackBarAction(
+                label: AppLocalizations.of(context).openFile,
+                onPressed: () => launchUrl(uri),
+              )
+            : null,
+      ),
+    );
+  }
+
+  static void handleError(
+    BuildContext context,
+    Object error,
+    StackTrace stackTrace,
+  ) {
+    Logs().w('Error handling attachment.', error, stackTrace);
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          AppLocalizations.of(context).errorDownloadingAttachment,
+        ),
+      ),
+    );
+  }
+}
+
 class AttachmentToolbar extends StatefulWidget {
   const AttachmentToolbar({
     super.key,
@@ -37,9 +193,7 @@ class AttachmentToolbar extends StatefulWidget {
 }
 
 class _AttachmentToolbarState extends State<AttachmentToolbar> {
-  final canDownload = true;
   final canSaveAs = !kIsWeb && !Platform.isIOS && !Platform.isAndroid;
-  final canShare = !kIsWeb && !Platform.isLinux;
 
   bool isPdf(Event event) => event.attachmentMimetype == 'application/pdf';
 
@@ -85,7 +239,7 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
                     ),
                   ]
                 : [
-                    if (canShare)
+                    if (AttachmentActions.canShare)
                       ShareOriginBuilder(
                         builder: (context, rect) {
                           return IconButton(
@@ -96,7 +250,7 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
                           );
                         },
                       ),
-                    if (canDownload)
+                    if (AttachmentActions.canDownload)
                       ShareOriginBuilder(
                         builder: (context, rect) {
                           return IconButton(
@@ -146,139 +300,29 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
     );
   }
 
-  XFile _buildXFile(Event event, MatrixFile mxFile) {
-    final bytes = mxFile.bytes;
-    final mimeType = mxFile.mimeType;
-    return XFile.fromData(
-      bytes,
-      mimeType: mimeType,
-      name: mxFile.name,
-      lastModified: event.originServerTs,
-    );
+  void _setLoading(bool value) {
+    if (mounted) setState(() => loading = value);
   }
 
-  Future<void> _share(Event event, Rect? rect) async {
-    setState(() {
-      loading = true;
-    });
-
-    try {
-      final mxFile = await event.downloadAndDecryptAttachment();
-      final xfile = _buildXFile(event, mxFile);
-
-      await SharePlus.instance.share(
-        ShareParams(
-          files: [xfile],
-          sharePositionOrigin: rect,
-        ),
+  Future<void> _share(Event event, Rect? rect) => AttachmentActions.share(
+        context,
+        event,
+        shareOrigin: rect,
+        onLoading: _setLoading,
       );
-    } catch (e, s) {
-      _handleAttachmentError(e, s);
-    } finally {
-      setState(() {
-        loading = false;
-      });
-    }
-  }
 
-  Future<void> _download(Event event, Rect? rect) async {
-    final client = ClientScope.of(context).client;
-    if (kIsWeb) {
-      return _share(event, rect);
-    }
-    if (Platform.isAndroid) {
-      return _downloadAndroid(event, rect);
-    }
-    setState(() {
-      loading = true;
-    });
-    try {
-      final mxFile = await event.downloadAndDecryptAttachment();
-      final xfile = _buildXFile(event, mxFile);
-
-      final directory = await getDownloadsDirectory();
-
-      // no, I would not expect a downloads directory present on my Arch Linux
-      await directory!.create();
-
-      File file = File(directory.path + separator + mxFile.name);
-
-      if (await file.exists()) {
-        final txid = client.generateUniqueTransactionId();
-
-        String newName;
-        if (mxFile.name.contains(r'.')) {
-          final lastDot = mxFile.name.lastIndexOf(r'.');
-
-          newName = mxFile.name.replaceRange(lastDot, lastDot, txid);
-        } else {
-          newName = mxFile.name + txid;
-        }
-
-        file = File(directory.path + separator + newName);
-      }
-
-      final path = file.path;
-
-      await xfile.saveTo(path);
-
-      _showFileStoredSnackBar(path);
-    } catch (e, s) {
-      _handleAttachmentError(e, s);
-    } finally {
-      setState(() {
-        loading = false;
-      });
-    }
-  }
-
-  Future<void> _downloadAndroid(Event event, [Rect? rect]) async {
-    setState(() {
-      loading = true;
-    });
-    try {
-      await FileSelector.ensureAndroidInitialized();
-
-      final mxFile = await event.downloadAndDecryptAttachment();
-      final xfile = _buildXFile(event, mxFile);
-
-      final directory = await getTemporaryDirectory();
-      final tmpPath = directory.path + separator + mxFile.name;
-
-      await xfile.saveTo(tmpPath);
-
-      final store = MediaStore();
-      final info = await store.saveFile(
-        tempFilePath: tmpPath,
-        dirType: DirType.download,
-        dirName: DirName.download,
+  Future<void> _download(Event event, Rect? rect) => AttachmentActions.download(
+        context,
+        event,
+        shareOrigin: rect,
+        onLoading: _setLoading,
       );
-      final uri = info?.uri;
-      if (info == null || !info.isSuccessful || uri == null) {
-        return;
-      }
-      final path = await store.getFilePathFromUri(uriString: uri.toString());
-      if (path == null) {
-        return;
-      }
-
-      _showFileStoredSnackBar(path);
-    } catch (e, s) {
-      _handleAttachmentError(e, s);
-    } finally {
-      setState(() {
-        loading = false;
-      });
-    }
-  }
 
   Future<void> _saveAs(Event event) async {
-    setState(() {
-      loading = true;
-    });
+    _setLoading(true);
     try {
       final mxFile = await event.downloadAndDecryptAttachment();
-      final xfile = _buildXFile(event, mxFile);
+      final xfile = AttachmentActions.buildXFile(event, mxFile);
 
       final location = await getSaveLocation(
         suggestedName: mxFile.name,
@@ -290,13 +334,11 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
 
       await xfile.saveTo(path);
 
-      _showFileStoredSnackBar(path);
+      AttachmentActions.showFileStored(context, path);
     } catch (e, s) {
-      _handleAttachmentError(e, s);
+      AttachmentActions.handleError(context, e, s);
     } finally {
-      setState(() {
-        loading = false;
-      });
+      _setLoading(false);
     }
   }
 
@@ -305,12 +347,10 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
       return;
     }
     final client = ClientScope.of(context).client;
-    setState(() {
-      loading = true;
-    });
+    _setLoading(true);
     try {
       final mxFile = await event.downloadAndDecryptAttachment();
-      final xfile = _buildXFile(event, mxFile);
+      final xfile = AttachmentActions.buildXFile(event, mxFile);
 
       final directory = await getTemporaryDirectory();
       // no, I would not expect a temporary directory present on my Arch Linux
@@ -335,49 +375,10 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
       final uri = Uri.file(path);
       await launchUrl(uri);
     } catch (e, s) {
-      _handleAttachmentError(e, s);
+      AttachmentActions.handleError(context, e, s);
     } finally {
-      setState(() {
-        loading = false;
-      });
+      _setLoading(false);
     }
-  }
-
-  Future<void> _showFileStoredSnackBar(String path) async {
-    final name = path.split(separator).last;
-    final uri = Uri.file(path);
-    final canLaunch = await canLaunchUrl(uri);
-
-    if (!mounted) {
-      return;
-    }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          AppLocalizations.of(context).fileDownloadedTo(name),
-        ),
-        action: canLaunch
-            ? SnackBarAction(
-                label: AppLocalizations.of(context).openFile,
-                onPressed: () => launchUrl(uri),
-              )
-            : null,
-      ),
-    );
-  }
-
-  void _handleAttachmentError(Object e, StackTrace s) {
-    Logs().w('Error sharing file.', e, s);
-    if (!mounted) {
-      return;
-    }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          AppLocalizations.of(context).errorDownloadingAttachment,
-        ),
-      ),
-    );
   }
 }
 
