@@ -35,8 +35,8 @@ class _RoomListScope extends InheritedWidget {
 
 class RoomListController extends State<RoomListPage> {
   static RoomListController of(BuildContext context) {
-    final _RoomListScope scope = context
-        .dependOnInheritedWidgetOfExactType<_RoomListScope>()!;
+    final _RoomListScope scope =
+        context.dependOnInheritedWidgetOfExactType<_RoomListScope>()!;
     return scope.controller;
   }
 
