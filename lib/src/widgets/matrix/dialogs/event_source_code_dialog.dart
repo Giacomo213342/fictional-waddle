@@ -20,7 +20,7 @@ class EventSourceCodeDialog extends StatelessWidget {
 
   Future<void> showDialog({required BuildContext context}) {
     final scope = MatrixScope.captureAll(context);
-    return Navigator.of(context, rootNavigator: true).push<void>(
+    return Navigator.of(context).push<void>(
       MaterialPageRoute(
         builder: (context) => MatrixScope(scope: scope, child: this),
         fullscreenDialog: true,

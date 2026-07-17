@@ -53,7 +53,7 @@ class RoomView extends StatelessWidget {
             tooltip: AppLocalizations.of(context).search,
             onPressed: () => showDialog<void>(
               context: context,
-              useRootNavigator: true,
+              useRootNavigator: false,
               builder: (_) =>
                   RoomScope(room: room, child: const RoomSearchDialog()),
             ),

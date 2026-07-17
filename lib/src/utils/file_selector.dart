@@ -153,7 +153,7 @@ class FileSelector {
           allowCompress: allowCompress,
         ),
       ),
-      useRootNavigator: true,
+      useRootNavigator: false,
     );
     if (selection == null) {
       return null;

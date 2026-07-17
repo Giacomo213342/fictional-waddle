@@ -41,7 +41,7 @@ class FullScreenAvatar extends StatelessWidget {
     return InkWell(
       onTap: () {
         final scope = MatrixScope.captureAll(context);
-        Navigator.of(context, rootNavigator: true).push(
+        Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => MatrixScope(
               scope: scope,

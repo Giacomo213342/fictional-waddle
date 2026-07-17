@@ -56,7 +56,7 @@ void main() {
     expect(find.text('room list'), findsOneWidget);
   });
 
-  testWidgets('system back still leaves after a root sheet scrim dismissal', (
+  testWidgets('system back still leaves after a room sheet scrim dismissal', (
     tester,
   ) async {
     final harness = _makeProductionShellHarness();
@@ -69,6 +69,7 @@ void main() {
     await tester.tap(find.text('open context menu'));
     await tester.pumpAndSettle();
     expect(find.text('context menu'), findsOneWidget);
+    expect(harness.branchNavigatorKey.currentState!.canPop(), isTrue);
     expect(harness.canHandlePop, isTrue);
 
     await tester.tapAt(const Offset(8, 8));
@@ -83,7 +84,52 @@ void main() {
     expect(find.text('room list'), findsOneWidget);
   });
 
-  testWidgets('system back closes a root sheet before leaving the room', (
+  testWidgets('room back survives an action dialog opened from its sheet', (
+    tester,
+  ) async {
+    final harness = _makeProductionShellHarness();
+    addTearDown(harness.router.dispose);
+    await tester.pumpWidget(harness.app);
+
+    await tester.tap(find.text('open context menu'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('delete'));
+    await tester.pumpAndSettle();
+    expect(find.text('confirm delete'), findsOneWidget);
+    expect(harness.branchNavigatorKey.currentState!.canPop(), isTrue);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('confirm delete'), findsNothing);
+    expect(find.text('room'), findsOneWidget);
+    expect(harness.canHandlePop, isTrue);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('room list'), findsOneWidget);
+  });
+
+  testWidgets('room back survives a fullscreen route', (tester) async {
+    final harness = _makeProductionShellHarness();
+    addTearDown(harness.router.dispose);
+    await tester.pumpWidget(harness.app);
+
+    await tester.tap(find.text('open photo'));
+    await tester.pumpAndSettle();
+    expect(find.text('fullscreen photo'), findsOneWidget);
+    expect(harness.branchNavigatorKey.currentState!.canPop(), isTrue);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('fullscreen photo'), findsNothing);
+    expect(harness.canHandlePop, isTrue);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('room list'), findsOneWidget);
+  });
+
+  testWidgets('system back closes a room sheet before leaving the room', (
     tester,
   ) async {
     final harness = _makeProductionShellHarness();
@@ -132,10 +178,12 @@ class _ProductionShellHarness {
   _ProductionShellHarness({
     required this.router,
     required this.roomNavigatorKey,
+    required this.branchNavigatorKey,
   });
 
   final GoRouter router;
   final GlobalKey<NavigatorState> roomNavigatorKey;
+  final GlobalKey<NavigatorState> branchNavigatorKey;
   bool? canHandlePop;
 
   Widget get app => MaterialApp.router(
@@ -151,36 +199,43 @@ _ProductionShellHarness _makeProductionShellHarness({
   String initialLocation = '/client/1/rooms/%21room%3Aexample.org',
 }) {
   final roomNavigatorKey = GlobalKey<NavigatorState>();
+  final branchNavigatorKey = GlobalKey<NavigatorState>();
   final router = GoRouter(
     initialLocation: initialLocation,
     routes: [
-      GoRoute(
-        path: '/client/:client/rooms',
-        builder: (context, state) => const Scaffold(
-          body: Text('room list'),
-        ),
-      ),
       ShellRoute(
-        navigatorKey: roomNavigatorKey,
-        builder: (context, state, child) => RoomShellBackHandler(
-          uri: state.uri,
-          nestedNavigatorKey: roomNavigatorKey,
-          child: ResponsiveSidebarLayout(
-            uri: state.uri,
-            main: const _RoomHarnessPage(),
-            sidebar: child,
-          ),
-        ),
+        navigatorKey: branchNavigatorKey,
+        builder: (context, state, child) => child,
         routes: [
           GoRoute(
-            path: '/client/:client/rooms/:roomId',
-            builder: (context, state) => const SizedBox.shrink(),
+            path: '/client/:client/rooms',
+            builder: (context, state) => const Scaffold(
+              body: Text('room list'),
+            ),
+          ),
+          ShellRoute(
+            navigatorKey: roomNavigatorKey,
+            builder: (context, state, child) => RoomShellBackHandler(
+              uri: state.uri,
+              nestedNavigatorKey: roomNavigatorKey,
+              child: ResponsiveSidebarLayout(
+                uri: state.uri,
+                main: const _RoomHarnessPage(),
+                sidebar: child,
+              ),
+            ),
             routes: [
               GoRoute(
-                path: 'details',
-                builder: (context, state) => const Scaffold(
-                  body: Text('details'),
-                ),
+                path: '/client/:client/rooms/:roomId',
+                builder: (context, state) => const SizedBox.shrink(),
+                routes: [
+                  GoRoute(
+                    path: 'details',
+                    builder: (context, state) => const Scaffold(
+                      body: Text('details'),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -191,6 +246,7 @@ _ProductionShellHarness _makeProductionShellHarness({
   return _ProductionShellHarness(
     router: router,
     roomNavigatorKey: roomNavigatorKey,
+    branchNavigatorKey: branchNavigatorKey,
   );
 }
 
@@ -205,13 +261,41 @@ class _RoomHarnessPage extends StatelessWidget {
             TextButton(
               onPressed: () => showModalBottomSheet<void>(
                 context: context,
-                useRootNavigator: true,
-                builder: (context) => const SizedBox(
+                useRootNavigator: false,
+                builder: (sheetContext) => SizedBox(
                   height: 200,
-                  child: Text('context menu'),
+                  child: Column(
+                    children: [
+                      const Text('context menu'),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(sheetContext).pop();
+                          showDialog<void>(
+                            context: context,
+                            useRootNavigator: false,
+                            builder: (context) => const AlertDialog(
+                              title: Text('confirm delete'),
+                            ),
+                          );
+                        },
+                        child: const Text('delete'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               child: const Text('open context menu'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).push<void>(
+                MaterialPageRoute(
+                  fullscreenDialog: true,
+                  builder: (context) => const Scaffold(
+                    body: Text('fullscreen photo'),
+                  ),
+                ),
+              ),
+              child: const Text('open photo'),
             ),
           ],
         ),

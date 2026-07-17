@@ -133,7 +133,10 @@ class DynamicContextMenu extends StatelessWidget {
     ContextMenuController.removeAny();
     final items = itemBuilder.call();
     await showModalBottomSheet(
-      useRootNavigator: true,
+      // Keep the sheet on the Navigator that owns the invoking route. A sheet
+      // on the application root can publish `canHandlePop: false` when it is
+      // dismissed and override a nested room's PopScope on Android.
+      useRootNavigator: false,
       context: context,
       clipBehavior: Clip.hardEdge,
       builder: (context) => MatrixScope(

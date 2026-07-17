@@ -41,7 +41,6 @@ class RoomListController extends State<RoomListPage> {
   }
 
   final searchController = SearchController();
-  final searchFocus = FocusNode();
   final scrollController = ScrollController();
   static final Map<String, double> _savedOffsets = {};
   String? _clientName;
@@ -100,7 +99,6 @@ class RoomListController extends State<RoomListPage> {
       ..removeListener(_saveOffset)
       ..dispose();
     searchController.dispose();
-    searchFocus.dispose();
     super.dispose();
   }
 
@@ -149,13 +147,11 @@ class RoomListController extends State<RoomListPage> {
   }
 
   void search() {
-    searchFocus.requestFocus();
     searchController.text = '';
     searchController.openView();
   }
 
   void command() {
-    searchFocus.requestFocus();
     searchController.value = const TextEditingValue(
       text: '/',
       composing: TextRange(start: 1, end: 1),
@@ -186,7 +182,7 @@ class RoomListController extends State<RoomListPage> {
     if (room == null) return;
 
     searchController.closeView('');
-    searchFocus.unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
 
     context.goMultiClient(RoomPage.makeRouteName(room.id));
   }

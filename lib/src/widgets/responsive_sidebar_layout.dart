@@ -39,6 +39,9 @@ class ResponsiveSidebarLayout extends StatelessWidget {
       showSidebar = true;
     }
     final layout = AdaptiveLayout(
+      // SlotLayout otherwise cross-fades builder replacements. While changing
+      // rooms that keeps the previous timeline visible underneath the new one.
+      transitionDuration: Duration.zero,
       body: SlotLayout(
         config: {
           Breakpoints.smallAndUp: SlotLayout.from(

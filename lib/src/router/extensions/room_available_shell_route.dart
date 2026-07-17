@@ -74,8 +74,11 @@ class RoomAvailableShellRoute extends ClientShellRoute {
                   uri: state.uri,
                   main: RoomScope(
                     room: room,
-                    child: spaceBuilder?.call(context, state) ??
-                        const FatalErrorPage(),
+                    child: KeyedSubtree(
+                      key: ValueKey((room.id, state.uri.fragment)),
+                      child: spaceBuilder?.call(context, state) ??
+                          const FatalErrorPage(),
+                    ),
                   ),
                   sidebar: child,
                 ),
@@ -90,7 +93,10 @@ class RoomAvailableShellRoute extends ClientShellRoute {
                   uri: state.uri,
                   main: RoomScope(
                     room: room,
-                    child: builder.call(context, state),
+                    child: KeyedSubtree(
+                      key: ValueKey((room.id, state.uri.fragment)),
+                      child: builder.call(context, state),
+                    ),
                   ),
                   sidebar: child,
                 ),

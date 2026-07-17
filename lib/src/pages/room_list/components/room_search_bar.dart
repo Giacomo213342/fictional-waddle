@@ -25,41 +25,27 @@ class RoomSearchBar extends StatelessWidget {
       bottom: false,
       child: SearchAnchor(
         searchController: controller.searchController,
-        builder: (context, searchController) => Padding(
+        builder: (context, _) => Padding(
           padding: const EdgeInsets.symmetric(
             // 16 - 1 px of border gap
             horizontal: 15,
             vertical: 4,
           ),
-          child: SearchBar(
-            controller: searchController,
-            focusNode: controller.searchFocus,
-            onTap: () {
-              searchController.openView();
-            },
-            onChanged: (_) {
-              searchController.openView();
-            },
-            onSubmitted: controller.searchSubmitted,
-            leading: IconButton(
-              onPressed: searchController.openView,
-              tooltip: MaterialLocalizations.of(context).searchFieldLabel,
-              icon: const Icon(Icons.search),
-            ),
-            trailing: [
-              IconButton(
-                onPressed: controller.accountSettings,
-                tooltip: AppLocalizations.of(context).accountSettings,
-                icon: ProfileAvatarBuilder(
-                  userId: userId ?? '',
-                  dimension: 32,
-                ),
+          child: SearchViewLauncher(
+            label: AppLocalizations.of(context).searchPromptLabel,
+            onPressed: controller.search,
+            accountButton: IconButton(
+              onPressed: controller.accountSettings,
+              tooltip: AppLocalizations.of(context).accountSettings,
+              icon: ProfileAvatarBuilder(
+                userId: userId ?? '',
+                dimension: 32,
               ),
-            ],
+            ),
           ),
         ),
         headerHeight: 56 - 1,
-        suggestionsBuilder: (c, searchController) {
+        suggestionsBuilder: (context, searchController) {
           final client = ClientScope.of(context).client;
           final query = searchController.text;
           final rooms = controller.filterRooms(query).map(
@@ -78,10 +64,7 @@ class RoomSearchBar extends StatelessWidget {
           if (query.startsWith('/')) {
             final command = query.split(' ').first.substring(1);
             final msg = query.replaceFirst('/$command', '').trim();
-            final args = CommandArgs(
-              msg: msg,
-              client: client,
-            );
+            final args = CommandArgs(msg: msg, client: client);
 
             commands = client.commands.keys
                 .where((cmd) => cmd.startsWith(command))
@@ -97,10 +80,67 @@ class RoomSearchBar extends StatelessWidget {
 
           return [...commands, ...rooms];
         },
-        viewOnSubmitted: RoomListController.of(context).searchSubmitted,
+        viewOnSubmitted: controller.searchSubmitted,
         viewBackgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
         viewConstraints: const BoxConstraints(minHeight: double.maxFinite),
         viewHintText: AppLocalizations.of(context).searchPromptLabel,
+      ),
+    );
+  }
+}
+
+class SearchViewLauncher extends StatelessWidget {
+  const SearchViewLauncher({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    required this.accountButton,
+  });
+
+  final String label;
+  final VoidCallback onPressed;
+  final Widget accountButton;
+
+  @override
+  Widget build(BuildContext context) {
+    final searchTheme = SearchBarTheme.of(context);
+    final states = <WidgetState>{};
+    final background = searchTheme.backgroundColor?.resolve(states) ??
+        Theme.of(context).colorScheme.surface;
+    final shape = searchTheme.shape?.resolve(states) ?? const StadiumBorder();
+
+    return Semantics(
+      button: true,
+      label: label,
+      child: Material(
+        color: background,
+        shape: shape,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onPressed,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 56),
+            child: Row(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Icon(Icons.search),
+                ),
+                Expanded(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                  ),
+                ),
+                accountButton,
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

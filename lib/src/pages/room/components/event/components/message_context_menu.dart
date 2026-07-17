@@ -45,7 +45,7 @@ class MessageContextMenu extends StatelessWidget {
     final scope = MatrixScope.captureAll(context);
     final response = await showAdaptiveDialog(
       context: context,
-      useRootNavigator: true,
+      useRootNavigator: false,
       builder: (context) => MatrixScope(
         scope: scope,
         child: AlertDialog.adaptive(

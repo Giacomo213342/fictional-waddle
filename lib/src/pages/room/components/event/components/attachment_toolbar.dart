@@ -285,7 +285,7 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
 
   Future<void> _openFullscreen(Event event) async {
     final scope = MatrixScope.captureAll(context);
-    await Navigator.of(context, rootNavigator: true).push<void>(
+    await Navigator.of(context).push<void>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (context) => MatrixScope(
@@ -471,15 +471,8 @@ class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
                 child: Transform.translate(
                   offset: Offset(0, _dismissOffset),
                   child: SizedBox.expand(
-                    child: InteractiveViewer(
+                    child: FittedImageInteractiveViewer(
                       transformationController: _transformationController,
-                      alignment: Alignment.center,
-                      boundaryMargin: EdgeInsets.zero,
-                      minScale: 1,
-                      maxScale: 5,
-                      panEnabled: true,
-                      scaleEnabled: true,
-                      trackpadScrollCausesScale: true,
                       onInteractionUpdate: (_) =>
                           _constrainToImage(viewport, imageSize),
                       onInteractionEnd: (_) =>
@@ -579,4 +572,39 @@ class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
       if (mounted) setState(() => _loading = false);
     }
   }
+}
+
+/// The zoom surface used by fullscreen message attachments.
+///
+/// The child already fills the viewport and centers the fitted image. Leaving
+/// [InteractiveViewer.alignment] unset is essential: its gesture recognizer
+/// and [TransformationController.toScene] both calculate the pinch focal point
+/// using a top-left matrix origin.
+class FittedImageInteractiveViewer extends StatelessWidget {
+  const FittedImageInteractiveViewer({
+    super.key,
+    required this.transformationController,
+    required this.onInteractionUpdate,
+    required this.onInteractionEnd,
+    required this.child,
+  });
+
+  final TransformationController transformationController;
+  final GestureScaleUpdateCallback onInteractionUpdate;
+  final GestureScaleEndCallback onInteractionEnd;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => InteractiveViewer(
+        transformationController: transformationController,
+        boundaryMargin: EdgeInsets.zero,
+        minScale: 1,
+        maxScale: 5,
+        panEnabled: true,
+        scaleEnabled: true,
+        trackpadScrollCausesScale: true,
+        onInteractionUpdate: onInteractionUpdate,
+        onInteractionEnd: onInteractionEnd,
+        child: child,
+      );
 }

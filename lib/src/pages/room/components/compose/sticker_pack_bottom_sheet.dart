@@ -17,7 +17,7 @@ class StickerPackBottomSheet extends StatelessWidget {
     final scope = MatrixScope.captureAll(context);
     return showModalBottomSheet<ImagePackImageContent>(
       context: context,
-      useRootNavigator: true,
+      useRootNavigator: false,
       builder: (context) => MatrixScope(
         scope: scope,
         child: this,
