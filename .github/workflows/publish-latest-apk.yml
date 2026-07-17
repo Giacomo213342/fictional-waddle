@@ -1,4 +1,4 @@
-name: Publish latest APK
+name: Publish APK prerelease
 
 on:
   push:
@@ -21,35 +21,77 @@ jobs:
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
+      - name: Resolve successful build
+        id: source
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_RUN_ID: ${{ github.event.workflow_run.id }}
+          EVENT_RUN_NUMBER: ${{ github.event.workflow_run.run_number }}
+          EVENT_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "workflow_run" ]]; then
+            RUN_ID="$EVENT_RUN_ID"
+            RUN_NUMBER="$EVENT_RUN_NUMBER"
+            HEAD_SHA="$EVENT_HEAD_SHA"
+          else
+            BUILD=$(gh api \
+              "repos/$GITHUB_REPOSITORY/actions/workflows/build-apk.yml/runs?branch=main&status=success&per_page=1" \
+              --jq '.workflow_runs[0] | [.id, .run_number, .head_sha] | @tsv')
+            IFS=$'\t' read -r RUN_ID RUN_NUMBER HEAD_SHA <<< "$BUILD"
+          fi
+
+          if [[ -z "$RUN_ID" || -z "$RUN_NUMBER" || -z "$HEAD_SHA" ]]; then
+            echo "Unable to resolve a successful Build APK run" >&2
+            exit 1
+          fi
+
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "run_number=$RUN_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "head_sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+
       - name: Download verified APK artifact
         uses: actions/download-artifact@v4
         with:
-          name: polycule-${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || '760fba77ddbec0bcc310c4372841358539913aec' }}
+          name: polycule-${{ steps.source.outputs.head_sha }}
           path: dist
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || 29548881323 }}
+          run-id: ${{ steps.source.outputs.run_id }}
 
-      - name: Publish rolling APK release
+      - name: Publish build prerelease
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HEAD_SHA: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || '760fba77ddbec0bcc310c4372841358539913aec' }}
+          RUN_ID: ${{ steps.source.outputs.run_id }}
+          RUN_NUMBER: ${{ steps.source.outputs.run_number }}
+          HEAD_SHA: ${{ steps.source.outputs.head_sha }}
         shell: bash
         run: |
+          set -euo pipefail
           APK=dist/polycule-arm64-v8a-release-aligned.apk
+          TAG="android-build-$RUN_NUMBER"
+          SHORT_SHA="${HEAD_SHA:0:7}"
+          TITLE="Polycule ARM64 build $RUN_NUMBER ($SHORT_SHA)"
+          printf -v NOTES \
+            'Signed and verified ARM64 APK from commit %s.\n\nBuild: https://github.com/%s/actions/runs/%s' \
+            "$HEAD_SHA" "$GITHUB_REPOSITORY" "$RUN_ID"
           test -s "$APK"
-          if gh release view latest-apk --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
-            gh release upload latest-apk "$APK" \
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release upload "$TAG" "$APK" \
               --repo "$GITHUB_REPOSITORY" \
               --clobber
-            gh release edit latest-apk \
-              --repo "$GITHUB_REPOSITORY" \
-              --title "Latest signed ARM64 APK" \
-              --notes "Signed ARM64 APK built and verified from commit $HEAD_SHA."
-          else
-            gh release create latest-apk "$APK" \
+            gh release edit "$TAG" \
               --repo "$GITHUB_REPOSITORY" \
               --target "$HEAD_SHA" \
-              --title "Latest signed ARM64 APK" \
-              --notes "Signed ARM64 APK built and verified from commit $HEAD_SHA." \
+              --title "$TITLE" \
+              --notes "$NOTES" \
+              --prerelease
+          else
+            gh release create "$TAG" "$APK" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$HEAD_SHA" \
+              --title "$TITLE" \
+              --notes "$NOTES" \
               --prerelease
           fi
