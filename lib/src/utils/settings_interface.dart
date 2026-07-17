@@ -73,11 +73,16 @@ class SettingsInterface {
       final verifyCertificates =
           await kPolyculeSecureStorage.read(key: 'verifyCertificates');
       final permitProxy = await kPolyculeSecureStorage.read(key: 'permitProxy');
-      final useSocks5Proxy = await kPolyculeSecureStorage.read(key: 'useSocks5Proxy');
+      final useSocks5Proxy =
+          await kPolyculeSecureStorage.read(key: 'useSocks5Proxy');
       final proxyHost = await kPolyculeSecureStorage.read(key: 'proxyHost');
       final proxyPortStr = await kPolyculeSecureStorage.read(key: 'proxyPort');
-      final proxyUsername = await kPolyculeSecureStorage.read(key: 'proxyUsername');
-      final proxyPassword = await kPolyculeSecureStorage.read(key: 'proxyPassword');
+      final proxyUsername =
+          await kPolyculeSecureStorage.read(key: 'proxyUsername');
+      final proxyPassword =
+          await kPolyculeSecureStorage.read(key: 'proxyPassword');
+      final proxyOneToOneCalls =
+          await kPolyculeSecureStorage.read(key: 'proxyOneToOneCalls');
       return NetworkState(
         useSni: useSni == null ? true : bool.tryParse(useSni) ?? true,
         tlsMinVersion:
@@ -92,10 +97,13 @@ class SettingsInterface {
         proxyPort: proxyPortStr != null ? int.tryParse(proxyPortStr) : null,
         proxyUsername: proxyUsername,
         proxyPassword: proxyPassword,
+        proxyOneToOneCalls: proxyOneToOneCalls == 'true',
       );
     } on PlatformException catch (e, s) {
       ErrorLogger().captureStackTrace(e, s);
-      if (failClosed) rethrow;
+      if (failClosed) {
+        rethrow;
+      }
       await kPolyculeSecureStorage.delete(key: 'useSni');
       await kPolyculeSecureStorage.delete(key: 'tlsMinVersion');
       await kPolyculeSecureStorage.delete(key: 'verifyCertificates');
@@ -105,6 +113,7 @@ class SettingsInterface {
       await kPolyculeSecureStorage.delete(key: 'proxyPort');
       await kPolyculeSecureStorage.delete(key: 'proxyUsername');
       await kPolyculeSecureStorage.delete(key: 'proxyPassword');
+      await kPolyculeSecureStorage.delete(key: 'proxyOneToOneCalls');
       return NetworkState();
     }
   }
@@ -145,6 +154,10 @@ class SettingsInterface {
     await kPolyculeSecureStorage.write(
       key: 'proxyPassword',
       value: network.proxyPassword,
+    );
+    await kPolyculeSecureStorage.write(
+      key: 'proxyOneToOneCalls',
+      value: network.proxyOneToOneCalls.toString(),
     );
   }
 

@@ -38,16 +38,27 @@ class _NetworkSettingsPageState extends State<NetworkSettingsPage> {
                   onChanged: _setSocks5Proxy,
                 ),
                 if (networkState.useSocks5Proxy) ...[
+                  SwitchListTile.adaptive(
+                    title: const Text('Use proxy/relay for 1:1 calls'),
+                    subtitle: const Text(
+                      'Force calls through the homeserver TURN relay. '
+                      'Matrix signaling continues to use SOCKS5.',
+                    ),
+                    value: networkState.proxyOneToOneCalls,
+                    onChanged: _setProxyOneToOneCalls,
+                  ),
                   ListTile(
                     title: TextFormField(
-                      decoration: const InputDecoration(labelText: 'Proxy Host'),
+                      decoration:
+                          const InputDecoration(labelText: 'Proxy Host'),
                       initialValue: networkState.proxyHost,
                       onChanged: _setProxyHost,
                     ),
                   ),
                   ListTile(
                     title: TextFormField(
-                      decoration: const InputDecoration(labelText: 'Proxy Port'),
+                      decoration:
+                          const InputDecoration(labelText: 'Proxy Port'),
                       initialValue: networkState.proxyPort?.toString(),
                       keyboardType: TextInputType.number,
                       onChanged: _setProxyPort,
@@ -55,14 +66,16 @@ class _NetworkSettingsPageState extends State<NetworkSettingsPage> {
                   ),
                   ListTile(
                     title: TextFormField(
-                      decoration: const InputDecoration(labelText: 'Proxy Username'),
+                      decoration:
+                          const InputDecoration(labelText: 'Proxy Username'),
                       initialValue: networkState.proxyUsername,
                       onChanged: _setProxyUsername,
                     ),
                   ),
                   ListTile(
                     title: TextFormField(
-                      decoration: const InputDecoration(labelText: 'Proxy Password'),
+                      decoration:
+                          const InputDecoration(labelText: 'Proxy Password'),
                       initialValue: networkState.proxyPassword,
                       obscureText: true,
                       onChanged: _setProxyPassword,
@@ -111,9 +124,13 @@ class _NetworkSettingsPageState extends State<NetworkSettingsPage> {
   }
 
   void _setSocks5Proxy(bool? useSocks5Proxy) {
-    if (useSocks5Proxy == null) return;
-    SettingsManager.of(context).network.value =
-        SettingsManager.of(context).network.value.copyWith(useSocks5Proxy: useSocks5Proxy);
+    if (useSocks5Proxy == null) {
+      return;
+    }
+    SettingsManager.of(context).network.value = SettingsManager.of(context)
+        .network
+        .value
+        .copyWith(useSocks5Proxy: useSocks5Proxy);
   }
 
   void _setProxyHost(String value) {
@@ -122,18 +139,34 @@ class _NetworkSettingsPageState extends State<NetworkSettingsPage> {
   }
 
   void _setProxyPort(String value) {
-    SettingsManager.of(context).network.value =
-        SettingsManager.of(context).network.value.copyWith(proxyPort: int.tryParse(value));
+    SettingsManager.of(context).network.value = SettingsManager.of(context)
+        .network
+        .value
+        .copyWith(proxyPort: int.tryParse(value));
   }
 
   void _setProxyUsername(String value) {
-    SettingsManager.of(context).network.value =
-        SettingsManager.of(context).network.value.copyWith(proxyUsername: value);
+    SettingsManager.of(context).network.value = SettingsManager.of(context)
+        .network
+        .value
+        .copyWith(proxyUsername: value);
   }
 
   void _setProxyPassword(String value) {
-    SettingsManager.of(context).network.value =
-        SettingsManager.of(context).network.value.copyWith(proxyPassword: value);
+    SettingsManager.of(context).network.value = SettingsManager.of(context)
+        .network
+        .value
+        .copyWith(proxyPassword: value);
+  }
+
+  void _setProxyOneToOneCalls(bool? value) {
+    if (value == null) {
+      return;
+    }
+    SettingsManager.of(context).network.value = SettingsManager.of(context)
+        .network
+        .value
+        .copyWith(proxyOneToOneCalls: value);
   }
 
   void _setVerifyCertificates(bool? verifyCertificates) {

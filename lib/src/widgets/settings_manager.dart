@@ -169,6 +169,7 @@ class NetworkState {
     this.proxyPort,
     this.proxyUsername,
     this.proxyPassword,
+    this.proxyOneToOneCalls = false,
   });
 
   final bool useSni;
@@ -180,6 +181,7 @@ class NetworkState {
   final int? proxyPort;
   final String? proxyUsername;
   final String? proxyPassword;
+  final bool proxyOneToOneCalls;
 
   NetworkState copyWith({
     bool? useSni,
@@ -191,6 +193,7 @@ class NetworkState {
     int? proxyPort,
     String? proxyUsername,
     String? proxyPassword,
+    bool? proxyOneToOneCalls,
   }) =>
       NetworkState(
         useSni: useSni ?? this.useSni,
@@ -202,6 +205,7 @@ class NetworkState {
         proxyPort: proxyPort ?? this.proxyPort,
         proxyUsername: proxyUsername ?? this.proxyUsername,
         proxyPassword: proxyPassword ?? this.proxyPassword,
+        proxyOneToOneCalls: proxyOneToOneCalls ?? this.proxyOneToOneCalls,
       );
 
   @override
@@ -214,7 +218,8 @@ class NetworkState {
       proxyHost.hashCode ^
       proxyPort.hashCode ^
       proxyUsername.hashCode ^
-      proxyPassword.hashCode;
+      proxyPassword.hashCode ^
+      proxyOneToOneCalls.hashCode;
 
   @override
   bool operator ==(Object other) {
@@ -227,7 +232,8 @@ class NetworkState {
           proxyHost == other.proxyHost &&
           proxyPort == other.proxyPort &&
           proxyUsername == other.proxyUsername &&
-          proxyPassword == other.proxyPassword;
+          proxyPassword == other.proxyPassword &&
+          proxyOneToOneCalls == other.proxyOneToOneCalls;
     }
     return super == other;
   }
