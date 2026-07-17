@@ -61,4 +61,3 @@ path.
   microphone/camera permissions, audio routing/Bluetooth, both call directions,
   remote hang-up, camera switching, relay-only ICE, background incoming calls,
   and Android native back.
-
