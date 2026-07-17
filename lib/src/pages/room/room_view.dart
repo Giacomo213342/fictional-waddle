@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../router/extensions/go_router_path_extension.dart';
+import '../../utils/matrix/voip/polycule_call_coordinator.dart';
 import '../../widgets/matrix/avatar_builder/room_builder.dart';
 import '../../widgets/matrix/room_display_name_text.dart';
 import '../../widgets/matrix/scopes/room_scope.dart';
+import '../../widgets/matrix/client_manager/client_manager.dart';
 import '../room_details/room_details.dart';
 import '../user_page/user_page.dart';
 import 'components/room_body.dart';
@@ -48,6 +51,30 @@ class RoomView extends StatelessWidget {
           },
         ),
         actions: [
+          if (canStartOneToOneCall(room))
+            ValueListenableBuilder(
+              valueListenable:
+                  ClientManager.of(context).callCoordinator.activeCall,
+              builder: (context, activeCall, _) => Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.call_outlined),
+                    tooltip: 'Audio call',
+                    onPressed: activeCall == null
+                        ? () => _startCall(context, room, CallType.kVoice)
+                        : null,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.videocam_outlined),
+                    tooltip: 'Video call',
+                    onPressed: activeCall == null
+                        ? () => _startCall(context, room, CallType.kVideo)
+                        : null,
+                  ),
+                ],
+              ),
+            ),
           IconButton(
             icon: const Icon(Icons.search),
             tooltip: AppLocalizations.of(context).search,
@@ -66,5 +93,23 @@ class RoomView extends StatelessWidget {
         child: const RoomBody(),
       ),
     );
+  }
+
+  Future<void> _startCall(
+    BuildContext context,
+    Room room,
+    CallType type,
+  ) async {
+    try {
+      await ClientManager.of(context).callCoordinator.startCall(room, type);
+    } catch (error, stackTrace) {
+      Logs().w('Unable to start 1:1 call.', error, stackTrace);
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.toString())),
+      );
+    }
   }
 }

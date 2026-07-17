@@ -8,7 +8,10 @@ import 'package:matrix/matrix.dart';
 import '../../../utils/matrix/client_util.dart';
 import '../../../utils/matrix/polycule_command_extension.dart';
 import '../../../utils/matrix/push_manager.dart';
+import '../../../utils/matrix/voip/polycule_call_coordinator.dart';
 import '../../../utils/polycule_http_client/polycule_http_client.dart';
+import '../../settings_manager.dart';
+import '../call/call_overlay_host.dart';
 import '../../error_dialog_scope.dart';
 import '../../intent_manager.dart';
 import 'client_store.dart';
@@ -60,6 +63,7 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
   final _loginClients = <int>{};
 
   late ClientStore store;
+  final callCoordinator = PolyculeCallCoordinator();
 
   final Map<int, StreamSubscription<LoginState>?> _loginStateListener = {};
 
@@ -83,15 +87,25 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
       subscription?.cancel();
     }
     _httpClientListener?.cancel();
+    unawaited(callCoordinator.dispose());
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => ErrorDialogScope(
-        child: IntentManagerWidget(
-          child: _ClientManagerScope(manager: this, child: widget.child),
+  Widget build(BuildContext context) {
+    callCoordinator.attachNetwork(SettingsManager.of(context).network);
+    return ErrorDialogScope(
+      child: IntentManagerWidget(
+        child: _ClientManagerScope(
+          manager: this,
+          child: CallOverlayHost(
+            coordinator: callCoordinator,
+            child: widget.child,
+          ),
         ),
-      );
+      ),
+    );
+  }
 
   Future<void> moveClient(Client client, int index) async {
     await store.moveClient(client, index);
@@ -118,13 +132,19 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
     );
 
     client.registerPolyculeCommands();
+    callCoordinator.registerClient(client);
 
     _loginStateListener[identifier]?.cancel();
     _loginStateListener[identifier] = client.onLoginStateChanged.stream.listen(
       (loginState) => _handleLoginStateChange(client, loginState),
     );
 
-    await client.init(waitForFirstSync: false);
+    try {
+      await client.init(waitForFirstSync: false);
+    } catch (_) {
+      await callCoordinator.unregisterClient(client);
+      rethrow;
+    }
     pushManagers[identifier] = PushManager(client);
     return client;
   }
@@ -165,6 +185,7 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
       return;
     }
 
+    await callCoordinator.unregisterClient(client);
     await store.deleteClient(client);
 
     if (!mounted) {
