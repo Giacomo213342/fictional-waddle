@@ -65,6 +65,8 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
 
   final PolyculeCallCoordinator coordinator;
   final ValueListenable<NetworkState> network;
+  final Map<CallSession, List<StreamSubscription<CallStateChange>>>
+      _callSubscriptions = {};
   Timer? _ringtoneTimer;
 
   bool get _relayOnly {
@@ -79,7 +81,12 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
   Future<RTCPeerConnection> createPeerConnection(
     Map<String, dynamic> configuration, [
     Map<String, dynamic> constraints = const {},
-  ]) {
+  ]) async {
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      await webrtc.Helper.setAndroidAudioConfiguration(
+        webrtc.AndroidAudioConfiguration.communication,
+      );
+    }
     final configured = configurePeerConnection(
       configuration,
       relayOnly: _relayOnly,
@@ -106,7 +113,17 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
   }
 
   @override
-  Future<void> registerListeners(CallSession session) async {}
+  Future<void> registerListeners(CallSession session) async {
+    if (_callSubscriptions.containsKey(session)) return;
+    _callSubscriptions[session] = [
+      session.onCallStateChanged.stream.listen((_) {
+        coordinator.callStateChanged(session);
+      }),
+      session.onCallEventChanged.stream.listen((_) {
+        coordinator.callStateChanged(session);
+      }),
+    ];
+  }
 
   @override
   Future<void> handleNewCall(CallSession session) async {
@@ -115,6 +132,10 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
 
   @override
   Future<void> handleCallEnded(CallSession session) async {
+    final subscriptions = _callSubscriptions.remove(session) ?? const [];
+    for (final subscription in subscriptions) {
+      await subscription.cancel();
+    }
     await stopRingtone();
     coordinator.deactivate(session);
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
@@ -152,6 +173,12 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
   EncryptionKeyProvider? get keyProvider => null;
 
   void dispose() {
+    for (final subscriptions in _callSubscriptions.values) {
+      for (final subscription in subscriptions) {
+        unawaited(subscription.cancel());
+      }
+    }
+    _callSubscriptions.clear();
     _ringtoneTimer?.cancel();
     _ringtoneTimer = null;
   }

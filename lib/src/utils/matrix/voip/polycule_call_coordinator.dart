@@ -4,13 +4,29 @@ import 'package:flutter/foundation.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../widgets/settings_manager.dart';
+import 'call_notification_manager.dart';
 import 'polycule_webrtc_delegate.dart';
 
 class ActivePolyculeCall {
-  const ActivePolyculeCall({required this.session, this.blockingError});
+  const ActivePolyculeCall({
+    required this.session,
+    this.blockingError,
+    this.visible = true,
+  });
 
   final CallSession session;
   final String? blockingError;
+  final bool visible;
+
+  ActivePolyculeCall copyWith({
+    String? blockingError,
+    bool? visible,
+  }) =>
+      ActivePolyculeCall(
+        session: session,
+        blockingError: blockingError ?? this.blockingError,
+        visible: visible ?? this.visible,
+      );
 }
 
 class CallRelayUnavailableException implements Exception {
@@ -29,8 +45,15 @@ class _ClientVoip {
 }
 
 class PolyculeCallCoordinator {
+  PolyculeCallCoordinator() {
+    CallNotificationManager.pendingIntent.addListener(
+      _handlePendingNotificationIntent,
+    );
+  }
+
   final activeCall = ValueNotifier<ActivePolyculeCall?>(null);
   final Map<Client, _ClientVoip> _clients = {};
+  final Map<CallSession, Timer> _connectionTimers = {};
   ValueListenable<NetworkState>? _network;
   bool _startingCall = false;
   bool _missingTurnRelay = false;
@@ -117,15 +140,147 @@ class PolyculeCallCoordinator {
       session: session,
       blockingError: error,
     );
+    unawaited(_showCallNotification(session));
+    _handlePendingNotificationIntent();
   }
 
   void deactivate(CallSession session) {
+    _connectionTimers.remove(session)?.cancel();
+    unawaited(CallNotificationManager.cancel(session.callId));
     if (identical(activeCall.value?.session, session)) {
       activeCall.value = null;
     }
   }
 
+  void minimizeActiveCall() {
+    final current = activeCall.value;
+    if (current == null || !current.visible) return;
+    activeCall.value = current.copyWith(visible: false);
+  }
+
+  void showActiveCall() {
+    final current = activeCall.value;
+    if (current == null || current.visible) return;
+    activeCall.value = current.copyWith(visible: true);
+  }
+
+  void callStateChanged(CallSession session) {
+    final current = activeCall.value;
+    if (!identical(current?.session, session)) return;
+    activeCall.value = current!.copyWith();
+
+    if (session.state == CallState.kConnected) {
+      _connectionTimers.remove(session)?.cancel();
+      unawaited(_showOngoingNotification(session, connected: true));
+    } else if (session.state == CallState.kConnecting) {
+      _startConnectionTimeout(session);
+      unawaited(_showOngoingNotification(session, connected: false));
+    }
+  }
+
+  void _startConnectionTimeout(CallSession session) {
+    if (_connectionTimers.containsKey(session)) return;
+    _connectionTimers[session] = Timer(const Duration(seconds: 35), () {
+      if (session.callHasEnded || session.state == CallState.kConnected) {
+        _connectionTimers.remove(session);
+        return;
+      }
+      final current = activeCall.value;
+      if (identical(current?.session, session)) {
+        activeCall.value = ActivePolyculeCall(
+          session: session,
+          blockingError:
+              'Unable to establish the encrypted media connection (ICE).',
+          visible: true,
+        );
+      }
+      _connectionTimers[session] = Timer(const Duration(seconds: 5), () {
+        _connectionTimers.remove(session);
+        if (!session.callHasEnded && session.state != CallState.kConnected) {
+          unawaited(session.hangup(reason: CallErrorCode.iceFailed));
+        }
+      });
+    });
+  }
+
+  Future<void> _showCallNotification(CallSession session) {
+    if (session.direction == CallDirection.kIncoming &&
+        session.state == CallState.kRinging &&
+        !session.answeredByUs) {
+      return CallNotificationManager.showIncoming(
+        clientIdentifier: session.client.clientName.clientIdentifier,
+        roomId: session.room.id,
+        callId: session.callId,
+        callerName: _peerName(session),
+        video: session.type == CallType.kVideo,
+        timeout: const Duration(minutes: 1),
+      );
+    }
+    return _showOngoingNotification(
+      session,
+      connected: session.state == CallState.kConnected,
+    );
+  }
+
+  Future<void> _showOngoingNotification(
+    CallSession session, {
+    required bool connected,
+  }) =>
+      CallNotificationManager.showOngoing(
+        clientIdentifier: session.client.clientName.clientIdentifier,
+        roomId: session.room.id,
+        callId: session.callId,
+        peerName: _peerName(session),
+        connected: connected,
+      );
+
+  String _peerName(CallSession session) =>
+      session.remoteUser?.calcDisplayname() ??
+      session.remoteUserId ??
+      'Matrix call';
+
+  void _handlePendingNotificationIntent() {
+    final intent = CallNotificationManager.pendingIntent.value;
+    final current = activeCall.value;
+    final session = current?.session;
+    if (intent == null ||
+        session == null ||
+        intent.callId != session.callId ||
+        intent.clientIdentifier != session.client.clientName.clientIdentifier) {
+      return;
+    }
+    CallNotificationManager.clearPending(intent);
+    showActiveCall();
+    switch (intent.action) {
+      case CallNotificationAction.show:
+        return;
+      case CallNotificationAction.answer:
+        unawaited(_answerFromNotification(session));
+        break;
+      case CallNotificationAction.decline:
+        unawaited(
+          session.reject(reason: CallErrorCode.userHangup),
+        );
+        break;
+      case CallNotificationAction.hangup:
+        unawaited(session.hangup(reason: CallErrorCode.userHangup));
+        break;
+    }
+  }
+
+  Future<void> _answerFromNotification(CallSession session) async {
+    await _showOngoingNotification(session, connected: false);
+    await session.answer();
+  }
+
   Future<void> dispose() async {
+    CallNotificationManager.pendingIntent.removeListener(
+      _handlePendingNotificationIntent,
+    );
+    for (final timer in _connectionTimers.values) {
+      timer.cancel();
+    }
+    _connectionTimers.clear();
     final current = activeCall.value?.session;
     if (current != null && !current.callHasEnded) {
       await current.hangup(reason: CallErrorCode.userHangup);

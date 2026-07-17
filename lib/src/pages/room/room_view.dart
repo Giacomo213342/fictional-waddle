@@ -58,20 +58,28 @@ class RoomView extends StatelessWidget {
               builder: (context, activeCall, _) => Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.call_outlined),
-                    tooltip: 'Audio call',
-                    onPressed: activeCall == null
-                        ? () => _startCall(context, room, CallType.kVoice)
-                        : null,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.videocam_outlined),
-                    tooltip: 'Video call',
-                    onPressed: activeCall == null
-                        ? () => _startCall(context, room, CallType.kVideo)
-                        : null,
-                  ),
+                  if (activeCall != null)
+                    IconButton.filledTonal(
+                      icon: const Icon(Icons.phone_in_talk),
+                      tooltip: 'Return to call',
+                      onPressed: ClientManager.of(
+                        context,
+                      ).callCoordinator.showActiveCall,
+                    )
+                  else ...[
+                    IconButton(
+                      icon: const Icon(Icons.call_outlined),
+                      tooltip: 'Audio call',
+                      onPressed: () =>
+                          _startCall(context, room, CallType.kVoice),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.videocam_outlined),
+                      tooltip: 'Video call',
+                      onPressed: () =>
+                          _startCall(context, room, CallType.kVideo),
+                    ),
+                  ],
                 ],
               ),
             ),

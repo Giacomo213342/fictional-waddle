@@ -17,6 +17,7 @@ import '../unified_push/unified_push_storage_polycule.dart';
 import 'push_gateway_extension.dart';
 import 'push_handler.dart';
 import 'push_log_journal.dart';
+import 'voip/call_notification_manager.dart';
 
 final pusherDataMessageFormat = kIsWeb
     ? null
@@ -133,21 +134,29 @@ class PushManager {
       final launchDetails =
           await notificationsPlugin.getNotificationAppLaunchDetails();
       if (launchDetails?.didNotificationLaunchApp == true) {
-        _openNotificationPayload(launchDetails?.notificationResponse?.payload);
+        final response = launchDetails?.notificationResponse;
+        _openNotificationPayload(
+          response?.payload,
+          actionId: response?.actionId,
+        );
       }
     }
   }
 
   static void _handleNotificationResponse(NotificationResponse response) {
-    _openNotificationPayload(response.payload);
+    _openNotificationPayload(response.payload, actionId: response.actionId);
   }
 
-  static void _openNotificationPayload(String? payload) {
+  static void _openNotificationPayload(
+    String? payload, {
+    String? actionId,
+  }) {
     if (payload == null) {
       return;
     }
     try {
       final data = jsonDecode(payload) as Map<String, dynamic>;
+      CallNotificationManager.receiveResponse(payload, actionId: actionId);
       final client = data['client'];
       final room = data['room'];
       if (client is int && room is String) {

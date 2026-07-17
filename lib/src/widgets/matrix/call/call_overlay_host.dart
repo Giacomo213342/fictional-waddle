@@ -19,11 +19,12 @@ class CallOverlayHost extends StatelessWidget {
         builder: (context, call, _) => Stack(
           children: [
             child,
-            if (call != null)
+            if (call != null && call.visible)
               Positioned.fill(
                 child: CallView(
                   key: ValueKey(call.session.callId),
                   activeCall: call,
+                  onMinimize: coordinator.minimizeActiveCall,
                 ),
               ),
           ],

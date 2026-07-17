@@ -8,9 +8,14 @@ import '../../../utils/matrix/voip/polycule_call_coordinator.dart';
 import '../avatar_builder/user_avatar.dart';
 
 class CallView extends StatefulWidget {
-  const CallView({super.key, required this.activeCall});
+  const CallView({
+    super.key,
+    required this.activeCall,
+    required this.onMinimize,
+  });
 
   final ActivePolyculeCall activeCall;
+  final VoidCallback onMinimize;
 
   @override
   State<CallView> createState() => _CallViewState();
@@ -19,7 +24,7 @@ class CallView extends StatefulWidget {
 class _CallViewState extends State<CallView> {
   final _remoteRenderer = webrtc.RTCVideoRenderer();
   final _localRenderer = webrtc.RTCVideoRenderer();
-  StreamSubscription<CallStateChange>? _callSubscription;
+  final List<StreamSubscription<dynamic>> _callSubscriptions = [];
   bool _renderersReady = false;
   bool _busy = false;
   bool _speakerOn = false;
@@ -30,13 +35,19 @@ class _CallViewState extends State<CallView> {
   void initState() {
     super.initState();
     _speakerOn = call.type == CallType.kVideo;
-    _callSubscription = call.onCallEventChanged.stream.listen((_) {
+    void handleUpdate(dynamic _) {
       if (!mounted) {
         return;
       }
       _syncRenderers();
       setState(() {});
-    });
+    }
+
+    _callSubscriptions.addAll([
+      call.onCallStateChanged.stream.listen(handleUpdate),
+      call.onCallEventChanged.stream.listen(handleUpdate),
+      call.onCallStreamsChanged.stream.listen(handleUpdate),
+    ]);
     unawaited(_initializeRenderers());
   }
 
@@ -69,7 +80,9 @@ class _CallViewState extends State<CallView> {
 
   @override
   void dispose() {
-    unawaited(_callSubscription?.cancel());
+    for (final subscription in _callSubscriptions) {
+      unawaited(subscription.cancel());
+    }
     if (_renderersReady) {
       _remoteRenderer.srcObject = null;
       _localRenderer.srcObject = null;
@@ -120,7 +133,7 @@ class _CallViewState extends State<CallView> {
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) {
-          unawaited(_hangup());
+          widget.onMinimize();
         }
       },
       child: Material(
@@ -160,8 +173,8 @@ class _CallViewState extends State<CallView> {
                     child: Padding(
                       padding: const EdgeInsets.all(8),
                       child: IconButton.filledTonal(
-                        tooltip: 'End call',
-                        onPressed: _busy ? null : _hangup,
+                        tooltip: 'Minimize call',
+                        onPressed: widget.onMinimize,
                         icon: const Icon(Icons.keyboard_arrow_down),
                       ),
                     ),
