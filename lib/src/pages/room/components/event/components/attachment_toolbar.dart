@@ -532,28 +532,14 @@ class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
 
   void _constrainToImage(Size viewport, Size image) {
     final matrix = _transformationController.value;
-    final scale = matrix.getMaxScaleOnAxis();
     final translation = matrix.getTranslation();
-
-    double constrainAxis(
-      double current,
-      double viewportExtent,
-      double imageExtent,
-    ) {
-      if (imageExtent * scale <= viewportExtent) {
-        return viewportExtent * (1 - scale) / 2;
-      }
-      final margin = (viewportExtent - imageExtent) / 2;
-      final minimum = viewportExtent - (margin + imageExtent) * scale;
-      final maximum = -margin * scale;
-      return current.clamp(minimum, maximum).toDouble();
+    final constrained = constrainFittedImageTransform(matrix, viewport, image);
+    final constrainedTranslation = constrained.getTranslation();
+    if (constrainedTranslation.x == translation.x &&
+        constrainedTranslation.y == translation.y) {
+      return;
     }
-
-    final dx = constrainAxis(translation.x, viewport.width, image.width);
-    final dy = constrainAxis(translation.y, viewport.height, image.height);
-    if (dx == translation.x && dy == translation.y) return;
-    _transformationController.value = matrix.clone()
-      ..setTranslationRaw(dx, dy, translation.z);
+    _transformationController.value = constrained;
   }
 
   void _finishInteraction(Size viewport, Size image) {
@@ -572,6 +558,33 @@ class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
       if (mounted) setState(() => _loading = false);
     }
   }
+}
+
+Matrix4 constrainFittedImageTransform(
+  Matrix4 matrix,
+  Size viewport,
+  Size image,
+) {
+  final scale = matrix.getMaxScaleOnAxis();
+  final translation = matrix.getTranslation();
+
+  double constrainAxis(
+    double current,
+    double viewportExtent,
+    double imageExtent,
+  ) {
+    if (scale <= 1.01) return 0;
+    final margin = (viewportExtent - imageExtent) / 2;
+    final firstEdge = -margin * scale;
+    final secondEdge = viewportExtent - (margin + imageExtent) * scale;
+    final minimum = math.min(firstEdge, secondEdge);
+    final maximum = math.max(firstEdge, secondEdge);
+    return current.clamp(minimum, maximum).toDouble();
+  }
+
+  final dx = constrainAxis(translation.x, viewport.width, image.width);
+  final dy = constrainAxis(translation.y, viewport.height, image.height);
+  return matrix.clone()..setTranslationRaw(dx, dy, translation.z);
 }
 
 /// The zoom surface used by fullscreen message attachments.

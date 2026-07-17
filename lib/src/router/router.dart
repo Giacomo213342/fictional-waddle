@@ -6,6 +6,7 @@ import 'package:matrix/matrix.dart';
 
 import '../pages/account_selector/account_selector.dart';
 import '../pages/account_settings/account_settings.dart';
+import '../pages/account_settings/account_settings_back_navigation.dart';
 import '../pages/account_settings/pages/emoji_settings/emoji_settings.dart';
 import '../pages/account_settings/pages/notification_settings/notification_settings.dart';
 import '../pages/account_settings/pages/session_settings/session_settings.dart';
@@ -31,6 +32,7 @@ import '../pages/user_sessions/user_sessions_page.dart';
 import '../widgets/matrix/client_manager/client_store.dart';
 import '../widgets/matrix/scopes/matrix_identifier_scope.dart';
 import '../widgets/placeholder.dart';
+import '../widgets/responsive_layout.dart';
 import 'extensions/client_manager_route.dart';
 import 'extensions/go_router_path_extension.dart';
 import 'extensions/homeserver_uri_route.dart';
@@ -134,6 +136,7 @@ class PolyculeRouter extends GoRouter {
 
   static StatefulShellBranch makeClientBranch(Client client) {
     final roomNavigatorKey = GlobalKey<NavigatorState>();
+    final accountSettingsNavigatorKey = GlobalKey<NavigatorState>();
     return StatefulShellBranch(
       routes: [
           MatrixClientRoute(
@@ -250,9 +253,18 @@ class PolyculeRouter extends GoRouter {
                           ),
                         ],
                       ),
-                      ResponsiveShellRoute(
-                        // navigatorKey: PolyculeRouter._tabNavigatorKey,
-                        builder: (context, state) => const AccountSettings(),
+                      ShellRoute(
+                        navigatorKey: accountSettingsNavigatorKey,
+                        builder: (context, state, child) =>
+                            AccountSettingsBackHandler(
+                          uri: state.uri,
+                          nestedNavigatorKey: accountSettingsNavigatorKey,
+                          child: ResponsiveLayout(
+                            uri: state.uri,
+                            main: const AccountSettings(),
+                            secondary: child,
+                          ),
+                        ),
                         routes: [
                           RequiresLoginRoute(
                             client: client,

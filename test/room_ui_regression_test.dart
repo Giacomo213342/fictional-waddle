@@ -5,6 +5,114 @@ import 'package:polycule/src/pages/room_list/components/room_search_bar.dart';
 import 'package:polycule/src/widgets/responsive_sidebar_layout.dart';
 
 void main() {
+  group('fullscreen image bounds', () {
+    const viewport = Size.square(400);
+    const landscapeImage = Size(400, 100);
+
+    test('preserves a valid position inside the black-band range', () {
+      final input = Matrix4.diagonal3Values(2, 2, 1)
+        ..setTranslationRaw(-200, -250, 0);
+
+      final first = constrainFittedImageTransform(
+        input,
+        viewport,
+        landscapeImage,
+      );
+      final second = constrainFittedImageTransform(
+        first,
+        viewport,
+        landscapeImage,
+      );
+
+      expect(first.getTranslation().y, -250);
+      expect(second.getTranslation().y, -250);
+    });
+
+    test('clamps only to the nearest valid black-band edge', () {
+      final input = Matrix4.diagonal3Values(2, 2, 1)
+        ..setTranslationRaw(-200, 20, 0);
+      final result = constrainFittedImageTransform(
+        input,
+        viewport,
+        landscapeImage,
+      );
+
+      expect(result.getTranslation().y, -100);
+    });
+
+    test('keeps fitted scale centered and oversized axes covered', () {
+      final fitted = Matrix4.identity()..setTranslationRaw(30, -20, 0);
+      final fittedResult = constrainFittedImageTransform(
+        fitted,
+        viewport,
+        landscapeImage,
+      );
+      expect(fittedResult.getTranslation().x, 0);
+      expect(fittedResult.getTranslation().y, 0);
+
+      final oversized = Matrix4.diagonal3Values(2, 2, 1)
+        ..setTranslationRaw(100, -500, 0);
+      final oversizedResult = constrainFittedImageTransform(
+        oversized,
+        viewport,
+        const Size.square(400),
+      );
+      expect(oversizedResult.getTranslation().x, 0);
+      expect(oversizedResult.getTranslation().y, -400);
+    });
+
+    testWidgets('a new gesture continues from the preserved band position', (
+      tester,
+    ) async {
+      final controller = TransformationController(
+        Matrix4.diagonal3Values(2, 2, 1)..setTranslationRaw(-200, -250, 0),
+      );
+      addTearDown(controller.dispose);
+
+      void constrain() {
+        final current = controller.value;
+        final constrained = constrainFittedImageTransform(
+          current,
+          viewport,
+          landscapeImage,
+        );
+        final before = current.getTranslation();
+        final after = constrained.getTranslation();
+        if (before.x != after.x || before.y != after.y) {
+          controller.value = constrained;
+        }
+      }
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: SizedBox.square(
+              dimension: 400,
+              child: FittedImageInteractiveViewer(
+                transformationController: controller,
+                onInteractionUpdate: (_) => constrain(),
+                onInteractionEnd: (_) => constrain(),
+                child: Center(
+                  child: SizedBox.fromSize(size: landscapeImage),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byType(FittedImageInteractiveViewer)),
+      );
+      await tester.pump(const Duration(milliseconds: 100));
+      await gesture.moveBy(const Offset(0, 10));
+      await tester.pump();
+
+      expect(controller.value.getTranslation().y, closeTo(-240, 0.01));
+      await gesture.up();
+    });
+  });
+
   testWidgets('collapsed home search is a launcher, not a text field', (
     tester,
   ) async {
