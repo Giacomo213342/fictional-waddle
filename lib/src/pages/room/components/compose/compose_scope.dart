@@ -19,9 +19,14 @@ import 'send_file_scope.dart';
 import 'type_ahead_helper.dart';
 
 class ComposeScopeWidget extends StatefulWidget {
-  const ComposeScopeWidget({super.key, required this.child});
+  const ComposeScopeWidget({
+    super.key,
+    required this.child,
+    required this.onMessageSubmitted,
+  });
 
   final Widget child;
+  final VoidCallback onMessageSubmitted;
 
   @override
   State<ComposeScopeWidget> createState() => ComposeScope();
@@ -130,9 +135,9 @@ class ComposeScope extends State<ComposeScopeWidget> {
 
   @override
   Widget build(BuildContext context) => _ComposeScope(
-    scope: this,
-    child: SendFileScopeWidget(child: widget.child),
-  );
+        scope: this,
+        child: SendFileScopeWidget(child: widget.child),
+      );
 
   Future<void> sendMessage() async {
     final room = RoomScope.of(context).room;
@@ -149,6 +154,7 @@ class ComposeScope extends State<ComposeScopeWidget> {
       _replyEvent = null;
       _editEvent = null;
     });
+    widget.onMessageSubmitted();
     try {
       String? eventId;
       // some joke enabling to send notices ...

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 
@@ -30,6 +31,25 @@ class MembershipJoinView extends StatefulWidget {
   State<MembershipJoinView> createState() => _MembershipJoinViewState();
 }
 
+@visibleForTesting
+bool shouldShowLatestMessagesShortcut({
+  required double pixels,
+  required double viewportDimension,
+}) =>
+    pixels > max(160, viewportDimension * .65);
+
+@visibleForTesting
+double estimateReversedTimelineOffset({
+  required int eventIndex,
+  required int eventCount,
+  required double maxScrollExtent,
+}) {
+  if (eventCount <= 1 || maxScrollExtent <= 0) return 0;
+  return (maxScrollExtent * eventIndex / (eventCount - 1))
+      .clamp(0, maxScrollExtent)
+      .toDouble();
+}
+
 class _MembershipJoinViewState extends State<MembershipJoinView>
     with WidgetsBindingObserver {
   Timeline? timeline;
@@ -43,6 +63,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
   bool _hasJumpedToUnread = false;
   bool _markingRead = false;
   bool _userScrollInProgress = false;
+  bool _showLatestMessagesShortcut = false;
   String _receiptFingerprint = '';
   StreamSubscription<String>? _roomUpdateSubscription;
   StreamSubscription<SyncUpdate>? _syncSubscription;
@@ -52,6 +73,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+    scrollController.addListener(_updateLatestMessagesShortcut);
     WidgetsBinding.instance.addPostFrameCallback((_) => _getTimeline());
     super.initState();
   }
@@ -85,6 +107,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
         room.typingUsers.any((user) => user.id != room.client.userID);
 
     return ComposeScopeWidget(
+      onMessageSubmitted: _scrollToLatestAfterSend,
       child: EventNavigationScope(
         navigate: _navigateToEvent,
         highlightEvents: eventHighlightStreamController.stream,
@@ -98,7 +121,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (_focusedEventId != null)
+                if (_focusedEventId != null || _showLatestMessagesShortcut)
                   Material(
                     color: Theme.of(context).colorScheme.secondaryContainer,
                     child: ListTile(
@@ -357,6 +380,34 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     setState(() => _unreadBoundaryEventId = null);
   }
 
+  void _updateLatestMessagesShortcut() {
+    if (!mounted || !scrollController.hasClients) return;
+    final position = scrollController.position;
+    final show = shouldShowLatestMessagesShortcut(
+      pixels: position.pixels,
+      viewportDimension: position.viewportDimension,
+    );
+    if (show == _showLatestMessagesShortcut) return;
+    setState(() => _showLatestMessagesShortcut = show);
+  }
+
+  void _scrollToLatestAfterSend() {
+    if (_focusedEventId != null) {
+      _returnToLatest();
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !scrollController.hasClients) return;
+      unawaited(
+        scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+        ),
+      );
+    });
+  }
+
   Future<void> _markLatestRead({bool preserveUnreadMarker = false}) async {
     final timeline = this.timeline;
     if (_markingRead || timeline == null || timeline.events.isEmpty) return;
@@ -503,14 +554,16 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
           (event) => event.eventId == eventId,
         ) ??
         -1;
-    final target = _eventKeys[eventId]?.currentContext;
-    if (index != -1 && target != null) {
-      await Scrollable.ensureVisible(
-        target,
-        duration: const Duration(milliseconds: 280),
-        alignment: .4,
-      );
-      if (mounted) eventHighlightStreamController.add(eventId);
+    if (index != -1) {
+      final target = await _materializeLoadedEvent(eventId, index);
+      if (target != null) {
+        await Scrollable.ensureVisible(
+          target,
+          duration: const Duration(milliseconds: 280),
+          alignment: .4,
+        );
+        if (mounted) eventHighlightStreamController.add(eventId);
+      }
       return;
     }
 
@@ -521,9 +574,84 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     );
   }
 
+  Future<BuildContext?> _materializeLoadedEvent(
+    String eventId,
+    int eventIndex,
+  ) async {
+    var target = _eventKeys[eventId]?.currentContext;
+    if (target != null) return target;
+    final timeline = this.timeline;
+    if (!mounted || timeline == null || !scrollController.hasClients) {
+      return null;
+    }
+
+    final position = scrollController.position;
+    final estimatedOffset = estimateReversedTimelineOffset(
+      eventIndex: eventIndex,
+      eventCount: timeline.events.length,
+      maxScrollExtent: position.maxScrollExtent,
+    );
+    await scrollController.animateTo(
+      estimatedOffset,
+      duration: const Duration(milliseconds: 240),
+      curve: Curves.easeOutCubic,
+    );
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return null;
+    target = _eventKeys[eventId]?.currentContext;
+
+    // Event heights vary, so the proportional estimate can land outside the
+    // cache extent. Walk by viewports toward the target until its lazy tile is
+    // built, without replacing the timeline or changing the room route.
+    for (var attempt = 0; target == null && attempt < 12; attempt++) {
+      if (!scrollController.hasClients) return null;
+      final mountedIndices = <int>[];
+      for (var index = 0; index < timeline.events.length; index++) {
+        if (_eventKeys[timeline.events[index].eventId]?.currentContext !=
+            null) {
+          mountedIndices.add(index);
+        }
+      }
+      if (mountedIndices.isEmpty) break;
+      final first = mountedIndices.reduce(min);
+      final last = mountedIndices.reduce(max);
+      final direction = eventIndex < first
+          ? -1.0
+          : eventIndex > last
+              ? 1.0
+              : 0.0;
+      if (direction == 0) {
+        await WidgetsBinding.instance.endOfFrame;
+      } else {
+        final current = scrollController.position;
+        final next =
+            (current.pixels + direction * current.viewportDimension * .8)
+                .clamp(0, current.maxScrollExtent)
+                .toDouble();
+        if (next == current.pixels) break;
+        scrollController.jumpTo(next);
+        await WidgetsBinding.instance.endOfFrame;
+      }
+      if (!mounted) return null;
+      target = _eventKeys[eventId]?.currentContext;
+    }
+    return target;
+  }
+
   void _returnToLatest() {
     final room = RoomScope.of(context).room;
-    context.goMultiClient(RoomPage.makeRouteName(room.id));
+    if (_focusedEventId != null) {
+      context.goMultiClient(RoomPage.makeRouteName(room.id));
+      return;
+    }
+    if (!scrollController.hasClients) return;
+    unawaited(
+      scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+      ),
+    );
   }
 }
 
