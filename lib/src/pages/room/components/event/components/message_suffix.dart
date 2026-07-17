@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../../utils/matrix/neighboaring_event_extension.dart';
+import '../../../../../utils/matrix/polycule_display_event_extension.dart';
 import '../../../../../utils/matrix/same_message_bubble_extension.dart';
 import '../../../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../../../widgets/matrix/scopes/timeline_scope.dart';
@@ -14,10 +15,12 @@ class MessageSuffix extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final timeline = TimelineScope.of(context).timeline;
-    final event = EventScope.of(context).event.getDisplayEvent(timeline);
-    timeline.getPreviousDisplayEvent(timeline.events.indexOf(event));
+    final event = EventScope.of(
+      context,
+    ).event.resolvePolyculeDisplayEvent(timeline).event;
+    final eventIndex = timeline.indexOfLogicalEvent(event);
     final nextEvent = timeline.getNextDisplayEvent(
-      timeline.events.indexOf(event),
+      eventIndex,
     );
 
     final isOwnMessage = event.senderId == event.room.client.userID;
@@ -49,8 +52,8 @@ class MessageSuffix extends StatelessWidget {
           child: showOwnAvatar
               ? avatar
               : !isOwnMessage && event.redacted
-              ? const Icon(Icons.delete)
-              : null,
+                  ? const Icon(Icons.delete)
+                  : null,
         ),
       ),
     );

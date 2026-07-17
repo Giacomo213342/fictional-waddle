@@ -1,15 +1,25 @@
 import 'package:matrix/matrix.dart';
 
 import 'is_display_event_extension.dart';
+import 'polycule_display_event_extension.dart';
 
 extension NeighboringDisplayEvents on Timeline {
+  int indexOfLogicalEvent(Event event) => events.indexWhere(
+        (candidate) =>
+            candidate.matchesEventOrTransactionId(event.eventId) ||
+            candidate.matchesEventOrTransactionId(event.transactionId) ||
+            event.matchesEventOrTransactionId(candidate.eventId) ||
+            event.matchesEventOrTransactionId(candidate.transactionId),
+      );
+
   Event? getPreviousDisplayEvent(int index) {
     Event? previousEvent;
     int previousEventIndex = index;
     do {
       previousEventIndex++;
       if (previousEventIndex < events.length) {
-        previousEvent = events[previousEventIndex].getDisplayEvent(this);
+        previousEvent =
+            events[previousEventIndex].resolvePolyculeDisplayEvent(this).event;
       } else {
         previousEvent = null;
       }
@@ -25,7 +35,8 @@ extension NeighboringDisplayEvents on Timeline {
     do {
       nextEventIndex--;
       if (nextEventIndex >= 0) {
-        nextEvent = events[nextEventIndex].getDisplayEvent(this);
+        nextEvent =
+            events[nextEventIndex].resolvePolyculeDisplayEvent(this).event;
       } else {
         nextEvent = null;
       }

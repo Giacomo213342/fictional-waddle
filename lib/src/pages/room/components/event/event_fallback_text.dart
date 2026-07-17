@@ -4,6 +4,7 @@ import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../l10n/matrix/polycule_matrix_localizations.dart';
 import '../../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../../widgets/matrix/scopes/timeline_scope.dart';
+import '../../../../utils/matrix/polycule_display_event_extension.dart';
 
 class EventFallbackText extends StatelessWidget {
   const EventFallbackText({super.key});
@@ -12,7 +13,8 @@ class EventFallbackText extends StatelessWidget {
   Widget build(BuildContext context) {
     final event = EventScope.of(context)
         .event
-        .getDisplayEvent(TimelineScope.of(context).timeline);
+        .resolvePolyculeDisplayEvent(TimelineScope.of(context).timeline)
+        .event;
     return FutureBuilder(
       future: event.calcLocalizedBody(AppLocalizations.of(context).matrix),
       builder: (context, snapshot) => Text(

@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../utils/matrix/neighboaring_event_extension.dart';
+import '../../../../utils/matrix/polycule_display_event_extension.dart';
 import '../../../../utils/matrix/is_display_event_extension.dart';
 import '../../../../utils/matrix/same_message_bubble_extension.dart';
 import '../../../../widgets/matrix/scopes/event_scope.dart';
@@ -31,11 +32,12 @@ class RoomMessage extends StatelessWidget {
     final timeline = TimelineScope.of(context).timeline;
 
     final event = scope.event;
+    final eventIndex = timeline.indexOfLogicalEvent(event);
     final previousEvent = timeline.getPreviousDisplayEvent(
-      timeline.events.indexOf(event),
+      eventIndex,
     );
     final nextEvent = timeline.getNextDisplayEvent(
-      timeline.events.indexOf(event),
+      eventIndex,
     );
 
     final previousMessageSameSender =
@@ -122,6 +124,9 @@ class RoomMessage extends StatelessWidget {
                                   builder: (context, snapshot) {
                                     final replyEvent =
                                         snapshot.data ?? replyEventFallback;
+                                    final displayReply = replyEvent
+                                        ?.resolvePolyculeDisplayEvent(timeline)
+                                        .event;
                                     return AnimatedSize(
                                       duration: const Duration(
                                         milliseconds: 150,
@@ -129,11 +134,10 @@ class RoomMessage extends StatelessWidget {
                                       alignment: Alignment.centerLeft,
                                       child: SizedBox(
                                         width: contentWidth,
-                                        child: replyEvent == null
+                                        child: displayReply == null
                                             ? null
                                             : EventScope(
-                                                event: replyEvent
-                                                    .getDisplayEvent(timeline),
+                                                event: displayReply,
                                                 child: QuotedEvent(
                                                   onTap: () => unawaited(
                                                     EventNavigationScope.of(

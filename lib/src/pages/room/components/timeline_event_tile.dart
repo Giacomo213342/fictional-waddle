@@ -6,6 +6,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../utils/matrix/is_display_event_extension.dart';
 import '../../../utils/matrix/poll_event.dart';
+import '../../../utils/matrix/polycule_display_event_extension.dart';
 import '../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../widgets/matrix/scopes/timeline_scope.dart';
 import 'event/event_fallback_text.dart';
@@ -30,7 +31,11 @@ class _TimelineEventTileState extends State<TimelineEventTile> {
     super.didChangeDependencies();
     final scopedEvent = EventScope.of(context).event;
     final stream = TimelineScope.of(context).eventChangeStream;
-    _event ??= scopedEvent;
+    // AnimatedList reuses an index's element when an edit relation is inserted
+    // before it. Never retain the previous index's event in that element.
+    if (!identical(_event, scopedEvent)) {
+      _event = scopedEvent;
+    }
     if (!identical(stream, _eventStream)) {
       _eventSubscription?.cancel();
       _eventStream = stream;
@@ -63,10 +68,9 @@ class _TimelineEventTileState extends State<TimelineEventTile> {
   Widget build(BuildContext context) {
     final timeline = TimelineScope.of(context).timeline;
     final sourceEvent = _event ?? EventScope.of(context).event;
-    final isEdited = sourceEvent
-        .aggregatedEvents(timeline, RelationshipTypes.edit)
-        .isNotEmpty;
-    final event = sourceEvent.getDisplayEvent(timeline);
+    final resolved = sourceEvent.resolvePolyculeDisplayEvent(timeline);
+    final event = resolved.event;
+    final isEdited = resolved.isEdited;
 
     if (!event.shouldDisplayEvent) {
       return const SizedBox();
@@ -78,9 +82,11 @@ class _TimelineEventTileState extends State<TimelineEventTile> {
         EventTypes.Reaction || EventTypes.Redaction => const SizedBox(),
         EventTypes.Sticker ||
         EventTypes.Message ||
-        EventTypes.Encrypted => RoomMessage(isEdited: isEdited),
+        EventTypes.Encrypted =>
+          RoomMessage(isEdited: isEdited),
         MatrixPollEventTypes.start ||
-        MatrixPollEventTypes.unstableStart => const RoomMessage(),
+        MatrixPollEventTypes.unstableStart =>
+          const RoomMessage(),
         EventTypes.RoomCreate ||
         EventTypes.RoomPowerLevels ||
         EventTypes.RoomJoinRules ||
@@ -92,9 +98,11 @@ class _TimelineEventTileState extends State<TimelineEventTile> {
         EventTypes.RoomAvatar ||
         EventTypes.RoomAliases ||
         EventTypes.RoomCanonicalAlias ||
-        EventTypes.RoomMember => const RoomState(),
+        EventTypes.RoomMember =>
+          const RoomState(),
         EventTypes.RoomCreate ||
-        EventTypes.RoomTombstone => const RoomTombstone(),
+        EventTypes.RoomTombstone =>
+          const RoomTombstone(),
         EventTypes.SpaceChild || EventTypes.SpaceParent => const RoomState(),
         _ => const EventFallbackText(),
       },
