@@ -62,7 +62,21 @@ jobs:
         run: flutter gen-l10n
 
       - name: Verify Android back navigation
-        run: flutter test test/room_back_navigation_test.dart
+        shell: bash
+        run: |
+          set +e
+          TEST_OUTPUT=$(flutter test test/room_back_navigation_test.dart 2>&1)
+          TEST_STATUS=$?
+          set -e
+          printf '%s\n' "$TEST_OUTPUT"
+          if ((TEST_STATUS != 0)); then
+            ANNOTATION=$(printf '%s' "$TEST_OUTPUT" \
+              | tail -n 120 \
+              | sed -e 's/%/%25/g' -e 's/\r/%0D/g' \
+              | awk 'BEGIN { ORS="%0A" } { print }')
+            echo "::error title=Android back navigation tests failed::$ANNOTATION"
+            exit "$TEST_STATUS"
+          fi
 
       - name: Build ARM64 APK
         shell: bash
