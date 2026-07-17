@@ -101,7 +101,13 @@ class RoomShellBackHandler extends StatelessWidget {
           // GoRouter can traverse it, but it has no page to pop. Its `false`
           // must not overwrite the parent route's PopScope capability at
           // WidgetsApp, otherwise Android unregisters Flutter's back callback.
-          onNotification: (_) => true,
+          onNotification: (notification) {
+            // The offstage leaf Navigator reports `false`, while this room's
+            // PopScope reports `true`. Swallowing both unregisters Flutter's
+            // Android back callback and lets the Activity close. Only discard
+            // the stale negative capability from the invisible Navigator.
+            return !notification.canHandlePop;
+          },
           child: child,
         ),
       );
