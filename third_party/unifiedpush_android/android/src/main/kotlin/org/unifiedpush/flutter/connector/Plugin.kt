@@ -2,9 +2,15 @@ package org.unifiedpush.flutter.connector
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.core.app.Person
+import androidx.core.content.LocusIdCompat
+import androidx.core.content.pm.ShortcutInfoCompat
+import androidx.core.content.pm.ShortcutManagerCompat
+import androidx.core.graphics.drawable.IconCompat
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -29,6 +35,7 @@ class Plugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private var job: Job? = null
     private val mainHandler = Handler(Looper.getMainLooper())
     private var pluginChannel: MethodChannel? = null
+    private var conversationChannel: MethodChannel? = null
     // Allow up to 20 calls during initialization
     val calls = MutableSharedFlow<Call>(replay = 20)
 
@@ -166,12 +173,26 @@ class Plugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         pluginChannel = MethodChannel(binding.binaryMessenger, PLUGIN_CHANNEL).apply {
             setMethodCallHandler(this@Plugin)
         }
+        conversationChannel = MethodChannel(
+            binding.binaryMessenger,
+            CONVERSATION_CHANNEL,
+        ).apply {
+            setMethodCallHandler { call, result ->
+                if (call.method != "publishConversationShortcut") {
+                    result.notImplemented()
+                    return@setMethodCallHandler
+                }
+                publishConversationShortcut(call, result)
+            }
+        }
     }
 
     override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
         Log.d(TAG, "onDetachedFromEngine")
         pluginChannel?.setMethodCallHandler(null)
         pluginChannel = null
+        conversationChannel?.setMethodCallHandler(null)
+        conversationChannel = null
         mContext = null
         job?.cancel()
         // A cached Android process can outlive its FlutterEngine. Do not leave
@@ -197,8 +218,59 @@ class Plugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
     }
 
+    private fun publishConversationShortcut(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
+        val context = mContext ?: run {
+            result.error("NO_CONTEXT", "Android context is unavailable", null)
+            return
+        }
+        val id = call.argument<String>("id")
+        val name = call.argument<String>("name")
+        val personName = call.argument<String>("personName") ?: name
+        val personKey = call.argument<String>("personKey") ?: id
+        if (id.isNullOrBlank() || name.isNullOrBlank() ||
+            personName.isNullOrBlank() || personKey.isNullOrBlank()) {
+            result.error("INVALID_ARGS", "Missing conversation identity", null)
+            return
+        }
+
+        val launchIntent = context.packageManager
+            .getLaunchIntentForPackage(context.packageName)
+            ?.apply {
+                action = Intent.ACTION_VIEW
+                putExtra("polycule_conversation_id", id)
+            }
+            ?: run {
+                result.error("NO_LAUNCH_INTENT", "App launch intent is unavailable", null)
+                return
+            }
+        val person = Person.Builder()
+            .setName(personName)
+            .setKey(personKey)
+            .setImportant(call.argument<Boolean>("important") == true)
+            .build()
+        val shortcut = ShortcutInfoCompat.Builder(context, id)
+            .setShortLabel(name)
+            .setLongLabel(name)
+            .setIcon(IconCompat.createWithResource(context, context.applicationInfo.icon))
+            .setIntent(launchIntent)
+            .setPerson(person)
+            .setCategories(setOf(CONVERSATION_CATEGORY))
+            .setLocusId(LocusIdCompat(id))
+            .setLongLived(true)
+            .setIsConversation()
+            .build()
+
+        result.success(ShortcutManagerCompat.pushDynamicShortcut(context, shortcut))
+    }
+
     companion object {
         private const val TAG = "Plugin"
+        private const val CONVERSATION_CHANNEL = "polycule.shortcuts"
+        private const val CONVERSATION_CATEGORY =
+            "business.braid.polycule.conversation"
         var calls: MutableSharedFlow<Call>? = null
         val dispatcher = Dispatchers.IO
     }

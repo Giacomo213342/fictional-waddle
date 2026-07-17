@@ -11,3 +11,8 @@ The identity check in `Plugin.onDetachedFromEngine` prevents an older plugin
 instance from clearing a newer instance's flow. This backports the event
 reinitialization behavior released upstream in 3.4.1 without requiring package
 resolution or downloads during local development.
+
+The same engine-level plugin owns the `polycule.shortcuts` method channel.
+Android conversation shortcuts must be publishable from both the foreground
+engine and the headless UnifiedPush engine; an Activity-owned handler cannot
+serve notifications received after process death.

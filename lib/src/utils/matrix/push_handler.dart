@@ -25,6 +25,7 @@ import 'is_display_event_extension.dart';
 import 'push_manager.dart';
 import 'poll_event.dart';
 import 'push_log_journal.dart';
+import 'voip/call_notification_manager.dart';
 
 final Map<String, Future<void>> _backgroundNotificationQueues = {};
 const _headlessStorageTimeout = Duration(seconds: 5);
@@ -235,7 +236,7 @@ Future<void> handleBackgroundNotification(
           mutedRoomIds: mutedRoomIds!,
           performClearingSync: false,
           eventLookupTimeout: _headlessRequestTimeout,
-          publishShortcut: false,
+          publishShortcut: true,
           backgroundState: notificationState,
         );
 
@@ -462,8 +463,7 @@ Future<void> _refreshHeadlessPushAccessToken(
 
   // A foreground client may have rotated the token after this headless
   // client was created. Prefer that token instead of rotating twice.
-  if (rejectedAccessToken != null &&
-      storedAccessToken != rejectedAccessToken) {
+  if (rejectedAccessToken != null && storedAccessToken != rejectedAccessToken) {
     client.accessToken = storedAccessToken;
     await PushLogJournal.record(
       'A newer Matrix access token was already stored; using it for retry.',
@@ -474,9 +474,7 @@ Future<void> _refreshHeadlessPushAccessToken(
   final homeserver = account['homeserver_url'];
   final refreshToken = account['refresh_token'];
   final userId = account['user_id'];
-  if (homeserver is! String ||
-      refreshToken is! String ||
-      userId is! String) {
+  if (homeserver is! String || refreshToken is! String || userId is! String) {
     throw StateError('Stored Matrix session cannot be refreshed.');
   }
 
@@ -588,6 +586,64 @@ Future<PushNotificationResult> handlePushNotification({
     return PushNotificationResult.suppressed;
   }
 
+  if (isMatrixCallSignalingEventType(event.type)) {
+    final callId = event.content['call_id'];
+    final isInvite = event.type.endsWith('.invite');
+    final isTerminal =
+        event.type.endsWith('.hangup') || event.type.endsWith('.reject');
+
+    if (callId is String && isTerminal) {
+      await CallNotificationManager.cancel(callId);
+    }
+
+    if (callId is String && isInvite && event.senderId != client.userID) {
+      final lifetime = event.content['lifetime'] is int
+          ? event.content['lifetime'] as int
+          : const Duration(minutes: 1).inMilliseconds;
+      final unsignedAge = event.unsigned?.tryGet<int>('age');
+      final age = unsignedAge != null
+          ? unsignedAge
+          : DateTime.now().difference(event.originServerTs).inMilliseconds;
+      final maximumLifetime = lifetime < 1000 ? 1000 : lifetime;
+      final remaining = Duration(
+        milliseconds: (lifetime - age).clamp(1000, maximumLifetime).toInt(),
+      );
+      final sender = event.senderFromMemoryOrFallback;
+      final show = () => CallNotificationManager.showIncoming(
+            clientIdentifier: client.clientName.clientIdentifier,
+            roomId: event.room.id,
+            callId: callId,
+            callerName: sender.calcDisplayname(i18n: l10n.matrix),
+            video: _callInviteContainsVideo(event.content),
+            timeout: remaining,
+          );
+      if (backgroundState == null) {
+        await show();
+      } else {
+        await backgroundState.showComplete(
+          cancelFallback: () => _cancelBackgroundFallback(
+            notificationsPlugin,
+            event.room.id,
+          ),
+          show: show,
+        );
+      }
+      return PushNotificationResult.shown;
+    }
+
+    if (backgroundState != null) {
+      await backgroundState.suppress((fallbackShown) async {
+        if (fallbackShown) {
+          await _cancelBackgroundFallback(
+            notificationsPlugin,
+            event.room.id,
+          );
+        }
+      });
+    }
+    return PushNotificationResult.suppressed;
+  }
+
   final roomId = event.roomId;
   if (roomId != null && ActiveRoomTracker.isVisible(roomId)) {
     if (backgroundState == null) {
@@ -682,6 +738,9 @@ Future<PushNotificationResult> handlePushNotification({
       await channel.invokeMethod('publishConversationShortcut', {
         'id': event.room.id,
         'name': roomName,
+        'personName': sender.calcDisplayname(i18n: l10n.matrix),
+        'personKey': event.senderId,
+        'important': event.room.isFavourite,
       });
     } catch (e) {
       Logs().w('Failed to publish conversation shortcut', e);
@@ -770,6 +829,19 @@ Future<PushNotificationResult> handlePushNotification({
     );
   }
   return PushNotificationResult.shown;
+}
+
+bool _callInviteContainsVideo(Map<String, dynamic> content) {
+  final metadata = content['org.matrix.msc3077.sdp_stream_metadata'] ??
+      content['sdp_stream_metadata'];
+  if (metadata is Map) {
+    for (final value in metadata.values) {
+      if (value is Map && value['video_muted'] == false) return true;
+    }
+  }
+  final offer = content['offer'];
+  final sdp = offer is Map ? offer['sdp'] : null;
+  return sdp is String && RegExp(r'(^|\r?\n)m=video\s').hasMatch(sdp);
 }
 
 PushNotification decodeMessage(Uint8List message) {
