@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
@@ -11,15 +13,16 @@ import 'client_route.dart';
 class RoomAvailableShellRoute extends ClientShellRoute {
   RoomAvailableShellRoute({
     required super.client,
+    required GlobalKey<NavigatorState> navigatorKey,
     required GoRouterWidgetBuilder builder,
     GoRouterWidgetBuilder? spaceBuilder,
     GoRouterWidgetBuilder? roomUnavailableBuilder,
     super.observers,
     required super.routes,
     super.parentNavigatorKey,
-    super.navigatorKey,
     super.restorationScopeId,
   }) : super(
+          navigatorKey: navigatorKey,
           builder: (context, state, child) {
             // check whether we have an event deep link
             String? eventId;
@@ -59,25 +62,35 @@ class RoomAvailableShellRoute extends ClientShellRoute {
 
             // handle spaces
             if (room.isSpace) {
-              return ResponsiveSidebarLayout(
-                uri: state.uri,
-                main: RoomScope(
-                  room: room,
-                  child: spaceBuilder?.call(context, state) ??
-                      const FatalErrorPage(),
+              return NavigatorPopHandler<Object?>(
+                onPopWithResult: (result) async {
+                  await navigatorKey.currentState?.maybePop(result);
+                },
+                child: ResponsiveSidebarLayout(
+                  uri: state.uri,
+                  main: RoomScope(
+                    room: room,
+                    child: spaceBuilder?.call(context, state) ??
+                        const FatalErrorPage(),
+                  ),
+                  sidebar: child,
                 ),
-                sidebar: child,
               );
             }
             // handle regular rooms
             else {
-              return ResponsiveSidebarLayout(
-                uri: state.uri,
-                main: RoomScope(
-                  room: room,
-                  child: builder.call(context, state),
+              return NavigatorPopHandler<Object?>(
+                onPopWithResult: (result) async {
+                  await navigatorKey.currentState?.maybePop(result);
+                },
+                child: ResponsiveSidebarLayout(
+                  uri: state.uri,
+                  main: RoomScope(
+                    room: room,
+                    child: builder.call(context, state),
+                  ),
+                  sidebar: child,
                 ),
-                sidebar: child,
               );
             }
           },

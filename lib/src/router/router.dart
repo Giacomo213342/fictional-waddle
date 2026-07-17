@@ -21,6 +21,7 @@ import '../pages/homeserver/homeserver.dart';
 import '../pages/login/login.dart';
 import '../pages/public_room/public_room.dart';
 import '../pages/room/room.dart';
+import '../pages/room/room_back_navigation.dart';
 import '../pages/room_details/room_details.dart';
 import '../pages/room_list/room_list.dart';
 import '../pages/room_list/room_list_position_tracker.dart';
@@ -132,9 +133,10 @@ class PolyculeRouter extends GoRouter {
     ],
   );
 
-  static StatefulShellBranch makeClientBranch(Client client) =>
-      StatefulShellBranch(
-        routes: [
+  static StatefulShellBranch makeClientBranch(Client client) {
+    final roomNavigatorKey = GlobalKey<NavigatorState>();
+    return StatefulShellBranch(
+      routes: [
           MatrixClientRoute(
             client: client,
             routes: [
@@ -177,6 +179,7 @@ class PolyculeRouter extends GoRouter {
                             routes: [
                               RoomAvailableShellRoute(
                                 client: client,
+                                navigatorKey: roomNavigatorKey,
                                 builder: (context, state) =>
                                     RoomPage(key: ValueKey(state.uri.fragment)),
                                 roomUnavailableBuilder: (context, state) =>
@@ -202,7 +205,9 @@ class PolyculeRouter extends GoRouter {
                                       return true;
                                     },
                                     builder: (context, state) =>
-                                        const PolyculePlaceholder(),
+                                        const RoomRouteBackScope(
+                                          child: PolyculePlaceholder(),
+                                        ),
                                   ),
                                   RoomAvailableRoute(
                                     client: client,
@@ -286,8 +291,9 @@ class PolyculeRouter extends GoRouter {
               ),
             ],
           ),
-        ],
-      );
+      ],
+    );
+  }
 
   static final _applicationNavigatorKey = GlobalKey<NavigatorState>();
 

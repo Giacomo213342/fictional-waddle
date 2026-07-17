@@ -6,10 +6,8 @@ import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import '../../../pages/room_list/room_list_position_tracker.dart';
 import '../../../utils/matrix/active_room_tracker.dart';
 import '../../intent_manager.dart';
-import '../scopes/client_scope.dart';
 import 'client_manager.dart';
 import 'components/top/keyboard_aware_top_bar.dart';
 
@@ -118,37 +116,6 @@ class _ClientTabViewState extends State<ClientTabView> {
     if (subscription != null) unawaited(subscription.cancel());
   }
 
-  Future<bool> _handleBackButton() async {
-    final roomMatch =
-        RegExp(r'^/client/\d+/rooms/([^/]+)$').firstMatch(widget.uri.path);
-    if (roomMatch == null) return false;
-
-    final rootNavigator = Navigator.of(context, rootNavigator: true);
-    if (rootNavigator.canPop()) {
-      await rootNavigator.maybePop();
-      return true;
-    }
-
-    final roomId = Uri.decodeComponent(roomMatch.group(1)!);
-    final room = ClientScope.of(context).client.getRoomById(roomId);
-    if (room != null) RoomListPositionTracker.prepareReturn(room);
-
-    final uri = widget.uri;
-    if (uri.fragment.isNotEmpty) {
-      GoRouter.of(context).go(uri.replace(fragment: '').toString());
-    } else {
-      GoRouter.of(context).go(
-        uri
-            .replace(
-              path: uri.path.substring(0, uri.path.lastIndexOf('/')),
-              fragment: '',
-            )
-            .toString(),
-      );
-    }
-    return true;
-  }
-
   @override
   Widget build(BuildContext context) {
     final activeRoomMatch =
@@ -157,29 +124,26 @@ class _ClientTabViewState extends State<ClientTabView> {
         ? null
         : Uri.decodeComponent(activeRoomMatch.group(1)!);
 
-    return BackButtonListener(
-      onBackButtonPressed: _handleBackButton,
-      child: Scaffold(
-        body: AdaptiveLayout(
-          transitionDuration: Duration.zero,
-          body: SlotLayout(
-            config: {
-              Breakpoints.smallAndUp: SlotLayout.from(
-                key: const Key('body'),
-                builder: (context) => widget.child,
-              ),
-            },
-          ),
-          topNavigation: SlotLayout(
-            config: {
-              Breakpoints.mediumLargeAndUp: SlotLayout.from(
-                key: const Key('top-app-bar'),
-                builder: (context) {
-                  return const KeyboardAwareTopBar();
-                },
-              ),
-            },
-          ),
+    return Scaffold(
+      body: AdaptiveLayout(
+        transitionDuration: Duration.zero,
+        body: SlotLayout(
+          config: {
+            Breakpoints.smallAndUp: SlotLayout.from(
+              key: const Key('body'),
+              builder: (context) => widget.child,
+            ),
+          },
+        ),
+        topNavigation: SlotLayout(
+          config: {
+            Breakpoints.mediumLargeAndUp: SlotLayout.from(
+              key: const Key('top-app-bar'),
+              builder: (context) {
+                return const KeyboardAwareTopBar();
+              },
+            ),
+          },
         ),
       ),
     );
