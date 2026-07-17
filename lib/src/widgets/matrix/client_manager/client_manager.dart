@@ -11,7 +11,6 @@ import '../../../utils/matrix/push_manager.dart';
 import '../../../utils/matrix/voip/polycule_call_coordinator.dart';
 import '../../../utils/polycule_http_client/polycule_http_client.dart';
 import '../../settings_manager.dart';
-import '../call/call_overlay_host.dart';
 import '../../error_dialog_scope.dart';
 import '../../intent_manager.dart';
 import 'client_store.dart';
@@ -98,10 +97,7 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
       child: IntentManagerWidget(
         child: _ClientManagerScope(
           manager: this,
-          child: CallOverlayHost(
-            coordinator: callCoordinator,
-            child: widget.child,
-          ),
+          child: widget.child,
         ),
       ),
     );

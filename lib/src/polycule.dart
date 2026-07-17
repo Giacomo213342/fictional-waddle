@@ -41,9 +41,9 @@ class _PolyculeClientState extends State<PolyculeClient>
   }
 
   @override
-  Widget build(BuildContext context) => ClientManagerRoot(
-        child: SettingsBuilder(
-          builder: (context) => const PolyculeRouterClientProvider(),
+  Widget build(BuildContext context) => SettingsBuilder(
+        builder: (context) => const ClientManagerRoot(
+          child: PolyculeRouterClientProvider(),
         ),
       );
 }

@@ -1,5 +1,27 @@
 # Matrix one-to-one calls
 
+## Startup integration correction
+
+- State owner: `ClientManager` owns the call coordinator; `SettingsManager`
+  owns the relay preference; the top-level `ClientManagerRoute` owns the
+  application navigation surface on which an active call is shown.
+- Confirmed failure: the first implementation asked `ClientManager` for a
+  `SettingsManager` that was below it in the widget tree, so the release build
+  threw before rendering the router and Android displayed a grey screen. The
+  call `Stack` was also above `MaterialApp`, where it had no `Directionality`,
+  theme, media query, or modal route for back handling.
+- Files/APIs: reorder `SettingsBuilder` and `ClientManagerRoot` in
+  `polycule.dart`; keep coordinator setup in `ClientManager`; mount
+  `CallOverlayHost` inside `ClientManagerRoute`.
+- Acceptance: a cold launch renders the existing router without an exception;
+  an active call inherits the app theme and current route; with no active call,
+  the host is layout-transparent and does not change navigation or back state.
+- Regression risks/checks: ensure one settings instance is shared by the HTTP
+  client, clients, and UI; widget-test startup ownership and the inactive call
+  host; analyze the touched modules and complete the signed ARM64 server build.
+- Physical Android testing: required for the repaired cold launch and for
+  incoming/in-call presentation and native back during a call.
+
 ## Ownership and confirmed integration path
 
 - `ClientManager` owns Matrix client lifetimes, so it also owns one

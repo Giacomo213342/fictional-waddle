@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 
 import 'package:go_router/go_router.dart';
 
+import '../../widgets/matrix/call/call_overlay_host.dart';
+import '../../widgets/matrix/client_manager/client_manager.dart';
 import '../../widgets/matrix/client_manager/client_tab_view.dart';
 import '../../widgets/matrix/matrix_dialog_scope/matrix_dialog_scope.dart';
 
@@ -15,10 +17,13 @@ class ClientManagerRoute extends StatefulShellRoute {
     super.restorationScopeId,
   }) : super(
           navigatorContainerBuilder: _activeBranchContainer,
-          builder: (context, state, shell) => MatrixDialogScope(
-            child: ClientTabView(
-              uri: state.uri,
-              child: shell,
+          builder: (context, state, shell) => CallOverlayHost(
+            coordinator: ClientManager.of(context).callCoordinator,
+            child: MatrixDialogScope(
+              child: ClientTabView(
+                uri: state.uri,
+                child: shell,
+              ),
             ),
           ),
         );
