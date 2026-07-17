@@ -45,4 +45,10 @@ void main() {
       10000,
     );
   });
+
+  test('initial cached-history reveal stays deliberately tiny', () {
+    expect(initialHistoryRevealDuration, const Duration(milliseconds: 80));
+    expect(initialHistoryRevealDelay(1), const Duration(milliseconds: 10));
+    expect(initialHistoryRevealDelay(100), const Duration(milliseconds: 80));
+  });
 }

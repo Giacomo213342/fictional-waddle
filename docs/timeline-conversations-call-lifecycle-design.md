@@ -11,7 +11,10 @@
   event and unnecessarily reloads the route.
 - Changes: give `ComposeScopeWidget` an explicit sent callback; derive latest
   affordance visibility from scroll distance; page the current viewport toward
-  a loaded target until its lazy tile exists, then use `ensureVisible`.
+  a loaded target until its lazy tile exists, then use `ensureVisible`. Room
+  entry uses no page transition (so the placeholder below it is never exposed),
+  paints `Room.lastEvent` while the timeline opens, then reveals at most the
+  first twelve cached predecessors with an 80 ms micro-animation.
 - Acceptance: text send reaches offset zero; manual movement beyond the
   threshold shows the latest affordance; loaded replies scroll both newer and
   older without route replacement; genuinely unloaded replies retain bounded

@@ -8,6 +8,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../../router/extensions/go_router_path_extension.dart';
 import '../../../../utils/matrix/active_room_tracker.dart';
+import '../../../../utils/matrix/is_display_event_extension.dart';
 import '../../../../utils/matrix/neighboaring_event_extension.dart';
 import '../../../../utils/matrix/poll_event.dart';
 import '../../../../widgets/ascii_progress_indicator.dart';
@@ -17,6 +18,7 @@ import '../../../../widgets/matrix/scopes/poll_update_scope.dart';
 import '../../../../widgets/matrix/scopes/room_scope.dart';
 import '../../../../widgets/matrix/scopes/timeline_scope.dart';
 import '../../../room_list/room_list_position_tracker.dart';
+import '../../../room_list/components/plain_event_preview_text.dart';
 import '../../room.dart';
 import '../compose/compose_scope.dart';
 import '../compose/message_input.dart';
@@ -50,6 +52,13 @@ double estimateReversedTimelineOffset({
       .toDouble();
 }
 
+@visibleForTesting
+const initialHistoryRevealDuration = Duration(milliseconds: 80);
+
+@visibleForTesting
+Duration initialHistoryRevealDelay(int order) =>
+    Duration(milliseconds: min(order, 8) * 10);
+
 class _MembershipJoinViewState extends State<MembershipJoinView>
     with WidgetsBindingObserver {
   Timeline? timeline;
@@ -69,6 +78,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
   StreamSubscription<SyncUpdate>? _syncSubscription;
   String? _unreadBoundaryEventId;
   String? _focusedEventId;
+  Set<String> _initialHistoryRevealEventIds = const {};
 
   @override
   void initState() {
@@ -99,10 +109,10 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
   @override
   Widget build(BuildContext context) {
     final timeline = this.timeline;
-    if (timeline == null || timeline.events.isEmpty) {
-      return const Center(child: AsciiProgressIndicator());
-    }
     final room = RoomScope.of(context).room;
+    if (timeline == null || timeline.events.isEmpty) {
+      return _CachedLastEvent(room: room);
+    }
     final showTyping = room.summary.mJoinedMemberCount == 3 &&
         room.typingUsers.any((user) => user.id != room.client.userID);
 
@@ -245,6 +255,14 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
       );
     }
 
+    if (_initialHistoryRevealEventIds.contains(event.eventId)) {
+      tile = _InitialHistoryReveal(
+        key: ValueKey('initial-history:${event.eventId}'),
+        order: index,
+        child: tile,
+      );
+    }
+
     return SizeTransition(sizeFactor: animation, child: tile);
   }
 
@@ -288,6 +306,12 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
       initialReadEventId,
       room.client.userID,
     );
+    _initialHistoryRevealEventIds = timeline.events
+        .skip(1)
+        .where((event) => event.shouldDisplayEvent)
+        .take(12)
+        .map((event) => event.eventId)
+        .toSet();
     setState(() {
       this.timeline = timeline;
     });
@@ -653,6 +677,100 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
       ),
     );
   }
+}
+
+class _CachedLastEvent extends StatelessWidget {
+  const _CachedLastEvent({required this.room});
+
+  final Room room;
+
+  @override
+  Widget build(BuildContext context) {
+    final event = room.lastEvent;
+    if (event == null || !event.shouldDisplayEvent) {
+      return const Center(child: AsciiProgressIndicator());
+    }
+    final ownMessage = event.senderId == room.client.userID;
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(40, 16, 40, 28),
+        child: Align(
+          alignment: ownMessage ? Alignment.centerRight : Alignment.centerLeft,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 520),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 7,
+                ),
+                child: EventScope(
+                  event: event,
+                  child: const PlainEventPreviewText(),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InitialHistoryReveal extends StatefulWidget {
+  const _InitialHistoryReveal({
+    super.key,
+    required this.order,
+    required this.child,
+  });
+
+  final int order;
+  final Widget child;
+
+  @override
+  State<_InitialHistoryReveal> createState() => _InitialHistoryRevealState();
+}
+
+class _InitialHistoryRevealState extends State<_InitialHistoryReveal>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  Timer? _startTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: initialHistoryRevealDuration,
+    );
+    _startTimer =
+        Timer(initialHistoryRevealDelay(widget.order), _controller.forward);
+  }
+
+  @override
+  void dispose() {
+    _startTimer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => FadeTransition(
+        opacity: _controller,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, -.002),
+            end: Offset.zero,
+          ).animate(_controller),
+          child: widget.child,
+        ),
+      );
 }
 
 class _EventHighlight extends StatefulWidget {
