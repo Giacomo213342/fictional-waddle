@@ -8,6 +8,7 @@ import '../../../widgets/matrix/client_manager/client_store.dart';
 import 'call_notification_manager.dart';
 import 'polycule_voip.dart';
 import 'polycule_webrtc_delegate.dart';
+import 'turn_socks_tunnel.dart';
 
 class ActivePolyculeCall {
   const ActivePolyculeCall({
@@ -89,6 +90,14 @@ class CallRelayUnavailableException implements Exception {
   @override
   String toString() =>
       'The homeserver did not provide a TURN relay for proxy-only calls.';
+}
+
+class CallProxyTurnUnavailableException implements Exception {
+  const CallProxyTurnUnavailableException();
+
+  @override
+  String toString() =>
+      'The homeserver did not provide a TURN/TCP route usable through SOCKS5.';
 }
 
 class _ClientVoip {
@@ -175,6 +184,9 @@ class PolyculeCallCoordinator {
         final iceServers = await entry.voip.getIceServers();
         if (!containsTurnServer(iceServers)) {
           throw const CallRelayUnavailableException();
+        }
+        if (!containsProxyableTurnTcpServer(iceServers)) {
+          throw const CallProxyTurnUnavailableException();
         }
       }
       return await entry.voip.inviteToCall(

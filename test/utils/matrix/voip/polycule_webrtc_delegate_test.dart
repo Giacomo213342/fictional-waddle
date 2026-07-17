@@ -38,6 +38,26 @@ void main() {
       expect(result.relayUnavailable, isFalse);
     });
 
+    test('keeps TURN and adds fallback STUN when homeserver omits STUN', () {
+      final result = configurePeerConnection(
+        {
+          'iceServers': [
+            {'urls': 'turn:relay.example.org'},
+          ],
+        },
+        relayOnly: false,
+      );
+
+      expect(result.value['iceServers'], [
+        {'urls': 'turn:relay.example.org'},
+        {
+          'urls': [matrixFallbackStunServer],
+        },
+      ]);
+      expect(result.turnServerCount, 1);
+      expect(result.usesFallbackStun, isTrue);
+    });
+
     test('forces relay ICE when proxy calls are enabled', () {
       final result = configurePeerConnection(
         {

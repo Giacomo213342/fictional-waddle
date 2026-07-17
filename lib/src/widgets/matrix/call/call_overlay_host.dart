@@ -46,6 +46,7 @@ Future<void> showPolyculeCallRoute(
 class _CallOverlayHostState extends State<CallOverlayHost> {
   Route<void>? _callRoute;
   String? _callRouteId;
+  String? _hiddenBannerCallId;
 
   PolyculeCallCoordinator get coordinator => widget.coordinator;
 
@@ -78,6 +79,10 @@ class _CallOverlayHostState extends State<CallOverlayHost> {
   }
 
   void _handleCallChanged() {
+    final callId = coordinator.activeCall.value?.session.callId;
+    if (_hiddenBannerCallId != null && _hiddenBannerCallId != callId) {
+      _hiddenBannerCallId = null;
+    }
     if (mounted) {
       setState(() {});
     }
@@ -171,27 +176,47 @@ class _CallOverlayHostState extends State<CallOverlayHost> {
   @override
   Widget build(BuildContext context) {
     final call = coordinator.activeCall.value;
+    final bannerHidden = call != null &&
+        !call.visible &&
+        _hiddenBannerCallId == call.session.callId;
     return Stack(
       children: [
         widget.child,
         if (call != null && !call.visible)
           Positioned(
-            left: 10,
             right: 10,
             top: MediaQuery.paddingOf(context).top + 8,
-            child: coordinator.isAwaitingAnswer(call.session)
-                ? IncomingCallBanner(
-                    callerName: coordinator.peerName(call.session),
-                    video: call.session.type == CallType.kVideo,
-                    onOpen: coordinator.showActiveCall,
-                    onAnswer: () => unawaited(coordinator.answerActiveCall()),
-                    onDecline: () => unawaited(coordinator.declineActiveCall()),
+            child: bannerHidden
+                ? _HiddenCallButton(
+                    incoming: coordinator.isAwaitingAnswer(call.session),
+                    onPressed: coordinator.showActiveCall,
                   )
-                : ActiveCallBanner(
-                    peerName: coordinator.peerName(call.session),
-                    status: call.blockingError ?? _compactCallStatus(call),
-                    onOpen: coordinator.showActiveCall,
-                    onHangup: () => unawaited(coordinator.hangupActiveCall()),
+                : ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 340),
+                    child: coordinator.isAwaitingAnswer(call.session)
+                        ? IncomingCallBanner(
+                            callerName: coordinator.peerName(call.session),
+                            video: call.session.type == CallType.kVideo,
+                            onOpen: coordinator.showActiveCall,
+                            onHide: () => setState(() {
+                              _hiddenBannerCallId = call.session.callId;
+                            }),
+                            onAnswer: () =>
+                                unawaited(coordinator.answerActiveCall()),
+                            onDecline: () =>
+                                unawaited(coordinator.declineActiveCall()),
+                          )
+                        : ActiveCallBanner(
+                            peerName: coordinator.peerName(call.session),
+                            status:
+                                call.blockingError ?? _compactCallStatus(call),
+                            onOpen: coordinator.showActiveCall,
+                            onHide: () => setState(() {
+                              _hiddenBannerCallId = call.session.callId;
+                            }),
+                            onHangup: () =>
+                                unawaited(coordinator.hangupActiveCall()),
+                          ),
                   ),
           ),
       ],
@@ -213,12 +238,14 @@ class ActiveCallBanner extends StatelessWidget {
     required this.peerName,
     required this.status,
     required this.onOpen,
+    required this.onHide,
     required this.onHangup,
   });
 
   final String peerName;
   final String status;
   final VoidCallback onOpen;
+  final VoidCallback onHide;
   final VoidCallback onHangup;
 
   @override
@@ -260,6 +287,12 @@ class ActiveCallBanner extends StatelessWidget {
                 ),
               ),
               _BannerAction(
+                tooltip: 'Hide',
+                icon: Icons.close,
+                color: colors.onSurfaceVariant,
+                onPressed: onHide,
+              ),
+              _BannerAction(
                 tooltip: 'Hang up',
                 icon: Icons.call_end,
                 color: colors.error,
@@ -279,6 +312,7 @@ class IncomingCallBanner extends StatelessWidget {
     required this.callerName,
     required this.video,
     required this.onOpen,
+    required this.onHide,
     required this.onAnswer,
     required this.onDecline,
   });
@@ -286,6 +320,7 @@ class IncomingCallBanner extends StatelessWidget {
   final String callerName;
   final bool video;
   final VoidCallback onOpen;
+  final VoidCallback onHide;
   final VoidCallback onAnswer;
   final VoidCallback onDecline;
 
@@ -317,6 +352,12 @@ class IncomingCallBanner extends StatelessWidget {
                 ),
               ),
               _BannerAction(
+                tooltip: 'Hide',
+                icon: Icons.close,
+                color: colors.onSurfaceVariant,
+                onPressed: onHide,
+              ),
+              _BannerAction(
                 tooltip: 'Decline',
                 icon: Icons.call_end,
                 color: colors.error,
@@ -331,6 +372,31 @@ class IncomingCallBanner extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HiddenCallButton extends StatelessWidget {
+  const _HiddenCallButton({required this.incoming, required this.onPressed});
+
+  final bool incoming;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Material(
+      color: colors.surfaceContainerHigh,
+      shape: const CircleBorder(),
+      elevation: 2,
+      child: IconButton(
+        tooltip: incoming ? 'Incoming call' : 'Active call',
+        onPressed: onPressed,
+        icon: Icon(
+          incoming ? Icons.ring_volume_outlined : Icons.call_outlined,
+          size: 19,
         ),
       ),
     );

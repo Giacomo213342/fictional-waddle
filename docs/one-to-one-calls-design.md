@@ -40,13 +40,22 @@
 
 ## Proxy semantics
 
-WebRTC media is ICE/DTLS/SRTP and cannot be sent through the app's HTTP SOCKS5
-client. When "proxy calls" is enabled, the delegate sets
-`iceTransportPolicy: relay`, which prevents direct host/STUN candidates and
-uses only the homeserver-provided TURN relay. TURN credential retrieval and
-Matrix signaling still traverse the configured SOCKS5 HTTP client. If no TURN
-server is available, call setup fails visibly instead of leaking to a direct
-path.
+`flutter_webrtc` does not inherit the app's HTTP connection factory. Merely
+setting `iceTransportPolicy: relay` still opens TURN directly and therefore
+does not satisfy the SOCKS5 setting. When "proxy calls" is enabled, Polycule
+now binds an ephemeral TCP listener on IPv4 loopback and rewrites each
+homeserver `turn:...?transport=tcp` URI to that listener. Every accepted TURN
+connection is forwarded through the configured, optionally authenticated,
+SOCKS5 proxy to the original hostname and port. The delegate simultaneously
+sets relay-only ICE, so no host, STUN, UDP TURN, or direct TCP TURN path can
+bypass the tunnel. The listener and every accepted socket are owned by the
+client's WebRTC delegate and closed when that delegate is disposed.
+
+TURN credential retrieval and Matrix signaling continue to use the normal
+Polycule SOCKS5 HTTP client. If the homeserver does not provide plaintext
+TURN/TCP, call setup fails visibly instead of silently leaking or hanging.
+Outside proxy-call mode, a public STUN fallback is added only when the
+homeserver list contains no STUN URI; homeserver TURN entries are retained.
 
 ## Files and APIs
 
@@ -70,13 +79,15 @@ path.
   underlying route; closing the call cannot pop the room/list navigator.
 - Ending, rejecting, failing, or remotely ending a call removes the overlay and
   releases renderers/media through the SDK cleanup path.
-- Relay-only preference persists. Enabled calls never fall back to direct ICE,
-  and fail clearly when TURN is missing.
+- Relay-only preference persists. Enabled calls tunnel TURN/TCP through SOCKS5,
+  never fall back to direct ICE, and fail clearly when a proxyable TURN route
+  is missing.
 
 ## Regression and validation
 
-- Focused tests cover relay configuration/validation, call eligibility, and
-  network setting copy/equality behavior.
+- Focused tests cover relay configuration/validation, authenticated SOCKS5
+  byte forwarding and teardown, call eligibility, and network setting
+  copy/equality behavior.
 - Format touched Dart only, run diff check, focused/full tests and analyzer,
   then a signed ARM64 GitHub build before main-branch publication.
 - Physical Android validation remains required with two Matrix accounts for

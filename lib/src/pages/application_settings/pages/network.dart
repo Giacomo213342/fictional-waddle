@@ -41,8 +41,8 @@ class _NetworkSettingsPageState extends State<NetworkSettingsPage> {
                   SwitchListTile.adaptive(
                     title: const Text('Use proxy/relay for 1:1 calls'),
                     subtitle: const Text(
-                      'Force calls through the homeserver TURN relay. '
-                      'Matrix signaling continues to use SOCKS5.',
+                      'Tunnel TURN/TCP media through SOCKS5 and disable '
+                      'direct peer routes.',
                     ),
                     value: networkState.proxyOneToOneCalls,
                     onChanged: _setProxyOneToOneCalls,

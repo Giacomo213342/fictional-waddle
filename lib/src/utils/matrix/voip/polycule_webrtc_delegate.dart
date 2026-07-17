@@ -8,6 +8,7 @@ import 'package:webrtc_interface/webrtc_interface.dart';
 
 import '../../../widgets/settings_manager.dart';
 import 'polycule_call_coordinator.dart';
+import 'turn_socks_tunnel.dart';
 
 class PeerConnectionConfiguration {
   const PeerConnectionConfiguration({
@@ -43,7 +44,7 @@ PeerConnectionConfiguration configurePeerConnection(
   // This opt-in fallback matches matrix-js-sdk. Host-only candidates cannot
   // normally cross mobile or residential NAT, while STUN keeps media P2P.
   // Relay-only calls deliberately never use a direct/STUN fallback.
-  if (!relayOnly && iceServers.isEmpty) {
+  if (!relayOnly && !iceServers.any(_isStunServer)) {
     iceServers.add(const {
       'urls': [matrixFallbackStunServer],
     });
@@ -70,6 +71,14 @@ bool _isTurnServer(Map<dynamic, dynamic> server) {
   final candidates = urls is Iterable ? urls : [urls];
   return candidates.whereType<String>().any(
         (url) => url.startsWith('turn:') || url.startsWith('turns:'),
+      );
+}
+
+bool _isStunServer(Map<dynamic, dynamic> server) {
+  final urls = server['urls'] ?? server['url'];
+  final candidates = urls is Iterable ? urls : [urls];
+  return candidates.whereType<String>().any(
+        (url) => url.startsWith('stun:') || url.startsWith('stuns:'),
       );
 }
 
@@ -100,6 +109,7 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
       {};
   PeerConnectionConfiguration? _pendingConfiguration;
   Timer? _ringtoneTimer;
+  final TurnSocksTunnelPool _turnSocksTunnels = TurnSocksTunnelPool();
 
   bool get _relayOnly {
     final state = network.value;
@@ -119,10 +129,28 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
         webrtc.AndroidAudioConfiguration.communication,
       );
     }
-    final configured = configurePeerConnection(
+    var configured = configurePeerConnection(
       configuration,
       relayOnly: _relayOnly,
     );
+    if (_relayOnly && !configured.relayUnavailable) {
+      final sourceServers = configured.value['iceServers'] as Iterable;
+      final rewritten = await _turnSocksTunnels.rewriteIceServers(
+        sourceServers.whereType<Map>().map(Map<String, dynamic>.from),
+        network.value,
+      );
+      configured = PeerConnectionConfiguration(
+        value: {
+          ...configured.value,
+          'iceServers': rewritten,
+        },
+        relayUnavailable: rewritten.isEmpty,
+        iceServerCount: rewritten.length,
+        turnServerCount: rewritten.length,
+        usesFallbackStun: false,
+        relayOnly: true,
+      );
+    }
     _pendingConfiguration = configured;
     if (configured.relayUnavailable) {
       coordinator.noteMissingTurnRelay();
@@ -218,6 +246,7 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
   EncryptionKeyProvider? get keyProvider => null;
 
   void dispose() {
+    unawaited(_turnSocksTunnels.close());
     for (final subscriptions in _callSubscriptions.values) {
       for (final subscription in subscriptions) {
         unawaited(subscription.cancel());

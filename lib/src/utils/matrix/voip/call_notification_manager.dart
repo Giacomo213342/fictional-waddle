@@ -4,6 +4,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:matrix/matrix.dart';
+
+import 'call_log_journal.dart';
 
 enum CallNotificationAction { show, answer, decline, hangup }
 
@@ -132,6 +135,7 @@ abstract final class CallNotificationManager {
     if (kIsWeb || !Platform.isAndroid) {
       return;
     }
+    await CallLogJournal.record('Posting native incoming-call notification.');
     try {
       await _androidCallChannel.invokeMethod<void>(
         'ensureIncomingCallChannel',
@@ -147,12 +151,13 @@ abstract final class CallNotificationManager {
       roomId: roomId,
       callId: callId,
     );
-    await plugin.show(
-      notificationId(callId),
-      callerName,
-      video ? 'Incoming video call' : 'Incoming call',
-      NotificationDetails(
-        android: AndroidNotificationDetails(
+    try {
+      await plugin.show(
+        notificationId(callId),
+        callerName,
+        video ? 'Incoming video call' : 'Incoming call',
+        NotificationDetails(
+          android: AndroidNotificationDetails(
           _incomingChannelId,
           'Incoming calls',
           channelDescription: 'Incoming Matrix calls',
@@ -185,10 +190,20 @@ abstract final class CallNotificationManager {
               semanticAction: SemanticAction.call,
             ),
           ],
+          ),
         ),
-      ),
-      payload: callPayload,
-    );
+        payload: callPayload,
+      );
+      await CallLogJournal.record(
+        'Native incoming-call notification posted successfully.',
+      );
+    } catch (error) {
+      await CallLogJournal.record(
+        'Native incoming-call notification failed (${error.runtimeType}).',
+        level: Level.error,
+      );
+      rethrow;
+    }
   }
 
   static Future<void> showOngoing({

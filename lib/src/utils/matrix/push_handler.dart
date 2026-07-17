@@ -27,6 +27,7 @@ import 'push_manager.dart';
 import 'poll_event.dart';
 import 'push_log_journal.dart';
 import 'voip/call_notification_manager.dart';
+import 'voip/call_log_journal.dart';
 
 final Map<String, Future<void>> _backgroundNotificationQueues = {};
 const _headlessStorageTimeout = Duration(seconds: 5);
@@ -598,6 +599,9 @@ Future<PushNotificationResult> handlePushNotification({
     }
 
     if (callId is String && isInvite && event.senderId != client.userID) {
+      await CallLogJournal.record(
+        'UnifiedPush resolved an incoming Matrix call invite.',
+      );
       final rawLifetime = event.content['lifetime'];
       final lifetime = rawLifetime is int
           ? rawLifetime
