@@ -1,0 +1,50 @@
+name: Publish latest APK
+
+on:
+  workflow_run:
+    workflows:
+      - Build APK
+    types:
+      - completed
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download verified APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: polycule-${{ github.event.workflow_run.head_sha }}
+          path: dist
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Publish rolling APK release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        shell: bash
+        run: |
+          APK=dist/polycule-arm64-v8a-release-aligned.apk
+          test -s "$APK"
+          if gh release view latest-apk --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release upload latest-apk "$APK" \
+              --repo "$GITHUB_REPOSITORY" \
+              --clobber
+            gh release edit latest-apk \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "Latest signed ARM64 APK" \
+              --notes "Signed ARM64 APK built and verified from commit $HEAD_SHA."
+          else
+            gh release create latest-apk "$APK" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$HEAD_SHA" \
+              --title "Latest signed ARM64 APK" \
+              --notes "Signed ARM64 APK built and verified from commit $HEAD_SHA." \
+              --prerelease
+          fi
