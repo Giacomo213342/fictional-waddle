@@ -38,7 +38,7 @@ class ResponsiveSidebarLayout extends StatelessWidget {
     } else {
       showSidebar = true;
     }
-    return AdaptiveLayout(
+    final layout = AdaptiveLayout(
       body: SlotLayout(
         config: {
           Breakpoints.smallAndUp: SlotLayout.from(
@@ -62,6 +62,27 @@ class ResponsiveSidebarLayout extends StatelessWidget {
               },
             ),
       bodyRatio: .65,
+    );
+
+    if (sidebar == null || showSidebar) {
+      return layout;
+    }
+
+    // A ShellRoute's child is its active Navigator. It must remain mounted
+    // even when the compact layout displays [main] instead, otherwise
+    // GoRouter's system-back traversal reaches an active ShellRouteMatch whose
+    // navigatorKey.currentState is null.
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        layout,
+        Positioned.fill(
+          child: Offstage(
+            offstage: true,
+            child: TickerMode(enabled: false, child: sidebar),
+          ),
+        ),
+      ],
     );
   }
 }

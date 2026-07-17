@@ -23,6 +23,7 @@ class ResponsiveLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final secondary = this.secondary;
     final segments =
         uri?.path.replaceFirst(RegExp(r'/client/\d+'), '').split('/');
     var showSecondary = false;
@@ -38,7 +39,16 @@ class ResponsiveLayout extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               main,
-              if (showSecondary) secondary!,
+              if (secondary != null)
+                Positioned.fill(
+                  child: Offstage(
+                    offstage: !showSecondary,
+                    child: TickerMode(
+                      enabled: showSecondary,
+                      child: secondary,
+                    ),
+                  ),
+                ),
             ],
           );
         } else {

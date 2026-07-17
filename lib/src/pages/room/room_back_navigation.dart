@@ -94,7 +94,17 @@ class RoomShellBackHandler extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isRoomRoot(uri)) {
-      return RoomRouteBackScope(uri: uri, child: child);
+      return RoomRouteBackScope(
+        uri: uri,
+        child: NotificationListener<NavigationNotification>(
+          // The leaf Navigator is mounted offstage at the room root so that
+          // GoRouter can traverse it, but it has no page to pop. Its `false`
+          // must not overwrite the parent route's PopScope capability at
+          // WidgetsApp, otherwise Android unregisters Flutter's back callback.
+          onNotification: (_) => true,
+          child: child,
+        ),
+      );
     }
 
     return NavigatorPopHandler<Object?>(
