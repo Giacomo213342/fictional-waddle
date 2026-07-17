@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/timeline-conversations-call-lifecycle
   workflow_dispatch:
 
 concurrency:
