@@ -8,15 +8,22 @@ import 'package:go_router/go_router.dart';
 /// the plain room route, back returns to that client's room list.
 Uri roomBackTarget(Uri uri) {
   if (uri.fragment.isNotEmpty) {
-    return uri.replace(fragment: '');
+    return _withoutFragment(uri);
   }
 
   final lastSeparator = uri.path.lastIndexOf('/');
   assert(lastSeparator > 0, 'A room route must have a parent route.');
-  return uri.replace(
-    path: uri.path.substring(0, lastSeparator),
-    fragment: '',
+  return _withoutFragment(
+    uri.replace(path: uri.path.substring(0, lastSeparator)),
   );
+}
+
+Uri _withoutFragment(Uri uri) {
+  final value = uri.toString();
+  final fragmentSeparator = value.indexOf('#');
+  return fragmentSeparator < 0
+      ? uri
+      : Uri.parse(value.substring(0, fragmentSeparator));
 }
 
 /// Whether [uri] identifies the room itself rather than a nested room page.
