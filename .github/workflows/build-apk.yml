@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/matrix-p2p-calls
   workflow_dispatch:
 
 concurrency:
@@ -68,7 +67,6 @@ jobs:
       - name: Build ARM64 APK
         shell: bash
         run: |
-          set -o pipefail
           export POLYCULE_VERSION="$(git describe --always)"
           # The last GitLab ARM64 APK has versionCode 268295502. The ABI
           # suffix is added by Gradle, so its Flutter build number was
@@ -91,7 +89,7 @@ jobs:
             exit 1
           fi
           echo "Building ARM64 APK with versionCode $ARM64_VERSION_CODE"
-          if ! flutter build apk \
+          flutter build apk \
             --release \
             --target-platform android-arm64 \
             --split-per-abi \
@@ -99,12 +97,7 @@ jobs:
             --dart-define=POLYCULE_IS_STABLE=false \
             --dart-define=POLYCULE_VERSION="$POLYCULE_VERSION" \
             --dart-define=no_default_http_client=true \
-            --dart-define=cronetHttpNoPlay=true 2>&1 | tee flutter-build.log; then
-            FAILURE=$(grep -E 'Error:|FAILURE:|What went wrong|Could not|error:' \
-              flutter-build.log | tail -n 20 | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')
-            echo "::error title=ARM64 Flutter build failure::$FAILURE"
-            exit 1
-          fi
+            --dart-define=cronetHttpNoPlay=true
 
       - name: Align, sign and verify APK
         shell: bash
