@@ -63,7 +63,24 @@ jobs:
         run: flutter gen-l10n
 
       - name: Run Flutter tests
-        run: flutter test
+        shell: bash
+        run: |
+          set +e
+          flutter test --reporter expanded 2>&1 | tee flutter-test.log
+          test_status=${PIPESTATUS[0]}
+          set -e
+          if ((test_status != 0)); then
+            # Public workflow pages hide raw logs from signed-out API clients.
+            # Preserve the useful tail in a check annotation so a failed
+            # feature-branch validation can still be diagnosed over SSH-only
+            # GitHub access.
+            details=$(tail -n 160 flutter-test.log)
+            details=${details//'%'/'%25'}
+            details=${details//$'\r'/'%0D'}
+            details=${details//$'\n'/'%0A'}
+            echo "::error title=Flutter test diagnostics::$details"
+            exit "$test_status"
+          fi
 
       - name: Build ARM64 APK
         shell: bash
