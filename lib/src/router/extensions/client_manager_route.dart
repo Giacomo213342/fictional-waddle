@@ -9,16 +9,18 @@ import '../../widgets/matrix/matrix_dialog_scope/matrix_dialog_scope.dart';
 
 class ClientManagerRoute extends StatefulShellRoute {
   ClientManagerRoute({
-    required super.branches,
+    required List<StatefulShellBranch> branches,
     super.key,
     super.pageBuilder,
     super.parentNavigatorKey,
     super.redirect,
     super.restorationScopeId,
   }) : super(
+          branches: branches,
           navigatorContainerBuilder: _activeBranchContainer,
           builder: (context, state, shell) => CallOverlayHost(
             coordinator: ClientManager.of(context).callCoordinator,
+            activeNavigatorKey: branches[shell.currentIndex].navigatorKey,
             child: MatrixDialogScope(
               child: ClientTabView(
                 uri: state.uri,

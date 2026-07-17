@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:polycule/src/pages/room/room_back_navigation.dart';
 import 'package:polycule/src/widgets/responsive_sidebar_layout.dart';
+import 'package:polycule/src/widgets/matrix/call/call_overlay_host.dart';
 
 void main() {
   group('room route classification', () {
@@ -122,6 +123,27 @@ void main() {
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(find.text('fullscreen photo'), findsNothing);
+    expect(harness.canHandlePop, isTrue);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('room list'), findsOneWidget);
+  });
+
+  testWidgets('ending a branch call route leaves room back ownership intact', (
+    tester,
+  ) async {
+    final harness = _makeProductionShellHarness();
+    addTearDown(harness.router.dispose);
+    await tester.pumpWidget(harness.app);
+
+    await tester.tap(find.text('open call'));
+    await tester.pumpAndSettle();
+    expect(find.text('fullscreen call'), findsOneWidget);
+
+    await tester.tap(find.text('hang up call'));
+    await tester.pumpAndSettle();
+    expect(find.text('fullscreen call'), findsNothing);
     expect(harness.canHandlePop, isTrue);
 
     await tester.binding.handlePopRoute();
@@ -285,6 +307,23 @@ class _RoomHarnessPage extends StatelessWidget {
                 ),
               ),
               child: const Text('open context menu'),
+            ),
+            TextButton(
+              onPressed: () => showPolyculeCallRoute(
+                context,
+                (callContext) => Scaffold(
+                  body: Column(
+                    children: [
+                      const Text('fullscreen call'),
+                      TextButton(
+                        onPressed: () => Navigator.of(callContext).pop(),
+                        child: const Text('hang up call'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              child: const Text('open call'),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).push<void>(

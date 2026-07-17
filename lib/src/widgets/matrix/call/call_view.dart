@@ -129,84 +129,76 @@ class _CallViewState extends State<CallView> {
         call.remoteUserMediaStream != null &&
         !(call.remoteUserMediaStream?.isVideoMuted() ?? true);
 
-    return PopScope<void>(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) {
-          widget.onMinimize();
-        }
-      },
-      child: Material(
-        color: Theme.of(context).colorScheme.surface,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            _CallBackdrop(
-              call: call,
-              remoteRenderer: _remoteRenderer,
-              showVideo: remoteVideoVisible && _renderersReady,
-            ),
-            if (isVideo && _renderersReady)
-              Positioned(
-                right: 16,
-                top: MediaQuery.paddingOf(context).top + 16,
-                width: 112,
-                height: 160,
-                child: Material(
-                  elevation: 8,
-                  clipBehavior: Clip.antiAlias,
-                  borderRadius: BorderRadius.circular(12),
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  child: webrtc.RTCVideoView(
-                    _localRenderer,
-                    mirror: true,
-                    objectFit:
-                        webrtc.RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-                  ),
+    return Material(
+      color: Theme.of(context).colorScheme.surface,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          _CallBackdrop(
+            call: call,
+            remoteRenderer: _remoteRenderer,
+            showVideo: remoteVideoVisible && _renderersReady,
+          ),
+          if (isVideo && _renderersReady)
+            Positioned(
+              right: 16,
+              top: MediaQuery.paddingOf(context).top + 16,
+              width: 112,
+              height: 160,
+              child: Material(
+                elevation: 8,
+                clipBehavior: Clip.antiAlias,
+                borderRadius: BorderRadius.circular(12),
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                child: webrtc.RTCVideoView(
+                  _localRenderer,
+                  mirror: true,
+                  objectFit:
+                      webrtc.RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                 ),
               ),
-            SafeArea(
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: IconButton.filledTonal(
-                        tooltip: 'Minimize call',
-                        onPressed: widget.onMinimize,
-                        icon: const Icon(Icons.keyboard_arrow_down),
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  _CallControls(
-                    call: call,
-                    busy: _busy,
-                    incoming: isIncoming,
-                    blockingError: widget.activeCall.blockingError,
-                    connectionStatus: widget.activeCall.connectionStatus,
-                    speakerOn: _speakerOn,
-                    onAnswer: () => _run(call.answer),
-                    onHangup: _hangup,
-                    onToggleMicrophone: () => _run(
-                      () => call.setMicrophoneMuted(!call.isMicrophoneMuted),
-                    ),
-                    onToggleCamera: isVideo
-                        ? () => _run(
-                              () => call.setLocalVideoMuted(
-                                !call.isLocalVideoMuted,
-                              ),
-                            )
-                        : null,
-                    onSwitchCamera: isVideo ? _switchCamera : null,
-                    onToggleSpeaker: _toggleSpeaker,
-                  ),
-                ],
-              ),
             ),
-          ],
-        ),
+          SafeArea(
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: IconButton.filledTonal(
+                      tooltip: 'Minimize call',
+                      onPressed: widget.onMinimize,
+                      icon: const Icon(Icons.keyboard_arrow_down),
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                _CallControls(
+                  call: call,
+                  busy: _busy,
+                  incoming: isIncoming,
+                  blockingError: widget.activeCall.blockingError,
+                  connectionStatus: widget.activeCall.connectionStatus,
+                  speakerOn: _speakerOn,
+                  onAnswer: () => _run(call.answer),
+                  onHangup: _hangup,
+                  onToggleMicrophone: () => _run(
+                    () => call.setMicrophoneMuted(!call.isMicrophoneMuted),
+                  ),
+                  onToggleCamera: isVideo
+                      ? () => _run(
+                            () => call.setLocalVideoMuted(
+                              !call.isLocalVideoMuted,
+                            ),
+                          )
+                      : null,
+                  onSwitchCamera: isVideo ? _switchCamera : null,
+                  onToggleSpeaker: _toggleSpeaker,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

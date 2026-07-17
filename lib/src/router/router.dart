@@ -56,250 +56,258 @@ class PolyculeRouter extends GoRouter {
   }
 
   PolyculeRouter._(this.routingConfig, this.clientNotifier)
-    : super.routingConfig(
-        navigatorKey: _applicationNavigatorKey,
-        debugLogDiagnostics: kDebugMode,
-        routingConfig: routingConfig,
-      ) {
+      : super.routingConfig(
+          navigatorKey: _applicationNavigatorKey,
+          debugLogDiagnostics: kDebugMode,
+          routingConfig: routingConfig,
+        ) {
     clientNotifier.addListener(_updateRoutingConfig);
   }
 
   static RoutingConfig makeRoutingConfig(List<Client> clients) => RoutingConfig(
-    routes: [
-      ClientManagerRoute(
-        branches: [
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: FatalErrorPage.routeName,
-                builder: (context, state) => FatalErrorPage(error: state.extra),
-              ),
-              GoRoute(
-                path: ApplicationSplashScreen.routeName,
-                builder: (context, state) => const ApplicationSplashScreen(),
-              ),
-              GoRoute(
-                path: AccountSelectorPage.routeName,
-                builder: (context, state) => AccountSelectorPage(
-                  redirect: Uri.decodeComponent(
-                    state.uri.queryParameters['redirect']!,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              ResponsiveShellRoute(
-                builder: (context, state) => const ApplicationSettingsPage(),
+        routes: [
+          ClientManagerRoute(
+            branches: [
+              StatefulShellBranch(
+                navigatorKey: GlobalKey<NavigatorState>(),
                 routes: [
                   GoRoute(
-                    path: ApplicationSettingsPage.routeName,
-                    builder: (context, state) => const PolyculePlaceholder(),
+                    path: FatalErrorPage.routeName,
+                    builder: (context, state) =>
+                        FatalErrorPage(error: state.extra),
+                  ),
+                  GoRoute(
+                    path: ApplicationSplashScreen.routeName,
+                    builder: (context, state) =>
+                        const ApplicationSplashScreen(),
+                  ),
+                  GoRoute(
+                    path: AccountSelectorPage.routeName,
+                    builder: (context, state) => AccountSelectorPage(
+                      redirect: Uri.decodeComponent(
+                        state.uri.queryParameters['redirect']!,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                navigatorKey: GlobalKey<NavigatorState>(),
+                routes: [
+                  ResponsiveShellRoute(
+                    builder: (context, state) =>
+                        const ApplicationSettingsPage(),
                     routes: [
                       GoRoute(
-                        path: AppearanceSettingsPage.routeName,
+                        path: ApplicationSettingsPage.routeName,
                         builder: (context, state) =>
-                            const AppearanceSettingsPage(),
-                      ),
-                      GoRoute(
-                        path: PushSettingsPage.routeName,
-                        builder: (context, state) => const PushSettingsPage(),
-                      ),
-                      GoRoute(
-                        path: NetworkSettingsPage.routeName,
-                        builder: (context, state) =>
-                            const NetworkSettingsPage(),
-                      ),
-                      GoRoute(
-                        path: LogsPage.routeName,
-                        builder: (context, state) => const LogsPage(),
-                      ),
-                      GoRoute(
-                        path: ErrorReportingSettingsPage.routeName,
-                        builder: (context, state) =>
-                            const ErrorReportingSettingsPage(),
+                            const PolyculePlaceholder(),
+                        routes: [
+                          GoRoute(
+                            path: AppearanceSettingsPage.routeName,
+                            builder: (context, state) =>
+                                const AppearanceSettingsPage(),
+                          ),
+                          GoRoute(
+                            path: PushSettingsPage.routeName,
+                            builder: (context, state) =>
+                                const PushSettingsPage(),
+                          ),
+                          GoRoute(
+                            path: NetworkSettingsPage.routeName,
+                            builder: (context, state) =>
+                                const NetworkSettingsPage(),
+                          ),
+                          GoRoute(
+                            path: LogsPage.routeName,
+                            builder: (context, state) => const LogsPage(),
+                          ),
+                          GoRoute(
+                            path: ErrorReportingSettingsPage.routeName,
+                            builder: (context, state) =>
+                                const ErrorReportingSettingsPage(),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ],
               ),
+              ...clients.map(makeClientBranch),
             ],
           ),
-          ...clients.map(makeClientBranch),
+          PolyculeDeeplinkRoute(),
+          MatrixDeeplinkRoute(),
         ],
-      ),
-      PolyculeDeeplinkRoute(),
-      MatrixDeeplinkRoute(),
-    ],
-  );
+      );
 
   static StatefulShellBranch makeClientBranch(Client client) {
+    final clientNavigatorKey = GlobalKey<NavigatorState>();
     final roomNavigatorKey = GlobalKey<NavigatorState>();
     final accountSettingsNavigatorKey = GlobalKey<NavigatorState>();
     return StatefulShellBranch(
+      navigatorKey: clientNavigatorKey,
       routes: [
-          MatrixClientRoute(
-            client: client,
-            routes: [
-              LoginStateRedirectRoute(
-                routes: [
-                  SplashRoute(
-                    path: '/client/${client.clientName.clientIdentifier}',
-                    builder: (context, state) => const SplashPage(),
-                    routes: [
-                      MustBeLoggedOutRoute(
-                        client: client,
-                        path: HomeserverPage.routeName,
-                        builder: (context, state) => const HomeserverPage(),
-                      ),
-                      HomeserverUriRoute(
-                        client: client,
-                        path: LoginPage.routeName,
-                        builder: (context, state, uri) =>
-                            LoginPage(homeserver: uri),
-                      ),
-                      RequiresLoginRoute(
-                        client: client,
-                        path: SsssBootstrapPage.routeName,
-                        builder: (context, state) => SsssBootstrapPage(
-                          disableSas: state.uri.queryParameters.containsKey(
-                            'disableSas',
-                          ),
+        MatrixClientRoute(
+          client: client,
+          routes: [
+            LoginStateRedirectRoute(
+              routes: [
+                SplashRoute(
+                  path: '/client/${client.clientName.clientIdentifier}',
+                  builder: (context, state) => const SplashPage(),
+                  routes: [
+                    MustBeLoggedOutRoute(
+                      client: client,
+                      path: HomeserverPage.routeName,
+                      builder: (context, state) => const HomeserverPage(),
+                    ),
+                    HomeserverUriRoute(
+                      client: client,
+                      path: LoginPage.routeName,
+                      builder: (context, state, uri) =>
+                          LoginPage(homeserver: uri),
+                    ),
+                    RequiresLoginRoute(
+                      client: client,
+                      path: SsssBootstrapPage.routeName,
+                      builder: (context, state) => SsssBootstrapPage(
+                        disableSas: state.uri.queryParameters.containsKey(
+                          'disableSas',
                         ),
                       ),
-                      ResponsiveShellRoute(
-                        builder: (context, state) => RoomListPage(
-                          key: ValueKey(state.pathParameters['client']),
-                        ),
-                        routes: [
-                          RequiresLoginRoute(
-                            client: client,
-                            path: RoomListPage.routeName,
-                            builder: (context, state) =>
-                                const PolyculePlaceholder(),
-                            routes: [
-                              RoomAvailableShellRoute(
-                                client: client,
-                                navigatorKey: roomNavigatorKey,
-                                builder: (context, state) =>
-                                    RoomPage(key: ValueKey(state.uri.fragment)),
-                                roomUnavailableBuilder: (context, state) =>
-                                    const PublicRoomPage(),
-                                routes: [
-                                  RoomAvailableRoute(
-                                    client: client,
-                                    path: RoomPage.pathParameter
-                                        .asGoRouterPath(),
-                                    onExit: (context, state) {
-                                      final encodedRoomId = state
-                                          .pathParameters[RoomPage.pathParameter];
-                                      if (encodedRoomId != null) {
-                                        final room = client.getRoomById(
-                                          Uri.decodeComponent(encodedRoomId),
+                    ),
+                    ResponsiveShellRoute(
+                      builder: (context, state) => RoomListPage(
+                        key: ValueKey(state.pathParameters['client']),
+                      ),
+                      routes: [
+                        RequiresLoginRoute(
+                          client: client,
+                          path: RoomListPage.routeName,
+                          builder: (context, state) =>
+                              const PolyculePlaceholder(),
+                          routes: [
+                            RoomAvailableShellRoute(
+                              client: client,
+                              navigatorKey: roomNavigatorKey,
+                              builder: (context, state) =>
+                                  RoomPage(key: ValueKey(state.uri.fragment)),
+                              roomUnavailableBuilder: (context, state) =>
+                                  const PublicRoomPage(),
+                              routes: [
+                                RoomAvailableRoute(
+                                  client: client,
+                                  path: RoomPage.pathParameter.asGoRouterPath(),
+                                  onExit: (context, state) {
+                                    final encodedRoomId = state
+                                        .pathParameters[RoomPage.pathParameter];
+                                    if (encodedRoomId != null) {
+                                      final room = client.getRoomById(
+                                        Uri.decodeComponent(encodedRoomId),
+                                      );
+                                      if (room != null) {
+                                        RoomListPositionTracker.prepareReturn(
+                                          room,
                                         );
-                                        if (room != null) {
-                                          RoomListPositionTracker.prepareReturn(
-                                            room,
-                                          );
-                                        }
                                       }
-                                      return true;
-                                    },
-                                    builder: (context, state) =>
-                                        const PolyculePlaceholder(),
-                                  ),
-                                  RoomAvailableRoute(
-                                    client: client,
-                                    path: RoomDetailsPage.path,
-                                    builder: (context, state) =>
-                                        const RoomDetailsPage(),
-                                  ),
-                                  RoomAvailableRoute(
-                                    client: client,
-                                    path: UserPage.roomPath,
-                                    builder: (context, state) =>
-                                        MatrixIdentifierScope.fromGoRouterState(
-                                          state: state,
-                                          child: const UserPage(),
-                                        ),
-                                  ),
-                                  RoomAvailableRoute(
-                                    client: client,
-                                    path: UserSessionsPage.path,
-                                    builder: (context, state) =>
-                                        MatrixIdentifierScope.fromGoRouterState(
-                                          state: state,
-                                          child: const UserSessionsPage(),
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          GoRoute(
-                            path: '/user',
-                            redirect: (context, state) => state.uri.path
-                                .substring(0, state.uri.path.lastIndexOf('/')),
-                          ),
-                          RequiresLoginRoute(
-                            client: client,
-                            path: UserPage.makeRouteName(),
-                            builder: (context, state) =>
-                                MatrixIdentifierScope.fromGoRouterState(
-                                  state: state,
-                                  child: const UserPage(),
+                                    }
+                                    return true;
+                                  },
+                                  builder: (context, state) =>
+                                      const PolyculePlaceholder(),
                                 ),
-                          ),
-                        ],
-                      ),
-                      ShellRoute(
-                        navigatorKey: accountSettingsNavigatorKey,
-                        builder: (context, state, child) =>
-                            AccountSettingsBackHandler(
-                          uri: state.uri,
-                          nestedNavigatorKey: accountSettingsNavigatorKey,
-                          child: ResponsiveLayout(
-                            uri: state.uri,
-                            main: const AccountSettings(),
-                            secondary: child,
+                                RoomAvailableRoute(
+                                  client: client,
+                                  path: RoomDetailsPage.path,
+                                  builder: (context, state) =>
+                                      const RoomDetailsPage(),
+                                ),
+                                RoomAvailableRoute(
+                                  client: client,
+                                  path: UserPage.roomPath,
+                                  builder: (context, state) =>
+                                      MatrixIdentifierScope.fromGoRouterState(
+                                    state: state,
+                                    child: const UserPage(),
+                                  ),
+                                ),
+                                RoomAvailableRoute(
+                                  client: client,
+                                  path: UserSessionsPage.path,
+                                  builder: (context, state) =>
+                                      MatrixIdentifierScope.fromGoRouterState(
+                                    state: state,
+                                    child: const UserSessionsPage(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        GoRoute(
+                          path: '/user',
+                          redirect: (context, state) => state.uri.path
+                              .substring(0, state.uri.path.lastIndexOf('/')),
+                        ),
+                        RequiresLoginRoute(
+                          client: client,
+                          path: UserPage.makeRouteName(),
+                          builder: (context, state) =>
+                              MatrixIdentifierScope.fromGoRouterState(
+                            state: state,
+                            child: const UserPage(),
                           ),
                         ),
-                        routes: [
-                          RequiresLoginRoute(
-                            client: client,
-                            path: AccountSettings.routeName,
-                            builder: (context, state) =>
-                                const PolyculePlaceholder(),
-                            routes: [
-                              RequiresLoginRoute(
-                                client: client,
-                                path: EmojiSettingsPage.routeName,
-                                builder: (context, state) =>
-                                    const EmojiSettingsPage(),
-                              ),
-                              RequiresLoginRoute(
-                                client: client,
-                                path: SessionSettingsPage.routeName,
-                                builder: (context, state) =>
-                                    const SessionSettingsPage(),
-                              ),
-                              RequiresLoginRoute(
-                                client: client,
-                                path: NotificationSettingsPage.routeName,
-                                builder: (context, state) =>
-                                    const NotificationSettingsPage(),
-                              ),
-                            ],
-                          ),
-                        ],
+                      ],
+                    ),
+                    ShellRoute(
+                      navigatorKey: accountSettingsNavigatorKey,
+                      builder: (context, state, child) =>
+                          AccountSettingsBackHandler(
+                        uri: state.uri,
+                        nestedNavigatorKey: accountSettingsNavigatorKey,
+                        child: ResponsiveLayout(
+                          uri: state.uri,
+                          main: const AccountSettings(),
+                          secondary: child,
+                        ),
                       ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
+                      routes: [
+                        RequiresLoginRoute(
+                          client: client,
+                          path: AccountSettings.routeName,
+                          builder: (context, state) =>
+                              const PolyculePlaceholder(),
+                          routes: [
+                            RequiresLoginRoute(
+                              client: client,
+                              path: EmojiSettingsPage.routeName,
+                              builder: (context, state) =>
+                                  const EmojiSettingsPage(),
+                            ),
+                            RequiresLoginRoute(
+                              client: client,
+                              path: SessionSettingsPage.routeName,
+                              builder: (context, state) =>
+                                  const SessionSettingsPage(),
+                            ),
+                            RequiresLoginRoute(
+                              client: client,
+                              path: NotificationSettingsPage.routeName,
+                              builder: (context, state) =>
+                                  const NotificationSettingsPage(),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
     );
   }

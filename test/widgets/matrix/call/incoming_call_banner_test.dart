@@ -33,4 +33,27 @@ void main() {
     expect(answered, 1);
     expect(declined, 1);
   });
+
+  testWidgets('active banner reopens and hangs up a minimized call',
+      (tester) async {
+    var opened = 0;
+    var hungUp = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ActiveCallBanner(
+            peerName: 'Alice',
+            status: 'Call in progress',
+            onOpen: () => opened++,
+            onHangup: () => hungUp++,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Alice'));
+    await tester.tap(find.byTooltip('Hang up'));
+    expect(opened, 1);
+    expect(hungUp, 1);
+  });
 }
