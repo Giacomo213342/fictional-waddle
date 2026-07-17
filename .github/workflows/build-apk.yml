@@ -61,6 +61,9 @@ jobs:
       - name: Generate localizations
         run: flutter gen-l10n
 
+      - name: Verify Android back navigation
+        run: flutter test test/room_back_navigation_test.dart
+
       - name: Build ARM64 APK
         shell: bash
         run: |

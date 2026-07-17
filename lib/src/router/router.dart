@@ -21,7 +21,6 @@ import '../pages/homeserver/homeserver.dart';
 import '../pages/login/login.dart';
 import '../pages/public_room/public_room.dart';
 import '../pages/room/room.dart';
-import '../pages/room/room_back_navigation.dart';
 import '../pages/room_details/room_details.dart';
 import '../pages/room_list/room_list.dart';
 import '../pages/room_list/room_list_position_tracker.dart';
@@ -205,9 +204,7 @@ class PolyculeRouter extends GoRouter {
                                       return true;
                                     },
                                     builder: (context, state) =>
-                                        const RoomRouteBackScope(
-                                          child: PolyculePlaceholder(),
-                                        ),
+                                        const PolyculePlaceholder(),
                                   ),
                                   RoomAvailableRoute(
                                     client: client,

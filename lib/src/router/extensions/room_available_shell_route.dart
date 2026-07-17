@@ -5,6 +5,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../pages/fatal_error/fatal_error_page.dart';
 import '../../pages/room/room.dart';
+import '../../pages/room/room_back_navigation.dart';
 import '../../widgets/matrix/scopes/matrix_identifier_scope.dart';
 import '../../widgets/matrix/scopes/room_scope.dart';
 import '../../widgets/responsive_sidebar_layout.dart';
@@ -53,19 +54,22 @@ class RoomAvailableShellRoute extends ClientShellRoute {
                 action: state.uri.queryParameters['action'],
               );
 
-              return MatrixIdentifierScope(
-                identifier: identifier,
-                child: roomUnavailableBuilder?.call(context, state) ??
-                    const FatalErrorPage(),
+              return RoomShellBackHandler(
+                uri: state.uri,
+                nestedNavigatorKey: navigatorKey,
+                child: MatrixIdentifierScope(
+                  identifier: identifier,
+                  child: roomUnavailableBuilder?.call(context, state) ??
+                      const FatalErrorPage(),
+                ),
               );
             }
 
             // handle spaces
             if (room.isSpace) {
-              return NavigatorPopHandler<Object?>(
-                onPopWithResult: (result) async {
-                  await navigatorKey.currentState?.maybePop(result);
-                },
+              return RoomShellBackHandler(
+                uri: state.uri,
+                nestedNavigatorKey: navigatorKey,
                 child: ResponsiveSidebarLayout(
                   uri: state.uri,
                   main: RoomScope(
@@ -79,10 +83,9 @@ class RoomAvailableShellRoute extends ClientShellRoute {
             }
             // handle regular rooms
             else {
-              return NavigatorPopHandler<Object?>(
-                onPopWithResult: (result) async {
-                  await navigatorKey.currentState?.maybePop(result);
-                },
+              return RoomShellBackHandler(
+                uri: state.uri,
+                nestedNavigatorKey: navigatorKey,
                 child: ResponsiveSidebarLayout(
                   uri: state.uri,
                   main: RoomScope(
