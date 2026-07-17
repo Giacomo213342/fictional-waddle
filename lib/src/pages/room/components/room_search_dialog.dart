@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../widgets/human_date.dart';
+import '../../../utils/matrix/call_event_summary.dart';
 import '../../../widgets/matrix/client_manager/client_store.dart';
 import '../../../widgets/matrix/scopes/room_scope.dart';
 
@@ -72,9 +73,18 @@ class _RoomSearchDialogState extends State<RoomSearchDialog> {
                     separatorBuilder: (_, __) => const Divider(height: 1),
                     itemBuilder: (context, index) {
                       final event = events[index];
-                      final body = event.content['body']?.toString() ??
-                          event.content['m.text']?.toString() ??
-                          event.type;
+                      final body = isMatrixCallSignalingEventType(event.type)
+                          ? matrixCallLifecycleKind(event.type) == null
+                              ? 'Call in progress'
+                              : matrixCallEventSummary(
+                                  event,
+                                  senderName: event.senderFromMemoryOrFallback
+                                          .displayName ??
+                                      event.senderId,
+                                )
+                          : event.content['body']?.toString() ??
+                              event.content['m.text']?.toString() ??
+                              event.type;
                       return ListTile(
                         leading: const Icon(Icons.chat_bubble_outline),
                         title: Text(
@@ -84,7 +94,9 @@ class _RoomSearchDialogState extends State<RoomSearchDialog> {
                         ),
                         subtitle: Text([
                           event.senderId,
-                          event.originServerTs.humanShortDate(context: context),
+                          event.originServerTs.humanShortDate(
+                            context: context,
+                          ),
                         ].join(' · ')),
                         onTap: () => _openResult(event),
                       );

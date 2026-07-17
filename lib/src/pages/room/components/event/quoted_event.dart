@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import '../../../../widgets/matrix/scopes/event_scope.dart';
+import '../../../../utils/matrix/call_event_summary.dart';
 import 'components/reply_user_prefix.dart';
 import 'event_fallback_text.dart';
 import 'm_room_message_content.dart';
@@ -14,9 +15,11 @@ class QuotedEvent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // for all attachments, show a fallback while for any other event, show text
-    final content = EventScope.of(context).event.hasAttachment
-        ? const EventFallbackText()
-        : const RoomMessageContent();
+    final event = EventScope.of(context).event;
+    final content =
+        event.hasAttachment || isMatrixCallSignalingEventType(event.type)
+            ? const EventFallbackText()
+            : const RoomMessageContent();
     final quote = Padding(
       padding: const EdgeInsets.only(
         left: 4.0,
@@ -64,7 +67,9 @@ class QuotedEvent extends StatelessWidget {
         ),
       ),
     );
-    if (onTap == null) return quote;
+    if (onTap == null) {
+      return quote;
+    }
     return Semantics(
       button: true,
       child: GestureDetector(

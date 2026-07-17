@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:polycule/src/utils/matrix/is_display_event_extension.dart';
+import 'package:polycule/src/utils/matrix/call_event_summary.dart';
 
 void main() {
-  test('all legacy Matrix call signaling families are hidden', () {
+  test('recognizes legacy Matrix call signaling families', () {
     for (final type in [
       'm.call.invite',
       'm.call.answer',
@@ -14,6 +14,48 @@ void main() {
     ]) {
       expect(isMatrixCallSignalingEventType(type), isTrue, reason: type);
     }
+  });
+
+  test('only call lifecycle milestones have timeline summaries', () {
+    expect(
+      matrixCallLifecycleKind('m.call.invite'),
+      MatrixCallLifecycleKind.invite,
+    );
+    expect(
+      matrixCallLifecycleKind('org.matrix.call.answer'),
+      MatrixCallLifecycleKind.answer,
+    );
+    expect(
+      matrixCallLifecycleKind('m.call.reject'),
+      MatrixCallLifecycleKind.reject,
+    );
+    expect(
+      matrixCallLifecycleKind('m.call.hangup'),
+      MatrixCallLifecycleKind.hangup,
+    );
+    for (final type in [
+      'm.call.candidates',
+      'm.call.negotiate',
+      'm.call.select_answer',
+      'org.matrix.call.sdp_stream_metadata_changed',
+    ]) {
+      expect(matrixCallLifecycleKind(type), isNull, reason: type);
+    }
+  });
+
+  test('detects video without exposing SDP', () {
+    expect(
+      callInviteContainsVideo({
+        'offer': {'sdp': 'v=0\r\nm=audio 9 RTP\r\nm=video 9 RTP'},
+      }),
+      isTrue,
+    );
+    expect(
+      callInviteContainsVideo({
+        'offer': {'sdp': 'v=0\r\nm=audio 9 RTP'},
+      }),
+      isFalse,
+    );
   });
 
   test('room messages and MatrixRTC membership are not call signaling', () {

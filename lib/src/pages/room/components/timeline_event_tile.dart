@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../utils/matrix/is_display_event_extension.dart';
+import '../../../utils/matrix/call_event_summary.dart';
 import '../../../utils/matrix/poll_event.dart';
 import '../../../utils/matrix/polycule_display_event_extension.dart';
 import '../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../widgets/matrix/scopes/timeline_scope.dart';
 import 'event/event_fallback_text.dart';
+import 'event/call_event_summary_tile.dart';
 import 'event/m_room_message.dart';
 import 'event/m_room_state.dart';
 import 'event/m_room_tombstone.dart';
@@ -104,6 +106,8 @@ class _TimelineEventTileState extends State<TimelineEventTile> {
         EventTypes.RoomTombstone =>
           const RoomTombstone(),
         EventTypes.SpaceChild || EventTypes.SpaceParent => const RoomState(),
+        _ when matrixCallLifecycleKind(event.type) != null =>
+          const CallEventSummaryTile(),
         _ => const EventFallbackText(),
       },
     );

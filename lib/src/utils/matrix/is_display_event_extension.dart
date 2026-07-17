@@ -1,16 +1,14 @@
 import 'package:matrix/matrix.dart';
 
+import 'call_event_summary.dart';
 import 'poll_event.dart';
-
-bool isMatrixCallSignalingEventType(String type) =>
-    type.startsWith('m.call.') || type.startsWith('org.matrix.call.');
 
 extension IsDisplayEventExtension on Event {
   bool get shouldDisplayEvent {
-    // Legacy 1:1 call events carry SDP, ICE candidates and call state. They
-    // are transport signaling, not room history messages.
+    // Only lifecycle milestones are room history. SDP, ICE candidates,
+    // negotiation, answer selection, and stream metadata remain hidden.
     if (isMatrixCallSignalingEventType(type)) {
-      return false;
+      return matrixCallLifecycleKind(type) != null;
     }
     // do not show edit and reaction notices
     if ([

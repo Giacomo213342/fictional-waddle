@@ -20,6 +20,7 @@ import '../settings_interface.dart';
 import '../unified_push/unified_push_storage_polycule.dart';
 import 'active_room_tracker.dart';
 import 'cached_push_rules.dart';
+import 'call_event_summary.dart';
 import 'client_util.dart';
 import 'is_display_event_extension.dart';
 import 'push_manager.dart';
@@ -614,7 +615,7 @@ Future<PushNotificationResult> handlePushNotification({
             roomId: event.room.id,
             callId: callId,
             callerName: sender.calcDisplayname(i18n: l10n.matrix),
-            video: _callInviteContainsVideo(event.content),
+            video: callInviteContainsVideo(event.content),
             timeout: remaining,
           );
       if (backgroundState == null) {
@@ -829,19 +830,6 @@ Future<PushNotificationResult> handlePushNotification({
     );
   }
   return PushNotificationResult.shown;
-}
-
-bool _callInviteContainsVideo(Map<String, dynamic> content) {
-  final metadata = content['org.matrix.msc3077.sdp_stream_metadata'] ??
-      content['sdp_stream_metadata'];
-  if (metadata is Map) {
-    for (final value in metadata.values) {
-      if (value is Map && value['video_muted'] == false) return true;
-    }
-  }
-  final offer = content['offer'];
-  final sdp = offer is Map ? offer['sdp'] : null;
-  return sdp is String && RegExp(r'(^|\r?\n)m=video\s').hasMatch(sdp);
 }
 
 PushNotification decodeMessage(Uint8List message) {
