@@ -16,6 +16,25 @@ void main() {
       expect(result.value, equals(source));
       expect(result.value, isNot(same(source)));
       expect(result.value, isNot(contains('iceTransportPolicy')));
+      expect(result.iceServerCount, 1);
+      expect(result.turnServerCount, 0);
+      expect(result.usesFallbackStun, isFalse);
+      expect(result.relayUnavailable, isFalse);
+    });
+
+    test('uses the Matrix fallback STUN server without homeserver ICE', () {
+      final result = configurePeerConnection(
+        {'iceServers': <Object>[]},
+        relayOnly: false,
+      );
+
+      expect(result.value, isNot(contains('iceTransportPolicy')));
+      expect(result.value['iceServers'], [
+        {
+          'urls': [matrixFallbackStunServer],
+        },
+      ]);
+      expect(result.usesFallbackStun, isTrue);
       expect(result.relayUnavailable, isFalse);
     });
 
@@ -32,6 +51,8 @@ void main() {
       );
 
       expect(result.value['iceTransportPolicy'], 'relay');
+      expect(result.turnServerCount, 1);
+      expect(result.usesFallbackStun, isFalse);
       expect(result.relayUnavailable, isFalse);
     });
 
@@ -46,6 +67,7 @@ void main() {
       );
 
       expect(result.value['iceTransportPolicy'], 'relay');
+      expect(result.usesFallbackStun, isFalse);
       expect(result.relayUnavailable, isTrue);
     });
   });

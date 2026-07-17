@@ -35,7 +35,7 @@ class _CallViewState extends State<CallView> {
   void initState() {
     super.initState();
     _speakerOn = call.type == CallType.kVideo;
-    void handleUpdate(dynamic _) {
+    void handleUpdate(_) {
       if (!mounted) {
         return;
       }
@@ -185,6 +185,7 @@ class _CallViewState extends State<CallView> {
                     busy: _busy,
                     incoming: isIncoming,
                     blockingError: widget.activeCall.blockingError,
+                    connectionStatus: widget.activeCall.connectionStatus,
                     speakerOn: _speakerOn,
                     onAnswer: () => _run(call.answer),
                     onHangup: _hangup,
@@ -289,6 +290,7 @@ class _CallControls extends StatelessWidget {
     required this.busy,
     required this.incoming,
     required this.blockingError,
+    required this.connectionStatus,
     required this.speakerOn,
     required this.onAnswer,
     required this.onHangup,
@@ -302,6 +304,7 @@ class _CallControls extends StatelessWidget {
   final bool busy;
   final bool incoming;
   final String? blockingError;
+  final String? connectionStatus;
   final bool speakerOn;
   final VoidCallback onAnswer;
   final VoidCallback onHangup;
@@ -330,6 +333,16 @@ class _CallControls extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 12),
+                ],
+                if (!incoming && connectionStatus != null) ...[
+                  Text(
+                    connectionStatus!,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          letterSpacing: 0.5,
+                        ),
+                  ),
+                  const SizedBox(height: 10),
                 ],
                 if (incoming)
                   Row(

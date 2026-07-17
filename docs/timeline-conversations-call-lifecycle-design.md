@@ -53,13 +53,19 @@
   renderer; `SystemSound` is an in-process alert rather than a phone ringtone;
   there is no background incoming or ongoing notification; hiding/ending the
   only overlay leaves no reopen path. The screenshot proves offer/answer/
-  negotiate signaling occurs but ICE never reaches connected; exact candidate
-  failure still needs state/ICE diagnostics and two-device logs.
+  negotiate signaling occurs but ICE never reaches connected. The Dart path
+  supplies no ICE server when `/voip/turnServer` is empty, unlike the explicit
+  `stun:turn.matrix.org` fallback available in matrix-js-sdk, so calls across
+  mobile/residential NAT can signal successfully without a reachable pair.
 - Changes: central call-event classifier; suppress signaling rows and message
   notifications; call-specific incoming/ongoing notifications and durable
   pending actions; separable minimize/show from hang-up; call state/ICE timeout
-  reporting; use the current compatible WebRTC implementation resolved by CI
-  and configure Android communication audio before media acquisition.
+  reporting; a direct-call Matrix STUN fallback plus sanitized description/
+  candidate/pair diagnostics; use the current compatible WebRTC implementation
+  resolved by CI and configure Android communication audio before media
+  acquisition. Incoming calls start as a compact in-app banner. Android owns a
+  versioned incoming-call channel configured with the system phone ringtone;
+  Flutter never loops `SystemSound.alert` on Android.
 - Acceptance: signaling is invisible in chat; cold/background invite rings and
   exposes answer/decline; active notification is ongoing and reopens the call;
   minimizing preserves the session; termination clears every call surface;

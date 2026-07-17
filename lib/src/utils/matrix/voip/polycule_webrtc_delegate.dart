@@ -13,29 +13,64 @@ class PeerConnectionConfiguration {
   const PeerConnectionConfiguration({
     required this.value,
     required this.relayUnavailable,
+    required this.iceServerCount,
+    required this.turnServerCount,
+    required this.usesFallbackStun,
+    required this.relayOnly,
   });
 
   final Map<String, dynamic> value;
   final bool relayUnavailable;
+  final int iceServerCount;
+  final int turnServerCount;
+  final bool usesFallbackStun;
+  final bool relayOnly;
 }
+
+const matrixFallbackStunServer = 'stun:turn.matrix.org';
 
 PeerConnectionConfiguration configurePeerConnection(
   Map<String, dynamic> source, {
   required bool relayOnly,
 }) {
   final configuration = Map<String, dynamic>.from(source);
-  if (!relayOnly) {
-    return PeerConnectionConfiguration(
-      value: configuration,
-      relayUnavailable: false,
-    );
+  final sourceServers = configuration['iceServers'];
+  final iceServers = sourceServers is Iterable
+      ? sourceServers.whereType<Map>().map(Map<String, dynamic>.from).toList()
+      : <Map<String, dynamic>>[];
+  var usesFallbackStun = false;
+
+  // This opt-in fallback matches matrix-js-sdk. Host-only candidates cannot
+  // normally cross mobile or residential NAT, while STUN keeps media P2P.
+  // Relay-only calls deliberately never use a direct/STUN fallback.
+  if (!relayOnly && iceServers.isEmpty) {
+    iceServers.add(const {
+      'urls': [matrixFallbackStunServer],
+    });
+    usesFallbackStun = true;
   }
 
-  configuration['iceTransportPolicy'] = 'relay';
+  configuration['iceServers'] = iceServers;
+  if (relayOnly) {
+    configuration['iceTransportPolicy'] = 'relay';
+  }
+  final turnServerCount = iceServers.where(_isTurnServer).length;
   return PeerConnectionConfiguration(
     value: configuration,
-    relayUnavailable: !containsTurnServer(configuration['iceServers']),
+    relayUnavailable: relayOnly && turnServerCount == 0,
+    iceServerCount: iceServers.length,
+    turnServerCount: turnServerCount,
+    usesFallbackStun: usesFallbackStun,
+    relayOnly: relayOnly,
   );
+}
+
+bool _isTurnServer(Map<dynamic, dynamic> server) {
+  final urls = server['urls'] ?? server['url'];
+  final candidates = urls is Iterable ? urls : [urls];
+  return candidates.whereType<String>().any(
+        (url) => url.startsWith('turn:') || url.startsWith('turns:'),
+      );
 }
 
 bool containsTurnServer(Object? iceServers) {
@@ -46,11 +81,7 @@ bool containsTurnServer(Object? iceServers) {
     if (server is! Map) {
       continue;
     }
-    final urls = server['urls'] ?? server['url'];
-    final candidates = urls is Iterable ? urls : [urls];
-    if (candidates.whereType<String>().any(
-          (url) => url.startsWith('turn:') || url.startsWith('turns:'),
-        )) {
+    if (_isTurnServer(server)) {
       return true;
     }
   }
@@ -67,6 +98,7 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
   final ValueListenable<NetworkState> network;
   final Map<CallSession, List<StreamSubscription<dynamic>>> _callSubscriptions =
       {};
+  PeerConnectionConfiguration? _pendingConfiguration;
   Timer? _ringtoneTimer;
 
   bool get _relayOnly {
@@ -91,6 +123,7 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
       configuration,
       relayOnly: _relayOnly,
     );
+    _pendingConfiguration = configured;
     if (configured.relayUnavailable) {
       coordinator.noteMissingTurnRelay();
     }
@@ -100,6 +133,11 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
   @override
   Future<void> playRingtone() async {
     await stopRingtone();
+    // Android ringing belongs to the native incoming-call notification. A
+    // repeated SystemSound is the notification beep, not the device ringtone.
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      return;
+    }
     await SystemSound.play(SystemSoundType.alert);
     _ringtoneTimer = Timer.periodic(const Duration(seconds: 2), (_) {
       unawaited(SystemSound.play(SystemSoundType.alert));
@@ -114,7 +152,14 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
 
   @override
   Future<void> registerListeners(CallSession session) async {
-    if (_callSubscriptions.containsKey(session)) return;
+    if (_callSubscriptions.containsKey(session)) {
+      return;
+    }
+    final configuration = _pendingConfiguration;
+    _pendingConfiguration = null;
+    if (configuration != null) {
+      coordinator.attachPeerConnectionConfiguration(session, configuration);
+    }
     _callSubscriptions[session] = [
       session.onCallStateChanged.stream.listen((_) {
         coordinator.callStateChanged(session);

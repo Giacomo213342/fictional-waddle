@@ -1,8 +1,13 @@
 package org.unifiedpush.flutter.connector
 
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
+import android.media.RingtoneManager
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -36,6 +41,7 @@ class Plugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private val mainHandler = Handler(Looper.getMainLooper())
     private var pluginChannel: MethodChannel? = null
     private var conversationChannel: MethodChannel? = null
+    private var callChannel: MethodChannel? = null
     // Allow up to 20 calls during initialization
     val calls = MutableSharedFlow<Call>(replay = 20)
 
@@ -185,6 +191,15 @@ class Plugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 publishConversationShortcut(call, result)
             }
         }
+        callChannel = MethodChannel(binding.binaryMessenger, CALL_CHANNEL).apply {
+            setMethodCallHandler { call, result ->
+                if (call.method != "ensureIncomingCallChannel") {
+                    result.notImplemented()
+                    return@setMethodCallHandler
+                }
+                ensureIncomingCallChannel(result)
+            }
+        }
     }
 
     override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
@@ -193,6 +208,8 @@ class Plugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         pluginChannel = null
         conversationChannel?.setMethodCallHandler(null)
         conversationChannel = null
+        callChannel?.setMethodCallHandler(null)
+        callChannel = null
         mContext = null
         job?.cancel()
         // A cached Android process can outlive its FlutterEngine. Do not leave
@@ -266,9 +283,51 @@ class Plugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         result.success(ShortcutManagerCompat.pushDynamicShortcut(context, shortcut))
     }
 
+    private fun ensureIncomingCallChannel(result: MethodChannel.Result) {
+        val context = mContext ?: run {
+            result.error("NO_CONTEXT", "Android context is unavailable", null)
+            return
+        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            result.success(true)
+            return
+        }
+
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE)
+            as NotificationManager
+        // Sound and audio usage are immutable once Android creates a channel.
+        // Use a versioned channel and remove the old notification-sound one.
+        manager.deleteNotificationChannel(LEGACY_INCOMING_CALL_CHANNEL_ID)
+        if (manager.getNotificationChannel(INCOMING_CALL_CHANNEL_ID) == null) {
+            val ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+            val attributes = AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                .build()
+            val channel = NotificationChannel(
+                INCOMING_CALL_CHANNEL_ID,
+                "Incoming calls",
+                NotificationManager.IMPORTANCE_HIGH,
+            ).apply {
+                description = "Incoming Matrix calls"
+                lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
+                enableVibration(true)
+                vibrationPattern = longArrayOf(0, 650, 350, 650)
+                setSound(ringtone, attributes)
+            }
+            manager.createNotificationChannel(channel)
+        }
+        result.success(true)
+    }
+
     companion object {
         private const val TAG = "Plugin"
         private const val CONVERSATION_CHANNEL = "polycule.shortcuts"
+        private const val CALL_CHANNEL = "polycule.calls"
+        private const val LEGACY_INCOMING_CALL_CHANNEL_ID =
+            "polycule.incoming_calls"
+        private const val INCOMING_CALL_CHANNEL_ID =
+            "polycule.incoming_calls.v2"
         private const val CONVERSATION_CATEGORY =
             "business.braid.polycule.conversation"
         var calls: MutableSharedFlow<Call>? = null

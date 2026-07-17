@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 enum CallNotificationAction { show, answer, decline, hangup }
@@ -24,8 +25,9 @@ abstract final class CallNotificationManager {
   static const answerActionId = 'polycule.call.answer';
   static const declineActionId = 'polycule.call.decline';
   static const hangupActionId = 'polycule.call.hangup';
-  static const _incomingChannelId = 'polycule.incoming_calls';
+  static const _incomingChannelId = 'polycule.incoming_calls.v2';
   static const _activeChannelId = 'polycule.active_calls';
+  static const _androidCallChannel = MethodChannel('polycule.calls');
 
   static final pendingIntent = ValueNotifier<CallNotificationIntent?>(null);
 
@@ -54,14 +56,20 @@ abstract final class CallNotificationManager {
     String? payload, {
     String? actionId,
   }) {
-    if (payload == null) return null;
+    if (payload == null) {
+      return null;
+    }
     try {
       final data = jsonDecode(payload) as Map<String, dynamic>;
-      if (data['kind'] != 'call') return null;
+      if (data['kind'] != 'call') {
+        return null;
+      }
       final client = data['client'];
       final room = data['room'];
       final call = data['call'];
-      if (client is! int || room is! String || call is! String) return null;
+      if (client is! int || room is! String || call is! String) {
+        return null;
+      }
       final action = switch (actionId) {
         answerActionId => CallNotificationAction.answer,
         declineActionId => CallNotificationAction.decline,
@@ -95,7 +103,18 @@ abstract final class CallNotificationManager {
     required bool video,
     required Duration timeout,
   }) async {
-    if (kIsWeb || !Platform.isAndroid) return;
+    if (kIsWeb || !Platform.isAndroid) {
+      return;
+    }
+    try {
+      await _androidCallChannel.invokeMethod<void>(
+        'ensureIncomingCallChannel',
+      );
+    } on PlatformException catch (error) {
+      debugPrint('Unable to configure the Android ringtone channel: $error');
+    } on MissingPluginException catch (error) {
+      debugPrint('Android ringtone channel plugin is unavailable: $error');
+    }
     final plugin = FlutterLocalNotificationsPlugin();
     final callPayload = payload(
       clientIdentifier: clientIdentifier,
@@ -119,6 +138,8 @@ abstract final class CallNotificationManager {
           ongoing: true,
           autoCancel: false,
           timeoutAfter: timeout.inMilliseconds,
+          playSound: true,
+          enableVibration: true,
           audioAttributesUsage: AudioAttributesUsage.notificationRingtone,
           additionalFlags: Int32List.fromList(const [4]),
           icon: '@drawable/ic_launcher_foreground',
@@ -151,7 +172,9 @@ abstract final class CallNotificationManager {
     required String peerName,
     required bool connected,
   }) async {
-    if (kIsWeb || !Platform.isAndroid) return;
+    if (kIsWeb || !Platform.isAndroid) {
+      return;
+    }
     await FlutterLocalNotificationsPlugin().show(
       notificationId(callId),
       peerName,
@@ -193,7 +216,9 @@ abstract final class CallNotificationManager {
   }
 
   static Future<void> cancel(String callId) {
-    if (kIsWeb || !Platform.isAndroid) return Future.value();
+    if (kIsWeb || !Platform.isAndroid) {
+      return Future.value();
+    }
     return FlutterLocalNotificationsPlugin().cancel(notificationId(callId));
   }
 }
