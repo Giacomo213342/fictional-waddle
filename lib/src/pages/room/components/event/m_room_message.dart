@@ -143,7 +143,7 @@ class RoomMessage extends StatelessWidget {
                                                     EventNavigationScope.of(
                                                       context,
                                                     ).navigate(
-                                                      replyEvent.eventId,
+                                                      displayReply.eventId,
                                                     ),
                                                   ),
                                                 ),
