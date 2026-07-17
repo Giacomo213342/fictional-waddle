@@ -30,6 +30,32 @@ abstract final class CallNotificationManager {
   static const _androidCallChannel = MethodChannel('polycule.calls');
 
   static final pendingIntent = ValueNotifier<CallNotificationIntent?>(null);
+  static bool _requestedFullScreenPermission = false;
+
+  /// Android 14+ may require the user to explicitly allow call full-screen
+  /// intents. Outgoing call initiation is a foreground, user-driven moment in
+  /// which opening that system permission screen is safe.
+  static Future<bool?> requestFullScreenIntentPermission() async {
+    if (kIsWeb || !Platform.isAndroid) {
+      return true;
+    }
+    if (_requestedFullScreenPermission) {
+      return null;
+    }
+    try {
+      final result = await FlutterLocalNotificationsPlugin()
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestFullScreenIntentPermission();
+      if (result != null) {
+        _requestedFullScreenPermission = true;
+      }
+      return result;
+    } catch (error) {
+      debugPrint('Unable to request full-screen call permission: $error');
+      return false;
+    }
+  }
 
   static int notificationId(String callId) {
     var hash = 0x811c9dc5;

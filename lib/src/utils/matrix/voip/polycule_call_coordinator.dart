@@ -6,6 +6,7 @@ import 'package:matrix/matrix.dart';
 import '../../../widgets/settings_manager.dart';
 import '../../../widgets/matrix/client_manager/client_store.dart';
 import 'call_notification_manager.dart';
+import 'polycule_voip.dart';
 import 'polycule_webrtc_delegate.dart';
 
 class ActivePolyculeCall {
@@ -135,7 +136,7 @@ class PolyculeCallCoordinator {
       network: network,
     );
     _clients[client] = _ClientVoip(
-      voip: VoIP(client, delegate),
+      voip: PolyculeVoIP(client, delegate, network: network),
       delegate: delegate,
     );
   }
@@ -167,6 +168,7 @@ class PolyculeCallCoordinator {
     _startingCall = true;
     _missingTurnRelay = false;
     try {
+      await CallNotificationManager.requestFullScreenIntentPermission();
       final network = _network!.value;
       final relayOnly = network.useSocks5Proxy && network.proxyOneToOneCalls;
       if (relayOnly) {
@@ -451,6 +453,18 @@ class PolyculeCallCoordinator {
       await session.reject(reason: CallErrorCode.userHangup);
     } catch (error, stackTrace) {
       _showActionError(session, error, stackTrace);
+    } finally {
+      _actionCalls.remove(session);
+    }
+  }
+
+  Future<void> hangupActiveCall() async {
+    final session = activeCall.value?.session;
+    if (session == null || !_actionCalls.add(session)) {
+      return;
+    }
+    try {
+      await _hangup(session);
     } finally {
       _actionCalls.remove(session);
     }
