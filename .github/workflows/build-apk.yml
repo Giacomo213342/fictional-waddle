@@ -71,7 +71,8 @@ jobs:
           printf '%s\n' "$TEST_OUTPUT"
           if ((TEST_STATUS != 0)); then
             ANNOTATION=$(printf '%s' "$TEST_OUTPUT" \
-              | tail -n 120 \
+              | sed -n '/^00:00/,$p' \
+              | tail -n 80 \
               | sed -e 's/%/%25/g' -e 's/\r/%0D/g' \
               | awk 'BEGIN { ORS="%0A" } { print }')
             echo "::error title=Android back navigation tests failed::$ANNOTATION"
