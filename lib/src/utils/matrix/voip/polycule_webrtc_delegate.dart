@@ -65,8 +65,8 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
 
   final PolyculeCallCoordinator coordinator;
   final ValueListenable<NetworkState> network;
-  final Map<CallSession, List<StreamSubscription<CallStateChange>>>
-      _callSubscriptions = {};
+  final Map<CallSession, List<StreamSubscription<dynamic>>> _callSubscriptions =
+      {};
   Timer? _ringtoneTimer;
 
   bool get _relayOnly {

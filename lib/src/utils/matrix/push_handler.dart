@@ -597,19 +597,19 @@ Future<PushNotificationResult> handlePushNotification({
     }
 
     if (callId is String && isInvite && event.senderId != client.userID) {
-      final lifetime = event.content['lifetime'] is int
-          ? event.content['lifetime'] as int
+      final rawLifetime = event.content['lifetime'];
+      final lifetime = rawLifetime is int
+          ? rawLifetime
           : const Duration(minutes: 1).inMilliseconds;
       final unsignedAge = event.unsigned?.tryGet<int>('age');
-      final age = unsignedAge != null
-          ? unsignedAge
-          : DateTime.now().difference(event.originServerTs).inMilliseconds;
+      final age = unsignedAge ??
+          DateTime.now().difference(event.originServerTs).inMilliseconds;
       final maximumLifetime = lifetime < 1000 ? 1000 : lifetime;
       final remaining = Duration(
         milliseconds: (lifetime - age).clamp(1000, maximumLifetime).toInt(),
       );
       final sender = event.senderFromMemoryOrFallback;
-      final show = () => CallNotificationManager.showIncoming(
+      Future<void> show() => CallNotificationManager.showIncoming(
             clientIdentifier: client.clientName.clientIdentifier,
             roomId: event.room.id,
             callId: callId,

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../widgets/settings_manager.dart';
+import '../../../widgets/matrix/client_manager/client_store.dart';
 import 'call_notification_manager.dart';
 import 'polycule_webrtc_delegate.dart';
 
