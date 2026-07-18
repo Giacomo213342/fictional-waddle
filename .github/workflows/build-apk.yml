@@ -73,7 +73,9 @@ jobs:
             # Preserve the useful tail in a check annotation so a failed
             # feature-branch validation can still be diagnosed over SSH-only
             # GitHub access.
-            details=$(tail -n 160 flutter-test.log)
+            # Check annotations are capped at roughly 8 KiB. Keep the actual
+            # failure tail instead of letting dependency notices consume it.
+            details=$(tail -n 100 flutter-test.log | tail -c 7000)
             details=${details//'%'/'%25'}
             details=${details//$'\r'/'%0D'}
             details=${details//$'\n'/'%0A'}
