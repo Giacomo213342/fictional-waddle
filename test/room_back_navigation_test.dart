@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:polycule/src/pages/room/room_back_navigation.dart';
+import 'package:polycule/src/router/extensions/client_manager_route.dart';
 import 'package:polycule/src/widgets/responsive_sidebar_layout.dart';
 import 'package:polycule/src/widgets/matrix/call/call_overlay_host.dart';
 
@@ -55,6 +56,19 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('room list'), findsOneWidget);
+  });
+
+  testWidgets('conversation list leaves system back to Android', (
+    tester,
+  ) async {
+    final harness = _makeProductionShellHarness(
+      initialLocation: '/client/1/rooms',
+    );
+    addTearDown(harness.router.dispose);
+    await tester.pumpWidget(harness.app);
+
+    expect(find.text('room list'), findsOneWidget);
+    expect(harness.canHandlePop, isFalse);
   });
 
   testWidgets('system back still leaves after a room sheet scrim dismissal', (
@@ -227,7 +241,10 @@ _ProductionShellHarness _makeProductionShellHarness({
     routes: [
       ShellRoute(
         navigatorKey: branchNavigatorKey,
-        builder: (context, state, child) => child,
+        builder: (context, state, child) => ActiveClientBackNotificationGuard(
+          uri: state.uri,
+          child: child,
+        ),
         routes: [
           GoRoute(
             path: '/client/:client/rooms',
@@ -309,20 +326,25 @@ class _RoomHarnessPage extends StatelessWidget {
               child: const Text('open context menu'),
             ),
             TextButton(
-              onPressed: () => showPolyculeCallRoute(
-                context,
-                (callContext) => Scaffold(
-                  body: Column(
-                    children: [
-                      const Text('fullscreen call'),
-                      TextButton(
-                        onPressed: () => Navigator.of(callContext).pop(),
-                        child: const Text('hang up call'),
-                      ),
-                    ],
+              onPressed: () {
+                late final Route<void> route;
+                route = buildPolyculeCallRoute(
+                  (callContext) => Scaffold(
+                    body: Column(
+                      children: [
+                        const Text('fullscreen call'),
+                        TextButton(
+                          // Production removes the fullscreen route when the
+                          // call owner reaches a terminal state.
+                          onPressed: () => route.navigator?.removeRoute(route),
+                          child: const Text('hang up call'),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
+                );
+                Navigator.of(context).push(route);
+              },
               child: const Text('open call'),
             ),
             TextButton(

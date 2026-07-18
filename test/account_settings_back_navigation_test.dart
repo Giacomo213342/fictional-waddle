@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:polycule/src/pages/account_settings/account_settings_back_navigation.dart';
+import 'package:polycule/src/router/extensions/client_manager_route.dart';
 import 'package:polycule/src/widgets/responsive_layout.dart';
 
 void main() {
@@ -96,7 +97,10 @@ _Harness _makeHarness({
     routes: [
       ShellRoute(
         navigatorKey: branchNavigatorKey,
-        builder: (context, state, child) => child,
+        builder: (context, state, child) => ActiveClientBackNotificationGuard(
+          uri: state.uri,
+          child: child,
+        ),
         routes: [
           GoRoute(
             path: '/client/:client',

@@ -63,7 +63,8 @@ class AccountSettingsBackHandler extends StatelessWidget {
         child: NotificationListener<NavigationNotification>(
           // The compact layout keeps the empty nested Navigator offstage. Its
           // false notification must not unregister Android back handling.
-          onNotification: (_) => true,
+          // Preserve the positive capability published by this PopScope.
+          onNotification: (notification) => !notification.canHandlePop,
           child: child,
         ),
       );

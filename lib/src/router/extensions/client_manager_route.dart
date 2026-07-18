@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 
 import 'package:go_router/go_router.dart';
 
+import '../../pages/account_settings/account_settings_back_navigation.dart';
+import '../../pages/room/room_back_navigation.dart';
 import '../../widgets/matrix/call/call_overlay_host.dart';
 import '../../widgets/matrix/client_manager/client_manager.dart';
 import '../../widgets/matrix/client_manager/client_tab_view.dart';
@@ -18,13 +20,16 @@ class ClientManagerRoute extends StatefulShellRoute {
   }) : super(
           branches: branches,
           navigatorContainerBuilder: _activeBranchContainer,
-          builder: (context, state, shell) => CallOverlayHost(
-            coordinator: ClientManager.of(context).callCoordinator,
-            activeNavigatorKey: branches[shell.currentIndex].navigatorKey,
-            child: MatrixDialogScope(
-              child: ClientTabView(
-                uri: state.uri,
-                child: shell,
+          builder: (context, state, shell) => ActiveClientBackNotificationGuard(
+            uri: state.uri,
+            child: CallOverlayHost(
+              coordinator: ClientManager.of(context).callCoordinator,
+              activeNavigatorKey: branches[shell.currentIndex].navigatorKey,
+              child: MatrixDialogScope(
+                child: ClientTabView(
+                  uri: state.uri,
+                  child: shell,
+                ),
               ),
             ),
           ),
@@ -62,4 +67,33 @@ class ClientManagerRoute extends StatefulShellRoute {
       }),
     );
   }
+}
+
+/// Prevents the active branch Navigator from overwriting an explicit back
+/// owner mounted inside its current route.
+///
+/// Removing a fullscreen call route and popping the last nested settings page
+/// both make the branch Navigator publish `canHandlePop: false`. At a room or
+/// account-settings root that value describes only the Navigator stack: the
+/// visible route still owns back through a [PopScope]. Let the positive scope
+/// notification bubble and discard only the stale negative parent value.
+class ActiveClientBackNotificationGuard extends StatelessWidget {
+  const ActiveClientBackNotificationGuard({
+    super.key,
+    required this.uri,
+    required this.child,
+  });
+
+  final Uri uri;
+  final Widget child;
+
+  bool get _routeOwnsBack => isRoomRoot(uri) || isAccountSettingsRoot(uri);
+
+  @override
+  Widget build(BuildContext context) =>
+      NotificationListener<NavigationNotification>(
+        onNotification: (notification) =>
+            _routeOwnsBack && !notification.canHandlePop,
+        child: child,
+      );
 }
