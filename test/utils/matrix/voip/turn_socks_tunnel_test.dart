@@ -32,12 +32,16 @@ void main() {
       authHandler: (username, password) =>
           username == 'polycule' && password == 'secret',
     );
+    final proxyConnections = proxy.connections.listen(
+      (connection) => unawaited(connection.forward()),
+    );
     await proxy.bind(InternetAddress.loopbackIPv4, 0);
     final proxyPort = proxy.proxies.keys.single;
     final pool = TurnSocksTunnelPool();
     addTearDown(() async {
       await pool.close();
       await proxy.stop();
+      await proxyConnections.cancel();
       await targetSubscription.cancel();
       await target.close();
     });
