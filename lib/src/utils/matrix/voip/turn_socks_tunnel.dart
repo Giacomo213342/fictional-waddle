@@ -187,8 +187,8 @@ class _LocalTurnSocksTunnel {
       );
       connections.add(remote);
       await Future.any([
-        local.pipe(remote),
-        remote.pipe(local),
+        local.cast<List<int>>().pipe(remote),
+        remote.cast<List<int>>().pipe(local),
       ]);
     } catch (_) {
       // The peer connection reports transport failure through its ICE state.
