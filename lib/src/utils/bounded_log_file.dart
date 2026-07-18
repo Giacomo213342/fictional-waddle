@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -22,6 +23,7 @@ class BoundedLogFile {
   final Future<Directory> Function() _directoryProvider;
 
   DateTime? _lastCleanup;
+  Future<void> _pendingOperation = Future.value();
 
   Future<void> append(String line) => _withLock((file) async {
         await _cleanup(file);
@@ -42,7 +44,19 @@ class BoundedLogFile {
         (file) => _cleanup(file, force: true),
       );
 
-  Future<T> _withLock<T>(Future<T> Function(File file) action) async {
+  Future<T> _withLock<T>(Future<T> Function(File file) action) {
+    final result = Completer<T>();
+    _pendingOperation = _pendingOperation.then((_) async {
+      try {
+        result.complete(await _withFileLock(action));
+      } catch (error, stackTrace) {
+        result.completeError(error, stackTrace);
+      }
+    });
+    return result.future;
+  }
+
+  Future<T> _withFileLock<T>(Future<T> Function(File file) action) async {
     final directory = await _directoryProvider();
     final file = File('${directory.path}/$fileName');
     final lock = await File('${file.path}.lock').open(mode: FileMode.append);
