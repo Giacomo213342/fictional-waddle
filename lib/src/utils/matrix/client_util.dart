@@ -9,8 +9,10 @@ import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
 
 import 'database/polycule_database_builder.dart';
+import 'matrix_auth_retry_client.dart';
 import 'matrix_refresh_token_client.dart';
 import 'poll_event.dart';
+import 'session_refresh_retrier.dart';
 
 abstract class ClientUtil {
   const ClientUtil._();
@@ -57,17 +59,20 @@ abstract class ClientUtil {
   }
 
   static Future<void> handleSoftLogout(Client client) async {
-    while (true) {
-      try {
-        await client.refreshAccessToken();
-        return;
-      } on ClientException catch (e, s) {
-        // keep waiting on network errors. This is likely due to
-        // power savings on mobile.
-        Logs().w('Error refreshing token. Retrying in 10 seconds.', e, s);
-        await Future.delayed(const Duration(seconds: 10));
-      }
-    }
+    final retrier = SessionRefreshRetrier(
+      onRoundExhausted: (error, stackTrace, exhaustedRounds) {
+        // Avoid flooding Application logs during long network outages.
+        if (exhaustedRounds == 1 || exhaustedRounds % 10 == 0) {
+          Logs().w(
+            'Matrix session refresh is temporarily unavailable; keeping the '
+            'session and retrying.',
+            error,
+            stackTrace,
+          );
+        }
+      },
+    );
+    await retrier.run(client.refreshAccessToken);
   }
 
   static BaseClient buildRetryClient(
@@ -76,7 +81,10 @@ abstract class ClientUtil {
     Duration requestTimeout = const Duration(seconds: 40),
   }) =>
       MatrixRefreshTokenClient(
-        inner: FixedTimeoutHttpClient(httpClient, requestTimeout),
+        inner: MatrixAuthRetryClient(
+          inner: FixedTimeoutHttpClient(httpClient, requestTimeout),
+          homeserver: () => client.homeserver,
+        ),
         client: client,
       );
 
