@@ -8,6 +8,7 @@ import 'package:matrix/matrix.dart';
 import 'package:media_kit/media_kit.dart';
 
 import 'src/polycule.dart';
+import 'src/utils/application_log_maintenance.dart';
 import 'src/utils/error_logger.dart';
 import 'src/utils/matrix/client_util.dart';
 import 'src/utils/matrix/push_handler.dart';
@@ -25,13 +26,14 @@ void main([List<String>? args]) {
   // used to capture errors in main thread
   runZonedGuarded(
     () async {
-      Logs().level = Level.verbose;
-      Logs().v('Called main() with arguments: $args');
+      Logs().level = Level.warning;
 
       WidgetsFlutterBinding.ensureInitialized();
       if (args?.contains('--unifiedpush-bg') ?? false) {
         return pushEntrypoint();
       }
+
+      await ApplicationLogMaintenance.start();
 
       await ClientUtil.initVodozemac();
 

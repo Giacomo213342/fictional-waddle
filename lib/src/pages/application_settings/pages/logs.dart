@@ -21,7 +21,6 @@ class LogsPage extends StatefulWidget {
 
 class _LogsPageState extends State<LogsPage> {
   List<LogEvent> events = [];
-  Level logLevel = Level.debug;
 
   Timer? _timer;
 
@@ -49,19 +48,6 @@ class _LogsPageState extends State<LogsPage> {
             icon: const Icon(Icons.refresh),
             tooltip: AppLocalizations.of(context).reload,
           ),
-          PopupMenuButton<Level>(
-            initialValue: logLevel,
-            onSelected: _setLogLevel,
-            itemBuilder: (context) => Level.values
-                .map(
-                  (level) => PopupMenuItem(
-                    value: level,
-                    child: Text(level.toString()),
-                  ),
-                )
-                .toList(),
-            icon: const Icon(Icons.filter_list),
-          ),
         ],
       ),
       body: RefreshIndicator.adaptive(
@@ -87,18 +73,13 @@ class _LogsPageState extends State<LogsPage> {
     ]);
     if (!mounted) return;
     setState(() {
+      final runtimeProblems = Logs()
+          .outputEvents
+          .where((event) => event.level.index <= Level.warning.index);
       events = <LogEvent>[
         ...results.expand((events) => events),
-        ...Logs().outputEvents,
-      ]
-          .reversed
-          .where((logEvent) => logEvent.level.index <= logLevel.index)
-          .toList();
+        ...runtimeProblems,
+      ].reversed.take(500).toList();
     });
-  }
-
-  void _setLogLevel(Level value) {
-    logLevel = value;
-    _refreshLogs();
   }
 }

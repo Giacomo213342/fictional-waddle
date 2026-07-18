@@ -1,35 +1,30 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:matrix/matrix.dart';
-import 'package:path_provider/path_provider.dart';
+
+import '../bounded_log_file.dart';
 
 class PushLogJournal {
   const PushLogJournal._();
 
-  static const _fileName = 'unifiedpush.log.jsonl';
-  static const _maximumBytes = 512 * 1024;
-  static const _maximumVisibleEvents = 500;
+  static const _maximumVisibleEvents = 200;
+  static final _journal = BoundedLogFile(
+    fileName: 'unifiedpush.log.jsonl',
+    maximumBytes: 512 * 1024,
+    maximumEvents: _maximumVisibleEvents,
+    retention: const Duration(days: 7),
+    cleanupInterval: const Duration(hours: 6),
+  );
 
   static Future<void> record(
     String message, {
     Level level = Level.info,
     Object? error,
     StackTrace? stackTrace,
+    bool important = false,
   }) async {
-    Logs().addLogEvent(
-      LogEvent(
-        '[UnifiedPush] $message',
-        exception: error,
-        stackTrace: stackTrace,
-        level: level,
-      ),
-    );
+    if (!important && level.index > Level.warning.index) return;
     try {
-      final file = await _file();
-      if (await file.exists() && await file.length() > _maximumBytes) {
-        await file.writeAsString('');
-      }
       final entry = jsonEncode({
         'timestamp': DateTime.now().toUtc().toIso8601String(),
         'level': level.name,
@@ -37,7 +32,7 @@ class PushLogJournal {
         if (error != null) 'error': error.toString(),
         if (stackTrace != null) 'stackTrace': stackTrace.toString(),
       });
-      await file.writeAsString('$entry\n', mode: FileMode.append, flush: true);
+      await _journal.append(entry);
     } catch (journalError, journalStackTrace) {
       Logs().w(
         'Unable to persist UnifiedPush log.',
@@ -49,9 +44,7 @@ class PushLogJournal {
 
   static Future<List<LogEvent>> readEvents() async {
     try {
-      final file = await _file();
-      if (!await file.exists()) return const [];
-      final lines = await file.readAsLines();
+      final lines = await _journal.readLines();
       return lines.reversed
           .take(_maximumVisibleEvents)
           .map(_decodeEvent)
@@ -62,6 +55,14 @@ class PushLogJournal {
     } catch (error, stackTrace) {
       Logs().w('Unable to read UnifiedPush log.', error, stackTrace);
       return const [];
+    }
+  }
+
+  static Future<void> clearExpired() async {
+    try {
+      await _journal.clearExpired();
+    } catch (error, stackTrace) {
+      Logs().w('Unable to prune UnifiedPush log.', error, stackTrace);
     }
   }
 
@@ -87,10 +88,5 @@ class PushLogJournal {
     } catch (_) {
       return null;
     }
-  }
-
-  static Future<File> _file() async {
-    final directory = await getApplicationSupportDirectory();
-    return File('${directory.path}/$_fileName');
   }
 }

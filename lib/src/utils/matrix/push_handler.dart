@@ -193,6 +193,7 @@ Future<void> handleBackgroundNotification(
       await PushLogJournal.record(
         'Background fallback shown after '
         '${stopwatch.elapsedMilliseconds}ms.',
+        important: true,
       );
     }
     return shown;
@@ -601,6 +602,7 @@ Future<PushNotificationResult> handlePushNotification({
     if (callId is String && isInvite && event.senderId != client.userID) {
       await CallLogJournal.record(
         'UnifiedPush resolved an incoming Matrix call invite.',
+        important: true,
       );
       final rawLifetime = event.content['lifetime'];
       final lifetime = rawLifetime is int

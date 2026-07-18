@@ -96,6 +96,7 @@ class PolyculeVoIP extends VoIP {
       await CallLogJournal.record(
         'Homeserver TURN lookup succeeded: '
         '${credentials.uris.length} ICE URI(s), ttl=${credentials.ttl}s.',
+        important: true,
       );
       return [
         {

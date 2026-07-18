@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:matrix/matrix.dart';
-import 'package:path_provider/path_provider.dart';
+
+import '../../bounded_log_file.dart';
 
 /// A bounded call-lifecycle journal that survives process restarts.
 ///
@@ -12,28 +12,28 @@ import 'package:path_provider/path_provider.dart';
 class CallLogJournal {
   const CallLogJournal._();
 
-  static const _fileName = 'matrix_calls.log.jsonl';
-  static const _maximumBytes = 512 * 1024;
-  static const _maximumVisibleEvents = 500;
+  static const _maximumVisibleEvents = 200;
+  static final _journal = BoundedLogFile(
+    fileName: 'matrix_calls.log.jsonl',
+    maximumBytes: 512 * 1024,
+    maximumEvents: _maximumVisibleEvents,
+    retention: const Duration(days: 7),
+    cleanupInterval: const Duration(hours: 6),
+  );
 
   static Future<void> record(
     String message, {
     Level level = Level.info,
+    bool important = false,
   }) async {
-    Logs().addLogEvent(LogEvent('[Call] $message', level: level));
+    if (!important && level.index > Level.warning.index) return;
     try {
-      final file = await _file();
-      if (await file.exists() && await file.length() > _maximumBytes) {
-        await file.writeAsString('');
-      }
-      await file.writeAsString(
-        '${jsonEncode({
-              'timestamp': DateTime.now().toUtc().toIso8601String(),
-              'level': level.name,
-              'message': message,
-            })}\n',
-        mode: FileMode.append,
-        flush: true,
+      await _journal.append(
+        jsonEncode({
+          'timestamp': DateTime.now().toUtc().toIso8601String(),
+          'level': level.name,
+          'message': message,
+        }),
       );
     } catch (error, stackTrace) {
       Logs().w('Unable to persist call log.', error, stackTrace);
@@ -42,11 +42,7 @@ class CallLogJournal {
 
   static Future<List<LogEvent>> readEvents() async {
     try {
-      final file = await _file();
-      if (!await file.exists()) {
-        return const [];
-      }
-      final lines = await file.readAsLines();
+      final lines = await _journal.readLines();
       return lines.reversed
           .take(_maximumVisibleEvents)
           .map(_decodeEvent)
@@ -57,6 +53,14 @@ class CallLogJournal {
     } catch (error, stackTrace) {
       Logs().w('Unable to read call log.', error, stackTrace);
       return const [];
+    }
+  }
+
+  static Future<void> clearExpired() async {
+    try {
+      await _journal.clearExpired();
+    } catch (error, stackTrace) {
+      Logs().w('Unable to prune call log.', error, stackTrace);
     }
   }
 
@@ -79,10 +83,5 @@ class CallLogJournal {
     } catch (_) {
       return null;
     }
-  }
-
-  static Future<File> _file() async {
-    final directory = await getApplicationSupportDirectory();
-    return File('${directory.path}/$_fileName');
   }
 }
