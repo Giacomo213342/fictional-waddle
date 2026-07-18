@@ -7,8 +7,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
+import android.media.RingtoneManager
 import android.os.Build
-import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -43,7 +43,20 @@ class PolyculeCallNotificationsPlugin : FlutterPlugin, MethodChannel.MethodCallH
                 "cancelCall" -> {
                     val id = requireNotNull(call.argument<Int>("notificationId"))
                     NotificationManagerCompat.from(context).cancel(id)
-                    closeSurface(call.argument<String>("callId"))
+                    val callId = call.argument<String>("callId")
+                    CallActionStore.clearForCall(context, callId)
+                    closeSurface(callId)
+                    result.success(null)
+                }
+                "getPendingCallAction" -> {
+                    result.success(CallActionStore.read(context))
+                }
+                "acknowledgeCallAction" -> {
+                    CallActionStore.acknowledge(
+                        context,
+                        requireNotNull(call.argument<String>("callId")),
+                        requireNotNull(call.argument<String>("actionId")),
+                    )
                     result.success(null)
                 }
                 else -> result.notImplemented()
@@ -98,6 +111,7 @@ class PolyculeCallNotificationsPlugin : FlutterPlugin, MethodChannel.MethodCallH
             context.packageName,
         ).takeIf { it != 0 } ?: context.applicationInfo.icon
 
+        val ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
         val notification = NotificationCompat.Builder(context, CallNotificationContract.CHANNEL_ID)
             .setSmallIcon(icon)
             .setContentTitle(callerName)
@@ -110,11 +124,13 @@ class PolyculeCallNotificationsPlugin : FlutterPlugin, MethodChannel.MethodCallH
             .setTimeoutAfter(timeoutMs)
             .setContentIntent(openIntent)
             .setFullScreenIntent(openIntent, true)
-            .setSound(Settings.System.DEFAULT_RINGTONE_URI)
+            .setSound(ringtoneUri)
             .setVibrate(longArrayOf(0L, 700L, 500L, 700L))
             .addAction(0, "Decline", declineIntent)
             .addAction(0, "Answer", answerIntent)
             .build()
+
+        notification.flags = notification.flags or Notification.FLAG_INSISTENT
 
         NotificationManagerCompat.from(context).notify(notificationId, notification)
     }
@@ -158,6 +174,7 @@ class PolyculeCallNotificationsPlugin : FlutterPlugin, MethodChannel.MethodCallH
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
             .build()
+        val ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
         val channel = NotificationChannel(
             CallNotificationContract.CHANNEL_ID,
             "Incoming calls",
@@ -167,7 +184,7 @@ class PolyculeCallNotificationsPlugin : FlutterPlugin, MethodChannel.MethodCallH
             lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             enableVibration(true)
             vibrationPattern = longArrayOf(0L, 700L, 500L, 700L)
-            setSound(Settings.System.DEFAULT_RINGTONE_URI, ringtoneAttributes)
+            setSound(ringtoneUri, ringtoneAttributes)
         }
         context.getSystemService(NotificationManager::class.java)
             .createNotificationChannel(channel)

@@ -6,8 +6,10 @@ import 'package:flutter/widgets.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../utils/matrix/client_util.dart';
+import '../../../utils/matrix/database/matrix_store_lease.dart';
 import '../../../utils/matrix/polycule_command_extension.dart';
 import '../../../utils/matrix/push_manager.dart';
+import '../../../utils/matrix/voip/call_notification_manager.dart';
 import '../../../utils/matrix/voip/polycule_call_coordinator.dart';
 import '../../../utils/polycule_http_client/polycule_http_client.dart';
 import '../../settings_manager.dart';
@@ -170,9 +172,15 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
     _httpClientListener = PolyculeHttpClientManager.httpClientCallbackStream
         .listen(_updateHttpClients);
 
-    await store.loadClients();
-    IntentManager.clientsReady.value = true;
-    return true;
+    final lease = await MatrixStoreLease.acquire();
+    try {
+      await store.loadClients();
+      await CallNotificationManager.restorePendingResponse();
+      IntentManager.clientsReady.value = true;
+      return true;
+    } finally {
+      await lease.release();
+    }
   }
 
   Future<void> _removeFromClientList(Client client) async {

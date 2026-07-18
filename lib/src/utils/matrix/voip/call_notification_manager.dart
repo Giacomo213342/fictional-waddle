@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -122,6 +123,53 @@ abstract final class CallNotificationManager {
     if (identical(pendingIntent.value, intent)) {
       pendingIntent.value = null;
     }
+    unawaited(_acknowledgeNativeAction(intent));
+  }
+
+  static Future<void> restorePendingResponse() async {
+    if (kIsWeb || !Platform.isAndroid) {
+      return;
+    }
+    try {
+      final data = await _androidCallChannel
+          .invokeMapMethod<String, dynamic>('getPendingCallAction');
+      final payload = data?['payload'];
+      final actionId = data?['actionId'];
+      if (payload is String && actionId is String) {
+        receiveResponse(payload, actionId: actionId);
+      }
+    } on MissingPluginException {
+      // Notification launch extras remain the compatibility path.
+    } on PlatformException catch (error) {
+      debugPrint('Unable to restore pending native call action: $error');
+    }
+  }
+
+  static Future<void> _acknowledgeNativeAction(
+    CallNotificationIntent intent,
+  ) async {
+    if (kIsWeb || !Platform.isAndroid) {
+      return;
+    }
+    final actionId = switch (intent.action) {
+      CallNotificationAction.answer => answerActionId,
+      CallNotificationAction.decline => declineActionId,
+      CallNotificationAction.hangup => hangupActionId,
+      CallNotificationAction.show => null,
+    };
+    if (actionId == null) {
+      return;
+    }
+    try {
+      await _androidCallChannel.invokeMethod<void>(
+        'acknowledgeCallAction',
+        {'callId': intent.callId, 'actionId': actionId},
+      );
+    } on MissingPluginException {
+      // Nothing was persisted by older native implementations.
+    } on PlatformException catch (error) {
+      debugPrint('Unable to acknowledge pending native call action: $error');
+    }
   }
 
   static Future<void> showIncoming({
@@ -178,7 +226,7 @@ abstract final class CallNotificationManager {
         video ? 'Incoming video call' : 'Incoming call',
         NotificationDetails(
           android: AndroidNotificationDetails(
-            _safeFallbackChannelId,
+            '$_safeFallbackChannelId.v2',
             'Incoming calls',
             channelDescription: 'Incoming Matrix calls',
             category: AndroidNotificationCategory.call,
@@ -189,7 +237,7 @@ abstract final class CallNotificationManager {
             ongoing: true,
             autoCancel: false,
             timeoutAfter: timeout.inMilliseconds,
-            playSound: true,
+            playSound: false,
             enableVibration: true,
             audioAttributesUsage: AudioAttributesUsage.notificationRingtone,
             additionalFlags: Int32List.fromList(const [4]),

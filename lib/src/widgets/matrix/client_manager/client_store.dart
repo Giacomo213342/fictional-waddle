@@ -2,12 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
-
 import 'package:matrix/matrix.dart';
 
 import '../../../pages/ssss_bootstrap/ssss_bootstrap.dart';
 import '../../../utils/error_logger.dart';
+import '../../../utils/matrix/database/polycule_database_builder.dart';
 import '../../../utils/runtime_suffix.dart';
 import '../../../utils/secure_storage.dart';
 
@@ -52,37 +51,41 @@ class ClientStore {
     storageLock = Completer<void>();
 
     final activeClients = List<Client>.from(this.activeClients.value);
-    String? json;
     try {
-      json = await kPolyculeSecureStorage.read(key: _clientNamesKey + suffix);
-    } on PlatformException catch (e, s) {
-      await kPolyculeSecureStorage.delete(key: _clientNamesKey + suffix);
-      ErrorLogger().captureStackTrace(e, s);
-    }
-    if (json != null) {
-      final identifiers = (jsonDecode(json) as Iterable).whereType<int>();
+      final json =
+          await kPolyculeSecureStorage.read(key: _clientNamesKey + suffix);
+      final identifiers = json == null
+          ? await discoverStoredClientIdentifiers()
+          : (jsonDecode(json) as Iterable).whereType<int>();
       for (final identifier in identifiers) {
-        // if the client is already running (usually client 1), skip building it
+        // If the client is already running (usually client 1), skip it.
         if (!activeClients.any(
           (client) => client.clientName.clientIdentifier == identifier,
         )) {
           activeClients.add(await buildClient(identifier));
         }
       }
-    }
-    if (activeClients.isEmpty) {
-      activeClients.add(await buildClient(1));
-    }
-    this.activeClients.value = activeClients;
-    storageLock?.complete();
-    storageLock = null;
-    Logs().d(
-      'Released storage lock after initialization. '
-      '${activeClients.length} clients running.',
-    );
+      if (activeClients.isEmpty) {
+        activeClients.add(await buildClient(1));
+      }
+      this.activeClients.value = activeClients;
+      Logs().d(
+        'Released storage lock after initialization. '
+        '${activeClients.length} clients running.',
+      );
 
-    _initializer.complete(true);
-    return true;
+      _initializer.complete(true);
+      return true;
+    } catch (error, stackTrace) {
+      ErrorLogger().captureStackTrace(error, stackTrace);
+      if (!_initializer.isCompleted) {
+        _initializer.completeError(error, stackTrace);
+      }
+      rethrow;
+    } finally {
+      storageLock?.complete();
+      storageLock = null;
+    }
   }
 
   Future<void> moveClient(Client client, int index) async {
@@ -97,34 +100,32 @@ class ClientStore {
       'Acquiring storage lock for moving clients.',
     );
     storageLock = Completer<void>();
-
-    final identifier = client.clientName.clientIdentifier;
-
-    final activeClients = List<Client>.from(this.activeClients.value);
-    final oldIndex = activeClients.indexWhere(
-      (element) => element.clientName.clientIdentifier == identifier,
-    );
-    if (oldIndex <= index) {
-      index--;
+    try {
+      final identifier = client.clientName.clientIdentifier;
+      final activeClients = List<Client>.from(this.activeClients.value);
+      final oldIndex = activeClients.indexWhere(
+        (element) => element.clientName.clientIdentifier == identifier,
+      );
+      if (oldIndex <= index) {
+        index--;
+      }
+      activeClients
+        ..removeAt(oldIndex)
+        ..insert(index, client);
+      await kPolyculeSecureStorage.write(
+        key: _clientNamesKey + suffix,
+        value: jsonEncode(
+          activeClients
+              .map((item) => item.clientName.clientIdentifier)
+              .toList(),
+        ),
+      );
+      this.activeClients.value = activeClients;
+      Logs().d('Released storage lock for moving clients.');
+    } finally {
+      storageLock?.complete();
+      storageLock = null;
     }
-
-    activeClients.removeAt(oldIndex);
-    activeClients.insert(index, client);
-
-    final clientIdentifiers =
-        activeClients.map((e) => e.clientName.clientIdentifier);
-    await kPolyculeSecureStorage.write(
-      key: _clientNamesKey + suffix,
-      value: jsonEncode(clientIdentifiers.toList()),
-    );
-    storageLock?.complete();
-    storageLock = null;
-
-    this.activeClients.value = activeClients;
-
-    Logs().d(
-      'Released storage lock for moving clients.',
-    );
   }
 
   Future<void> deleteClient(Client client) async {
@@ -139,23 +140,25 @@ class ClientStore {
       'Acquiring storage lock for client deletion.',
     );
     storageLock = Completer<void>();
-
-    final identifier = client.clientName.clientIdentifier;
-
-    final activeClients = List<Client>.from(this.activeClients.value);
-
-    activeClients.removeWhere(
-      (element) => element.clientName.clientIdentifier == identifier,
-    );
-
-    final clientIdentifiers =
-        activeClients.map((e) => e.clientName.clientIdentifier);
-    await kPolyculeSecureStorage.write(
-      key: _clientNamesKey + suffix,
-      value: jsonEncode(clientIdentifiers.toList()),
-    );
-    storageLock?.complete();
-    storageLock = null;
+    final activeClients = List<Client>.from(this.activeClients.value)
+      ..removeWhere(
+        (element) =>
+            element.clientName.clientIdentifier ==
+            client.clientName.clientIdentifier,
+      );
+    try {
+      await kPolyculeSecureStorage.write(
+        key: _clientNamesKey + suffix,
+        value: jsonEncode(
+          activeClients
+              .map((item) => item.clientName.clientIdentifier)
+              .toList(),
+        ),
+      );
+    } finally {
+      storageLock?.complete();
+      storageLock = null;
+    }
 
     this.activeClients.value = activeClients;
 
@@ -186,34 +189,25 @@ class ClientStore {
       'Acquiring storage lock in order to store the new client.',
     );
     storageLock = Completer<void>();
-
-    String? storedJson;
     try {
-      storedJson =
+      final storedJson =
           await kPolyculeSecureStorage.read(key: _clientNamesKey + suffix);
-    } on PlatformException catch (e, s) {
-      await kPolyculeSecureStorage.delete(key: _clientNamesKey + suffix);
-      ErrorLogger().captureStackTrace(e, s);
-    }
-
-    Set<int> identifiers = {};
-
-    if (storedJson is String) {
-      identifiers.addAll((jsonDecode(storedJson) as Iterable).whereType<int>());
-    }
-    if (!identifiers.contains(identifier)) {
+      final identifiers = <int>{};
+      if (storedJson is String) {
+        identifiers.addAll(
+          (jsonDecode(storedJson) as Iterable).whereType<int>(),
+        );
+      }
       identifiers.add(identifier);
+      await kPolyculeSecureStorage.write(
+        key: _clientNamesKey + suffix,
+        value: jsonEncode(identifiers.toList()),
+      );
+      Logs().d('Released storage lock after storing the new client.');
+    } finally {
+      storageLock?.complete();
+      storageLock = null;
     }
-    await kPolyculeSecureStorage.write(
-      key: _clientNamesKey + suffix,
-      value: jsonEncode(identifiers.toList()),
-    );
-    storageLock?.complete();
-    storageLock = null;
-
-    Logs().d(
-      'Released storage lock after storing the new client.',
-    );
   }
 
   Future<Client> buildNewClient() async {

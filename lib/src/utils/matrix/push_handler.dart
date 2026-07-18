@@ -22,6 +22,7 @@ import 'active_room_tracker.dart';
 import 'cached_push_rules.dart';
 import 'call_event_summary.dart';
 import 'client_util.dart';
+import 'database/matrix_store_lease.dart';
 import 'is_display_event_extension.dart';
 import 'push_manager.dart';
 import 'poll_event.dart';
@@ -131,9 +132,10 @@ class BackgroundNotificationState {
 
   Future<bool> showFallback(Future<bool> Function() show) =>
       _synchronized(() async {
-        if (_settled || _fallbackShown) return false;
-        _fallbackShown = await show();
-        return _fallbackShown;
+        if (_settled || _fallbackShown) {
+          return false;
+        }
+        return _fallbackShown = await show();
       });
 
   Future<void> showComplete({
@@ -141,7 +143,9 @@ class BackgroundNotificationState {
     required Future<void> Function() show,
   }) =>
       _synchronized(() async {
-        if (_settled) return;
+        if (_settled) {
+          return;
+        }
         if (_fallbackShown) {
           await cancelFallback();
           _fallbackShown = false;
@@ -154,7 +158,9 @@ class BackgroundNotificationState {
     Future<void> Function(bool fallbackShown) settle,
   ) =>
       _synchronized(() async {
-        if (_settled) return;
+        if (_settled) {
+          return;
+        }
         await settle(_fallbackShown);
         _fallbackShown = false;
         _settled = true;
@@ -175,9 +181,21 @@ Future<void> handleBackgroundNotification(
           const Locale('en');
   final l10n = await AppLocalizations.delegate.load(locale);
   Client? client;
+  MatrixStoreLease? storeLease;
   Set<String>? mutedRoomIds;
   final notificationState = BackgroundNotificationState();
   await PushLogJournal.record('Received background callback for $instance.');
+
+  if (await _handleCallSignalingPush(
+    message: message.content,
+    instance: instance,
+    l10n: l10n,
+  )) {
+    await PushLogJournal.record(
+      'Handled call signaling without opening the Matrix database.',
+    );
+    return;
+  }
 
   Future<bool> showFallback() async {
     final shown = await notificationState.showFallback(
@@ -200,6 +218,7 @@ Future<void> handleBackgroundNotification(
   }
 
   final fullNotification = () async {
+    storeLease = await MatrixStoreLease.acquire();
     Logs().d('Loading headless network settings.');
     final settings = await const SettingsInterface()
         .getNetwork(failClosed: true)
@@ -247,7 +266,9 @@ Future<void> handleBackgroundNotification(
     try {
       result = await resolveNotification();
     } on MatrixException catch (error) {
-      if (error.error != MatrixError.M_UNKNOWN_TOKEN) rethrow;
+      if (error.error != MatrixError.M_UNKNOWN_TOKEN) {
+        rethrow;
+      }
       await PushLogJournal.record(
         'Homeserver rejected the access token; refreshing the stored '
         'session and retrying once.',
@@ -314,10 +335,69 @@ Future<void> handleBackgroundNotification(
             .w('Failed to dispose headless Matrix client.', error, stackTrace);
       }
     }
+    await storeLease?.release();
     await PushLogJournal.record(
       'Background notification finished in ${stopwatch.elapsedMilliseconds}ms.',
     );
   }
+}
+
+Future<bool> _handleCallSignalingPush({
+  required Uint8List message,
+  required String instance,
+  required AppLocalizations l10n,
+}) async {
+  PushNotification notification;
+  try {
+    notification = decodeMessage(message);
+  } catch (_) {
+    return false;
+  }
+  final type = notification.type;
+  if (type == null || !isMatrixCallSignalingEventType(type)) {
+    return false;
+  }
+
+  final content = notification.content ?? const <String, Object?>{};
+  final callId = content['call_id'];
+  final terminal = type.endsWith('.hangup') || type.endsWith('.reject');
+  if (terminal) {
+    if (callId is String) {
+      await CallNotificationManager.cancel(callId);
+    }
+    return true;
+  }
+
+  if (!type.endsWith('.invite')) {
+    return true;
+  }
+  final roomId = notification.roomId;
+  final clientIdentifier = int.tryParse(
+    RegExp(r'(\d+)$').firstMatch(instance)?.group(1) ?? '',
+  );
+  if (callId is! String || roomId == null || clientIdentifier == null) {
+    await CallLogJournal.record(
+      'Incoming call push lacked required public routing metadata.',
+      level: Level.warning,
+      important: true,
+    );
+    return true;
+  }
+
+  final rawLifetime = content['lifetime'];
+  final lifetimeMs = rawLifetime is int
+      ? rawLifetime.clamp(1000, const Duration(minutes: 2).inMilliseconds)
+      : const Duration(minutes: 1).inMilliseconds;
+  await CallNotificationManager.showIncoming(
+    clientIdentifier: clientIdentifier,
+    roomId: roomId,
+    callId: callId,
+    callerName:
+        notification.senderDisplayName ?? notification.roomName ?? l10n.appName,
+    video: callInviteContainsVideo(content),
+    timeout: Duration(milliseconds: lifetimeMs),
+  );
+  return true;
 }
 
 Future<bool> _showBackgroundFallbackNotification({
@@ -330,7 +410,9 @@ Future<bool> _showBackgroundFallbackNotification({
   try {
     final notification = decodeMessage(message);
     final roomId = notification.roomId;
-    if (roomId == null || mutedRoomIds?.contains(roomId) == true) return false;
+    if (roomId == null || mutedRoomIds?.contains(roomId) == true) {
+      return false;
+    }
     if (mutedRoomIds == null) {
       Logs().w(
         'Showing fallback without cached mute rules for $instance.',

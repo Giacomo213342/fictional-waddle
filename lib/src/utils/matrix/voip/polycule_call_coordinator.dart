@@ -754,20 +754,58 @@ class PolyculeCallCoordinator {
         intent.clientIdentifier != session.client.clientName.clientIdentifier) {
       return;
     }
-    CallNotificationManager.clearPending(intent);
     switch (intent.action) {
       case CallNotificationAction.show:
+        CallNotificationManager.clearPending(intent);
         showActiveCall();
         return;
       case CallNotificationAction.answer:
-        unawaited(answerActiveCall());
+        unawaited(_consumePeerNotificationAction(intent, session));
         break;
       case CallNotificationAction.decline:
-        unawaited(declineActiveCall());
+        unawaited(_consumePeerNotificationAction(intent, session));
         break;
       case CallNotificationAction.hangup:
-        unawaited(_hangup(session));
+        unawaited(_consumePeerNotificationAction(intent, session));
         break;
+    }
+  }
+
+  Future<void> _consumePeerNotificationAction(
+    CallNotificationIntent intent,
+    CallSession session,
+  ) async {
+    if (!_actionCalls.add(session)) {
+      return;
+    }
+    try {
+      switch (intent.action) {
+        case CallNotificationAction.show:
+          return;
+        case CallNotificationAction.answer:
+          if (!isAwaitingAnswer(session)) {
+            CallNotificationManager.clearPending(intent);
+            return;
+          }
+          showActiveCall();
+          await _answerFromNotification(session);
+          break;
+        case CallNotificationAction.decline:
+          if (!isAwaitingAnswer(session)) {
+            CallNotificationManager.clearPending(intent);
+            return;
+          }
+          await session.reject(reason: CallErrorCode.userHangup);
+          break;
+        case CallNotificationAction.hangup:
+          await session.hangup(reason: CallErrorCode.userHangup);
+          break;
+      }
+      CallNotificationManager.clearPending(intent);
+    } catch (error, stackTrace) {
+      _showActionError(session, error, stackTrace);
+    } finally {
+      _actionCalls.remove(session);
     }
   }
 

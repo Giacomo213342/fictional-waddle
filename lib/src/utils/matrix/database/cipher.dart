@@ -1,62 +1,63 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 
-import 'package:flutter/services.dart';
-
-import 'package:matrix/matrix.dart';
-
-import '../../error_logger.dart';
 import '../../runtime_suffix.dart';
 import '../../secure_storage.dart';
 
 const _cipherStorageKey = 'database_cipher';
 
-Future<String> getDatabaseCipher() async {
-  String? cipher;
+class MissingDatabaseCipherError implements Exception {
+  const MissingDatabaseCipherError();
 
-  final suffix = getRuntimeSuffix();
-
-  try {
-    const secureStorage = kPolyculeSecureStorage;
-    cipher = await secureStorage.read(key: _cipherStorageKey + suffix);
-    if (cipher != null) {
-      return cipher;
-    }
-
-    // looks like no cipher stored yet
-    final rng = Random.secure();
-    final list = Uint8List(32);
-    list.setAll(0, Iterable.generate(list.length, (i) => rng.nextInt(256)));
-    final newCipher = base64UrlEncode(list);
-    await secureStorage.write(
-      key: _cipherStorageKey + suffix,
-      value: newCipher,
-    );
-
-    // workaround for if we just wrote to the key and it still doesn't exist
-    cipher = await secureStorage.read(key: _cipherStorageKey + suffix);
-    if (cipher == null) {
-      throw MissingPluginException();
-    }
-  } on MissingPluginException catch (e, s) {
-    kPolyculeSecureStorage
-        .delete(key: _cipherStorageKey + suffix)
-        .catchError((_) {});
-    ErrorLogger().captureStackTrace(e, s);
-  } catch (e, s) {
-    kPolyculeSecureStorage
-        .delete(key: _cipherStorageKey + suffix)
-        .catchError((_) {});
-    Logs().w('Unable to init database encryption', e, s);
-  }
-
-  // with the new database, we should no longer allow unencrypted storage
-  // secure_storage now supports all platforms we support
-  if (cipher == null) {
-    throw CouldNotStoreCipherError();
-  }
-
-  return cipher;
+  @override
+  String toString() =>
+      'The Matrix database exists but its encryption key is unavailable.';
 }
 
-class CouldNotStoreCipherError extends Error {}
+class CouldNotStoreCipherError implements Exception {
+  const CouldNotStoreCipherError();
+
+  @override
+  String toString() =>
+      'The Matrix database encryption key could not be stored.';
+}
+
+typedef SecureValueReader = Future<String?> Function(String key);
+typedef SecureValueWriter = Future<void> Function(String key, String value);
+
+Future<String> getDatabaseCipher({
+  required bool databaseExists,
+  SecureValueReader? read,
+  SecureValueWriter? write,
+}) async {
+  read ??= (key) => kPolyculeSecureStorage.read(key: key);
+  write ??=
+      (key, value) => kPolyculeSecureStorage.write(key: key, value: value);
+
+  final suffix = getRuntimeSuffix();
+  final key = _cipherStorageKey + suffix;
+  final cipher = await read(key);
+  if (cipher != null) {
+    return cipher;
+  }
+
+  // Generating a replacement key for an existing encrypted database would
+  // make the account permanently unreadable. Surface the storage failure and
+  // preserve every byte instead.
+  if (databaseExists) {
+    throw const MissingDatabaseCipherError();
+  }
+
+  final rng = Random.secure();
+  final bytes = Uint8List(32);
+  bytes.setAll(0, Iterable.generate(bytes.length, (_) => rng.nextInt(256)));
+  final newCipher = base64UrlEncode(bytes);
+  await write(key, newCipher);
+
+  final storedCipher = await read(key);
+  if (storedCipher == null) {
+    throw const CouldNotStoreCipherError();
+  }
+  return storedCipher;
+}

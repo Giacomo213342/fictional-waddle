@@ -1,7 +1,7 @@
 package business.braid.polycule.callnotifications
 
 internal object CallNotificationContract {
-    const val CHANNEL_ID = "polycule.incoming_calls.v3"
+    const val CHANNEL_ID = "polycule.incoming_calls.v4"
     const val ACTION_CLOSE_SURFACE =
         "business.braid.polycule.callnotifications.CLOSE_SURFACE"
 

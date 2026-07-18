@@ -17,6 +17,7 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.app.NotificationManagerCompat
 
 /**
  * The only Polycule surface allowed above Android's keyguard.
@@ -153,6 +154,25 @@ class IncomingCallActivity : Activity() {
         }
 
     private fun forwardToPolycule(actionId: String?) {
+        if (actionId != null) {
+            val payload = intent.getStringExtra(CallNotificationContract.EXTRA_PAYLOAD)
+            val currentCallId = intent.getStringExtra(CallNotificationContract.EXTRA_CALL_ID)
+            if (payload != null && currentCallId != null) {
+                CallActionStore.persist(
+                    this,
+                    payload,
+                    actionId,
+                    currentCallId,
+                    intent.getLongExtra(
+                        CallNotificationContract.EXTRA_EXPIRES_AT,
+                        System.currentTimeMillis() + 60_000L,
+                    ),
+                )
+            }
+            NotificationManagerCompat.from(this).cancel(
+                intent.getIntExtra(CallNotificationContract.EXTRA_NOTIFICATION_ID, 0),
+            )
+        }
         val launchIntent = packageManager.getLaunchIntentForPackage(packageName) ?: run {
             finishAndRemoveTask()
             return

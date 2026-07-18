@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../widgets/matrix/client_manager/client_manager.dart';
 import '../../widgets/matrix/client_manager/client_store.dart';
+import '../fatal_error/fatal_error_page.dart';
 import 'application_splash_screen_view.dart';
 
 class ApplicationSplashScreen extends StatefulWidget {
@@ -28,12 +29,22 @@ class _ApplicationSplashScreenState extends State<ApplicationSplashScreen> {
 
   Future<void> _clientRedirect() async {
     final manager = ClientManager.of(context);
-    await manager.store.waiForInitialization;
-    if (!mounted) {
-      return;
-    }
+    try {
+      await manager.store.waiForInitialization;
+      if (!mounted) {
+        return;
+      }
 
-    final client = manager.store.activeClients.value.first;
-    context.go('/client/${client.clientName.clientIdentifier}');
+      final clients = manager.store.activeClients.value;
+      if (clients.isEmpty) {
+        throw StateError('No Matrix client was restored.');
+      }
+      final client = clients.first;
+      context.go('/client/${client.clientName.clientIdentifier}');
+    } catch (error) {
+      if (mounted) {
+        context.go(FatalErrorPage.routeName, extra: error);
+      }
+    }
   }
 }
