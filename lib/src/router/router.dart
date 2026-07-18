@@ -178,6 +178,7 @@ class PolyculeRouter extends GoRouter {
                       ),
                     ),
                     ResponsiveShellRoute(
+                      animateCompactSecondary: true,
                       builder: (context, state) => RoomListPage(
                         key: ValueKey(state.pathParameters['client']),
                       ),
