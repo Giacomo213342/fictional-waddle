@@ -15,9 +15,6 @@ permissions:
 
 jobs:
   build-apk:
-    # Temporarily paused: the next feature pass will re-enable this before the
-    # next APK is requested, without spending compile minutes in the meantime.
-    if: ${{ false }}
     runs-on: ubuntu-latest
     container:
       image: registry.gitlab.com/polycule_client/flutter-dockerimages:3.35.7-android

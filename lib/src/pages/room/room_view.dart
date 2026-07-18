@@ -51,37 +51,37 @@ class RoomView extends StatelessWidget {
           },
         ),
         actions: [
-          if (canStartOneToOneCall(room))
-            ValueListenableBuilder(
-              valueListenable:
-                  ClientManager.of(context).callCoordinator.activeCall,
-              builder: (context, activeCall, _) => Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (activeCall != null)
-                    IconButton.filledTonal(
-                      icon: const Icon(Icons.phone_in_talk),
-                      tooltip: 'Return to call',
-                      onPressed: ClientManager.of(
-                        context,
-                      ).callCoordinator.showActiveCall,
-                    )
-                  else ...[
-                    IconButton(
-                      icon: const Icon(Icons.call_outlined),
-                      tooltip: 'Audio call',
-                      onPressed: () =>
-                          _startCall(context, room, CallType.kVoice),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.videocam_outlined),
-                      tooltip: 'Video call',
-                      onPressed: () =>
-                          _startCall(context, room, CallType.kVideo),
-                    ),
+          if (canStartRoomCall(room))
+            ListenableBuilder(
+              listenable: ClientManager.of(context).callCoordinator.callState,
+              builder: (context, _) {
+                final coordinator = ClientManager.of(context).callCoordinator;
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (coordinator.hasActiveCall)
+                      IconButton.filledTonal(
+                        icon: const Icon(Icons.phone_in_talk),
+                        tooltip: 'Return to call',
+                        onPressed: coordinator.showAnyActiveCall,
+                      )
+                    else ...[
+                      IconButton(
+                        icon: const Icon(Icons.call_outlined),
+                        tooltip: 'Audio call',
+                        onPressed: () =>
+                            _startCall(context, room, CallType.kVoice),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.videocam_outlined),
+                        tooltip: 'Video call',
+                        onPressed: () =>
+                            _startCall(context, room, CallType.kVideo),
+                      ),
+                    ],
                   ],
-                ],
-              ),
+                );
+              },
             ),
           IconButton(
             icon: const Icon(Icons.search),
@@ -111,7 +111,7 @@ class RoomView extends StatelessWidget {
     try {
       await ClientManager.of(context).callCoordinator.startCall(room, type);
     } catch (error, stackTrace) {
-      Logs().w('Unable to start 1:1 call.', error, stackTrace);
+      Logs().w('Unable to start room call.', error, stackTrace);
       if (!context.mounted) {
         return;
       }

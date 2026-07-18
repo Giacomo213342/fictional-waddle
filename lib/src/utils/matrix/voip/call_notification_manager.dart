@@ -28,7 +28,7 @@ abstract final class CallNotificationManager {
   static const answerActionId = 'polycule.call.answer';
   static const declineActionId = 'polycule.call.decline';
   static const hangupActionId = 'polycule.call.hangup';
-  static const _incomingChannelId = 'polycule.incoming_calls.v2';
+  static const _safeFallbackChannelId = 'polycule.incoming_calls.fallback';
   static const _activeChannelId = 'polycule.active_calls';
   static const _androidCallChannel = MethodChannel('polycule.calls');
 
@@ -135,37 +135,57 @@ abstract final class CallNotificationManager {
     if (kIsWeb || !Platform.isAndroid) {
       return;
     }
-    await CallLogJournal.record('Posting native incoming-call notification.');
-    try {
-      await _androidCallChannel.invokeMethod<void>(
-        'ensureIncomingCallChannel',
-      );
-    } on PlatformException catch (error) {
-      debugPrint('Unable to configure the Android ringtone channel: $error');
-    } on MissingPluginException catch (error) {
-      debugPrint('Android ringtone channel plugin is unavailable: $error');
-    }
-    final plugin = FlutterLocalNotificationsPlugin();
+    await CallLogJournal.record(
+      'Posting lockscreen-isolated incoming-call notification.',
+    );
+    final notification = notificationId(callId);
     final callPayload = payload(
       clientIdentifier: clientIdentifier,
       roomId: roomId,
       callId: callId,
     );
     try {
-      await plugin.show(
-        notificationId(callId),
+      await _androidCallChannel.invokeMethod<void>(
+        'showIncomingCall',
+        {
+          'notificationId': notification,
+          'payload': callPayload,
+          'callId': callId,
+          'callerName': callerName,
+          'video': video,
+          'timeoutMs': timeout.inMilliseconds,
+          'answerActionId': answerActionId,
+          'declineActionId': declineActionId,
+        },
+      );
+      await CallLogJournal.record(
+        'Lockscreen-isolated incoming-call notification posted successfully.',
+        important: true,
+      );
+      return;
+    } on PlatformException catch (error) {
+      debugPrint('Native call notification failed: $error');
+    } on MissingPluginException catch (error) {
+      debugPrint('Native call notification plugin is unavailable: $error');
+    }
+
+    // Security-preserving fallback: an ordinary heads-up notification is less
+    // capable, but it can never expose MainActivity over the keyguard.
+    try {
+      await FlutterLocalNotificationsPlugin().show(
+        notification,
         callerName,
         video ? 'Incoming video call' : 'Incoming call',
         NotificationDetails(
           android: AndroidNotificationDetails(
-            _incomingChannelId,
+            _safeFallbackChannelId,
             'Incoming calls',
             channelDescription: 'Incoming Matrix calls',
             category: AndroidNotificationCategory.call,
             importance: Importance.max,
             priority: Priority.max,
             visibility: NotificationVisibility.public,
-            fullScreenIntent: true,
+            fullScreenIntent: false,
             ongoing: true,
             autoCancel: false,
             timeoutAfter: timeout.inMilliseconds,
@@ -195,8 +215,8 @@ abstract final class CallNotificationManager {
         payload: callPayload,
       );
       await CallLogJournal.record(
-        'Native incoming-call notification posted successfully.',
-        important: true,
+        'Posted safe non-fullscreen incoming-call fallback.',
+        level: Level.warning,
       );
     } catch (error) {
       await CallLogJournal.record(
@@ -216,6 +236,16 @@ abstract final class CallNotificationManager {
   }) async {
     if (kIsWeb || !Platform.isAndroid) {
       return;
+    }
+    try {
+      await _androidCallChannel.invokeMethod<void>(
+        'dismissIncomingCallSurface',
+        {'callId': callId},
+      );
+    } on PlatformException catch (error) {
+      debugPrint('Unable to dismiss incoming-call surface: $error');
+    } on MissingPluginException catch (error) {
+      debugPrint('Native call notification plugin is unavailable: $error');
     }
     await FlutterLocalNotificationsPlugin().show(
       notificationId(callId),
@@ -257,10 +287,21 @@ abstract final class CallNotificationManager {
     );
   }
 
-  static Future<void> cancel(String callId) {
+  static Future<void> cancel(String callId) async {
     if (kIsWeb || !Platform.isAndroid) {
-      return Future.value();
+      return;
     }
-    return FlutterLocalNotificationsPlugin().cancel(notificationId(callId));
+    final id = notificationId(callId);
+    try {
+      await _androidCallChannel.invokeMethod<void>(
+        'cancelCall',
+        {'notificationId': id, 'callId': callId},
+      );
+    } on PlatformException catch (error) {
+      debugPrint('Unable to cancel native call notification: $error');
+    } on MissingPluginException catch (error) {
+      debugPrint('Native call notification plugin is unavailable: $error');
+    }
+    await FlutterLocalNotificationsPlugin().cancel(id);
   }
 }

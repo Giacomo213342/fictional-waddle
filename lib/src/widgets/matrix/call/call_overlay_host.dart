@@ -5,6 +5,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../../utils/matrix/voip/polycule_call_coordinator.dart';
 import 'call_view.dart';
+import 'group_call_view.dart';
 
 class CallOverlayHost extends StatefulWidget {
   const CallOverlayHost({
@@ -54,6 +55,7 @@ class _CallOverlayHostState extends State<CallOverlayHost> {
   void initState() {
     super.initState();
     coordinator.activeCall.addListener(_handleCallChanged);
+    coordinator.activeGroupCall.addListener(_handleCallChanged);
     _scheduleRouteSync();
   }
 
@@ -62,7 +64,9 @@ class _CallOverlayHostState extends State<CallOverlayHost> {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.coordinator, coordinator)) {
       oldWidget.coordinator.activeCall.removeListener(_handleCallChanged);
+      oldWidget.coordinator.activeGroupCall.removeListener(_handleCallChanged);
       coordinator.activeCall.addListener(_handleCallChanged);
+      coordinator.activeGroupCall.addListener(_handleCallChanged);
       _scheduleRouteSync();
     } else if (!identical(
       oldWidget.activeNavigatorKey,
@@ -75,11 +79,12 @@ class _CallOverlayHostState extends State<CallOverlayHost> {
   @override
   void dispose() {
     coordinator.activeCall.removeListener(_handleCallChanged);
+    coordinator.activeGroupCall.removeListener(_handleCallChanged);
     super.dispose();
   }
 
   void _handleCallChanged() {
-    final callId = coordinator.activeCall.value?.session.callId;
+    final callId = _activeCallRouteId();
     if (_hiddenBannerCallId != null && _hiddenBannerCallId != callId) {
       _hiddenBannerCallId = null;
     }
@@ -98,8 +103,11 @@ class _CallOverlayHostState extends State<CallOverlayHost> {
   }
 
   void _syncCallRoute() {
-    final active = coordinator.activeCall.value;
-    final shouldShow = active != null && active.visible;
+    final peerCall = coordinator.activeCall.value;
+    final groupCall = coordinator.activeGroupCall.value;
+    final activeRouteId = _activeCallRouteId();
+    final shouldShow =
+        (peerCall?.visible ?? false) || (groupCall?.visible ?? false);
     final existing = _callRoute;
 
     if (!shouldShow) {
@@ -110,7 +118,7 @@ class _CallOverlayHostState extends State<CallOverlayHost> {
     }
 
     if (existing != null) {
-      if (_callRouteId == active.session.callId &&
+      if (_callRouteId == activeRouteId &&
           identical(
             existing.navigator,
             widget.activeNavigatorKey.currentState,
@@ -124,19 +132,33 @@ class _CallOverlayHostState extends State<CallOverlayHost> {
       return;
     }
 
-    final callId = active.session.callId;
+    final callId = activeRouteId!;
     final route = buildPolyculeCallRoute(
-      (routeContext) => ValueListenableBuilder<ActivePolyculeCall?>(
-        valueListenable: coordinator.activeCall,
-        builder: (context, current, _) {
-          if (current == null || current.session.callId != callId) {
+      (routeContext) => AnimatedBuilder(
+        animation: coordinator.callState,
+        builder: (context, _) {
+          final currentPeer = coordinator.activeCall.value;
+          final currentGroup = coordinator.activeGroupCall.value;
+          if (currentPeer != null &&
+              'peer:${currentPeer.session.callId}' == callId) {
+            return CallView(
+              key: ValueKey(callId),
+              activeCall: currentPeer,
+              onMinimize: () => Navigator.of(routeContext).maybePop(),
+            );
+          }
+          if (currentGroup != null &&
+              'group:${currentGroup.session.groupCallId}' == callId) {
+            return GroupCallView(
+              key: ValueKey(callId),
+              activeCall: currentGroup,
+              onMinimize: () => Navigator.of(routeContext).maybePop(),
+            );
+          }
+          if (currentPeer == null && currentGroup == null) {
             return const Material(child: SizedBox.expand());
           }
-          return CallView(
-            key: ValueKey(callId),
-            activeCall: current,
-            onMinimize: () => Navigator.of(routeContext).maybePop(),
-          );
+          return const Material(child: SizedBox.expand());
         },
       ),
     );
@@ -155,15 +177,25 @@ class _CallOverlayHostState extends State<CallOverlayHost> {
       }
       _callRoute = null;
       _callRouteId = null;
-      final current = coordinator.activeCall.value;
-      if (current != null &&
-          current.session.callId == callId &&
-          current.visible) {
+      final currentPeer = coordinator.activeCall.value;
+      final currentGroup = coordinator.activeGroupCall.value;
+      final remainsVisible = currentPeer != null &&
+              'peer:${currentPeer.session.callId}' == callId &&
+              currentPeer.visible ||
+          currentGroup != null &&
+              'group:${currentGroup.session.groupCallId}' == callId &&
+              currentGroup.visible;
+      if (remainsVisible) {
         if (identical(
           navigatorAtPush,
           widget.activeNavigatorKey.currentState,
         )) {
-          coordinator.minimizeActiveCall();
+          if (currentPeer != null &&
+              'peer:${currentPeer.session.callId}' == callId) {
+            coordinator.minimizeActiveCall();
+          } else {
+            coordinator.minimizeActiveGroupCall();
+          }
         } else {
           _scheduleRouteSync();
         }
@@ -175,31 +207,35 @@ class _CallOverlayHostState extends State<CallOverlayHost> {
 
   @override
   Widget build(BuildContext context) {
-    final call = coordinator.activeCall.value;
-    final bannerHidden = call != null &&
-        !call.visible &&
-        _hiddenBannerCallId == call.session.callId;
+    final peerCall = coordinator.activeCall.value;
+    final groupCall = coordinator.activeGroupCall.value;
+    final routeId = _activeCallRouteId();
+    final minimized = peerCall != null && !peerCall.visible ||
+        groupCall != null && !groupCall.visible;
+    final bannerHidden = minimized && _hiddenBannerCallId == routeId;
     return Stack(
       children: [
         widget.child,
-        if (call != null && !call.visible)
+        if (minimized)
           Positioned(
             right: 10,
             top: MediaQuery.paddingOf(context).top + 8,
             child: bannerHidden
                 ? _HiddenCallButton(
-                    incoming: coordinator.isAwaitingAnswer(call.session),
-                    onPressed: coordinator.showActiveCall,
+                    incoming: peerCall != null &&
+                        coordinator.isAwaitingAnswer(peerCall.session),
+                    onPressed: coordinator.showAnyActiveCall,
                   )
                 : ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 340),
-                    child: coordinator.isAwaitingAnswer(call.session)
+                    child: peerCall != null &&
+                            coordinator.isAwaitingAnswer(peerCall.session)
                         ? IncomingCallBanner(
-                            callerName: coordinator.peerName(call.session),
-                            video: call.session.type == CallType.kVideo,
-                            onOpen: coordinator.showActiveCall,
+                            callerName: coordinator.peerName(peerCall.session),
+                            video: peerCall.session.type == CallType.kVideo,
+                            onOpen: coordinator.showAnyActiveCall,
                             onHide: () => setState(() {
-                              _hiddenBannerCallId = call.session.callId;
+                              _hiddenBannerCallId = routeId;
                             }),
                             onAnswer: () =>
                                 unawaited(coordinator.answerActiveCall()),
@@ -207,20 +243,40 @@ class _CallOverlayHostState extends State<CallOverlayHost> {
                                 unawaited(coordinator.declineActiveCall()),
                           )
                         : ActiveCallBanner(
-                            peerName: coordinator.peerName(call.session),
-                            status:
-                                call.blockingError ?? _compactCallStatus(call),
-                            onOpen: coordinator.showActiveCall,
+                            peerName: peerCall != null
+                                ? coordinator.peerName(peerCall.session)
+                                : coordinator.groupCallName(groupCall!.session),
+                            status: peerCall != null
+                                ? peerCall.blockingError ??
+                                    _compactCallStatus(peerCall)
+                                : groupCall!.blockingError ??
+                                    _compactGroupCallStatus(groupCall),
+                            onOpen: coordinator.showAnyActiveCall,
                             onHide: () => setState(() {
-                              _hiddenBannerCallId = call.session.callId;
+                              _hiddenBannerCallId = routeId;
                             }),
-                            onHangup: () =>
-                                unawaited(coordinator.hangupActiveCall()),
+                            onHangup: () => unawaited(
+                              peerCall != null
+                                  ? coordinator.hangupActiveCall()
+                                  : coordinator.leaveActiveGroupCall(),
+                            ),
                           ),
                   ),
           ),
       ],
     );
+  }
+
+  String? _activeCallRouteId() {
+    final peerCall = coordinator.activeCall.value;
+    if (peerCall != null) {
+      return 'peer:${peerCall.session.callId}';
+    }
+    final groupCall = coordinator.activeGroupCall.value;
+    if (groupCall != null) {
+      return 'group:${groupCall.session.groupCallId}';
+    }
+    return null;
   }
 }
 
@@ -231,6 +287,18 @@ String _compactCallStatus(ActivePolyculeCall call) =>
       CallState.kRinging => 'Calling…',
       _ => 'Active call',
     };
+
+String _compactGroupCallStatus(ActivePolyculeGroupCall call) {
+  final participants =
+      call.session.participants.map((participant) => participant.userId).toSet()
+        ..addAll(
+          call.session.backend.userMediaStreams.map(
+            (stream) => stream.participant.userId,
+          ),
+        );
+  return '${participants.length} participant'
+      '${participants.length == 1 ? '' : 's'}';
+}
 
 class ActiveCallBanner extends StatelessWidget {
   const ActiveCallBanner({

@@ -68,6 +68,8 @@ dependencies:
   media_store_plus: ^0.1.3
   mime: ^2.0.0
   path_provider: ^2.1.4
+  polycule_call_notifications:
+    path: third_party/polycule_call_notifications
   receive_sharing_intent: ^1.8.1
   sentry: ^9.6.0
   share_plus: ^12.0.1

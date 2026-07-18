@@ -36,6 +36,31 @@ class ActivePolyculeCall {
       );
 }
 
+class ActivePolyculeGroupCall {
+  const ActivePolyculeGroupCall({
+    required this.session,
+    required this.type,
+    this.blockingError,
+    this.visible = true,
+  });
+
+  final GroupCallSession session;
+  final CallType type;
+  final String? blockingError;
+  final bool visible;
+
+  ActivePolyculeGroupCall copyWith({
+    String? blockingError,
+    bool? visible,
+  }) =>
+      ActivePolyculeGroupCall(
+        session: session,
+        type: type,
+        blockingError: blockingError ?? this.blockingError,
+        visible: visible ?? this.visible,
+      );
+}
+
 class _CallConnectionSnapshot {
   const _CallConnectionSnapshot({
     required this.iceState,
@@ -103,7 +128,7 @@ class CallProxyTurnUnavailableException implements Exception {
 class _ClientVoip {
   _ClientVoip({required this.voip, required this.delegate});
 
-  final VoIP voip;
+  final PolyculeVoIP voip;
   final PolyculeWebRtcDelegate delegate;
 }
 
@@ -115,6 +140,7 @@ class PolyculeCallCoordinator {
   }
 
   final activeCall = ValueNotifier<ActivePolyculeCall?>(null);
+  final activeGroupCall = ValueNotifier<ActivePolyculeGroupCall?>(null);
   final Map<Client, _ClientVoip> _clients = {};
   final Map<CallSession, Timer> _connectionTimers = {};
   final Map<CallSession, Timer> _diagnosticTimers = {};
@@ -122,11 +148,22 @@ class PolyculeCallCoordinator {
   final Map<CallSession, _CallConnectionSnapshot> _diagnostics = {};
   final Set<CallSession> _samplingCalls = {};
   final Set<CallSession> _actionCalls = {};
+  final Map<GroupCallSession, StreamSubscription<GroupCallStateChange>>
+      _groupCallSubscriptions = {};
+  final Map<GroupCallSession, CallType> _groupCallTypes = {};
   ValueListenable<NetworkState>? _network;
   bool _startingCall = false;
   bool _missingTurnRelay = false;
 
-  bool get canHandleNewCall => activeCall.value == null && !_startingCall;
+  late final Listenable callState = Listenable.merge([
+    activeCall,
+    activeGroupCall,
+  ]);
+
+  bool get hasActiveCall =>
+      activeCall.value != null || activeGroupCall.value != null;
+
+  bool get canHandleNewCall => !hasActiveCall && !_startingCall;
 
   void attachNetwork(ValueListenable<NetworkState> network) {
     _network ??= network;
@@ -159,12 +196,17 @@ class PolyculeCallCoordinator {
     if (identical(current?.client, client) && !current!.callHasEnded) {
       await current.hangup(reason: CallErrorCode.userHangup);
     }
+    final currentGroup = activeGroupCall.value?.session;
+    if (identical(currentGroup?.client, client) &&
+        currentGroup!.state != GroupCallState.ended) {
+      await currentGroup.leave();
+    }
     entry.delegate.dispose();
   }
 
-  Future<CallSession> startCall(Room room, CallType type) async {
-    if (!canStartOneToOneCall(room)) {
-      throw StateError('This room is not an available one-to-one chat.');
+  Future<void> startCall(Room room, CallType type) async {
+    if (!canStartRoomCall(room)) {
+      throw StateError('This room is not available for calls.');
     }
     if (!canHandleNewCall) {
       throw StateError('Another call is already active.');
@@ -174,28 +216,118 @@ class PolyculeCallCoordinator {
       throw StateError('Calls are not initialized.');
     }
 
+    if (canStartOneToOneCall(room)) {
+      await _startPeerCall(room, type, entry);
+    } else {
+      await _startGroupCall(room, type, entry);
+    }
+  }
+
+  Future<void> _startPeerCall(
+    Room room,
+    CallType type,
+    _ClientVoip entry,
+  ) async {
     _startingCall = true;
     _missingTurnRelay = false;
     try {
       await CallNotificationManager.requestFullScreenIntentPermission();
-      final network = _network!.value;
-      final relayOnly = network.useSocks5Proxy && network.proxyOneToOneCalls;
-      if (relayOnly) {
-        final iceServers = await entry.voip.getIceServers();
-        if (!containsTurnServer(iceServers)) {
-          throw const CallRelayUnavailableException();
-        }
-        if (!containsProxyableTurnTcpServer(iceServers)) {
-          throw const CallProxyTurnUnavailableException();
-        }
-      }
-      return await entry.voip.inviteToCall(
+      await _validateRelayAvailability(entry);
+      await entry.voip.inviteToCall(
         room,
         type,
         userId: room.directChatMatrixID,
       );
     } finally {
       _startingCall = false;
+    }
+  }
+
+  Future<void> _startGroupCall(
+    Room room,
+    CallType type,
+    _ClientVoip entry,
+  ) async {
+    _startingCall = true;
+    _missingTurnRelay = false;
+    GroupCallSession? groupCall;
+    try {
+      await CallNotificationManager.requestFullScreenIntentPermission();
+      await _validateRelayAvailability(entry);
+      final activeIds = room.activeGroupCallIds;
+      final groupCallId = activeIds.isEmpty
+          ? room.client.generateUniqueTransactionId()
+          : activeIds.first;
+      groupCall = await entry.voip.fetchOrCreateGroupCall(
+        groupCallId,
+        room,
+        MeshBackend(),
+        'm.call',
+        'm.room',
+        preShareKey: false,
+      );
+      _groupCallTypes[groupCall] = type;
+      if (type == CallType.kVoice) {
+        final audioStream = await entry.delegate.mediaDevices.getUserMedia(
+          const {'audio': true, 'video': false},
+        );
+        await groupCall.backend.initLocalStream(
+          groupCall,
+          stream: WrappedMediaStream(
+            stream: audioStream,
+            participant: groupCall.localParticipant!,
+            room: room,
+            client: room.client,
+            purpose: SDPStreamMetadataPurpose.Usermedia,
+            audioMuted: audioStream.getAudioTracks().isEmpty,
+            videoMuted: true,
+            isGroupCall: true,
+            voip: entry.voip,
+          ),
+        );
+      } else {
+        await groupCall.backend.initLocalStream(groupCall);
+      }
+      // GroupCallSession sets this after mesh setup, but incoming peer invites
+      // can race with that setup. Claim the matching conference first so the
+      // SDK busy guard accepts only peers from this group while joining.
+      entry.voip.claimGroupCall(room.id, groupCall.groupCallId);
+      await groupCall.enter();
+    } catch (_) {
+      if (groupCall != null &&
+          groupCall.state != GroupCallState.ended &&
+          groupCall.state != GroupCallState.localCallFeedUninitialized) {
+        try {
+          await groupCall.leave();
+        } catch (error, stackTrace) {
+          Logs().w(
+            '[VOIP] Unable to clean up failed group call startup.',
+            error,
+            stackTrace,
+          );
+        }
+      }
+      if (groupCall != null) {
+        entry.voip.releaseClaimedGroupCall(room.id, groupCall.groupCallId);
+      }
+      rethrow;
+    } finally {
+      _startingCall = false;
+    }
+  }
+
+  Future<void> _validateRelayAvailability(_ClientVoip entry) async {
+    final network = _network!.value;
+    final relayOnly = network.useSocks5Proxy && network.proxyOneToOneCalls;
+    if (!relayOnly) {
+      return;
+    }
+    final iceServers = await entry.voip.getIceServers();
+    if (!containsTurnServer(iceServers)) {
+      throw const CallRelayUnavailableException();
+    }
+    if (!containsProxyableTurnTcpServer(iceServers)) {
+      throw const CallProxyTurnUnavailableException();
     }
   }
 
@@ -246,6 +378,56 @@ class PolyculeCallCoordinator {
     }
   }
 
+  void activateGroupCall(GroupCallSession session) {
+    if (session.state != GroupCallState.entered) {
+      return;
+    }
+    final current = activeGroupCall.value;
+    if (current != null && !identical(current.session, session)) {
+      return;
+    }
+    _groupCallSubscriptions.putIfAbsent(
+      session,
+      () => session.onGroupCallEvent.stream.listen((_) {
+        final active = activeGroupCall.value;
+        if (!identical(active?.session, session)) {
+          return;
+        }
+        if (session.state == GroupCallState.ended) {
+          deactivateGroupCall(session);
+        } else {
+          activeGroupCall.value = active!.copyWith();
+        }
+      }),
+    );
+    activeGroupCall.value = ActivePolyculeGroupCall(
+      session: session,
+      type: _groupCallTypes[session] ?? CallType.kVideo,
+    );
+    unawaited(
+      CallNotificationManager.showOngoing(
+        clientIdentifier: session.client.clientName.clientIdentifier,
+        roomId: session.room.id,
+        callId: session.groupCallId,
+        peerName: groupCallName(session),
+        connected: true,
+      ),
+    );
+    _handlePendingNotificationIntent();
+  }
+
+  void deactivateGroupCall(GroupCallSession session) {
+    final subscription = _groupCallSubscriptions.remove(session);
+    if (subscription != null) {
+      unawaited(subscription.cancel());
+    }
+    _groupCallTypes.remove(session);
+    unawaited(CallNotificationManager.cancel(session.groupCallId));
+    if (identical(activeGroupCall.value?.session, session)) {
+      activeGroupCall.value = null;
+    }
+  }
+
   void minimizeActiveCall() {
     final current = activeCall.value;
     if (current == null || !current.visible) {
@@ -260,6 +442,30 @@ class PolyculeCallCoordinator {
       return;
     }
     activeCall.value = current.copyWith(visible: true);
+  }
+
+  void minimizeActiveGroupCall() {
+    final current = activeGroupCall.value;
+    if (current == null || !current.visible) {
+      return;
+    }
+    activeGroupCall.value = current.copyWith(visible: false);
+  }
+
+  void showActiveGroupCall() {
+    final current = activeGroupCall.value;
+    if (current == null || current.visible) {
+      return;
+    }
+    activeGroupCall.value = current.copyWith(visible: true);
+  }
+
+  void showAnyActiveCall() {
+    if (activeCall.value != null) {
+      showActiveCall();
+    } else {
+      showActiveGroupCall();
+    }
   }
 
   void callStateChanged(CallSession session) {
@@ -432,6 +638,9 @@ class PolyculeCallCoordinator {
 
   String peerName(CallSession session) => _peerName(session);
 
+  String groupCallName(GroupCallSession session) =>
+      _groupCallRoomName(session.room);
+
   bool isAwaitingAnswer(CallSession session) =>
       session.direction == CallDirection.kIncoming &&
       session.state == CallState.kRinging &&
@@ -482,6 +691,24 @@ class PolyculeCallCoordinator {
     }
   }
 
+  Future<void> leaveActiveGroupCall() async {
+    final groupCall = activeGroupCall.value?.session;
+    if (groupCall == null || groupCall.state == GroupCallState.ended) {
+      return;
+    }
+    try {
+      await groupCall.leave();
+    } catch (error, stackTrace) {
+      Logs().w('[VOIP] Unable to leave group call.', error, stackTrace);
+      final current = activeGroupCall.value;
+      if (identical(current?.session, groupCall)) {
+        activeGroupCall.value = current!.copyWith(
+          blockingError: 'Unable to leave the group call.',
+        );
+      }
+    }
+  }
+
   void _showActionError(
     CallSession session,
     Object error,
@@ -503,6 +730,24 @@ class PolyculeCallCoordinator {
     final intent = CallNotificationManager.pendingIntent.value;
     final current = activeCall.value;
     final session = current?.session;
+    final groupSession = activeGroupCall.value?.session;
+    if (intent != null &&
+        groupSession != null &&
+        intent.callId == groupSession.groupCallId &&
+        intent.clientIdentifier ==
+            groupSession.client.clientName.clientIdentifier) {
+      CallNotificationManager.clearPending(intent);
+      switch (intent.action) {
+        case CallNotificationAction.show:
+        case CallNotificationAction.answer:
+          showActiveGroupCall();
+          return;
+        case CallNotificationAction.decline:
+        case CallNotificationAction.hangup:
+          unawaited(leaveActiveGroupCall());
+          return;
+      }
+    }
     if (intent == null ||
         session == null ||
         intent.callId != session.callId ||
@@ -559,11 +804,21 @@ class PolyculeCallCoordinator {
     if (current != null && !current.callHasEnded) {
       await current.hangup(reason: CallErrorCode.userHangup);
     }
+    final currentGroup = activeGroupCall.value?.session;
+    if (currentGroup != null && currentGroup.state != GroupCallState.ended) {
+      await currentGroup.leave();
+    }
+    for (final subscription in _groupCallSubscriptions.values) {
+      await subscription.cancel();
+    }
+    _groupCallSubscriptions.clear();
+    _groupCallTypes.clear();
     for (final entry in _clients.values) {
       entry.delegate.dispose();
     }
     _clients.clear();
     activeCall.dispose();
+    activeGroupCall.dispose();
   }
 }
 
@@ -593,6 +848,32 @@ bool canStartOneToOneCall(Room room) {
     localUserId: room.client.userID,
     joinedMemberCount: room.summary.mJoinedMemberCount,
   );
+}
+
+bool canStartRoomCall(Room room) =>
+    canStartOneToOneCall(room) ||
+    isGroupCallEligible(
+      membership: room.membership,
+      isDirectChat: room.isDirectChat,
+      joinedMemberCount: room.summary.mJoinedMemberCount,
+    );
+
+bool isGroupCallEligible({
+  required Membership membership,
+  required bool isDirectChat,
+  required int? joinedMemberCount,
+}) =>
+    membership == Membership.join &&
+    !isDirectChat &&
+    (joinedMemberCount == null || joinedMemberCount >= 3);
+
+String _groupCallRoomName(Room room) {
+  final name = room.name.trim();
+  if (name.isNotEmpty) {
+    return name;
+  }
+  final alias = room.canonicalAlias.trim();
+  return alias.isEmpty ? 'Group call' : alias;
 }
 
 bool isOneToOneCallEligible({

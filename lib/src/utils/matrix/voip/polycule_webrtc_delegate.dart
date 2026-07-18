@@ -231,10 +231,29 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
   }
 
   @override
-  Future<void> handleNewGroupCall(GroupCallSession groupCall) async {}
+  Future<void> handleNewGroupCall(GroupCallSession groupCall) async {
+    // Passive m.call.member discovery also invokes this callback. Only a
+    // locally entered session owns UI, media controls, and notifications.
+    if (groupCall.state == GroupCallState.entered) {
+      coordinator.activateGroupCall(groupCall);
+    }
+  }
 
   @override
-  Future<void> handleGroupCallEnded(GroupCallSession groupCall) async {}
+  Future<void> handleGroupCallEnded(GroupCallSession groupCall) async {
+    coordinator.deactivateGroupCall(groupCall);
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      try {
+        await webrtc.Helper.clearAndroidCommunicationDevice();
+      } catch (error, stackTrace) {
+        Logs().w(
+          'Unable to clear Android group-call audio routing.',
+          error,
+          stackTrace,
+        );
+      }
+    }
+  }
 
   @override
   bool get isWeb => kIsWeb;

@@ -47,4 +47,53 @@ void main() {
       expect(eligible(count: 4), isFalse);
     });
   });
+
+  group('isGroupCallEligible', () {
+    test('accepts joined non-direct rooms with at least three members', () {
+      expect(
+        isGroupCallEligible(
+          membership: Membership.join,
+          isDirectChat: false,
+          joinedMemberCount: 3,
+        ),
+        isTrue,
+      );
+      expect(
+        isGroupCallEligible(
+          membership: Membership.join,
+          isDirectChat: false,
+          joinedMemberCount: 12,
+        ),
+        isTrue,
+      );
+    });
+
+    test('keeps controls available while a group count is lazy-loaded', () {
+      expect(
+        isGroupCallEligible(
+          membership: Membership.join,
+          isDirectChat: false,
+          joinedMemberCount: null,
+        ),
+        isTrue,
+      );
+    });
+
+    test('rejects direct, non-joined, and undersized rooms', () {
+      bool eligible({
+        Membership membership = Membership.join,
+        bool direct = false,
+        int? count = 3,
+      }) =>
+          isGroupCallEligible(
+            membership: membership,
+            isDirectChat: direct,
+            joinedMemberCount: count,
+          );
+
+      expect(eligible(membership: Membership.invite), isFalse);
+      expect(eligible(direct: true), isFalse);
+      expect(eligible(count: 2), isFalse);
+    });
+  });
 }

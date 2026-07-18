@@ -59,16 +59,17 @@ class TurnCredentialCache {
 
 class PolyculeVoIP extends VoIP {
   PolyculeVoIP(
-    Client client,
-    WebRTCDelegate delegate, {
+    super.client,
+    super.delegate, {
     required ValueListenable<NetworkState> network,
-  })  : _turnCredentials = TurnCredentialCache(
+  }) : _turnCredentials = TurnCredentialCache(
           load: () async {
+            final relayOnly = network.value.useSocks5Proxy &&
+                network.value.proxyOneToOneCalls;
             await CallLogJournal.record(
               'Requesting homeserver TURN credentials through the Matrix '
               'HTTP client (SOCKS5=${network.value.useSocks5Proxy}, '
-              'relayOnly='
-              '${network.value.useSocks5Proxy && network.value.proxyOneToOneCalls}).',
+              'relayOnly=$relayOnly).',
             );
             return client.getTurnServer().timeout(
                   const Duration(seconds: 8),
@@ -77,10 +78,30 @@ class PolyculeVoIP extends VoIP {
                   ),
                 );
           },
-        ),
-        super(client, delegate);
+        );
 
   final TurnCredentialCache _turnCredentials;
+
+  /// Claims the conference before mesh setup so matching peer invites are not
+  /// rejected by the SDK's busy guard during [GroupCallSession.enter].
+  void claimGroupCall(String roomId, String callId) {
+    for (final id in groupCalls.keys) {
+      if (id.roomId == roomId && id.callId == callId) {
+        currentGroupCID = id;
+        return;
+      }
+    }
+    throw StateError('The group call must be registered before it is claimed.');
+  }
+
+  bool isClaimedGroupCall(String roomId, String callId) =>
+      currentGroupCID?.roomId == roomId && currentGroupCID?.callId == callId;
+
+  void releaseClaimedGroupCall(String roomId, String callId) {
+    if (isClaimedGroupCall(roomId, callId)) {
+      currentGroupCID = null;
+    }
+  }
 
   @override
   Future<List<Map<String, dynamic>>> getIceServers() async {
