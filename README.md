@@ -1,5 +1,34 @@
-# ![polycule logo](assets/logo/logo-circle.svg) < polycule >
 
+
+# ![polycule logo](assets/logo/logo-circle.svg) A vibe-coded version of < polycule >
+## Why?
+I created this personal project just to use it with [mautrix-whatsapp](https://github.com/Giacomo213342/mautrix-whatsapp) as GrapheneOS has issues with Whatsapp's Play Integrity checks, I didn't really like any of the commercial clients but when I saw < polycule > I liked it so much.
+This project is fully vibe-coded, I am not a Dart developer, I don't really recommend using it unless you are ready to experience bugs and general issues (still, it should be less broken than the original abandoned version of < polycule >).
+I decided to publish this just because I think you can get a smoother experience if you like < polycule >'s UI style. If you don't like the fact this is made with AI, I understand it, I don't like it either, but I needed to get something to work else I couldn't text my friends and family (also because of the terrible proxy support in clients like Faraday).
+
+## Umm, ok I guess... But what do I get?
+### General features
+- Socks5 proxy support
+- System navigation (gestures, buttons, etc) implementation
+- A dark OLED theme
+- Removal of the multi-account system
+- Bottom bar removal
+- VoIP implementation (see [my version of mautrix-whatsapp](https://github.com/Giacomo213342/mautrix-whatsapp), which is vibe-coded as well)
+- SQLite bug fixes, which caused disconnections and broke the whole experience
+- Notifications improvements and fixes
+- General interface optimizations and edits to allow for a smoother experience
+- Many, many, many more critical bug fixes
+### Room features
+- Unread message dividers
+- Clicking on replies brings you to the quoted message
+- Read, typing, edited indicator implementations (very simple, set up to work with mautrix)
+- Polls
+- Images and videos are opened full-screen when played and can be zoomed/downloaded
+- Voice messages are implemented better and allow speeding up or slowing down the speed
+- Timestamp edits to show the full time on older messages
+## Note: some stuff can still be a little broken *(mostly due to bugs in the original code)*, but I don't feel like it's too much of an issue with general everyday use.
+### I won't implement stuff not related to < polycule > + mautrix usage. I mean, if I can do it with AI you can too, right?
+#
 ![< polycule > - a geeky and efficient \[matrix\] client for power users](assets/artwork/feature-graphic.svg)
 
 [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/polycule_client%2Fpolycule?style=for-the-badge&logo=gitlab)](https://gitlab.com/polycule_client/polycule/-/pipelines)
@@ -99,7 +128,7 @@ might be quite similar in both clients - they both have a similar code base we k
 | Room settings             |        :x:         |
 | Account settings          | :white_check_mark: |
 | \[matrix\] widgets        |        :x:         |
-| VoIP signaling            |        :x:         |
+| VoIP signaling            | :white_check_mark: |
 | Emoji picker              | :white_check_mark: |
 
 ## License
