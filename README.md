@@ -2,9 +2,11 @@
 
 # ![polycule logo](assets/logo/logo-circle.svg) A vibe-coded version of < polycule >
 ## Why?
-I created this personal project just to use it with [mautrix-whatsapp](https://github.com/Giacomo213342/mautrix-whatsapp) as GrapheneOS has issues with Whatsapp's Play Integrity checks, I didn't really like any of the commercial clients but when I saw < polycule > I liked it so much.
-This project is fully vibe-coded, I am not a Dart developer, I don't really recommend using it unless you are ready to experience bugs and general issues (still, it should be less broken than the original abandoned version of < polycule >).
-I decided to publish this just because I think you can get a smoother experience if you like < polycule >'s UI style. If you don't like the fact this is made with AI, I understand it, I don't like it either, but I needed to get something to work else I couldn't text my friends and family (also because of the terrible proxy support in clients like Faraday).
+I created this personal project just to use it with [mautrix-whatsapp](https://github.com/Giacomo213342/mautrix-whatsapp) as GrapheneOS has issues with Whatsapp's Play Integrity checks. I didn't really like any of the publicly available clients except this one, but the bugs and partial implementations made it unusable.
+
+NOTE: This project is fully vibe-coded, I am not a Dart developer, I don't really recommend using it unless you are ready to experience bugs and general issues (still, it should be less broken than the original abandoned version of < polycule >).
+
+I decided to publish this just because I think you can get a smoother experience if you like < polycule >'s L&F. If you don't like that this is made with AI, I understand, I don't like it either, but I needed to get something to work else I couldn't text my friends and family (mostly because of the terrible proxy support in clients like Faraday).
 
 ## Umm, ok I guess... But what do I get?
 ### General features
@@ -14,7 +16,7 @@ I decided to publish this just because I think you can get a smoother experience
 - Removal of the multi-account system
 - Bottom bar removal
 - VoIP implementation (see [my version of mautrix-whatsapp](https://github.com/Giacomo213342/mautrix-whatsapp), which is vibe-coded as well)
-- SQLite bug fixes, which caused disconnections and broke the whole experience
+- SQLite bug fixes, which caused database resets
 - Notifications improvements and fixes
 - General interface optimizations and edits to allow for a smoother experience
 - Many, many, many more critical bug fixes
