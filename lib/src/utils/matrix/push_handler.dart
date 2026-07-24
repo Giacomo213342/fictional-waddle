@@ -30,10 +30,10 @@ import 'push_log_journal.dart';
 import 'voip/call_notification_manager.dart';
 import 'voip/call_log_journal.dart';
 
-final Map<String, Future<void>> _backgroundNotificationQueues = {};
 const _headlessStorageTimeout = Duration(seconds: 5);
 const _headlessRequestTimeout = Duration(seconds: 30);
 const _backgroundNotificationDeadline = Duration(seconds: 10);
+const backgroundFastFallbackDelay = Duration(milliseconds: 900);
 
 Future<void> _cancelBackgroundFallback(
   FlutterLocalNotificationsPlugin plugin,
@@ -62,19 +62,16 @@ Future<void> pushEntrypoint() async {
 }
 
 void _queueBackgroundNotification(PushMessage message, String instance) {
-  final previous = _backgroundNotificationQueues[instance] ?? Future.value();
-  late final Future<void> tracked;
-  tracked = previous
-      .then((_) => handleBackgroundNotification(message, instance))
-      .catchError((Object error, StackTrace stackTrace) {
-    Logs().e('Queued background notification failed.', error, stackTrace);
-  }).whenComplete(() {
-    if (identical(_backgroundNotificationQueues[instance], tracked)) {
-      _backgroundNotificationQueues.remove(instance);
-    }
-  });
-  _backgroundNotificationQueues[instance] = tracked;
-  unawaited(tracked);
+  // Each callback must start immediately. MatrixStoreLease serializes the
+  // database section, while the fast envelope fallback remains independent:
+  // one slow homeserver lookup must never hold later notifications hostage.
+  unawaited(
+    handleBackgroundNotification(message, instance).catchError(
+      (Object error, StackTrace stackTrace) {
+        Logs().e('Background notification failed.', error, stackTrace);
+      },
+    ),
+  );
 }
 
 enum PushNotificationResult { shown, suppressed, unresolved }
@@ -183,8 +180,8 @@ Future<void> handleBackgroundNotification(
   Client? client;
   MatrixStoreLease? storeLease;
   Set<String>? mutedRoomIds;
+  Timer? fastFallbackTimer;
   final notificationState = BackgroundNotificationState();
-  await PushLogJournal.record('Received background callback for $instance.');
 
   if (await _handleCallSignalingPush(
     message: message.content,
@@ -196,6 +193,7 @@ Future<void> handleBackgroundNotification(
     );
     return;
   }
+  await PushLogJournal.record('Received background callback for $instance.');
 
   Future<bool> showFallback() async {
     final shown = await notificationState.showFallback(
@@ -216,6 +214,11 @@ Future<void> handleBackgroundNotification(
     }
     return shown;
   }
+
+  fastFallbackTimer = Timer(
+    backgroundFastFallbackDelay,
+    () => unawaited(showFallback()),
+  );
 
   final fullNotification = () async {
     storeLease = await MatrixStoreLease.acquire();
@@ -244,7 +247,7 @@ Future<void> handleBackgroundNotification(
       httpCallback.call(),
       requestTimeout: _headlessRequestTimeout,
     );
-    mutedRoomIds = await _prepareHeadlessPushClient(client!);
+    mutedRoomIds = await prepareHeadlessPushClient(client!);
     await PushLogJournal.record(
       'Matrix session prepared; cached muted rooms: ${mutedRoomIds!.length}.',
       level: Level.debug,
@@ -326,6 +329,7 @@ Future<void> handleBackgroundNotification(
     );
     await showFallback();
   } finally {
+    fastFallbackTimer.cancel();
     final clientToDispose = client;
     if (clientToDispose != null) {
       try {
@@ -425,6 +429,7 @@ Future<bool> _showBackgroundFallbackNotification({
     ).timeout(_headlessStorageTimeout);
     final plugin = FlutterLocalNotificationsPlugin();
     final roomName = notification.roomName ?? l10n.appName;
+    final envelopeBody = fallbackNotificationBody(notification, l10n);
     if (!kIsWeb && Platform.isAndroid) {
       await plugin
           .resolvePlatformSpecificImplementation<
@@ -442,7 +447,7 @@ Future<bool> _showBackgroundFallbackNotification({
     await plugin.show(
       PushManager.backgroundFallbackId(roomId),
       roomName,
-      l10n.newNotification,
+      envelopeBody,
       NotificationDetails(
         android: AndroidNotificationDetails(
           roomId,
@@ -471,7 +476,21 @@ Future<bool> _showBackgroundFallbackNotification({
   }
 }
 
-Future<Set<String>> _prepareHeadlessPushClient(Client client) async {
+@visibleForTesting
+String fallbackNotificationBody(
+  PushNotification notification,
+  AppLocalizations l10n,
+) {
+  if (notification.type == EventTypes.Message) {
+    final body = notification.content?['body'];
+    if (body is String && body.trim().isNotEmpty) {
+      return body.trim();
+    }
+  }
+  return l10n.newNotification;
+}
+
+Future<Set<String>> prepareHeadlessPushClient(Client client) async {
   var account = await client.database.getClient(client.clientName);
   final savedHttpClient = client.httpClient;
   final previousBatch = account?['prev_batch'];
@@ -802,12 +821,18 @@ Future<PushNotificationResult> handlePushNotification({
       : null;
 
   final sender = event.senderFromMemoryOrFallback;
+  final senderAvatarFuture = sender.avatarUrl?.downloadAndroidAvatar(client);
+  final roomAvatarFuture = event.room.avatar?.downloadAndroidAvatar(client);
+  final senderAvatarBytes = await senderAvatarFuture;
+  final roomAvatarBytes = await roomAvatarFuture;
 
   final person = Person(
     bot: event.messageType == MessageTypes.Notice,
     important: event.room.isFavourite,
     key: event.senderId,
-    icon: await sender.avatarUrl?.downloadAndroidIcon(client),
+    icon: senderAvatarBytes == null
+        ? null
+        : ByteArrayAndroidIcon(senderAvatarBytes),
     name: sender.calcDisplayname(i18n: l10n.matrix),
   );
 
@@ -830,6 +855,7 @@ Future<PushNotificationResult> handlePushNotification({
         'personName': sender.calcDisplayname(i18n: l10n.matrix),
         'personKey': event.senderId,
         'important': event.room.isFavourite,
+        'avatarBytes': roomAvatarBytes,
       });
     } catch (e) {
       Logs().w('Failed to publish conversation shortcut', e);
@@ -862,6 +888,9 @@ Future<PushNotificationResult> handlePushNotification({
     number: notification.counts?.unread,
     category: AndroidNotificationCategory.message,
     icon: '@drawable/ic_launcher_foreground',
+    largeIcon: roomAvatarBytes == null
+        ? null
+        : ByteArrayAndroidBitmap(roomAvatarBytes),
     shortcutId: event.room.id,
     styleInformation: messagingStyleInformation ??
         MessagingStyleInformation(
@@ -928,11 +957,45 @@ PushNotification decodeMessage(Uint8List message) {
 }
 
 extension GetAndroidIcon on Uri {
-  Future<ByteArrayAndroidIcon?> downloadAndroidIcon(Client client) async {
-    final bytes = await client.database.getFile(this);
-    if (bytes == null) {
+  Future<Uint8List?> downloadAndroidAvatar(Client client) async {
+    try {
+      final database = client.database;
+      final original = await database.getFile(this);
+      if (original != null) {
+        return original;
+      }
+      final thumbnailUri = await getThumbnailUri(
+        client,
+        width: 128,
+        height: 128,
+        method: ThumbnailMethod.crop,
+      ).timeout(const Duration(milliseconds: 750));
+      if (thumbnailUri.host.isEmpty) {
+        return null;
+      }
+      final thumbnail = await database.getFile(thumbnailUri);
+      if (thumbnail != null) {
+        return thumbnail;
+      }
+      final response = await client.httpClient.get(
+        thumbnailUri,
+        headers: {'authorization': 'Bearer ${client.accessToken}'},
+      ).timeout(const Duration(milliseconds: 1250));
+      if (response.statusCode != 200 || response.bodyBytes.isEmpty) {
+        return null;
+      }
+      final bytes = response.bodyBytes;
+      if (bytes.length < database.maxFileSize) {
+        await database.storeFile(
+          thumbnailUri,
+          bytes,
+          DateTime.now().millisecondsSinceEpoch,
+        );
+      }
+      return bytes;
+    } catch (error) {
+      Logs().v('Unable to resolve an Android conversation avatar: $error');
       return null;
     }
-    return ByteArrayAndroidIcon(bytes);
   }
 }

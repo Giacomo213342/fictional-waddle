@@ -56,8 +56,58 @@ double estimateReversedTimelineOffset({
 const initialHistoryRevealDuration = Duration(milliseconds: 80);
 
 @visibleForTesting
+const initialUnreadMarkerAlignment = .43;
+
+@visibleForTesting
 Duration initialHistoryRevealDelay(int order) =>
     Duration(milliseconds: min(order, 8) * 10);
+
+@visibleForTesting
+String? resolveUnreadBoundaryEventId(
+  List<Event> events,
+  String? initialReadEventId,
+  String? ownUserId,
+) {
+  if (initialReadEventId == null || ownUserId == null) return null;
+  final readIndex = events.indexWhere(
+    (event) => event.eventId == initialReadEventId,
+  );
+  if (readIndex < 0) return null;
+
+  var boundaryEventId = initialReadEventId;
+  // The timeline is reversed: lower indices are newer. Keep own messages
+  // sent after the receipt above the divider, until the first incoming event.
+  for (var index = readIndex - 1; index >= 0; index--) {
+    final event = events[index];
+    if (![
+      EventTypes.Message,
+      EventTypes.Sticker,
+      EventTypes.Encrypted,
+    ].contains(event.type)) {
+      continue;
+    }
+    if (event.senderId != ownUserId) break;
+    boundaryEventId = event.eventId;
+  }
+  return boundaryEventId;
+}
+
+@visibleForTesting
+String? firstUnreadDisplayEventId(
+  List<Event> events,
+  String? boundaryEventId,
+) {
+  if (boundaryEventId == null) return null;
+  final boundaryIndex = events.indexWhere(
+    (event) => event.eventId == boundaryEventId,
+  );
+  if (boundaryIndex <= 0) return null;
+  for (var index = boundaryIndex - 1; index >= 0; index--) {
+    final event = events[index];
+    if (event.shouldDisplayEvent) return event.eventId;
+  }
+  return null;
+}
 
 class _MembershipJoinViewState extends State<MembershipJoinView>
     with WidgetsBindingObserver {
@@ -70,6 +120,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
   final eventHighlightStreamController = StreamController<String>.broadcast();
   final Map<String, GlobalKey> _eventKeys = {};
   bool _hasJumpedToUnread = false;
+  int _initialUnreadJumpAttempts = 0;
   bool _markingRead = false;
   bool _userScrollInProgress = false;
   bool _showLatestMessagesShortcut = false;
@@ -77,6 +128,7 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
   StreamSubscription<String>? _roomUpdateSubscription;
   StreamSubscription<SyncUpdate>? _syncSubscription;
   String? _unreadBoundaryEventId;
+  String? _firstUnreadEventId;
   String? _focusedEventId;
   Set<String> _initialHistoryRevealEventIds = const {};
 
@@ -301,10 +353,18 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     if (!mounted) {
       return;
     }
-    _unreadBoundaryEventId = _resolveUnreadBoundary(
-      timeline,
+    await _loadHistoryThroughReadMarker(timeline, initialReadEventId);
+    if (!mounted) {
+      return;
+    }
+    _unreadBoundaryEventId = resolveUnreadBoundaryEventId(
+      timeline.events,
       initialReadEventId,
       room.client.userID,
+    );
+    _firstUnreadEventId = firstUnreadDisplayEventId(
+      timeline.events,
+      _unreadBoundaryEventId,
     );
     _initialHistoryRevealEventIds = timeline.events
         .skip(1)
@@ -345,63 +405,85 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     }
 
     if (!_hasJumpedToUnread) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted || fullyReadMarkerKey.currentContext == null) return;
-        _hasJumpedToUnread = true;
-        final markerContext = fullyReadMarkerKey.currentContext!;
-        final markerBox = markerContext.findRenderObject() as RenderBox?;
-        final scrollable = Scrollable.maybeOf(markerContext);
-        final viewportBox =
-            scrollable?.context.findRenderObject() as RenderBox?;
-        if (markerBox != null && viewportBox != null) {
-          final markerY = markerBox.localToGlobal(Offset.zero).dy -
-              viewportBox.localToGlobal(Offset.zero).dy;
-          final viewportHeight = viewportBox.size.height;
-          if (markerY >= viewportHeight * .25 && markerY <= viewportHeight) {
-            return;
-          }
-        }
-        Scrollable.ensureVisible(
-          markerContext,
-          duration: const Duration(milliseconds: 300),
-          alignment: 0.1, // Near the top
-        );
-      });
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _jumpToInitialUnread(),
+      );
     }
   }
 
-  String? _resolveUnreadBoundary(
+  Future<void> _loadHistoryThroughReadMarker(
     Timeline timeline,
     String? initialReadEventId,
-    String? ownUserId,
-  ) {
-    if (initialReadEventId == null || ownUserId == null) return null;
-    final readIndex = timeline.events.indexWhere(
-      (event) => event.eventId == initialReadEventId,
-    );
-    if (readIndex < 0) return initialReadEventId;
-
-    var boundaryEventId = initialReadEventId;
-    // The timeline is reversed: lower indices are newer. Include every own
-    // message after the receipt, stopping at the first incoming event.
-    for (var index = readIndex - 1; index >= 0; index--) {
-      final event = timeline.events[index];
-      if (![
-        EventTypes.Message,
-        EventTypes.Sticker,
-        EventTypes.Encrypted,
-      ].contains(event.type)) {
-        continue;
+  ) async {
+    if (initialReadEventId == null) return;
+    while (timeline.events.every(
+          (event) => event.eventId != initialReadEventId,
+        ) &&
+        timeline.canRequestHistory) {
+      final previousLength = timeline.events.length;
+      try {
+        await timeline.requestHistory(historyCount: 50);
+      } catch (error, stackTrace) {
+        Logs().w(
+          'Unable to load history through the unread marker.',
+          error,
+          stackTrace,
+        );
+        return;
       }
-      if (event.senderId != ownUserId) break;
-      boundaryEventId = event.eventId;
+      if (timeline.events.length <= previousLength) return;
     }
-    return boundaryEventId;
+  }
+
+  Future<void> _jumpToInitialUnread() async {
+    final timeline = this.timeline;
+    final boundaryEventId = _unreadBoundaryEventId;
+    if (!mounted ||
+        timeline == null ||
+        boundaryEventId == null ||
+        _hasJumpedToUnread) {
+      return;
+    }
+    final boundaryIndex = timeline.events.indexWhere(
+      (event) => event.eventId == boundaryEventId,
+    );
+    if (boundaryIndex < 0) return;
+
+    _hasJumpedToUnread = true;
+    _initialUnreadJumpAttempts++;
+    await _materializeLoadedEvent(boundaryEventId, boundaryIndex);
+    if (!mounted) return;
+    await WidgetsBinding.instance.endOfFrame;
+    final markerContext = fullyReadMarkerKey.currentContext;
+    if (markerContext == null) {
+      _hasJumpedToUnread = false;
+      if (_initialUnreadJumpAttempts < 4) {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => _jumpToInitialUnread(),
+        );
+      }
+      return;
+    }
+    await Scrollable.ensureVisible(
+      markerContext,
+      duration: const Duration(milliseconds: 320),
+      curve: Curves.easeOutCubic,
+      alignment: initialUnreadMarkerAlignment,
+    );
+    if (!mounted) return;
+    await WidgetsBinding.instance.endOfFrame;
+    final firstUnreadEventId = _firstUnreadEventId;
+    if (firstUnreadEventId != null) {
+      eventHighlightStreamController.add(firstUnreadEventId);
+    }
   }
 
   void _dismissUnreadMarker() {
     if (_unreadBoundaryEventId == null) return;
-    setState(() => _unreadBoundaryEventId = null);
+    setState(() {
+      _unreadBoundaryEventId = null;
+      _firstUnreadEventId = null;
+    });
   }
 
   void _updateLatestMessagesShortcut() {
@@ -439,7 +521,10 @@ class _MembershipJoinViewState extends State<MembershipJoinView>
     final latestEventId = timeline.events.first.eventId;
     if (room.fullyRead == latestEventId && !room.isUnread) return;
     _markingRead = true;
-    if (!preserveUnreadMarker) _unreadBoundaryEventId = null;
+    if (!preserveUnreadMarker) {
+      _unreadBoundaryEventId = null;
+      _firstUnreadEventId = null;
+    }
     if (mounted) setState(() {});
     try {
       await room.setReadMarker(

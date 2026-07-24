@@ -11,6 +11,7 @@ import 'src/polycule.dart';
 import 'src/utils/application_log_maintenance.dart';
 import 'src/utils/error_logger.dart';
 import 'src/utils/matrix/client_util.dart';
+import 'src/utils/matrix/media_upload_queue.dart';
 import 'src/utils/matrix/push_handler.dart';
 import 'src/utils/single_tab/single_tab.dart';
 
@@ -31,6 +32,12 @@ void main([List<String>? args]) {
       WidgetsFlutterBinding.ensureInitialized();
       if (args?.contains('--unifiedpush-bg') ?? false) {
         return pushEntrypoint();
+      }
+      final mediaWorkerIndex = args?.indexOf('--media-upload-worker') ?? -1;
+      if (mediaWorkerIndex >= 0 && (args?.length ?? 0) > mediaWorkerIndex + 1) {
+        await ClientUtil.initVodozemac();
+        await MediaUploadQueue.runWorker(args![mediaWorkerIndex + 1]);
+        return;
       }
 
       await ApplicationLogMaintenance.start();

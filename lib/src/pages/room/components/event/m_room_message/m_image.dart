@@ -23,44 +23,50 @@ class ImageMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final image = ThumbnailAspectRatio(
-      child: MxcEncryptedFileBuilder<MatrixFile, MatrixFile>(
-        event: EventScope.of(context).event,
-        thumbnail: fullscreen
-            ? ThumbnailRequest.attachmentOnly
-            : ThumbnailRequest.thumbnailOnly,
-        builder: (context, thumbnail, attachment, retryCallback) {
-          final data = thumbnail.data ?? attachment.data;
+    final event = EventScope.of(context).event;
+    final description = imageDescriptionForEvent(event);
+    final image = Semantics(
+      image: true,
+      label: description ?? event.body,
+      child: ThumbnailAspectRatio(
+        child: MxcEncryptedFileBuilder<MatrixFile, MatrixFile>(
+          event: event,
+          thumbnail: fullscreen
+              ? ThumbnailRequest.attachmentOnly
+              : ThumbnailRequest.thumbnailOnly,
+          builder: (context, thumbnail, attachment, retryCallback) {
+            final data = thumbnail.data ?? attachment.data;
 
-          final label = (thumbnail.hasError || attachment.hasError)
-              ? RetryDownloadButton(callback: retryCallback)
-              : const AsciiProgressIndicator();
+            final label = (thumbnail.hasError || attachment.hasError)
+                ? RetryDownloadButton(callback: retryCallback)
+                : const AsciiProgressIndicator();
 
-          return Stack(
-            alignment: Alignment.center,
-            fit: StackFit.expand,
-            children: [
-              AnimatedOpacity(
-                opacity: data == null ? 1 : 0,
-                duration: MxcAvatar.kFadeDuration,
-                curve: Curves.easeInOut,
-                child: BlurHashIndicator(label: label),
-              ),
-              AnimatedOpacity(
-                opacity: data == null ? 0 : 1,
-                duration: MxcAvatar.kFadeDuration,
-                curve: Curves.easeInOut,
-                child: data == null
-                    ? null
-                    : MimedImage(
-                        bytes: data.bytes,
-                        name: data.name,
-                        fit: BoxFit.contain,
-                      ),
-              ),
-            ],
-          );
-        },
+            return Stack(
+              alignment: Alignment.center,
+              fit: StackFit.expand,
+              children: [
+                AnimatedOpacity(
+                  opacity: data == null ? 1 : 0,
+                  duration: MxcAvatar.kFadeDuration,
+                  curve: Curves.easeInOut,
+                  child: BlurHashIndicator(label: label),
+                ),
+                AnimatedOpacity(
+                  opacity: data == null ? 0 : 1,
+                  duration: MxcAvatar.kFadeDuration,
+                  curve: Curves.easeInOut,
+                  child: data == null
+                      ? null
+                      : MimedImage(
+                          bytes: data.bytes,
+                          name: data.name,
+                          fit: BoxFit.contain,
+                        ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
     if (fullscreen) {
@@ -73,4 +79,13 @@ class ImageMessage extends StatelessWidget {
       child: image,
     );
   }
+}
+
+String? imageDescriptionForEvent(Event event) {
+  final body = event.body.trim();
+  final filename = event.content['filename'];
+  if (body.isEmpty || filename is! String || body == filename.trim()) {
+    return null;
+  }
+  return body;
 }

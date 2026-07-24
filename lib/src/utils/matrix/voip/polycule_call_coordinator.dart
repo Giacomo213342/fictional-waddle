@@ -233,6 +233,7 @@ class PolyculeCallCoordinator {
     try {
       await CallNotificationManager.requestFullScreenIntentPermission();
       await _validateRelayAvailability(entry);
+      await entry.delegate.prepareCallAudio();
       await entry.voip.inviteToCall(
         room,
         type,
@@ -254,6 +255,7 @@ class PolyculeCallCoordinator {
     try {
       await CallNotificationManager.requestFullScreenIntentPermission();
       await _validateRelayAvailability(entry);
+      await entry.delegate.prepareCallAudio();
       final activeIds = room.activeGroupCallIds;
       final groupCallId = activeIds.isEmpty
           ? room.client.generateUniqueTransactionId()
@@ -819,6 +821,11 @@ class PolyculeCallCoordinator {
 
   Future<void> _answerFromNotification(CallSession session) async {
     await _showOngoingNotification(session, connected: false);
+    final entry = _clients[session.client];
+    if (entry == null) {
+      throw StateError('Calls are not initialized for this account.');
+    }
+    await entry.delegate.prepareCallAudio();
     await session.answer();
   }
 
@@ -884,7 +891,6 @@ bool canStartOneToOneCall(Room room) {
     membership: room.membership,
     remoteUserId: room.directChatMatrixID,
     localUserId: room.client.userID,
-    joinedMemberCount: room.summary.mJoinedMemberCount,
   );
 }
 
@@ -918,9 +924,7 @@ bool isOneToOneCallEligible({
   required Membership membership,
   required String? remoteUserId,
   required String? localUserId,
-  required int? joinedMemberCount,
 }) =>
     membership == Membership.join &&
     remoteUserId != null &&
-    remoteUserId != localUserId &&
-    (joinedMemberCount == null || joinedMemberCount == 2);
+    remoteUserId != localUserId;

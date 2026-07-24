@@ -9,9 +9,9 @@ class ShareFilesText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: IntentManager.sharedFilesListener,
-      builder: (context, files, _) => Text(
-        AppLocalizations.of(context).sharingFiles(files?.length ?? 0),
+      valueListenable: IntentManager.sharedPayloadListener,
+      builder: (context, payload, _) => Text(
+        AppLocalizations.of(context).sharingFiles(payload?.files.length ?? 0),
       ),
     );
   }

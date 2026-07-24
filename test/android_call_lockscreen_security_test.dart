@@ -39,6 +39,14 @@ void main() {
       'third_party/polycule_call_notifications/android/src/main/kotlin/'
       'business/braid/polycule/callnotifications/IncomingCallActivity.kt',
     ).readAsStringSync();
+    final service = File(
+      'third_party/polycule_call_notifications/android/src/main/kotlin/'
+      'business/braid/polycule/callnotifications/'
+      'CallForegroundService.kt',
+    ).readAsStringSync();
+    final appManifest = File(
+      'android/app/src/main/AndroidManifest.xml',
+    ).readAsStringSync();
 
     expect(
       manifest,
@@ -56,5 +64,24 @@ void main() {
     );
     expect(surface, isNot(contains('FlutterActivity')));
     expect(surface, contains('FLAG_SECURE'));
+    expect(service, contains('FOREGROUND_SERVICE_TYPE_PHONE_CALL'));
+    expect(appManifest, contains('FOREGROUND_SERVICE_PHONE_CALL'));
+    expect(appManifest, contains('MANAGE_OWN_CALLS'));
+  });
+
+  test('call notification channel is owned by one native plugin', () {
+    final calls = File(
+      'third_party/polycule_call_notifications/android/src/main/kotlin/'
+      'business/braid/polycule/callnotifications/'
+      'PolyculeCallNotificationsPlugin.kt',
+    ).readAsStringSync();
+    final unifiedPush = File(
+      'third_party/unifiedpush_android/android/src/main/kotlin/'
+      'org/unifiedpush/flutter/connector/Plugin.kt',
+    ).readAsStringSync();
+
+    expect(calls, contains('polycule.call_notifications'));
+    expect(unifiedPush, isNot(contains('polycule.call_notifications')));
+    expect(unifiedPush, isNot(contains('polycule.calls')));
   });
 }

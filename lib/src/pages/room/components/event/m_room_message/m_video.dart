@@ -16,91 +16,63 @@ import '../../../../../widgets/matrix/tumbnail_aspect_ratio.dart';
 import '../../../../../widgets/mimed_image.dart';
 import '../../../../../widgets/polycule_text_shadow.dart';
 
-class VideoMessage extends StatefulWidget {
+class VideoMessage extends StatelessWidget {
   const VideoMessage({
     super.key,
+    this.fullscreen = false,
+    this.active = true,
   });
 
+  final bool fullscreen;
+  final bool active;
+
   @override
-  State<VideoMessage> createState() => _VideoMessageState();
+  Widget build(BuildContext context) =>
+      fullscreen ? _FullscreenVideo(active: active) : const _VideoThumbnail();
 }
 
-class _VideoMessageState extends State<VideoMessage>
-    with AutomaticKeepAliveClientMixin<VideoMessage> {
-  final Player player = Player();
-  VideoController? controller;
-
-  @override
-  void initState() {
-    controller = VideoController(player);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    player.dispose();
-    super.dispose();
-  }
+class _VideoThumbnail extends StatelessWidget {
+  const _VideoThumbnail();
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     return SelectionArea(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: 512, maxWidth: 512),
         child: ThumbnailAspectRatio(
-          child: MxcEncryptedFileBuilder<Playable, MatrixFile>(
+          child: MxcEncryptedFileBuilder<Never, MatrixFile>(
             event: EventScope.of(context).event,
-            attachmentTransformer: _makePlayable,
+            thumbnail: ThumbnailRequest.thumbnailOnly,
+            fallbackToAttachment: false,
             builder: (context, thumbnail, attachment, retryCallback) {
-              final playable = attachment.data;
               final thumb = thumbnail.data;
-
-              final label = attachment.hasError
+              final label = thumbnail.hasError
                   ? RetryDownloadButton(callback: retryCallback)
                   : const AsciiProgressIndicator();
-
               return Stack(
                 alignment: Alignment.center,
                 fit: StackFit.expand,
                 children: [
                   AnimatedOpacity(
-                    opacity: playable == null && thumb == null ? 1 : 0,
+                    opacity: thumb == null ? 1 : 0,
                     duration: MxcAvatar.kFadeDuration,
                     curve: Curves.easeInOut,
                     child: BlurHashIndicator(label: label),
                   ),
-                  AnimatedOpacity(
-                    opacity: thumb == null ? 0 : 1,
-                    duration: MxcAvatar.kFadeDuration,
-                    curve: Curves.easeInOut,
-                    child: thumb == null
-                        ? null
-                        : Stack(
-                            alignment: Alignment.center,
-                            fit: StackFit.expand,
-                            children: [
-                              MimedImage(
-                                bytes: thumb.bytes,
-                                fit: BoxFit.contain,
-                                name: thumb.name,
-                              ),
-                              PolyculeTextShadow(child: Center(child: label)),
-                            ],
-                          ),
-                  ),
-                  AnimatedOpacity(
-                    opacity: playable == null ? 0 : 1,
-                    duration: MxcAvatar.kFadeDuration,
-                    curve: Curves.easeInOut,
-                    child: playable == null
-                        ? null
-                        : Video(
-                            controller: controller!,
-                            fill: Colors.transparent,
-                            controls: AdaptiveVideoControls,
-                          ),
+                  if (thumb != null)
+                    MimedImage(
+                      bytes: thumb.bytes,
+                      fit: BoxFit.contain,
+                      name: thumb.name,
+                    ),
+                  const PolyculeTextShadow(
+                    child: Center(
+                      child: Icon(
+                        Icons.play_circle_fill_rounded,
+                        color: Colors.white,
+                        size: 64,
+                      ),
+                    ),
                   ),
                 ],
               );
@@ -110,23 +82,67 @@ class _VideoMessageState extends State<VideoMessage>
       ),
     );
   }
+}
+
+class _FullscreenVideo extends StatefulWidget {
+  const _FullscreenVideo({required this.active});
+
+  final bool active;
+
+  @override
+  State<_FullscreenVideo> createState() => _FullscreenVideoState();
+}
+
+class _FullscreenVideoState extends State<_FullscreenVideo> {
+  final Player _player = Player();
+  late final VideoController _controller = VideoController(_player);
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant _FullscreenVideo oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.active && !widget.active) {
+      unawaited(_player.pause());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: Colors.black,
+      child: MxcEncryptedFileBuilder<Playable, MatrixFile>(
+        event: EventScope.of(context).event,
+        thumbnail: ThumbnailRequest.attachmentOnly,
+        attachmentTransformer: _makePlayable,
+        builder: (context, thumbnail, attachment, retryCallback) {
+          final playable = attachment.data;
+          if (attachment.hasError) {
+            return Center(child: RetryDownloadButton(callback: retryCallback));
+          }
+          if (playable == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return Video(
+            controller: _controller,
+            fill: Colors.black,
+            controls: AdaptiveVideoControls,
+          );
+        },
+      ),
+    );
+  }
 
   Future<Playable?> _makePlayable(MatrixFile? file) async {
     if (file == null) {
       return null;
     }
     final playable = await Media.memory(file.bytes, type: file.mimeType);
-    await player.open(playable);
-    await player.pause();
+    await _player.open(playable);
     return playable;
   }
-
-  @override
-  void didChangeDependencies() {
-    setState(() {});
-    super.didChangeDependencies();
-  }
-
-  @override
-  bool get wantKeepAlive => true;
 }

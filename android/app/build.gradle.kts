@@ -57,6 +57,7 @@ android {
 
 dependencies {
     implementation("org.unifiedpush.android:embedded-fcm-distributor:3.0.0")
+    implementation("androidx.work:work-runtime:2.11.2")
 
     // https://developer.android.com/studio/write/java8-support.html#library-desugaring
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")

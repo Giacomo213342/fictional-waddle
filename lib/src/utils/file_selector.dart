@@ -21,6 +21,7 @@ class FileSelector {
 
   bool compress = false;
   List<XFile>? files;
+  Map<XFile, String> descriptions = const {};
 
   final String? msgType;
 
@@ -161,6 +162,7 @@ class FileSelector {
 
     compress = selection.compress;
     this.files = selection.files;
+    descriptions = selection.descriptions;
     return selection;
   }
 
@@ -242,11 +244,17 @@ class FileSelector {
 
         final tuple = MatrixFileTuple(
           file: matrixFile,
+          description: descriptions[file],
           // the thumbnail is generated in the SDK
         );
         matrixFiles.add(tuple);
       } else if (matrixFile is MatrixAudioFile) {
-        matrixFiles.add(MatrixFileTuple(file: matrixFile));
+        matrixFiles.add(
+          MatrixFileTuple(
+            file: matrixFile,
+            description: descriptions[file],
+          ),
+        );
       } else if (matrixFile is MatrixVideoFile) {
         MatrixImageFile? thumbnail;
         try {
@@ -270,10 +278,16 @@ class FileSelector {
           MatrixFileTuple(
             file: matrixFile,
             thumbnail: thumbnail,
+            description: descriptions[file],
           ),
         );
       } else {
-        matrixFiles.add(MatrixFileTuple(file: matrixFile));
+        matrixFiles.add(
+          MatrixFileTuple(
+            file: matrixFile,
+            description: descriptions[file],
+          ),
+        );
       }
     }
 
@@ -282,8 +296,13 @@ class FileSelector {
 }
 
 class MatrixFileTuple {
-  const MatrixFileTuple({required this.file, this.thumbnail});
+  const MatrixFileTuple({
+    required this.file,
+    this.thumbnail,
+    this.description,
+  });
 
   final MatrixFile file;
   final MatrixImageFile? thumbnail;
+  final String? description;
 }

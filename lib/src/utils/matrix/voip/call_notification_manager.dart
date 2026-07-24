@@ -30,8 +30,8 @@ abstract final class CallNotificationManager {
   static const declineActionId = 'polycule.call.decline';
   static const hangupActionId = 'polycule.call.hangup';
   static const _safeFallbackChannelId = 'polycule.incoming_calls.fallback';
-  static const _activeChannelId = 'polycule.active_calls';
-  static const _androidCallChannel = MethodChannel('polycule.calls');
+  static const _androidCallChannel =
+      MethodChannel('polycule.call_notifications');
 
   static final pendingIntent = ValueNotifier<CallNotificationIntent?>(null);
   static bool _requestedFullScreenPermission = false;
@@ -286,22 +286,34 @@ abstract final class CallNotificationManager {
       return;
     }
     try {
-      await _androidCallChannel.invokeMethod<void>(
-        'dismissIncomingCallSurface',
-        {'callId': callId},
-      );
+      await _androidCallChannel.invokeMethod<void>('showOngoingCall', {
+        'notificationId': notificationId(callId),
+        'payload': payload(
+          clientIdentifier: clientIdentifier,
+          roomId: roomId,
+          callId: callId,
+        ),
+        'callId': callId,
+        'peerName': peerName,
+        'connected': connected,
+        'hangupActionId': hangupActionId,
+      });
+      return;
     } on PlatformException catch (error) {
-      debugPrint('Unable to dismiss incoming-call surface: $error');
+      debugPrint('Unable to start native ongoing-call service: $error');
     } on MissingPluginException catch (error) {
       debugPrint('Native call notification plugin is unavailable: $error');
     }
+
+    // Compatibility fallback for builds made before the dedicated native
+    // foreground call service was registered.
     await FlutterLocalNotificationsPlugin().show(
       notificationId(callId),
       peerName,
       connected ? 'Call in progress' : 'Connecting call…',
       NotificationDetails(
         android: AndroidNotificationDetails(
-          _activeChannelId,
+          'polycule.active_calls',
           'Active calls',
           channelDescription: 'Ongoing Matrix calls',
           category: AndroidNotificationCategory.call,

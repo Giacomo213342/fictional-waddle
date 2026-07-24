@@ -14,11 +14,13 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../utils/file_selector.dart';
 import '../../../../../widgets/matrix/scopes/client_scope.dart';
+import '../../../../../widgets/matrix/scopes/event_navigation_scope.dart';
 import '../../../../../widgets/matrix/scopes/event_scope.dart';
 import '../../../../../widgets/matrix/scopes/matrix_scope.dart';
 import '../../../../../widgets/polycule_overflow_bar.dart';
 import '../../../../../widgets/share_origin_builder.dart';
 import '../m_room_message/m_image.dart';
+import '../m_room_message/m_video.dart';
 
 class AttachmentActions {
   const AttachmentActions._();
@@ -192,6 +194,13 @@ class AttachmentToolbar extends StatefulWidget {
   State<AttachmentToolbar> createState() => _AttachmentToolbarState();
 }
 
+bool isFullscreenGalleryEvent(Event event) =>
+    !event.redacted &&
+    {
+      MessageTypes.Image,
+      MessageTypes.Video,
+    }.contains(event.messageType);
+
 class _AttachmentToolbarState extends State<AttachmentToolbar> {
   final canSaveAs = !kIsWeb && !Platform.isIOS && !Platform.isAndroid;
 
@@ -285,15 +294,25 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
 
   Future<void> _openFullscreen(Event event) async {
     final scope = MatrixScope.captureAll(context);
+    final navigateToEvent = EventNavigationScope.of(context).navigate;
+    final mediaEvents = scope.timeline?.timeline.events
+            .where(isFullscreenGalleryEvent)
+            .toList(growable: false) ??
+        [event];
+    final initialIndex = mediaEvents.indexWhere(
+      (candidate) => candidate.eventId == event.eventId,
+    );
     await Navigator.of(context).push<void>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (context) => MatrixScope(
           scope: scope,
           child: _FullscreenAttachment(
-            title: event.body,
-            onShare: (rect) => _share(event, rect),
-            onDownload: (rect) => _download(event, rect),
+            events: initialIndex < 0 ? [event] : mediaEvents,
+            initialIndex: initialIndex < 0 ? 0 : initialIndex,
+            onShare: _share,
+            onDownload: _download,
+            onNavigateToEvent: navigateToEvent,
           ),
         ),
       ),
@@ -384,30 +403,34 @@ class _AttachmentToolbarState extends State<AttachmentToolbar> {
 
 class _FullscreenAttachment extends StatefulWidget {
   const _FullscreenAttachment({
-    required this.title,
+    required this.events,
+    required this.initialIndex,
     required this.onShare,
     required this.onDownload,
+    required this.onNavigateToEvent,
   });
 
-  final String title;
-  final Future<void> Function(Rect? rect) onShare;
-  final Future<void> Function(Rect? rect) onDownload;
+  final List<Event> events;
+  final int initialIndex;
+  final Future<void> Function(Event event, Rect? rect) onShare;
+  final Future<void> Function(Event event, Rect? rect) onDownload;
+  final Future<void> Function(String eventId) onNavigateToEvent;
 
   @override
   State<_FullscreenAttachment> createState() => _FullscreenAttachmentState();
 }
 
 class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
-  final _transformationController = TransformationController();
-  final Set<int> _activePointers = {};
+  late final PageController _pageController = PageController(
+    initialPage: widget.initialIndex,
+  );
+  late Event _event = widget.events[widget.initialIndex];
   bool _loading = false;
-  double _dismissOffset = 0;
-
-  double get _scale => _transformationController.value.getMaxScaleOnAxis();
+  bool _imageZoomed = false;
 
   @override
   void dispose() {
-    _transformationController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -417,7 +440,7 @@ class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(_event.body),
         foregroundColor: Colors.white,
         backgroundColor: Colors.black54,
         actions: _loading
@@ -431,66 +454,152 @@ class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
                 ),
               ]
             : [
+                IconButton(
+                  tooltip: 'Show in timeline',
+                  onPressed: _showInTimeline,
+                  icon: const Icon(Icons.chat_bubble_outline_rounded),
+                ),
                 ShareOriginBuilder(
                   builder: (context, rect) => IconButton(
                     tooltip: MaterialLocalizations.of(
                       context,
                     ).shareButtonLabel,
-                    onPressed: () => _run(() => widget.onShare(rect)),
+                    onPressed: () => _run(() => widget.onShare(_event, rect)),
                     icon: const Icon(Icons.share),
                   ),
                 ),
                 ShareOriginBuilder(
                   builder: (context, rect) => IconButton(
                     tooltip: AppLocalizations.of(context).download,
-                    onPressed: () => _run(() => widget.onDownload(rect)),
+                    onPressed: () =>
+                        _run(() => widget.onDownload(_event, rect)),
                     icon: const Icon(Icons.save_alt),
                   ),
                 ),
               ],
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final viewport = constraints.biggest;
-          final imageSize = _fittedImageSize(
-            viewport,
-            EventScope.of(context).event,
+      body: PageView.builder(
+        controller: _pageController,
+        physics: _imageZoomed
+            ? const NeverScrollableScrollPhysics()
+            : const PageScrollPhysics(),
+        itemCount: widget.events.length,
+        onPageChanged: (index) {
+          setState(() {
+            _event = widget.events[index];
+            _imageZoomed = false;
+          });
+        },
+        itemBuilder: (context, index) {
+          final event = widget.events[index];
+          return EventScope(
+            event: event,
+            child: event.messageType == MessageTypes.Video
+                ? SafeArea(
+                    top: false,
+                    child: VideoMessage(
+                      fullscreen: true,
+                      active: event.eventId == _event.eventId,
+                    ),
+                  )
+                : _FullscreenImage(
+                    onZoomChanged: (zoomed) {
+                      if (event.eventId == _event.eventId &&
+                          zoomed != _imageZoomed) {
+                        setState(() => _imageZoomed = zoomed);
+                      }
+                    },
+                  ),
           );
-          final opacity = (1 - (_dismissOffset / viewport.height))
-              .clamp(0.55, 1.0)
-              .toDouble();
-          return Listener(
-            onPointerDown: _handlePointerDown,
-            onPointerMove: _handlePointerMove,
-            onPointerUp: _handlePointerEnd,
-            onPointerCancel: _handlePointerEnd,
-            child: ColoredBox(
-              color: Colors.black,
-              child: Opacity(
-                opacity: opacity,
-                child: Transform.translate(
-                  offset: Offset(0, _dismissOffset),
-                  child: SizedBox.expand(
-                    child: FittedImageInteractiveViewer(
-                      transformationController: _transformationController,
-                      onInteractionUpdate: (_) =>
-                          _constrainToImage(viewport, imageSize),
-                      onInteractionEnd: (_) =>
-                          _finishInteraction(viewport, imageSize),
-                      child: Center(
-                        child: SizedBox.fromSize(
-                          size: imageSize,
-                          child: const ImageMessage(fullscreen: true),
-                        ),
+        },
+      ),
+    );
+  }
+
+  Future<void> _run(Future<void> Function() action) async {
+    setState(() => _loading = true);
+    try {
+      await action();
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _showInTimeline() async {
+    final eventId = _event.eventId;
+    await Navigator.of(context).maybePop();
+    await WidgetsBinding.instance.endOfFrame;
+    await widget.onNavigateToEvent(eventId);
+  }
+}
+
+class _FullscreenImage extends StatefulWidget {
+  const _FullscreenImage({required this.onZoomChanged});
+
+  final ValueChanged<bool> onZoomChanged;
+
+  @override
+  State<_FullscreenImage> createState() => _FullscreenImageState();
+}
+
+class _FullscreenImageState extends State<_FullscreenImage> {
+  final _transformationController = TransformationController();
+  final Set<int> _activePointers = {};
+  double _dismissOffset = 0;
+  bool _zoomed = false;
+
+  double get _scale => _transformationController.value.getMaxScaleOnAxis();
+
+  @override
+  void dispose() {
+    _transformationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final viewport = constraints.biggest;
+        final imageSize = _fittedImageSize(
+          viewport,
+          EventScope.of(context).event,
+        );
+        final opacity = (1 - (_dismissOffset / viewport.height))
+            .clamp(0.55, 1.0)
+            .toDouble();
+        return Listener(
+          onPointerDown: _handlePointerDown,
+          onPointerMove: _handlePointerMove,
+          onPointerUp: _handlePointerEnd,
+          onPointerCancel: _handlePointerEnd,
+          child: ColoredBox(
+            color: Colors.black,
+            child: Opacity(
+              opacity: opacity,
+              child: Transform.translate(
+                offset: Offset(0, _dismissOffset),
+                child: SizedBox.expand(
+                  child: FittedImageInteractiveViewer(
+                    transformationController: _transformationController,
+                    panEnabled: _zoomed,
+                    onInteractionUpdate: (_) =>
+                        _constrainToImage(viewport, imageSize),
+                    onInteractionEnd: (_) =>
+                        _finishInteraction(viewport, imageSize),
+                    child: Center(
+                      child: SizedBox.fromSize(
+                        size: imageSize,
+                        child: const ImageMessage(fullscreen: true),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -531,6 +640,7 @@ class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
   }
 
   void _constrainToImage(Size viewport, Size image) {
+    _updateZoomState();
     final matrix = _transformationController.value;
     final translation = matrix.getTranslation();
     final constrained = constrainFittedImageTransform(matrix, viewport, image);
@@ -545,18 +655,20 @@ class _FullscreenAttachmentState extends State<_FullscreenAttachment> {
   void _finishInteraction(Size viewport, Size image) {
     if (_scale <= 1.01) {
       _transformationController.value = Matrix4.identity();
+      _setZoomed(false);
       return;
     }
     _constrainToImage(viewport, image);
   }
 
-  Future<void> _run(Future<void> Function() action) async {
-    setState(() => _loading = true);
-    try {
-      await action();
-    } finally {
-      if (mounted) setState(() => _loading = false);
+  void _updateZoomState() => _setZoomed(_scale > 1.01);
+
+  void _setZoomed(bool value) {
+    if (_zoomed == value) {
+      return;
     }
+    setState(() => _zoomed = value);
+    widget.onZoomChanged(value);
   }
 }
 
@@ -600,12 +712,14 @@ class FittedImageInteractiveViewer extends StatelessWidget {
     required this.onInteractionUpdate,
     required this.onInteractionEnd,
     required this.child,
+    this.panEnabled = true,
   });
 
   final TransformationController transformationController;
   final GestureScaleUpdateCallback onInteractionUpdate;
   final GestureScaleEndCallback onInteractionEnd;
   final Widget child;
+  final bool panEnabled;
 
   @override
   Widget build(BuildContext context) => InteractiveViewer(
@@ -613,7 +727,7 @@ class FittedImageInteractiveViewer extends StatelessWidget {
         boundaryMargin: EdgeInsets.zero,
         minScale: 1,
         maxScale: 5,
-        panEnabled: true,
+        panEnabled: panEnabled,
         scaleEnabled: true,
         trackpadScrollCausesScale: true,
         onInteractionUpdate: onInteractionUpdate,

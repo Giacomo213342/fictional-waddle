@@ -25,6 +25,7 @@ import '../pages/room/room.dart';
 import '../pages/room_details/room_details.dart';
 import '../pages/room_list/room_list.dart';
 import '../pages/room_list/room_list_position_tracker.dart';
+import '../pages/share_target/share_target.dart';
 import '../pages/splash_screen/splash_screen.dart';
 import '../pages/ssss_bootstrap/ssss_bootstrap.dart';
 import '../pages/user_page/user_page.dart';
@@ -88,6 +89,10 @@ class PolyculeRouter extends GoRouter {
                         state.uri.queryParameters['redirect']!,
                       ),
                     ),
+                  ),
+                  GoRoute(
+                    path: ShareTargetPage.routeName,
+                    builder: (context, state) => const ShareTargetPage(),
                   ),
                 ],
               ),

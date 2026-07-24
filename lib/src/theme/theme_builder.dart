@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -99,10 +100,9 @@ class PolyculeThemeBuilder extends StatelessWidget {
             brightness: Brightness.dark,
           );
 
-          var darkColorScheme =
-              themeState.colorMode == PolyculeColorMode.system
-                  ? darkDynamic ?? darkFallback
-                  : darkFallback;
+          var darkColorScheme = themeState.colorMode == PolyculeColorMode.system
+              ? darkDynamic ?? darkFallback
+              : darkFallback;
 
           if (themeState.colorMode == PolyculeColorMode.oled) {
             darkColorScheme = darkColorScheme.copyWith(
@@ -176,6 +176,15 @@ class PolyculeThemeBuilder extends StatelessWidget {
         PolyculeFonts.notoSans.name,
       ],
       colorScheme: colorScheme,
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.windows: ZoomPageTransitionsBuilder(),
+          TargetPlatform.linux: ZoomPageTransitionsBuilder(),
+        },
+      ),
       scaffoldBackgroundColor: oled ? Colors.black : null,
       canvasColor: oled ? Colors.black : null,
       appBarTheme: oled

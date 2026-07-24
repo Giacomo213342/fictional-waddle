@@ -12,8 +12,7 @@ class CancelShareButton extends StatefulWidget {
 class _CancelShareButtonState extends State<CancelShareButton> {
   @override
   void initState() {
-    IntentManager.sharedFilesListener.addListener(_clearBanner);
-    IntentManager.sharedTextListener.addListener(_clearBanner);
+    IntentManager.sharedPayloadListener.addListener(_clearBanner);
     super.initState();
   }
 
@@ -26,8 +25,7 @@ class _CancelShareButtonState extends State<CancelShareButton> {
 
   @override
   void dispose() {
-    IntentManager.sharedFilesListener.removeListener(_clearBanner);
-    IntentManager.sharedTextListener.removeListener(_clearBanner);
+    IntentManager.sharedPayloadListener.removeListener(_clearBanner);
     super.dispose();
   }
 
@@ -37,8 +35,7 @@ class _CancelShareButtonState extends State<CancelShareButton> {
   }
 
   void _clearBanner() {
-    if (IntentManager.sharedFilesListener.value != null ||
-        IntentManager.sharedTextListener.value != null) {
+    if (IntentManager.sharedPayloadListener.value != null) {
       return;
     }
     ScaffoldMessenger.of(context).clearMaterialBanners();

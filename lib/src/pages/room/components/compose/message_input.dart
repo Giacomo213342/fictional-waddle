@@ -13,6 +13,7 @@ import 'compose_scope.dart';
 import 'msgtype_dropdown.dart';
 import 'send_file_scope.dart';
 import 'type_ahead_helper.dart';
+import 'voice_message_composer.dart';
 
 class MessageInput extends StatelessWidget {
   const MessageInput({super.key, this.onStartedTyping});
@@ -65,12 +66,13 @@ class MessageInput extends StatelessWidget {
               ),
             ),
           ),
-          TypeAheadField<TypeAheadOption>(
-            focusNode: compose.messageFocusNode,
-            controller: compose.messageController,
-            suggestionsController: compose.suggestionsController,
-            builder: (context, textEditingController, focusNode) {
-              return TextField(
+          VoiceMessageComposer(
+            builder: (context, startVoiceRecording) =>
+                TypeAheadField<TypeAheadOption>(
+              focusNode: compose.messageFocusNode,
+              controller: compose.messageController,
+              suggestionsController: compose.suggestionsController,
+              builder: (context, textEditingController, focusNode) => TextField(
                 controller: textEditingController,
                 focusNode: focusNode,
                 autofocus: !kIsWeb &&
@@ -95,7 +97,9 @@ class MessageInput extends StatelessWidget {
                 ),
                 cursorWidth: 10,
                 onChanged: (value) {
-                  if (value.isNotEmpty) onStartedTyping?.call();
+                  if (value.isNotEmpty) {
+                    onStartedTyping?.call();
+                  }
                 },
                 onSubmitted: (_) => compose.sendMessage(),
                 textInputAction: TextInputAction.newline,
@@ -109,27 +113,33 @@ class MessageInput extends StatelessWidget {
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   prefixIcon: const MsgtypeDropdown(),
                   helperText: '{ "format": "org.matrix.custom.html" }',
-                  suffixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        tooltip: AppLocalizations.of(context).send,
-                        icon: const Icon(Icons.send),
-                        onPressed: compose.sendMessage,
+                  suffixIcon: AnimatedBuilder(
+                    animation: compose.messageController,
+                    builder: (context, _) => IconButton(
+                      tooltip: compose.messageController.text.trim().isEmpty
+                          ? 'Record voice message'
+                          : AppLocalizations.of(context).send,
+                      icon: Icon(
+                        compose.messageController.text.trim().isEmpty
+                            ? Icons.mic_rounded
+                            : Icons.send,
                       ),
-                    ],
+                      onPressed: compose.messageController.text.trim().isEmpty
+                          ? startVoiceRecording
+                          : compose.sendMessage,
+                    ),
                   ),
                   alignLabelWithHint: false,
                   labelText: 'm.room.message',
                 ),
-              );
-            },
-            direction: VerticalDirection.up,
-            hideOnEmpty: true,
-            itemBuilder: typeAheadHelper.itemBuilder,
-            onSelected: typeAheadHelper.onSelected,
-            suggestionsCallback: typeAheadHelper.suggestionsCallback,
-            listBuilder: typeAheadHelper.listBuilder,
+              ),
+              direction: VerticalDirection.up,
+              hideOnEmpty: true,
+              itemBuilder: typeAheadHelper.itemBuilder,
+              onSelected: typeAheadHelper.onSelected,
+              suggestionsCallback: typeAheadHelper.suggestionsCallback,
+              listBuilder: typeAheadHelper.listBuilder,
+            ),
           ),
         ],
       ),

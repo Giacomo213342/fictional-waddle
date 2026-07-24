@@ -10,41 +10,36 @@ void main() {
           membership: Membership.join,
           remoteUserId: '@peer:example.org',
           localUserId: '@me:example.org',
-          joinedMemberCount: 2,
         ),
         isTrue,
       );
     });
 
-    test('allows an unknown lazy-loaded count for a known direct peer', () {
+    test('allows a direct peer even when a bridge added room members', () {
       expect(
         isOneToOneCallEligible(
           membership: Membership.join,
           remoteUserId: '@peer:example.org',
           localUserId: '@me:example.org',
-          joinedMemberCount: null,
         ),
         isTrue,
       );
     });
 
-    test('rejects non-joined, self, missing peer and multi-member rooms', () {
+    test('rejects non-joined, self and missing direct peers', () {
       bool eligible({
         Membership membership = Membership.join,
         String? remote = '@peer:example.org',
-        int? count = 2,
       }) =>
           isOneToOneCallEligible(
             membership: membership,
             remoteUserId: remote,
             localUserId: '@me:example.org',
-            joinedMemberCount: count,
           );
 
       expect(eligible(membership: Membership.invite), isFalse);
       expect(eligible(remote: null), isFalse);
       expect(eligible(remote: '@me:example.org'), isFalse);
-      expect(eligible(count: 4), isFalse);
     });
   });
 

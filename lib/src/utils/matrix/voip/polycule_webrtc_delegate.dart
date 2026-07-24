@@ -124,11 +124,6 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
     Map<String, dynamic> configuration, [
     Map<String, dynamic> constraints = const {},
   ]) async {
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      await webrtc.Helper.setAndroidAudioConfiguration(
-        webrtc.AndroidAudioConfiguration.communication,
-      );
-    }
     var configured = configurePeerConnection(
       configuration,
       relayOnly: _relayOnly,
@@ -156,6 +151,17 @@ class PolyculeWebRtcDelegate implements WebRTCDelegate {
       coordinator.noteMissingTurnRelay();
     }
     return webrtc.createPeerConnection(configured.value, constraints);
+  }
+
+  /// Switch Android to communication audio only after the user has answered
+  /// (or initiated) a call. Doing this while an incoming call is merely
+  /// ringing can route the system ringtone through the call audio path.
+  Future<void> prepareCallAudio() async {
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      await webrtc.Helper.setAndroidAudioConfiguration(
+        webrtc.AndroidAudioConfiguration.communication,
+      );
+    }
   }
 
   @override

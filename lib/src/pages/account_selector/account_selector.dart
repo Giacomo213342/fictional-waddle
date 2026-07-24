@@ -4,9 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../widgets/intent_manager.dart';
 import '../../widgets/matrix/client_manager/client_manager.dart';
-import '../../widgets/sharing_intent_banner/sharing_intent_banner.dart';
 import '../room/room.dart';
 import '../user_page/user_page.dart';
 import 'account_selector_view.dart';
@@ -28,25 +26,9 @@ class AccountSelectorPage extends StatefulWidget {
 
 class AccountSelectorController extends State<AccountSelectorPage> {
   @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) => _checkSharingData());
-
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) => AccountSelectorView(controller: this);
 
   Future<void> selectAccount(int identifier) async {
-    // ignore any redirect in case we handle a share intent
-    if (IntentManager.sharedFilesListener.value != null ||
-        IntentManager.sharedTextListener.value != null) {
-      context.pushReplacement(
-        '/client/$identifier',
-      );
-      return;
-    }
-
     // handle [matrix] calls
     final matrixCallUri = Uri.tryParse(widget.redirect);
     final matrixCallLink = matrixCallUri?.queryParameters['url'];
@@ -73,28 +55,6 @@ class AccountSelectorController extends State<AccountSelectorPage> {
     context.pushReplacement(
       '/client/$identifier/$path',
     );
-  }
-
-  Future<void> _checkSharingData() async {
-    // funny bug : any deeplink will meanwhile be interpreted as shared text
-    // easy workaround : if the shared text is equal to the redirect, we know
-    // it was the same data processed
-    final sharedText = IntentManager.sharedTextListener.value;
-
-    if (sharedText == widget.redirect ||
-        (sharedText?.startsWith('io.element.call:/') ?? false)) {
-      await IntentManager.claimShareIntent();
-      return;
-    }
-    if (IntentManager.sharedFilesListener.value != null) {
-      ScaffoldMessenger.of(context).showMaterialBanner(
-        SharingIntentBanner.files(),
-      );
-    } else if (IntentManager.sharedTextListener.value != null) {
-      ScaffoldMessenger.of(context).showMaterialBanner(
-        SharingIntentBanner.text(),
-      );
-    }
   }
 
   void _matrixRedirect(

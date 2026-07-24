@@ -26,6 +26,7 @@ class MxcEncryptedFileBuilder<T, U> extends StatefulWidget {
     required this.event,
     required this.builder,
     this.thumbnail = ThumbnailRequest.both,
+    this.fallbackToAttachment = true,
     this.attachmentTransformer,
     this.thumbnailTransformer,
   });
@@ -33,6 +34,7 @@ class MxcEncryptedFileBuilder<T, U> extends StatefulWidget {
   static final Map<String, MatrixFile> _runtimeCache = {};
 
   final ThumbnailRequest thumbnail;
+  final bool fallbackToAttachment;
   final Event event;
   final ThumbnailAttachmentBuilder<T, U> builder;
   final MatrixFileTransformer<T>? attachmentTransformer;
@@ -145,7 +147,9 @@ class _MxcEncryptedFileBuilderState<T, U>
         setState(() {});
       }
       final file = await operation.value;
-      if (file == null && widget.thumbnail == ThumbnailRequest.thumbnailOnly) {
+      if (file == null &&
+          widget.thumbnail == ThumbnailRequest.thumbnailOnly &&
+          widget.fallbackToAttachment) {
         startAttachmentOperation();
       }
 

@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:go_router/go_router.dart';
 
+import '../../widgets/android_predictive_back_scope.dart';
 import '../room_list/room_list.dart';
 
 bool isAccountSettingsRoot(Uri uri) {
@@ -53,13 +54,10 @@ class AccountSettingsBackHandler extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isAccountSettingsRoot(uri)) {
-      return PopScope<void>(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, _) {
-          if (!didPop) {
-            GoRouter.of(context).go(accountSettingsBackTarget(uri).toString());
-          }
-        },
+      return AndroidPredictiveBackScope(
+        onBack: () => GoRouter.of(
+          context,
+        ).go(accountSettingsBackTarget(uri).toString()),
         child: NotificationListener<NavigationNotification>(
           // The compact layout keeps the empty nested Navigator offstage. Its
           // false notification must not unregister Android back handling.

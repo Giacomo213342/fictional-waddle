@@ -9,6 +9,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../utils/matrix/database_drafts.dart';
+import '../../../../utils/matrix/media_upload_queue.dart';
 import '../../../../widgets/intent_manager.dart';
 import '../../../../widgets/matrix/dialogs/command_error_dialog.dart';
 import '../../../../widgets/matrix/dialogs/command_helper_dialog.dart';
@@ -106,7 +107,9 @@ class ComposeScope extends State<ComposeScopeWidget> {
 
   void _handleTypingChanged() {
     final room = _room;
-    if (room == null) return;
+    if (room == null) {
+      return;
+    }
     final hasText = messageController.text.trim().isNotEmpty;
     _typingIdleTimer?.cancel();
     if (!hasText) {
@@ -127,7 +130,9 @@ class ComposeScope extends State<ComposeScopeWidget> {
       unawaited(room.setTyping(true, timeout: 15000));
     }
     _typingIdleTimer = Timer(const Duration(seconds: 12), () {
-      if (!_isTyping) return;
+      if (!_isTyping) {
+        return;
+      }
       _isTyping = false;
       unawaited(room.setTyping(false));
     });
@@ -200,7 +205,7 @@ class ComposeScope extends State<ComposeScopeWidget> {
         }
       }
       if (eventId != null) {
-        if (IntentManager.sharedTextListener.value != null) {
+        if (IntentManager.sharedPayloadListener.value?.text != null) {
           await IntentManager.claimShareIntent();
         }
       }
@@ -299,6 +304,7 @@ class ComposeScope extends State<ComposeScopeWidget> {
 
     await txids[txid]?.cancel();
     txids.remove(txid);
+    await MediaUploadQueue.cancel(txid);
 
     room.sendingFilePlaceholders.remove(txid);
     room.sendingFileThumbnails.remove(txid);

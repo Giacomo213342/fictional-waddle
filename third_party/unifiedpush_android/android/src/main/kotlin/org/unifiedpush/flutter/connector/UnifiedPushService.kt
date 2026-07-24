@@ -7,6 +7,8 @@ import io.flutter.embedding.engine.dart.DartExecutor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import java.security.MessageDigest
 import org.unifiedpush.android.connector.FailedReason
 import org.unifiedpush.android.connector.PushService
 import org.unifiedpush.android.connector.data.PushEndpoint
@@ -66,6 +68,10 @@ open class UnifiedPushService: PushService() {
 
     override fun onMessage(message: PushMessage, instance: String) {
         Log.d(TAG, "onMessage")
+        if (isDuplicatePush(message, instance)) {
+            Log.i(TAG, "Dropping duplicate push payload for $instance")
+            return
+        }
         val data = mapOf(
             PLUGIN_ARG_INSTANCE to instance,
             PLUGIN_ARG_MESSAGE_CONTENT to message.content,
@@ -122,7 +128,53 @@ open class UnifiedPushService: PushService() {
         }
     }
 
+    private fun isDuplicatePush(message: PushMessage, instance: String): Boolean {
+        val digest = MessageDigest.getInstance("SHA-256")
+        digest.update(instance.toByteArray(Charsets.UTF_8))
+        digest.update(0.toByte())
+        val eventId = runCatching {
+            JSONObject(String(message.content, Charsets.UTF_8))
+                .optJSONObject("notification")
+                ?.optString("event_id")
+                ?.takeIf { it.isNotBlank() }
+        }.getOrNull()
+        digest.update(
+            eventId?.toByteArray(Charsets.UTF_8) ?: message.content,
+        )
+        val fingerprint = digest.digest().joinToString("") { "%02x".format(it) }
+        val key = "$SEEN_PREFIX$fingerprint"
+        val now = System.currentTimeMillis()
+        val preferences = getSharedPreferences(DEDUPLICATION_STORE, Context.MODE_PRIVATE)
+
+        synchronized(deduplicationLock) {
+            val lastSeen = preferences.getLong(key, 0L)
+            if (lastSeen > 0 && now - lastSeen < DUPLICATE_WINDOW_MS) {
+                return true
+            }
+            val editor = preferences.edit().putLong(key, now)
+            if (preferences.all.size > MAXIMUM_SEEN_PAYLOADS) {
+                preferences.all.forEach { (storedKey, value) ->
+                    val timestamp = value as? Long ?: return@forEach
+                    if (storedKey.startsWith(SEEN_PREFIX) &&
+                        now - timestamp > RETENTION_MS) {
+                        editor.remove(storedKey)
+                    }
+                }
+            }
+            // commit() makes the fingerprint visible before a second service
+            // callback can launch another Flutter engine.
+            editor.commit()
+            return false
+        }
+    }
+
     internal companion object {
         private const val TAG = "UnifiedPushService"
+        private const val DEDUPLICATION_STORE = "polycule_unifiedpush_seen"
+        private const val SEEN_PREFIX = "payload_"
+        private const val DUPLICATE_WINDOW_MS = 15 * 60 * 1000L
+        private const val RETENTION_MS = 24 * 60 * 60 * 1000L
+        private const val MAXIMUM_SEEN_PAYLOADS = 128
+        private val deduplicationLock = Any()
     }
 }

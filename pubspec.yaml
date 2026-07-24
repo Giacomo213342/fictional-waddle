@@ -2,7 +2,7 @@ name: polycule
 description: "A geeky and efficient [matrix] client for power users."
 publish_to: 'none'
 
-version: 0.3.4+34
+version: 0.4.0+35
 
 environment:
   sdk: '>=3.2.0 <4.0.0'
@@ -71,6 +71,7 @@ dependencies:
   polycule_call_notifications:
     path: third_party/polycule_call_notifications
   receive_sharing_intent: ^1.8.1
+  record: ^7.1.1
   sentry: ^9.6.0
   share_plus: ^12.0.1
   sqflite: ^2.4.0

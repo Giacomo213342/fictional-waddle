@@ -255,14 +255,19 @@ class PushManager {
     final uri = await client.checkPushGateway(endpoint.url);
     final pushKey = endpoint.url;
     final pushId = pushKey.split('/').last;
+    final appId = 'business.braid.polycule.${client.deviceID}';
 
     final pusher = Pusher(
-      appId: 'business.braid.polycule.${client.deviceID}',
+      appId: appId,
       pushkey: pushKey,
       appDisplayName: localizations.appName,
       data: PusherData(
         url: uri,
-        format: 'event_id_only',
+        // The full push envelope lets incoming m.call.invite events reach the
+        // native call surface immediately. With event_id_only the headless
+        // isolate must open the database and fetch the event first, which can
+        // take tens of seconds after Android has woken the application.
+        format: null,
         additionalProperties: {'data_message': pusherDataMessageFormat},
       ),
       deviceDisplayName:
@@ -275,6 +280,46 @@ class PushManager {
       pusher,
     );
     await settings.storePushKey(client.clientName, pushKey);
+    this.endpoint = pushKey;
+    await _removeStaleDevicePushers(
+      appId: appId,
+      activePushKey: pushKey,
+    );
+  }
+
+  Future<void> _removeStaleDevicePushers({
+    required String appId,
+    required String activePushKey,
+  }) async {
+    try {
+      final pushers = await client.getPushers() ?? const <Pusher>[];
+      final stale = staleDevicePushers(
+        pushers,
+        appId: appId,
+        activePushKey: activePushKey,
+      );
+      for (final pusher in stale) {
+        await client.deletePusher(
+          PusherId(appId: pusher.appId, pushkey: pusher.pushkey),
+        );
+      }
+      if (stale.isNotEmpty) {
+        await PushLogJournal.record(
+          'Removed ${stale.length} stale UnifiedPush endpoint(s) for this '
+          'device.',
+          important: true,
+        );
+      }
+    } catch (error, stackTrace) {
+      // A cleanup failure must never undo the newly registered working
+      // endpoint. It will be retried on the next endpoint callback.
+      await PushLogJournal.record(
+        'Unable to remove stale UnifiedPush endpoints.',
+        level: Level.warning,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   void onRegistrationFailed(FailedReason reason, String instance) {
@@ -338,3 +383,14 @@ class PushManager {
     await UnifiedPush.register(instance: instance);
   }
 }
+
+List<Pusher> staleDevicePushers(
+  Iterable<Pusher> pushers, {
+  required String appId,
+  required String activePushKey,
+}) =>
+    pushers
+        .where(
+          (pusher) => pusher.appId == appId && pusher.pushkey != activePushKey,
+        )
+        .toList(growable: false);

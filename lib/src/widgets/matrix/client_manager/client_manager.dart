@@ -7,8 +7,10 @@ import 'package:matrix/matrix.dart';
 
 import '../../../utils/matrix/client_util.dart';
 import '../../../utils/matrix/database/matrix_store_lease.dart';
+import '../../../utils/matrix/media_upload_queue.dart';
 import '../../../utils/matrix/polycule_command_extension.dart';
 import '../../../utils/matrix/push_manager.dart';
+import '../../../utils/matrix/room_last_event_loader.dart';
 import '../../../utils/matrix/voip/call_notification_manager.dart';
 import '../../../utils/matrix/voip/polycule_call_coordinator.dart';
 import '../../../utils/polycule_http_client/polycule_http_client.dart';
@@ -177,10 +179,14 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
       await store.loadClients();
       await CallNotificationManager.restorePendingResponse();
       IntentManager.clientsReady.value = true;
-      return true;
+      unawaited(MediaUploadQueue.reschedulePending());
     } finally {
       await lease.release();
     }
+    for (final client in store.activeClients.value) {
+      unawaited(RoomLastEventLoader.warmClient(client));
+    }
+    return true;
   }
 
   Future<void> _removeFromClientList(Client client) async {

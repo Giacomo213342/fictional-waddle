@@ -1,26 +1,27 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
-/// Serializes Matrix database ownership across foreground and headless Dart
-/// isolates, including multiple Flutter engines in the same Android process.
+/// Serializes Matrix database initialization across foreground and headless
+/// Dart isolates.
+///
+/// Android uses a process-wide native semaphore because POSIX file locks do
+/// not contend between two owners in the same process. The native plugin
+/// releases permits when a FlutterEngine is destroyed, so a killed headless
+/// isolate cannot strand startup. Other platforms use an in-isolate mutex.
 class MatrixStoreLease {
-  MatrixStoreLease._(this._lockFile, this._token) {
-    _heartbeat = Timer.periodic(
-      const Duration(seconds: 30),
-      (_) => unawaited(_refreshHeartbeat()),
-    );
-  }
+  MatrixStoreLease._native(this._nativeToken) : _fallbackRelease = null;
 
-  static const _retryDelay = Duration(milliseconds: 40);
-  static const _maximumLeaseAge = Duration(minutes: 3);
+  MatrixStoreLease._fallback(this._fallbackRelease) : _nativeToken = null;
 
-  final File _lockFile;
-  final String _token;
-  late final Timer _heartbeat;
+  static const _channel = MethodChannel('polycule.matrix_store_lock');
+  static final Map<String, Future<void>> _fallbackTails = {};
+
+  final String? _nativeToken;
+  final void Function()? _fallbackRelease;
   bool _released = false;
 
   static Future<MatrixStoreLease> acquire() async {
@@ -29,99 +30,34 @@ class MatrixStoreLease {
   }
 
   static Future<MatrixStoreLease> acquireFile(File lockFile) async {
-    final token = _newToken();
-    while (true) {
-      var created = false;
+    if (!kIsWeb && Platform.isAndroid) {
       try {
-        await lockFile.create(exclusive: true);
-        created = true;
-        await lockFile.writeAsString(
-          jsonEncode({
-            'pid': pid,
-            'token': token,
-            'createdAt': DateTime.now().toUtc().toIso8601String(),
-          }),
-          flush: true,
-        );
-        return MatrixStoreLease._(lockFile, token);
-      } on FileSystemException {
-        if (created) {
-          await lockFile.delete().catchError((_) => lockFile);
-          await Future<void>.delayed(_retryDelay);
-          continue;
+        final token = await _channel.invokeMethod<String>('acquire');
+        if (token == null) {
+          throw PlatformException(
+            code: 'NO_LOCK_TOKEN',
+            message: 'Native Matrix store lock returned no token.',
+          );
         }
-        if (await _recoverAbandonedLease(lockFile)) {
-          continue;
-        }
-        await Future<void>.delayed(_retryDelay);
+        return MatrixStoreLease._native(token);
+      } on MissingPluginException {
+        // Tests and non-standard embeddings fall back to the Dart mutex.
       }
     }
-  }
 
-  static String _newToken() {
-    final random = Random.secure();
-    return '$pid-${DateTime.now().microsecondsSinceEpoch}-'
-        '${random.nextInt(1 << 32)}';
-  }
-
-  static Future<bool> _recoverAbandonedLease(File lockFile) async {
-    try {
-      final stat = await lockFile.stat();
-      if (stat.type == FileSystemEntityType.notFound) {
-        return true;
+    final key = lockFile.absolute.path;
+    final previous = _fallbackTails[key] ?? Future<void>.value();
+    final released = Completer<void>();
+    _fallbackTails[key] = released.future;
+    await previous;
+    return MatrixStoreLease._fallback(() {
+      if (!released.isCompleted) {
+        released.complete();
       }
-      final data = jsonDecode(await lockFile.readAsString());
-      final ownerPid = data is Map ? data['pid'] : null;
-      final ownerAlive = ownerPid is int &&
-          ownerPid > 0 &&
-          await Directory('/proc/$ownerPid').exists();
-      final leaseExpired =
-          DateTime.now().difference(stat.modified) > _maximumLeaseAge;
-      if (ownerAlive && !leaseExpired) {
-        return false;
+      if (identical(_fallbackTails[key], released.future)) {
+        _fallbackTails.remove(key);
       }
-
-      final evidence = File(
-        '${lockFile.path}.abandoned-'
-        '${DateTime.now().toUtc().microsecondsSinceEpoch}',
-      );
-      await lockFile.rename(evidence.path);
-      return true;
-    } on FileSystemException {
-      return !await lockFile.exists();
-    } on FormatException {
-      final stat = await lockFile.stat();
-      return DateTime.now().difference(stat.modified) > _maximumLeaseAge &&
-          await _renameMalformedLease(lockFile);
-    }
-  }
-
-  static Future<bool> _renameMalformedLease(File lockFile) async {
-    try {
-      await lockFile.rename(
-        '${lockFile.path}.malformed-'
-        '${DateTime.now().toUtc().microsecondsSinceEpoch}',
-      );
-      return true;
-    } on FileSystemException {
-      return false;
-    }
-  }
-
-  Future<void> _refreshHeartbeat() async {
-    if (_released) {
-      return;
-    }
-    try {
-      final data = jsonDecode(await _lockFile.readAsString());
-      if (data is Map && data['token'] == _token) {
-        await _lockFile.setLastModified(DateTime.now());
-      }
-    } on FileSystemException {
-      // Release/recovery won the race with this heartbeat.
-    } on FormatException {
-      // Never mutate a lock whose ownership cannot be proven.
-    }
+    });
   }
 
   Future<void> release() async {
@@ -129,16 +65,11 @@ class MatrixStoreLease {
       return;
     }
     _released = true;
-    _heartbeat.cancel();
-    try {
-      final data = jsonDecode(await _lockFile.readAsString());
-      if (data is Map && data['token'] == _token) {
-        await _lockFile.delete();
-      }
-    } on FileSystemException {
-      // The process may already have recovered an expired owner.
-    } on FormatException {
-      // Never delete a lock whose ownership cannot be proven.
+    final token = _nativeToken;
+    if (token != null) {
+      await _channel.invokeMethod<void>('release', {'token': token});
+    } else {
+      _fallbackRelease?.call();
     }
   }
 }

@@ -9,6 +9,8 @@ import android.content.Intent
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
+import androidx.core.app.NotificationCompat.CallStyle
+import androidx.core.app.Person
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -21,7 +23,10 @@ class PolyculeCallNotificationsPlugin : FlutterPlugin, MethodChannel.MethodCallH
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         context = binding.applicationContext
-        channel = MethodChannel(binding.binaryMessenger, "polycule.calls")
+        channel = MethodChannel(
+            binding.binaryMessenger,
+            "polycule.call_notifications",
+        )
         channel.setMethodCallHandler(this)
     }
 
@@ -36,6 +41,10 @@ class PolyculeCallNotificationsPlugin : FlutterPlugin, MethodChannel.MethodCallH
                     showIncomingCall(requireNotNull(call.arguments as? Map<*, *>))
                     result.success(null)
                 }
+                "showOngoingCall" -> {
+                    showOngoingCall(requireNotNull(call.arguments as? Map<*, *>))
+                    result.success(null)
+                }
                 "dismissIncomingCallSurface" -> {
                     closeSurface(call.argument<String>("callId"))
                     result.success(null)
@@ -45,6 +54,8 @@ class PolyculeCallNotificationsPlugin : FlutterPlugin, MethodChannel.MethodCallH
                     NotificationManagerCompat.from(context).cancel(id)
                     val callId = call.argument<String>("callId")
                     CallActionStore.clearForCall(context, callId)
+                    IncomingCallStateStore.clear(context, callId)
+                    CallForegroundService.stop(context)
                     closeSurface(callId)
                     result.success(null)
                 }
@@ -75,7 +86,14 @@ class PolyculeCallNotificationsPlugin : FlutterPlugin, MethodChannel.MethodCallH
         val timeoutMs = (arguments["timeoutMs"] as? Number)?.toLong() ?: 60_000L
         val answerActionId = requireNotNull(arguments["answerActionId"] as? String)
         val declineActionId = requireNotNull(arguments["declineActionId"] as? String)
-        val expiresAt = System.currentTimeMillis() + timeoutMs
+        val requestedExpiry = System.currentTimeMillis() + timeoutMs
+        val expiresAt = IncomingCallStateStore.resolveExpiry(
+            context,
+            callId,
+            requestedExpiry,
+        )
+        val remainingMs = expiresAt - System.currentTimeMillis()
+        if (remainingMs <= 0L) return
 
         ensureIncomingChannel()
         val openIntent = surfaceIntent(
@@ -111,7 +129,11 @@ class PolyculeCallNotificationsPlugin : FlutterPlugin, MethodChannel.MethodCallH
             context.packageName,
         ).takeIf { it != 0 } ?: context.applicationInfo.icon
 
-        val ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+        val ringtoneUri = callRingtoneUri()
+        val caller = Person.Builder()
+            .setName(callerName)
+            .setImportant(true)
+            .build()
         val notification = NotificationCompat.Builder(context, CallNotificationContract.CHANNEL_ID)
             .setSmallIcon(icon)
             .setContentTitle(callerName)
@@ -121,18 +143,70 @@ class PolyculeCallNotificationsPlugin : FlutterPlugin, MethodChannel.MethodCallH
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOngoing(true)
             .setAutoCancel(false)
-            .setTimeoutAfter(timeoutMs)
+            .setOnlyAlertOnce(true)
+            .setTimeoutAfter(remainingMs)
             .setContentIntent(openIntent)
             .setFullScreenIntent(openIntent, true)
             .setSound(ringtoneUri)
             .setVibrate(longArrayOf(0L, 700L, 500L, 700L))
-            .addAction(0, "Decline", declineIntent)
-            .addAction(0, "Answer", answerIntent)
+            .setStyle(CallStyle.forIncomingCall(caller, declineIntent, answerIntent))
             .build()
 
         notification.flags = notification.flags or Notification.FLAG_INSISTENT
 
         NotificationManagerCompat.from(context).notify(notificationId, notification)
+    }
+
+    private fun showOngoingCall(arguments: Map<*, *>) {
+        val notificationId = requireNotNull(arguments["notificationId"] as? Int)
+        val payload = requireNotNull(arguments["payload"] as? String)
+        val callId = requireNotNull(arguments["callId"] as? String)
+        val peerName = requireNotNull(arguments["peerName"] as? String)
+        val connected = arguments["connected"] as? Boolean ?: false
+        val hangupActionId = requireNotNull(arguments["hangupActionId"] as? String)
+
+        ensureActiveChannel()
+        IncomingCallStateStore.clear(context, callId)
+        closeSurface(callId)
+        // Cancel first so Android releases the incoming channel's insistent
+        // ringtone before the same notification ID becomes the foreground
+        // service notification on the silent active-call channel.
+        NotificationManagerCompat.from(context).cancel(notificationId)
+
+        val openIntent = mainActivityIntent(
+            notificationId,
+            payload,
+            null,
+        )
+        val hangupIntent = surfaceIntent(
+            notificationId,
+            payload,
+            callId,
+            peerName,
+            false,
+            hangupActionId,
+            Long.MAX_VALUE,
+        )
+        val notification = NotificationCompat.Builder(
+            context,
+            CallNotificationContract.ACTIVE_CHANNEL_ID,
+        )
+            .setSmallIcon(notificationIcon())
+            .setContentTitle(peerName)
+            .setContentText(if (connected) "Call in progress" else "Connecting call…")
+            .setCategory(NotificationCompat.CATEGORY_CALL)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setOngoing(true)
+            .setAutoCancel(false)
+            .setOnlyAlertOnce(true)
+            .setSilent(true)
+            .setUsesChronometer(connected)
+            .setWhen(System.currentTimeMillis())
+            .setContentIntent(openIntent)
+            .addAction(0, "Hang up", hangupIntent)
+            .build()
+
+        CallForegroundService.start(context, notificationId, callId, notification)
     }
 
     private fun surfaceIntent(
@@ -168,13 +242,41 @@ class PolyculeCallNotificationsPlugin : FlutterPlugin, MethodChannel.MethodCallH
         )
     }
 
+    private fun mainActivityIntent(
+        notificationId: Int,
+        payload: String,
+        selectedAction: String?,
+    ): PendingIntent {
+        val intent = requireNotNull(
+            context.packageManager.getLaunchIntentForPackage(context.packageName),
+        ).apply {
+            action = if (selectedAction == null) {
+                CallNotificationContract.SELECT_NOTIFICATION
+            } else {
+                CallNotificationContract.SELECT_FOREGROUND_NOTIFICATION
+            }
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            putExtra(CallNotificationContract.EXTRA_NOTIFICATION_ID, notificationId)
+            putExtra(CallNotificationContract.EXTRA_PAYLOAD, payload)
+            putExtra(CallNotificationContract.EXTRA_ACTION_ID, selectedAction)
+            putExtra(CallNotificationContract.EXTRA_CANCEL_NOTIFICATION, false)
+        }
+        return PendingIntent.getActivity(
+            context,
+            notificationId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+    }
+
     private fun ensureIncomingChannel() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val ringtoneAttributes = AudioAttributes.Builder()
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
             .build()
-        val ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+        val ringtoneUri = callRingtoneUri()
         val channel = NotificationChannel(
             CallNotificationContract.CHANNEL_ID,
             "Incoming calls",
@@ -189,6 +291,33 @@ class PolyculeCallNotificationsPlugin : FlutterPlugin, MethodChannel.MethodCallH
         context.getSystemService(NotificationManager::class.java)
             .createNotificationChannel(channel)
     }
+
+    private fun ensureActiveChannel() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+        val channel = NotificationChannel(
+            CallNotificationContract.ACTIVE_CHANNEL_ID,
+            "Active calls",
+            NotificationManager.IMPORTANCE_LOW,
+        ).apply {
+            description = "Ongoing Matrix calls"
+            setSound(null, null)
+            enableVibration(false)
+        }
+        context.getSystemService(NotificationManager::class.java)
+            .createNotificationChannel(channel)
+    }
+
+    private fun callRingtoneUri() =
+        RingtoneManager.getActualDefaultRingtoneUri(
+            context,
+            RingtoneManager.TYPE_RINGTONE,
+        ) ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+
+    private fun notificationIcon() = context.resources.getIdentifier(
+        "ic_launcher_foreground",
+        "drawable",
+        context.packageName,
+    ).takeIf { it != 0 } ?: context.applicationInfo.icon
 
     private fun closeSurface(callId: String?) {
         context.sendBroadcast(

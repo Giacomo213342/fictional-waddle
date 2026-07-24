@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:polycule/src/pages/room/components/event/components/attachment_toolbar.dart';
@@ -5,6 +7,21 @@ import 'package:polycule/src/pages/room_list/components/room_search_bar.dart';
 import 'package:polycule/src/widgets/responsive_sidebar_layout.dart';
 
 void main() {
+  test('ordinary room syncs do not rebuild the complete timeline subtree', () {
+    final roomBody = File(
+      'lib/src/pages/room/components/room_body.dart',
+    ).readAsStringSync();
+    final join = File(
+      'lib/src/pages/room/components/membership/join.dart',
+    ).readAsStringSync();
+
+    expect(roomBody, isNot(contains('RoomBuilder(')));
+    expect(roomBody, contains('if (membership == _membership)'));
+    expect(roomBody, contains('setState(()'));
+    expect(join, contains('onInsert: _insertEvent'));
+    expect(join, contains('onChange: _changeEvent'));
+  });
+
   group('fullscreen image bounds', () {
     const viewport = Size.square(400);
     const landscapeImage = Size(400, 100);

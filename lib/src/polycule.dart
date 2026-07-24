@@ -6,6 +6,7 @@ import '../l10n/generated/app_localizations.dart';
 import 'router/router.dart';
 import 'theme/theme_builder.dart';
 import 'utils/matrix/push_manager.dart';
+import 'widgets/intent_manager.dart';
 import 'widgets/matrix/client_manager/client_manager.dart';
 import 'widgets/settings_manager.dart';
 
@@ -58,6 +59,7 @@ class PolyculeRouterClientProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     router ??= PolyculeRouter(ClientManager.of(context).store.activeClients);
+    IntentManager.attachNavigation(router!.go);
     return SettingsBuilder(
       builder: (context) => PolyculeThemeBuilder(
         builder: (context, config) => ValueListenableBuilder<Locale?>(

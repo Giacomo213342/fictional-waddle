@@ -32,7 +32,6 @@ class RoomMessageContent extends StatelessWidget {
         final isOwnMessage = event.senderId == event.room.client.userID;
         return AttachmentToolbar(
           showToolbar: false,
-          openFullscreen: true,
           child: Align(
             alignment:
                 isOwnMessage ? Alignment.centerRight : Alignment.centerLeft,
@@ -47,13 +46,27 @@ class RoomMessageContent extends StatelessWidget {
       case CuteEventContent.eventType:
         return const CuteEventMessage();
       case MessageTypes.Image:
+        final description = imageDescriptionForEvent(event);
         return AttachmentToolbar(
           showToolbar: false,
           openFullscreen: true,
-          child: ImageMessage(key: ValueKey(event)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ImageMessage(key: ValueKey(event)),
+              if (description != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 6, 8, 2),
+                  child: Text(description),
+                ),
+            ],
+          ),
         );
       case MessageTypes.Video:
-        return AttachmentToolbar(child: VideoMessage(key: ValueKey(event)));
+        return AttachmentToolbar(
+          openFullscreen: true,
+          child: VideoMessage(key: ValueKey(event)),
+        );
       case MessageTypes.Audio:
         return AudioMessage(key: ValueKey(event));
       case MessageTypes.File:

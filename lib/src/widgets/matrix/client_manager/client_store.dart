@@ -54,9 +54,28 @@ class ClientStore {
     try {
       final json =
           await kPolyculeSecureStorage.read(key: _clientNamesKey + suffix);
-      final identifiers = json == null
-          ? await discoverStoredClientIdentifiers()
-          : (jsonDecode(json) as Iterable).whereType<int>();
+      Iterable<int> identifiers;
+      if (json == null) {
+        identifiers = await discoverStoredClientIdentifiers();
+      } else {
+        try {
+          final decoded = jsonDecode(json);
+          if (decoded is! Iterable) {
+            throw const FormatException('Client registry is not a list.');
+          }
+          identifiers = decoded.whereType<int>();
+        } on FormatException catch (error, stackTrace) {
+          // The encrypted registry is only an index. The per-account Matrix
+          // stores are authoritative and must not become unreachable because
+          // one small metadata value was truncated.
+          Logs().w(
+            'Client registry is malformed; discovering preserved stores.',
+            error,
+            stackTrace,
+          );
+          identifiers = await discoverStoredClientIdentifiers();
+        }
+      }
       for (final identifier in identifiers) {
         // If the client is already running (usually client 1), skip it.
         if (!activeClients.any(

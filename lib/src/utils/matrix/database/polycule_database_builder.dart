@@ -14,6 +14,10 @@ import 'idb/stub.dart' if (dart.library.js_interop) 'idb/web.dart';
 import 'sqlcipher_stub.dart'
     if (dart.library.io) 'package:sqlcipher_flutter_libs/sqlcipher_flutter_libs.dart';
 
+const _recoverySnapshotAge = Duration(hours: 6);
+const _primaryRecoverySuffix = '.recovery-1';
+const _secondaryRecoverySuffix = '.recovery-2';
+
 Future<List<int>> discoverStoredClientIdentifiers({
   Directory? directory,
 }) async {
@@ -99,7 +103,7 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(
         .w('Restored the preserved Matrix database after an interrupted open.');
   }
 
-  Database database = await _openEncryptedDatabase(
+  Database database = await _openEncryptedDatabaseWithRecovery(
     databasePath,
     cipher,
   );
@@ -118,7 +122,10 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(
     await _preserveSidecar('$databasePath-shm', '$backupPath-shm');
     try {
       await legacyBrokenFile.copy(databasePath);
-      database = await _openEncryptedDatabase(databasePath, cipher);
+      database = await _openEncryptedDatabaseWithRecovery(
+        databasePath,
+        cipher,
+      );
       if (!await _containsStoredSession(database)) {
         throw const FormatException(
           'The preserved Matrix database contains no stored session.',
@@ -128,10 +135,15 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(
     } catch (_) {
       await database.close().catchError((_) {});
       await File(backupPath).copy(databasePath);
-      database = await _openEncryptedDatabase(databasePath, cipher);
+      database = await _openEncryptedDatabaseWithRecovery(
+        databasePath,
+        cipher,
+      );
       rethrow;
     }
   }
+
+  await _createRecoverySnapshot(database, databasePath, cipher);
 
   return MatrixSdkDatabase.init(
     clientName,
@@ -142,34 +154,209 @@ Future<MatrixSdkDatabase> polyculeDatabaseBuilder(
   );
 }
 
-Future<Database> _openEncryptedDatabase(String path, String cipher) async {
+Future<Database> _openEncryptedDatabaseWithRecovery(
+  String path,
+  String cipher,
+) async {
+  Database? database;
+  Object? originalError;
+  StackTrace? originalStackTrace;
+  for (var attempt = 0; attempt < 3; attempt++) {
+    try {
+      database = await _openEncryptedDatabase(path, cipher);
+      if (!await _databaseIsHealthy(database)) {
+        throw const FormatException('Matrix database quick_check failed.');
+      }
+      return database;
+    } catch (error, stackTrace) {
+      originalError = error;
+      originalStackTrace = stackTrace;
+      await database?.close().catchError((_) {});
+      database = null;
+      if (!_isTransientDatabaseError(error) || attempt == 2) {
+        break;
+      }
+      await Future<void>.delayed(Duration(milliseconds: 150 * (attempt + 1)));
+    }
+  }
+
+  if (_isRecoverableDatabaseDamage(originalError) &&
+      await _restoreRecoverySnapshot(path, cipher)) {
+    final recovered = await _openEncryptedDatabase(path, cipher);
+    if (await _databaseIsHealthy(recovered) &&
+        await _containsStoredSession(recovered)) {
+      Logs().w('Recovered the Matrix store from a verified snapshot.');
+      return recovered;
+    }
+    await recovered.close().catchError((_) {});
+  }
+
+  await _preserveFailedDatabase(path);
+  Logs().wtf(
+    'Matrix database open failed. The original database was preserved.',
+    originalError,
+    originalStackTrace,
+  );
+  Error.throwWithStackTrace(originalError!, originalStackTrace!);
+}
+
+bool _isTransientDatabaseError(Object? error) {
+  final message = error.toString().toLowerCase();
+  return message.contains('database is locked') ||
+      message.contains('database is busy') ||
+      message.contains('database is closed') ||
+      message.contains('cannot start a transaction');
+}
+
+bool _isRecoverableDatabaseDamage(Object? error) {
+  if (error is FormatException) {
+    return true;
+  }
+  final message = error.toString().toLowerCase();
+  return message.contains('database disk image is malformed') ||
+      message.contains('file is not a database') ||
+      message.contains('database corruption');
+}
+
+Future<Database> _openEncryptedDatabase(
+  String path,
+  String cipher, {
+  bool reliabilityPragmas = true,
+}) async {
   final helper = SQfLiteEncryptionHelper(
     factory: databaseFactory,
     path: path,
     cipher: cipher,
   );
+  await helper.ensureDatabaseFileEncrypted();
+  return databaseFactory.openDatabase(
+    path,
+    options: OpenDatabaseOptions(
+      version: 1,
+      singleInstance: reliabilityPragmas,
+      onConfigure: (database) async {
+        await helper.applyPragmaKey(database);
+        await database.execute('PRAGMA busy_timeout = 15000');
+        if (reliabilityPragmas) {
+          await database.rawQuery('PRAGMA journal_mode = WAL');
+          await database.execute('PRAGMA synchronous = FULL');
+          await database.execute('PRAGMA wal_autocheckpoint = 500');
+          await database.execute('PRAGMA foreign_keys = ON');
+        }
+      },
+    ),
+  );
+}
+
+Future<bool> _databaseIsHealthy(Database database) async {
   try {
-    await helper.ensureDatabaseFileEncrypted();
-    return await databaseFactory.openDatabase(
-      path,
-      options: OpenDatabaseOptions(
-        version: 1,
-        onConfigure: helper.applyPragmaKey,
-      ),
-    );
-  } catch (error, stackTrace) {
-    final file = File(path);
-    if (await file.exists()) {
-      final evidencePath =
-          '$path.failed-open-${DateTime.now().toUtc().microsecondsSinceEpoch}';
-      await file.copy(evidencePath).catchError((_) => file);
+    final rows = await database.rawQuery('PRAGMA quick_check(1)');
+    return rows.length == 1 &&
+        rows.single.values.length == 1 &&
+        rows.single.values.single.toString().toLowerCase() == 'ok';
+  } catch (_) {
+    return false;
+  }
+}
+
+Future<bool> _restoreRecoverySnapshot(String path, String cipher) async {
+  for (final suffix in const [
+    _primaryRecoverySuffix,
+    _secondaryRecoverySuffix,
+  ]) {
+    final snapshot = File('$path$suffix');
+    if (!await snapshot.exists() ||
+        !await _candidateContainsStoredSession(snapshot.path, cipher)) {
+      continue;
     }
-    Logs().wtf(
-      'Matrix database open failed. The original database was preserved.',
+
+    final staged = File('$path.recovering');
+    try {
+      await snapshot.copy(staged.path);
+      if (!await _candidateContainsStoredSession(staged.path, cipher)) {
+        await staged.delete().catchError((_) => staged);
+        continue;
+      }
+      final evidenceSuffix =
+          '.failed-${DateTime.now().toUtc().microsecondsSinceEpoch}';
+      await _moveIfPresent(path, '$path$evidenceSuffix');
+      await _moveIfPresent('$path-wal', '$path$evidenceSuffix-wal');
+      await _moveIfPresent('$path-shm', '$path$evidenceSuffix-shm');
+      await staged.rename(path);
+      return true;
+    } catch (error, stackTrace) {
+      Logs().w(
+        'Unable to restore Matrix recovery snapshot $suffix.',
+        error,
+        stackTrace,
+      );
+      await staged.delete().catchError((_) => staged);
+    }
+  }
+  return false;
+}
+
+Future<void> _createRecoverySnapshot(
+  Database database,
+  String path,
+  String cipher,
+) async {
+  if (!await _containsStoredSession(database)) {
+    return;
+  }
+  final primary = File('$path$_primaryRecoverySuffix');
+  if (await primary.exists() &&
+      DateTime.now().difference((await primary.stat()).modified) <
+          _recoverySnapshotAge) {
+    return;
+  }
+
+  final staged = File('$path.recovery-new');
+  try {
+    if (await staged.exists()) {
+      await staged.delete();
+    }
+    final escapedPath = staged.path.replaceAll("'", "''");
+    await database.execute("VACUUM INTO '$escapedPath'");
+    if (!await _candidateContainsStoredSession(staged.path, cipher)) {
+      throw const FormatException(
+        'The new Matrix recovery snapshot failed validation.',
+      );
+    }
+    final secondary = File('$path$_secondaryRecoverySuffix');
+    if (await secondary.exists()) {
+      await secondary.delete();
+    }
+    if (await primary.exists()) {
+      await primary.rename(secondary.path);
+    }
+    await staged.rename(primary.path);
+  } catch (error, stackTrace) {
+    Logs().w(
+      'Unable to refresh the Matrix recovery snapshot.',
       error,
       stackTrace,
     );
-    rethrow;
+    await staged.delete().catchError((_) => staged);
+  }
+}
+
+Future<void> _preserveFailedDatabase(String path) async {
+  final timestamp = DateTime.now().toUtc().microsecondsSinceEpoch;
+  for (final suffix in const ['', '-wal', '-shm']) {
+    final source = File('$path$suffix');
+    if (await source.exists()) {
+      await source
+          .copy('$path.failed-open-$timestamp$suffix')
+          .catchError((_) => source);
+    }
+  }
+}
+
+Future<void> _moveIfPresent(String sourcePath, String destinationPath) async {
+  final source = File(sourcePath);
+  if (await source.exists()) {
+    await source.rename(destinationPath);
   }
 }
 
@@ -179,19 +366,13 @@ Future<bool> _candidateContainsStoredSession(
 ) async {
   Database? candidate;
   try {
-    final helper = SQfLiteEncryptionHelper(
-      factory: databaseFactory,
-      path: path,
-      cipher: cipher,
-    );
-    candidate = await databaseFactory.openDatabase(
+    candidate = await _openEncryptedDatabase(
       path,
-      options: OpenDatabaseOptions(
-        singleInstance: false,
-        onConfigure: helper.applyPragmaKey,
-      ),
+      cipher,
+      reliabilityPragmas: false,
     );
-    return _containsStoredSession(candidate);
+    return await _databaseIsHealthy(candidate) &&
+        await _containsStoredSession(candidate);
   } catch (_) {
     return false;
   } finally {

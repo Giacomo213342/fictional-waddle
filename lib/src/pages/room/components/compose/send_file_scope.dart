@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:async/async.dart';
+import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:media_store_plus/media_store_plus.dart';
 import 'package:mime/mime.dart';
@@ -12,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../utils/file_selector.dart';
+import '../../../../utils/matrix/media_upload_queue.dart';
 import '../../../../widgets/intent_manager.dart';
 import '../../../../widgets/matrix/scopes/room_scope.dart';
 import 'compose_scope.dart';
@@ -42,10 +44,20 @@ class SendFileScope extends State<SendFileScopeWidget> {
   static SendFileScope of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<_SendFileScope>()!.scope;
 
+  int? _handledSharePayloadId;
+  bool _shareDeliveryInProgress = false;
+
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) => _sendSharedData());
+    IntentManager.sharedPayloadListener.addListener(_scheduleSharedData);
+    _scheduleSharedData();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    IntentManager.sharedPayloadListener.removeListener(_scheduleSharedData);
+    super.dispose();
   }
 
   @override
@@ -167,40 +179,113 @@ class SendFileScope extends State<SendFileScopeWidget> {
     return true;
   }
 
+  Future<void> sendVoiceMessage({
+    required MatrixAudioFile file,
+    required Duration duration,
+    required List<int> waveform,
+  }) =>
+      _sendFileTransaction(
+        MatrixFileTuple(file: file),
+        extraContent: {
+          'org.matrix.msc3245.voice': <String, dynamic>{},
+          'org.matrix.msc1767.audio': {
+            'duration': duration.inMilliseconds,
+            'waveform': waveform,
+          },
+        },
+      );
+
+  void _scheduleSharedData() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _sendSharedData());
+  }
+
   Future<void> _sendSharedData() async {
-    final message = IntentManager.sharedTextListener.value;
+    if (!mounted || _shareDeliveryInProgress) {
+      return;
+    }
+    final payload = IntentManager.sharedPayloadListener.value;
+    if (payload == null || payload.roomId == null) {
+      _handledSharePayloadId = null;
+      return;
+    }
+    final room = RoomScope.of(context).room;
+    if (payload.clientName != room.client.clientName ||
+        payload.roomId != room.id ||
+        _handledSharePayloadId == payload.id) {
+      return;
+    }
+
+    _handledSharePayloadId = payload.id;
+    final message = payload.text;
     if (message != null) {
       ComposeScope.of(context).messageController.text = message;
     }
-    final files = IntentManager.sharedFilesListener.value;
-    if (files != null) {
-      final selector = FileSelector(MessageTypes.File);
-      selector.files = files;
+    if (!payload.hasFiles) {
+      return;
+    }
+
+    _shareDeliveryInProgress = true;
+    try {
+      final selector = FileSelector(null)..files = payload.files;
       final result = await sendFileSelection(selector);
       if (result) {
         await IntentManager.claimShareIntent();
+      } else {
+        IntentManager.clearShareDestination();
+        if (mounted) {
+          context.go('/share');
+        }
       }
-    } else {
-      return;
+      if (!mounted) {
+        return;
+      }
+      ComposeScope.of(context).setSendMsgType();
+    } finally {
+      _shareDeliveryInProgress = false;
     }
-    if (!mounted) {
-      return;
-    }
-    ComposeScope.of(context).setSendMsgType();
   }
 
-  Future<void> _sendFileTransaction(MatrixFileTuple tuple) async {
+  Future<void> _sendFileTransaction(
+    MatrixFileTuple tuple, {
+    Map<String, dynamic>? extraContent,
+  }) async {
     final room = RoomScope.of(context).room;
     final compose = ComposeScope.of(context);
+    final replyEvent = compose.replyEvent;
+    final editEvent = compose.editEvent;
+    final description = tuple.description?.trim();
+    final effectiveExtraContent = <String, dynamic>{
+      if (extraContent != null) ...extraContent,
+      if (tuple.file is MatrixImageFile && description?.isNotEmpty == true)
+        'body': description,
+      if (tuple.file is MatrixImageFile && description?.isNotEmpty == true)
+        'filename': tuple.file.name,
+    };
     final txid = room.client.generateUniqueTransactionId();
+    final job = await MediaUploadQueue.enqueue(
+      client: room.client,
+      roomId: room.id,
+      txid: txid,
+      file: tuple.file,
+      thumbnail: tuple.thumbnail,
+      replyEventId: replyEvent?.eventId,
+      editEventId: editEvent?.eventId,
+      extraContent:
+          effectiveExtraContent.isEmpty ? null : effectiveExtraContent,
+    );
 
     final operation = compose.txids[txid] = CancelableOperation.fromFuture(
-      room.sendFileEvent(
-        tuple.file,
-        thumbnail: tuple.thumbnail,
-        inReplyTo: compose.replyEvent,
-        editEventId: compose.editEvent?.eventId,
-        txid: txid,
+      MediaUploadQueue.runForeground(
+        job,
+        () => room.sendFileEvent(
+          tuple.file,
+          thumbnail: tuple.thumbnail,
+          inReplyTo: replyEvent,
+          editEventId: editEvent?.eventId,
+          txid: txid,
+          extraContent:
+              effectiveExtraContent.isEmpty ? null : effectiveExtraContent,
+        ),
       ),
     );
 

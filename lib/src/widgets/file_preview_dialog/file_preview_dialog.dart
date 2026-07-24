@@ -24,6 +24,7 @@ class FilePreviewDialogController extends State<FilePreviewDialog> {
 
   bool compress = false;
   List<XFile> files = [];
+  final Map<XFile, TextEditingController> descriptionControllers = {};
 
   int? _lastSize;
 
@@ -41,7 +42,18 @@ class FilePreviewDialogController extends State<FilePreviewDialog> {
   @override
   void initState() {
     files = widget.files;
+    for (final file in files) {
+      descriptionControllers[file] = TextEditingController();
+    }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    for (final controller in descriptionControllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -52,7 +64,15 @@ class FilePreviewDialogController extends State<FilePreviewDialog> {
   void send() {
     if (files.isNotEmpty) {
       return Navigator.of(context).pop(
-        FileSendProperties(files, compress),
+        FileSendProperties(
+          files,
+          compress,
+          descriptions: {
+            for (final file in files)
+              if (descriptionControllers[file]!.text.trim().isNotEmpty)
+                file: descriptionControllers[file]!.text.trim(),
+          },
+        ),
       );
     }
     return Navigator.of(context).pop();
@@ -61,6 +81,7 @@ class FilePreviewDialogController extends State<FilePreviewDialog> {
   void remove(XFile file) {
     setState(() {
       files.remove(file);
+      descriptionControllers.remove(file)?.dispose();
     });
   }
 
@@ -68,8 +89,13 @@ class FilePreviewDialogController extends State<FilePreviewDialog> {
 }
 
 class FileSendProperties {
-  const FileSendProperties(this.files, this.compress);
+  const FileSendProperties(
+    this.files,
+    this.compress, {
+    this.descriptions = const {},
+  });
 
   final List<XFile> files;
   final bool compress;
+  final Map<XFile, String> descriptions;
 }

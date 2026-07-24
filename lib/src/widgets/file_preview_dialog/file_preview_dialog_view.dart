@@ -30,9 +30,30 @@ class FilePreviewDialogView extends StatelessWidget {
                 runAlignment: WrapAlignment.spaceEvenly,
                 children: files
                     .map(
-                      (file) => XFilePreview(
-                        file: file,
-                        onRemove: () => controller.remove(file),
+                      (file) => Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          XFilePreview(
+                            file: file,
+                            onRemove: () => controller.remove(file),
+                          ),
+                          if (isImageXFile(file))
+                            SizedBox(
+                              width: 224,
+                              child: TextField(
+                                controller:
+                                    controller.descriptionControllers[file],
+                                maxLines: 3,
+                                minLines: 1,
+                                decoration: const InputDecoration(
+                                  labelText: 'Image description',
+                                  hintText:
+                                      'Describe the image for accessibility',
+                                  prefixIcon: Icon(Icons.description_outlined),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     )
                     .toList(),

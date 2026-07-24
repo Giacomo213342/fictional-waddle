@@ -48,3 +48,27 @@ class XFilePreview extends StatelessWidget {
     );
   }
 }
+
+bool isImageXFile(XFile file) {
+  final type = file.mimeType?.split('/').firstOrNull ??
+      file.name.split('.').lastOrNull?.toLowerCase();
+  return const {
+    'image',
+    'png',
+    'apng',
+    'jpg',
+    'jpeg',
+    'webp',
+    'avif',
+    'gif',
+    'bmp',
+    'wbmp',
+    'svg',
+    'tiff',
+    'json',
+    'zip',
+    'lottie',
+    'gzip',
+    'tgs',
+  }.contains(type);
+}

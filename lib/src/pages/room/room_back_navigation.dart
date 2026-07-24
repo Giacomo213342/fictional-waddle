@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 
 import 'package:go_router/go_router.dart';
 
+import '../../widgets/android_predictive_back_scope.dart';
+
 /// Returns the declarative route that precedes the current room state.
 ///
 /// An event fragment is part of the room state, so it is cleared first. From
@@ -61,13 +63,8 @@ class RoomRouteBackScope extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope<void>(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) {
-          GoRouter.of(context).go(roomBackTarget(uri).toString());
-        }
-      },
+    return AndroidPredictiveBackScope(
+      onBack: () => GoRouter.of(context).go(roomBackTarget(uri).toString()),
       child: child,
     );
   }

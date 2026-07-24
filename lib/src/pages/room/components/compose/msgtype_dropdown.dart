@@ -120,18 +120,35 @@ class MsgtypeDropdown extends StatelessWidget {
       case MessageTypes.Sticker:
         SendFileScope.of(context).showStickerSelector(msgType);
       case poll:
-        ComposeScope.of(context).setSendMsgType(MessageTypes.Text);
-        unawaited(
-          showDialog<void>(
-            context: context,
-            builder: (_) => PollCreationDialog(
-              room: RoomScope.of(context).room,
-            ),
-          ),
-        );
+        unawaited(_showPollDialog(context));
       default:
         ComposeScope.of(context).setSendMsgType(MessageTypes.Text);
         break;
+    }
+  }
+
+  Future<void> _showPollDialog(BuildContext context) async {
+    final compose = ComposeScope.of(context);
+    final room = RoomScope.of(context).room;
+    compose.setSendMsgType(MessageTypes.Text);
+
+    // DropdownMenu completes its own selection after invoking onSelected.
+    // Wait for that overlay to settle before adding another route, and keep
+    // the dialog on the room's Navigator so native back always has one clear
+    // owner.
+    await WidgetsBinding.instance.endOfFrame;
+    if (!context.mounted) {
+      return;
+    }
+    await showDialog<void>(
+      context: context,
+      useRootNavigator: false,
+      builder: (_) => PollCreationDialog(room: room),
+    );
+    if (context.mounted) {
+      // DropdownMenu may have written m.poll into its controller after the
+      // callback. Restore the actual composer mode on both send and cancel.
+      compose.setSendMsgType(MessageTypes.Text);
     }
   }
 }
