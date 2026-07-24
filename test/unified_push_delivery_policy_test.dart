@@ -4,12 +4,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:polycule/src/utils/matrix/push_handler.dart';
 
 void main() {
-  test('background fallback is bounded below one second', () {
-    expect(
-      backgroundFastFallbackDelay,
-      lessThan(const Duration(seconds: 1)),
-    );
-  });
+  test('background fallback delay allows decrypt before showing placeholder', () {
+  expect(
+    backgroundFastFallbackDelay,
+    greaterThanOrEqualTo(const Duration(seconds: 2)),
+    reason: 'Fallback must not fire before client.init has a chance to complete',
+  );
+  expect(
+    backgroundFastFallbackDelay,
+    lessThanOrEqualTo(const Duration(seconds: 6)),
+    reason: 'Fallback must not make the notification feel excessively delayed',
+  );
+});
 
   test('slow callbacks cannot serialize later notification delivery', () {
     final handler = File(
