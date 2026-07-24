@@ -31,9 +31,9 @@ import 'voip/call_notification_manager.dart';
 import 'voip/call_log_journal.dart';
 
 const _headlessStorageTimeout = Duration(seconds: 5);
-const _headlessRequestTimeout = Duration(seconds: 30);
-const _backgroundNotificationDeadline = Duration(seconds: 10);
-const backgroundFastFallbackDelay = Duration(milliseconds: 900);
+const _headlessRequestTimeout = Duration(seconds: 15);
+const _backgroundNotificationDeadline = Duration(seconds: 20);
+const backgroundFastFallbackDelay = Duration(seconds: 4);
 
 Future<void> _cancelBackgroundFallback(
   FlutterLocalNotificationsPlugin plugin,
