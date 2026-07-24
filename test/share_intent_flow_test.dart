@@ -168,6 +168,16 @@ void main() {
     expect(application, contains('IntentManager.attachNavigation(router!.go)'));
     expect(intentManager, isNot(contains('context.go(')));
     expect(intentManager, contains('_navigateTo(ShareTargetPage.routeName)'));
+    expect(intentManager, contains('if (clientsReady.value)'));
+    expect(intentManager, contains('clientsReady.addListener(listener)'));
+    expect(intentManager, contains('_cancelPendingShareNavigation()'));
+    expect(intentManager, contains("'consumeShareIntent'"));
+    expect(
+      File(
+        'android/app/src/main/kotlin/business/braid/polycule/MainActivity.kt',
+      ).readAsStringSync(),
+      contains('currentIntent.action = Intent.ACTION_MAIN'),
+    );
     expect(
       File('lib/src/pages/share_target/share_target.dart').readAsStringSync(),
       contains('ProfileAvatarBuilder('),

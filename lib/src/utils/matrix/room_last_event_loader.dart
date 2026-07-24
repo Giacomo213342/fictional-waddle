@@ -5,6 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:matrix/matrix.dart';
 
 typedef RoomEventDecryptor = Future<Event> Function(Event event);
+typedef RoomLastEventHistoryLoader = Future<Event?> Function(
+  Room room,
+  Event expected,
+);
 
 final class RoomLastEventLoader {
   const RoomLastEventLoader._();
@@ -24,6 +28,7 @@ final class RoomLastEventLoader {
   static Future<Event?> load(
     Room room, {
     RoomEventDecryptor? decrypt,
+    RoomLastEventHistoryLoader? loadFromHistory,
   }) {
     final event = room.lastEvent;
     if (event == null || event.type != EventTypes.Encrypted) {
@@ -31,7 +36,14 @@ final class RoomLastEventLoader {
     }
 
     final encryption = room.client.encryption;
-    final decryptEvent = decrypt ?? encryption?.decryptRoomEvent;
+    final decryptEvent = decrypt ??
+        (encryption == null
+            ? null
+            : (Event event) => encryption.decryptRoomEvent(
+                  event,
+                  store: true,
+                  updateType: EventUpdateType.history,
+                ));
     if (decryptEvent == null) {
       return Future.value(event);
     }
@@ -39,25 +51,64 @@ final class RoomLastEventLoader {
     final key =
         '${room.client.clientName}\u0000${room.id}\u0000${event.eventId}';
     return _inFlight.putIfAbsent(key, () async {
+      Event decrypted = event;
       try {
-        final decrypted = await decryptEvent(event);
-        if (decrypted.type != EventTypes.Encrypted &&
-            room.lastEvent?.eventId == event.eventId) {
-          room.lastEvent = decrypted;
-          _revisionNotifierFor(room).value++;
-        }
-        return decrypted;
+        final originalSource = event.originalSource;
+        final decryptCandidate = originalSource == null
+            ? event
+            : Event.fromMatrixEvent(originalSource, room);
+        decrypted = await decryptEvent(decryptCandidate);
       } catch (error, stackTrace) {
         Logs().d(
           'Unable to decrypt the last event for ${room.id}.',
           error,
           stackTrace,
         );
-        return event;
-      } finally {
-        _inFlight.remove(key);
       }
+
+      if (decrypted.type == EventTypes.Encrypted) {
+        try {
+          decrypted =
+              await (loadFromHistory ?? _loadFromHistory)(room, event) ??
+                  decrypted;
+        } catch (error, stackTrace) {
+          Logs().d(
+            'Unable to load the cached last event for ${room.id}.',
+            error,
+            stackTrace,
+          );
+        }
+      }
+
+      final current = room.lastEvent;
+      if (current?.eventId != event.eventId) {
+        return current;
+      }
+      if (current?.type != EventTypes.Encrypted) {
+        return current;
+      }
+      if (decrypted.type != EventTypes.Encrypted) {
+        room.lastEvent = decrypted;
+        _revisionNotifierFor(room).value++;
+      }
+      return decrypted;
+    }).whenComplete(() {
+      _inFlight.remove(key);
     });
+  }
+
+  static Future<Event?> _loadFromHistory(Room room, Event expected) async {
+    final timeline = await room.getTimeline(limit: 1);
+    try {
+      for (final event in timeline.events) {
+        if (event.eventId == expected.eventId) {
+          return event;
+        }
+      }
+      return null;
+    } finally {
+      timeline.cancelSubscriptions();
+    }
   }
 
   static Future<void> warmClient(

@@ -44,6 +44,11 @@ jobs:
           test -s "$APK_SOURCE"
           mv "$APK_SOURCE" "$APK_RELEASE"
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh api \
+              --method PATCH \
+              "repos/$GITHUB_REPOSITORY/git/refs/tags/$TAG" \
+              -f sha="$HEAD_SHA" \
+              -F force=true
             gh release upload "$TAG" "$APK_RELEASE" \
               --repo "$GITHUB_REPOSITORY" \
               --clobber

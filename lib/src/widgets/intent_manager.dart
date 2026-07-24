@@ -17,6 +17,9 @@ import '../utils/matrix_to_extension.dart';
 import '../utils/oauth2_web/oauth2.dart';
 
 const _kPolyculeUriScheme = 'web+polycule';
+const _intentLifecycleChannel = MethodChannel(
+  'business.braid.polycule/intent_lifecycle',
+);
 
 class IntentManagerWidget extends StatefulWidget {
   const IntentManagerWidget({super.key, required this.child});
@@ -43,6 +46,7 @@ class IntentManager extends State<IntentManagerWidget> {
   static int _nextSharePayloadId = 0;
   static ValueChanged<String>? _navigate;
   static String? _pendingRoute;
+  static VoidCallback? _shareReadyListener;
 
   final _shareIntentCache = Cache<String>(const Duration(seconds: 2));
 
@@ -66,6 +70,40 @@ class IntentManager extends State<IntentManagerWidget> {
       return;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) => navigate(route));
+  }
+
+  static void _navigateToShareTarget() {
+    if (clientsReady.value) {
+      _cancelPendingShareNavigation();
+      _navigateTo(ShareTargetPage.routeName);
+      return;
+    }
+    if (_shareReadyListener != null) {
+      return;
+    }
+
+    late final VoidCallback listener;
+    listener = () {
+      if (!clientsReady.value) {
+        return;
+      }
+      clientsReady.removeListener(listener);
+      _shareReadyListener = null;
+      if (sharedPayloadListener.value != null) {
+        _navigateTo(ShareTargetPage.routeName);
+      }
+    };
+    _shareReadyListener = listener;
+    clientsReady.addListener(listener);
+  }
+
+  static void _cancelPendingShareNavigation() {
+    final listener = _shareReadyListener;
+    if (listener == null) {
+      return;
+    }
+    clientsReady.removeListener(listener);
+    _shareReadyListener = null;
   }
 
   @override
@@ -239,16 +277,24 @@ class IntentManager extends State<IntentManagerWidget> {
     if (!mounted) {
       return;
     }
-    _navigateTo(ShareTargetPage.routeName);
+    _navigateToShareTarget();
   }
 
   static Future<void> claimShareIntent() async {
+    _cancelPendingShareNavigation();
     sharedPayloadListener.value = null;
 
     if (kIsWeb || (!Platform.isIOS && !Platform.isAndroid)) {
       return;
     }
     await ReceiveSharingIntent.instance.reset();
+    if (Platform.isAndroid) {
+      try {
+        await _intentLifecycleChannel.invokeMethod<void>('consumeShareIntent');
+      } on MissingPluginException {
+        Logs().d('The Android intent lifecycle channel is unavailable.');
+      }
+    }
   }
 
   Future<void> _handleTextShare(
@@ -278,7 +324,7 @@ class IntentManager extends State<IntentManagerWidget> {
     if (!mounted) {
       return;
     }
-    _navigateTo(ShareTargetPage.routeName);
+    _navigateToShareTarget();
   }
 
   Future<void> _handleLostData() async {
@@ -306,7 +352,7 @@ class IntentManager extends State<IntentManagerWidget> {
     if (!mounted) {
       return;
     }
-    _navigateTo(ShareTargetPage.routeName);
+    _navigateToShareTarget();
   }
 
   static void selectShareDestination({

@@ -29,6 +29,7 @@ class ShareTargetPage extends StatefulWidget {
 
 class _ShareTargetPageState extends State<ShareTargetPage> {
   final _searchController = TextEditingController();
+  bool _emptyRedirectScheduled = false;
 
   @override
   void initState() {
@@ -46,6 +47,12 @@ class _ShareTargetPageState extends State<ShareTargetPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (IntentManager.sharedPayloadListener.value == null) {
+      _redirectEmptyShare();
+      return const Scaffold(
+        body: Center(child: AsciiProgressIndicator()),
+      );
+    }
     final manager = ClientManager.of(context);
     return AndroidPredictiveBackScope(
       onBack: () => unawaited(_cancel()),
@@ -145,6 +152,24 @@ class _ShareTargetPageState extends State<ShareTargetPage> {
     if (!mounted) {
       return;
     }
+    _goToConversationList();
+  }
+
+  void _redirectEmptyShare() {
+    if (_emptyRedirectScheduled) {
+      return;
+    }
+    _emptyRedirectScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _emptyRedirectScheduled = false;
+      if (!mounted || IntentManager.sharedPayloadListener.value != null) {
+        return;
+      }
+      _goToConversationList();
+    });
+  }
+
+  void _goToConversationList() {
     final clients = ClientManager.of(context).store.activeClients.value;
     final client = clients.firstOrNull;
     if (client == null) {
