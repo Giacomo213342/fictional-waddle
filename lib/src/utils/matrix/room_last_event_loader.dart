@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -15,6 +16,9 @@ final class RoomLastEventLoader {
 
   static final Map<String, ValueNotifier<int>> _revisions = {};
   static final Map<String, Future<Event?>> _inFlight = {};
+  static final Map<String, Room> _watchedRooms = {};
+  static final Map<String, StreamSubscription<String>>
+      _sessionKeySubscriptions = {};
 
   static ValueNotifier<int> _revisionNotifierFor(Room room) =>
       _revisions.putIfAbsent(_roomKey(room), () => ValueNotifier<int>(0));
@@ -34,6 +38,7 @@ final class RoomLastEventLoader {
     if (event == null || event.type != EventTypes.Encrypted) {
       return Future.value(event);
     }
+    _watchForSessionKeys(room);
 
     final encryption = room.client.encryption;
     final decryptEvent = decrypt ??
@@ -108,6 +113,38 @@ final class RoomLastEventLoader {
       return null;
     } finally {
       timeline.cancelSubscriptions();
+    }
+  }
+
+  static void _watchForSessionKeys(Room room) {
+    final key = _roomKey(room);
+    if (identical(_watchedRooms[key], room)) {
+      return;
+    }
+    unawaited(_sessionKeySubscriptions.remove(key)?.cancel());
+    _watchedRooms[key] = room;
+    _sessionKeySubscriptions[key] =
+        room.onSessionKeyReceived.stream.listen((_) {
+      if (!identical(_watchedRooms[key], room) ||
+          room.lastEvent?.type != EventTypes.Encrypted) {
+        return;
+      }
+      // Loading a room timeline requests missing Megolm sessions. Retry the
+      // preview as soon as that key arrives instead of requiring the user to
+      // open the conversation before its last message becomes readable.
+      unawaited(load(room));
+    });
+  }
+
+  static Future<void> disposeClient(Client client) async {
+    final keys = _watchedRooms.entries
+        .where((entry) => identical(entry.value.client, client))
+        .map((entry) => entry.key)
+        .toList(growable: false);
+    for (final key in keys) {
+      _watchedRooms.remove(key);
+      await _sessionKeySubscriptions.remove(key)?.cancel();
+      _revisions.remove(key)?.dispose();
     }
   }
 

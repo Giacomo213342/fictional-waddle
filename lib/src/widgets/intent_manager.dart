@@ -280,21 +280,30 @@ class IntentManager extends State<IntentManagerWidget> {
     _navigateToShareTarget();
   }
 
-  static Future<void> claimShareIntent() async {
+  static Future<bool> claimShareIntent({
+    bool closeExternalTask = false,
+  }) async {
     _cancelPendingShareNavigation();
     sharedPayloadListener.value = null;
 
     if (kIsWeb || (!Platform.isIOS && !Platform.isAndroid)) {
-      return;
+      return false;
     }
     await ReceiveSharingIntent.instance.reset();
     if (Platform.isAndroid) {
       try {
+        if (closeExternalTask) {
+          return await _intentLifecycleChannel.invokeMethod<bool>(
+                'cancelShareIntent',
+              ) ??
+              false;
+        }
         await _intentLifecycleChannel.invokeMethod<void>('consumeShareIntent');
       } on MissingPluginException {
         Logs().d('The Android intent lifecycle channel is unavailable.');
       }
     }
+    return false;
   }
 
   Future<void> _handleTextShare(

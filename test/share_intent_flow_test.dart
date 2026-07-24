@@ -172,14 +172,24 @@ void main() {
     expect(intentManager, contains('clientsReady.addListener(listener)'));
     expect(intentManager, contains('_cancelPendingShareNavigation()'));
     expect(intentManager, contains("'consumeShareIntent'"));
+    expect(intentManager, contains("'cancelShareIntent'"));
+    final shareTarget =
+        File('lib/src/pages/share_target/share_target.dart').readAsStringSync();
+    expect(shareTarget, contains('closeExternalTask: true'));
+    final mainActivity = File(
+      'android/app/src/main/kotlin/business/braid/polycule/MainActivity.kt',
+    ).readAsStringSync();
     expect(
-      File(
-        'android/app/src/main/kotlin/business/braid/polycule/MainActivity.kt',
-      ).readAsStringSync(),
+      mainActivity,
+      contains('Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS'),
+    );
+    expect(mainActivity, contains('finishAndRemoveTask()'));
+    expect(
+      mainActivity,
       contains('currentIntent.action = Intent.ACTION_MAIN'),
     );
     expect(
-      File('lib/src/pages/share_target/share_target.dart').readAsStringSync(),
+      shareTarget,
       contains('ProfileAvatarBuilder('),
     );
     expect(sender, contains('payload.clientName != room.client.clientName'));

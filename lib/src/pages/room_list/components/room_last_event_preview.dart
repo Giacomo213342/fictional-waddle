@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:matrix/matrix.dart';
+
 import '../../../utils/matrix/room_last_event_loader.dart';
 import '../../../widgets/matrix/avatar_builder/room_builder.dart';
 import '../../../widgets/matrix/scopes/event_scope.dart';
@@ -25,6 +27,13 @@ class RoomLastEventPreview extends StatelessWidget {
               final lastEvent = lastEventSnapshot.data ?? room.lastEvent;
               if (lastEvent == null) {
                 return const SizedBox();
+              }
+              if (lastEvent.type == EventTypes.Encrypted) {
+                return const Text(
+                  'Encrypted message',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                );
               }
               Widget preview = EventScope(
                 event: lastEvent,

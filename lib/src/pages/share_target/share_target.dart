@@ -148,8 +148,10 @@ class _ShareTargetPageState extends State<ShareTargetPage> {
   }
 
   Future<void> _cancel() async {
-    await IntentManager.claimShareIntent();
-    if (!mounted) {
+    final externalTaskClosed = await IntentManager.claimShareIntent(
+      closeExternalTask: true,
+    );
+    if (!mounted || externalTaskClosed) {
       return;
     }
     _goToConversationList();

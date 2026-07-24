@@ -18,7 +18,10 @@ void main() {
     client = Client('polycule_client_1', database: _NoopDatabase());
   });
 
-  tearDown(() => client.dispose());
+  tearDown(() async {
+    await RoomLastEventLoader.disposeClient(client);
+    await client.dispose();
+  });
 
   test('cached encrypted last event is replaced after background decryption',
       () async {

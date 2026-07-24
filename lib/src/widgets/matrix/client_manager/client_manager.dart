@@ -86,6 +86,9 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
 
   @override
   void dispose() {
+    for (final client in store.activeClients.value) {
+      unawaited(RoomLastEventLoader.disposeClient(client));
+    }
     for (final subscription in _loginStateListener.values) {
       subscription?.cancel();
     }
@@ -196,6 +199,7 @@ class ClientManager extends State<ClientManagerRoot> with RouteAware {
     }
 
     await callCoordinator.unregisterClient(client);
+    await RoomLastEventLoader.disposeClient(client);
     await store.deleteClient(client);
 
     if (!mounted) {
