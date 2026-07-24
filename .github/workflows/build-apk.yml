@@ -27,6 +27,16 @@ jobs:
       KEY_ALIAS: ${{ secrets.KEYSTORE_ALIAS || secrets.KEY_ALIAS }}
 
     steps:
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: false
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
       - name: Check out repository
         uses: actions/checkout@v4
         with:
