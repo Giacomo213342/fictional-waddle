@@ -17,7 +17,7 @@ jobs:
   build-apk:
     runs-on: ubuntu-latest
     container:
-      image: registry.gitlab.com/polycule_client/flutter-dockerimages:3.35.7-android
+      image: registry.gitlab.com/polycule_client/flutter-dockerimages:3.41.2-android
     env:
       PUB_CACHE: ${{ github.workspace }}/.pub-cache
       CP_HOME_DIR: ${{ github.workspace }}/.pod-cache
